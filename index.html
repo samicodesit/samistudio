@@ -60,6 +60,7 @@
         :root {
             --bg: #050505;
             --text: #ffffff;
+            --gold: #D4AF37;
             --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -154,7 +155,6 @@
         .headline {
             font-size: clamp(3.5rem, 15vw, 12rem);
             line-height: 0.85;
-            /* Slightly increased to prevent clipping if tight */
             letter-spacing: -0.05em;
             font-weight: 100;
             margin-left: -0.03em;
@@ -191,7 +191,13 @@
         .headline .visual-emphasis {
             font-weight: 400;
             font-style: italic;
-            color: var(--text);
+            color: var(--gold);
+        }
+
+        .accent-gold {
+            color: var(--gold);
+            opacity: 0.95;
+            font-weight: 600;
         }
 
         /* Preloader */
@@ -255,7 +261,7 @@
             }
         }
 
-        /* Refined CTA */
+        /* CTA */
         .cta-dock {
             position: relative;
             background: rgba(255, 255, 255, 0.03);
@@ -276,7 +282,7 @@
             }
         }
 
-        /* Premium Shimmer Effect - Refined */
+        /* Shimmer Effect */
         .cta-dock::after {
             content: "";
             position: absolute;
@@ -319,7 +325,6 @@
             }
         }
 
-        /* Refined Shimmer Keyframes */
         @keyframes premium-shimmer {
             0% {
                 transform: translateX(-100%) skewX(-15deg);
@@ -418,11 +423,11 @@
                 <span class="text-[11px] uppercase tracking-[0.6em] font-semibold">Sami Studio</span>
                 <span class="text-[9px] uppercase tracking-[0.4em] opacity-60">Product Designer & Builder</span>
             </div>
-            <!-- Elegant divider for mobile only -->
+            <!-- divider for mobile only -->
             <div class="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent md:hidden my-1"></div>
             <div class="flex items-center gap-4">
                 <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse opacity-80"></div>
-                <span class="text-[9px] uppercase tracking-[0.5em] opacity-60 color-gold">Available March 2026</span>
+                <span class="text-[9px] uppercase tracking-[0.5em] opacity-60 accent-gold">Available March 2026</span>
             </div>
         </header>
 
