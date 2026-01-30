@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sami Studio — Bespoke Presence | Premium Landing Pages & Websites</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Crafting premium landing pages and websites that elevate your digital presence. Product designer & builder specializing in bespoke web experiences.">
+    <meta name="keywords" content="web design, landing pages, premium websites, product designer, web developer, bespoke design, Amsterdam">
+    <meta name="author" content="Sami Studio">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://samistudio.nl">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://samistudio.nl">
+    <meta property="og:title" content="Sami Studio — Bespoke Presence">
+    <meta property="og:description" content="Crafting premium landing pages and websites that elevate your digital presence.">
+    <meta property="og:image" content="https://samistudio.nl/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://samistudio.nl">
+    <meta name="twitter:title" content="Sami Studio — Bespoke Presence">
+    <meta name="twitter:description" content="Crafting premium landing pages and websites that elevate your digital presence.">
+    <meta name="twitter:image" content="https://samistudio.nl/og-image.png">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#050505">
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-BMY4FZVGPH"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-BMY4FZVGPH');
+    </script>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #050505;
+            --text: #ffffff;
+            --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            overflow: hidden;
+            height: 100dvh;
+            width: 100vw;
+        }
+
+        /* Ambient Background */
+        .visual-anchor {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            opacity: 0;
+            will-change: transform, opacity;
+            transition: opacity 2s var(--ease-out-expo);
+        }
+        
+        .visual-anchor.loaded {
+            opacity: 1;
+        }
+
+        .portrait {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Increased brightness from 0.18 to 0.35 for better visibility */
+            filter: grayscale(100%) contrast(1.15) brightness(0.35);
+            transform: scale(1.1);
+            animation: slow-pan 25s ease-in-out infinite alternate;
+            will-change: transform;
+        }
+        
+        @media (max-width: 768px) {
+            .portrait {
+                object-position: center 30%;
+                filter: grayscale(100%) contrast(1.15) brightness(0.3);
+                animation: slow-pan-mobile 20s ease-in-out infinite alternate;
+            }
+        }
+        
+        @keyframes slow-pan-mobile {
+            from {
+                transform: scale(1.2) translate(-2%, -1.5%);
+            }
+
+            to {
+                transform: scale(1.05) translate(2%, 1.5%);
+            }
+        }
+
+        .scrim {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 30%, rgba(5, 5, 5, 0.2) 0%, var(--bg) 90%);
+        }
+        
+        @media (max-width: 768px) {
+            .scrim {
+                background: linear-gradient(to bottom, 
+                    rgba(5, 5, 5, 0.75) 0%, 
+                    rgba(5, 5, 5, 0.5) 30%,
+                    rgba(5, 5, 5, 0.4) 50%,
+                    rgba(5, 5, 5, 0.85) 100%);
+            }
+        }
+
+        /* UI Layout */
+        .ui-layer {
+            position: relative;
+            z-index: 10;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: clamp(1.5rem, 8vw, 6rem);
+        }
+        
+        @media (max-width: 768px) {
+            .ui-layer {
+                padding: 2rem 1.5rem;
+                gap: 2rem;
+            }
+        }
+
+        /* Static Premium Headline */
+        .headline {
+            font-size: clamp(3.5rem, 15vw, 12rem);
+            line-height: 0.85; /* Slightly increased to prevent clipping if tight */
+            letter-spacing: -0.05em;
+            font-weight: 100;
+            margin-left: -0.03em; /* Optical alignment correction */
+        }
+        
+        @media (max-width: 768px) {
+            .headline {
+                font-size: clamp(2.5rem, 18vw, 5rem);
+                line-height: 0.9;
+                letter-spacing: -0.03em;
+            }
+        }
+        
+        /* Text Masking for Reveal */
+        .line-wrapper {
+            overflow: hidden;
+            display: block;
+        }
+
+        .line-inner {
+            display: block;
+            transform: translateY(110%) rotate(2deg);
+            opacity: 0;
+            transition: transform 1.5s var(--ease-out-expo), opacity 1.5s var(--ease-out-expo);
+            will-change: transform, opacity;
+        }
+        
+        .line-inner.revealed {
+            transform: translateY(0) rotate(0deg);
+            opacity: 1;
+        }
+
+        .headline .visual-emphasis {
+            font-weight: 400;
+            font-style: italic;
+            color: var(--text);
+        }
+
+        /* Preloader */
+        .loader-screen {
+            position: fixed;
+            inset: 0;
+            background: #050505;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: translateY(0);
+            transition: transform 1.2s cubic-bezier(0.87, 0, 0.13, 1);
+            /* Ensure full viewport coverage on mobile */
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
+        }
+        
+        .loader-screen.done {
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+        
+        .loader-text {
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            opacity: 1;
+        }
+        
+        .loader-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 1px;
+            background: #fff;
+            width: 0%;
+            transition: width 0.3s ease-out;
+        }
+        
+        .loader-line.animating {
+            animation: loader-progress 1.8s ease-in-out forwards;
+        }
+        
+        @media (max-width: 768px) {
+            .loader-line {
+                /* Ensure line is visible above mobile browser UI */
+                bottom: env(safe-area-inset-bottom, 0px);
+                height: 2px;
+            }
+        }
+
+        @keyframes loader-progress {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        /* Refined CTA */
+        .cta-dock {
+            position: relative;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            transition: all 0.6s var(--ease-out-expo);
+            overflow: hidden;
+        }
+        
+        @media (max-width: 768px) {
+            .cta-dock {
+                background: rgba(255, 255, 255, 0.06);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+        }
+
+        /* Premium Shimmer Effect - Refined */
+        .cta-dock::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(110deg,
+                    transparent 20%,
+                    transparent 40%,
+                    rgba(255, 255, 255, 0.1) 50%,
+                    transparent 60%,
+                    transparent 80%);
+            transform: translateX(-100%) skewX(-15deg);
+            animation: premium-shimmer 6s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+            animation-delay: 5s;
+            pointer-events: none;
+        }
+
+        .cta-dock:hover {
+            background: #fff;
+            color: #000 !important;
+            border-color: #fff;
+            transform: translateY(-4px);
+        }
+
+        /* Disable shimmer on hover to focus on the fill state */
+        .cta-dock:hover::after {
+            opacity: 0;
+        }
+
+        /* Animation Definitions */
+        @keyframes slow-pan {
+            from {
+                transform: scale(1.1) translate(-0.5%, -0.5%);
+            }
+
+            to {
+                transform: scale(1.02) translate(0.5%, 0.5%);
+            }
+        }
+
+        /* Refined Shimmer Keyframes */
+        @keyframes premium-shimmer {
+            0% {
+                transform: translateX(-100%) skewX(-15deg);
+            }
+
+            100% {
+                transform: translateX(100%) skewX(-15deg);
+            }
+        }
+
+        .reveal-element {
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 2s var(--ease-out-expo), transform 2s var(--ease-out-expo);
+        }
+        
+        .reveal-element.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Transition delays for staggered reveal - controlled by JS */
+        .delay-nav {
+            transition-delay: 0.1s;
+        }
+
+        .delay-main {
+            transition-delay: 0.5s;
+        }
+        
+        .delay-headline-1 {
+            transition-delay: 0.2s;
+        }
+        
+        .delay-headline-2 {
+            transition-delay: 0.35s;
+        }
+
+        .delay-foot {
+            transition-delay: 0.6s;
+        }
+
+        /* Film Grain */
+        .grain::before {
+            content: "";
+            position: fixed;
+            inset: -100%;
+            width: 300%;
+            height: 300%;
+            background: url("https://grainy-gradients.vercel.app/noise.svg");
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 100;
+            animation: grain-jitter 0.6s steps(2) infinite;
+        }
+
+        @keyframes grain-jitter {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(-0.5%, -0.5%);
+            }
+
+            100% {
+                transform: translate(0.5%, 0.5%);
+            }
+        }
+    </style>
+</head>
+
+<body class="grain">
+
+    <!-- Preloader -->
+    <div class="loader-screen">
+        <div class="loader-text">Sami Studio</div>
+        <div class="loader-line"></div>
+    </div>
+
+    <div class="visual-anchor">
+        <picture>
+            <source media="(max-width: 768px)" srcset="portrait-mobile.png">
+            <img src="portrait.png" alt="Portrait" class="portrait" loading="eager" decoding="sync" fetchpriority="high">
+        </picture>
+        <div class="scrim"></div>
+    </div>
+
+    <div class="ui-layer">
+
+        <!-- Identity -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-start gap-3 md:gap-0 reveal-element delay-nav">
+            <div class="flex flex-col gap-1.5">
+                <span class="text-[11px] uppercase tracking-[0.6em] font-semibold">Sami Studio</span>
+                <span class="text-[9px] uppercase tracking-[0.4em] opacity-60">Product Designer & Builder</span>
+            </div>
+            <!-- Elegant divider for mobile only -->
+            <div class="w-full h-px bg-gradient-to-r from-transparent via-white/20 to-transparent md:hidden my-1"></div>
+            <div class="flex items-center gap-4">
+                <div class="w-1.5 h-1.5 bg-white rounded-full animate-pulse opacity-80"></div>
+                <span class="text-[9px] uppercase tracking-[0.5em] opacity-60">Available March 2026</span>
+            </div>
+        </header>
+
+        <!-- Message -->
+        <main class="max-w-6xl">
+            <h1 class="headline">
+                <span class="line-wrapper">
+                    <span class="line-inner delay-headline-1">Bespoke</span>
+                </span>
+                <span class="line-wrapper">
+                    <span class="line-inner delay-headline-2"><span class="visual-emphasis">Presence</span>.</span>
+                </span>
+            </h1>
+            <div class="mt-8 md:mt-12 reveal-element delay-main">
+                <p class="text-[11px] md:text-xs uppercase tracking-[0.2em] leading-loose opacity-70 max-w-xs md:max-w-md">
+                    Crafting premium landing pages and websites that elevate your digital presence.
+                </p>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="flex flex-col md:flex-row md:items-end justify-between gap-8 md:gap-12 reveal-element delay-foot">
+
+            <div class="relative w-full md:w-auto">
+                <a href="https://wa.me/31619942565" target="_blank"
+                    onclick="gtag('event', 'click', {event_category: 'engagement', event_label: 'whatsapp_inquiry'});"
+                    class="cta-dock group flex items-center gap-6 px-10 py-6 md:py-5">
+                    <div class="relative w-5 h-5 z-10">
+                        <svg viewBox="0 0 24 24" fill="currentColor"
+                            class="w-full h-full transition-transform duration-700 group-hover:rotate-12">
+                            <path
+                                d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.885-9.885 9.885m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.937 3.659 1.432 5.631 1.433h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                        </svg>
+                    </div>
+                    <span class="text-[11px] md:text-[10px] uppercase tracking-[0.5em] font-bold z-10">Direct Inquiry</span>
+                </a>
+            </div>
+
+            <div class="flex flex-col items-start md:items-end gap-2">
+                <span class="text-[9px] uppercase tracking-[0.4em] opacity-60">Amsterdam — Worldwide</span>
+                <span class="text-[8px] uppercase tracking-[0.4em] opacity-40">© Sami Studio. All rights
+                    reserved.</span>
+            </div>
+
+        </footer>
+
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+            
+            // Elements
+            const loaderScreen = document.querySelector('.loader-screen');
+            const loaderLine = document.querySelector('.loader-line');
+            const visualAnchor = document.querySelector('.visual-anchor');
+            const portraitImg = document.querySelector('.portrait');
+            const lineInners = document.querySelectorAll('.line-inner');
+            const revealElements = document.querySelectorAll('.reveal-element');
+            
+            // State
+            let imageLoaded = false;
+            let minTimeElapsed = false;
+            let pageRevealed = false;
+            const MIN_LOADER_TIME = 2000; // Minimum time to show loader (ms)
+            const MAX_LOADER_TIME = 5000; // Maximum time before forcing reveal
+            
+            // Force a fresh start by resetting any inline styles
+            function resetAnimationState() {
+                pageRevealed = false;
+                imageLoaded = false;
+                minTimeElapsed = false;
+                
+                // Reset loader
+                loaderScreen.style.display = 'flex';
+                loaderScreen.classList.remove('done');
+                
+                // Reset loader line - force reflow for animation restart
+                loaderLine.classList.remove('animating');
+                loaderLine.style.width = '0%';
+                void loaderLine.offsetWidth; // Force reflow
+                
+                // Reset visual elements
+                visualAnchor.classList.remove('loaded');
+                lineInners.forEach(el => el.classList.remove('revealed'));
+                revealElements.forEach(el => el.classList.remove('revealed'));
+            }
+            
+            // Start the loading sequence
+            function startLoader() {
+                resetAnimationState();
+                
+                // Start progress bar animation after a tiny delay to ensure reset
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        loaderLine.classList.add('animating');
+                    });
+                });
+                
+                // Set minimum time
+                setTimeout(() => {
+                    minTimeElapsed = true;
+                    checkAndReveal();
+                }, MIN_LOADER_TIME);
+                
+                // Failsafe: force reveal after max time even if image hasn't loaded
+                setTimeout(() => {
+                    if (!pageRevealed) {
+                        imageLoaded = true;
+                        minTimeElapsed = true;
+                        checkAndReveal();
+                    }
+                }, MAX_LOADER_TIME);
+            }
+            
+            // Check if we can reveal the page
+            function checkAndReveal() {
+                if (imageLoaded && minTimeElapsed && !pageRevealed) {
+                    pageRevealed = true;
+                    revealPage();
+                }
+            }
+            
+            // Reveal the page content
+            function revealPage() {
+                // Slide up loader
+                loaderScreen.classList.add('done');
+                
+                // After loader starts moving, reveal background
+                setTimeout(() => {
+                    visualAnchor.classList.add('loaded');
+                }, 200);
+                
+                // Reveal text elements with stagger
+                setTimeout(() => {
+                    lineInners.forEach(el => el.classList.add('revealed'));
+                    revealElements.forEach(el => el.classList.add('revealed'));
+                }, 400);
+                
+                // Hide loader from DOM after animation completes
+                setTimeout(() => {
+                    loaderScreen.style.display = 'none';
+                }, 1500);
+            }
+            
+            // Handle image loading
+            function setupImageLoading() {
+                // Check if image is already cached/loaded
+                if (portraitImg.complete && portraitImg.naturalHeight !== 0) {
+                    imageLoaded = true;
+                    checkAndReveal();
+                } else {
+                    portraitImg.addEventListener('load', () => {
+                        imageLoaded = true;
+                        checkAndReveal();
+                    }, { once: true });
+                    
+                    // Handle error - still reveal page
+                    portraitImg.addEventListener('error', () => {
+                        imageLoaded = true;
+                        checkAndReveal();
+                    }, { once: true });
+                }
+            }
+            
+            // Initialize
+            function init() {
+                startLoader();
+                setupImageLoading();
+            }
+            
+            // Run init immediately - the script is at the end of body so DOM is ready
+            init();
+            
+            // Handle page visibility changes (back/forward cache - bfcache)
+            window.addEventListener('pageshow', (event) => {
+                if (event.persisted) {
+                    // Page was restored from bfcache, reset and restart
+                    init();
+                }
+            });
+            
+            // Handle soft refreshes more robustly
+            // Some browsers may partially preserve state on refresh
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible' && pageRevealed) {
+                    // Page is already revealed, ensure everything is visible
+                    visualAnchor.classList.add('loaded');
+                    lineInners.forEach(el => el.classList.add('revealed'));
+                    revealElements.forEach(el => el.classList.add('revealed'));
+                }
+            });
+        })();
+    </script>
+
+</body>
+
+</html>

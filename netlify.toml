@@ -1,0 +1,7 @@
+[build]
+  publish = "."
+  command = ""
+
+[context.production.environment]
+# Add any env vars for Netlify here, e.g.:
+# NODE_ENV = "production"
