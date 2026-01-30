@@ -1,6 +1,6 @@
 [build]
   publish = "."
-  command = ""
+  command = "true"
 
 [context.production.environment]
 # Add any env vars for Netlify here, e.g.:
