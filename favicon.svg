@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
-  <image href="/favicon-96x96.png" width="64" height="64" preserveAspectRatio="xMidYMid meet" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="Sami Studio">
+  <rect width="64" height="64" rx="10" fill="#050505" />
+  <g fill="#ffffff" font-family="Inter, Arial, sans-serif" font-weight="800" font-size="48">
+    <text x="32" y="50%" dominant-baseline="middle" text-anchor="middle">S</text>
+  </g>
 </svg>
