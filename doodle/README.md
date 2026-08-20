@@ -21,3 +21,7 @@ The app keeps prompts and generated images in browser memory only. The root Sami
 - Domain: `doodle.samistudio.nl`
 - Image model: `gpt-image-1-mini`
 - Image quality: `low`
+
+## Deployment checklist
+
+Configure the Vercel project with root directory `doodle/`, Fluid Compute, and the encrypted environment variables from `.env.example`. Attach `doodle.samistudio.nl` without changing the apex site. Local release verification was run on 2026-08-20; production deployment and one real generation remain pending until the project key and Vercel settings are supplied.

@@ -1,5 +1,10 @@
+// @vitest-environment node
+
+import dotenv from "dotenv";
 import { describe, expect, it } from "vitest";
 import { generateDoodle } from "./generate-doodle";
+
+dotenv.config({ path: ".env.local" });
 
 describe.skipIf(process.env.RUN_REAL_IMAGE_TEST !== "1")("real Doodle image access", () => {
   it("generates a low-quality PNG through the Doodle project", async () => {
