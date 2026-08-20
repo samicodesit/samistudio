@@ -1,11 +1,10 @@
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getCopy, type Locale } from "@/lib/i18n";
 import { DoodleClient } from "./doodle-client";
 
-const suggestions = ["Two cats hug", "A dog with a flower", "A sleepy moon"] as const;
-
-function renderClient() {
-  return render(<DoodleClient initialAuthenticated suggestions={suggestions} />);
+function renderClient(locale: Locale = "en") {
+  return render(<DoodleClient copy={getCopy(locale)} />);
 }
 
 describe("DoodleClient", () => {
@@ -18,8 +17,8 @@ describe("DoodleClient", () => {
   it("fills a suggestion without fetching", () => {
     const fetchMock = vi.spyOn(globalThis, "fetch");
     renderClient();
-    fireEvent.click(screen.getByRole("button", { name: /Two cats hug/ }));
-    expect(screen.getByRole("textbox")).toHaveValue("Two cats hug");
+    fireEvent.click(screen.getByRole("button", { name: /warm scarf/ }));
+    expect(screen.getByRole("textbox")).toHaveValue("A person giving someone a warm scarf");
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -29,8 +28,16 @@ describe("DoodleClient", () => {
     expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(screen.getByRole("heading", { level: 1, name: "What should we doodle?" })).toBeInTheDocument();
     expect(screen.queryByText(/One tiny moment|Private space|private little space|Your prompts/)).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Two cats hug/ })).toBeVisible();
+    expect(screen.getByRole("button", { name: /warm scarf/ })).toBeVisible();
     expect(screen.getByRole("button", { name: /Create doodle/ })).toBeVisible();
+  });
+
+  it("renders localized controls and suggestions", () => {
+    renderClient("de");
+
+    expect(screen.getByRole("heading", { name: "Was sollen wir zeichnen?" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Doodle erstellen" })).toBeVisible();
+    expect(screen.getByRole("button", { name: /warmen Schal/ })).toBeVisible();
   });
 
   it("opens the reference doodle for a closer look", () => {
@@ -66,20 +73,14 @@ describe("DoodleClient", () => {
     expect(screen.getByRole("textbox")).toHaveValue("A scene that takes time");
   });
 
-  it("locks on 401 while preserving the scene and returns to idle after unlock", async () => {
-    const fetchMock = vi
-      .spyOn(globalThis, "fetch")
-      .mockResolvedValueOnce(new Response(null, { status: 401 }))
-      .mockResolvedValueOnce(new Response(JSON.stringify({ authenticated: true }), { status: 200 }));
+  it("keeps the public composer visible when generation is unavailable", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response(null, { status: 401 }));
     renderClient();
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Keep this scene" } });
     fireEvent.click(screen.getByRole("button", { name: /Create doodle/ }));
-    expect(await screen.findByRole("heading", { name: "Enter the passphrase" })).toBeInTheDocument();
-    expect(screen.getByLabelText("Passphrase")).toBeInTheDocument();
-    fireEvent.change(screen.getByLabelText("Passphrase"), { target: { value: "correct" } });
-    fireEvent.click(screen.getByRole("button", { name: "Unlock" }));
-    await waitFor(() => expect(screen.getByRole("textbox")).toHaveValue("Keep this scene"));
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(await screen.findByRole("alert")).toHaveTextContent("temporarily unavailable");
+    expect(screen.getByRole("textbox")).toHaveValue("Keep this scene");
+    expect(screen.queryByLabelText("Passphrase")).not.toBeInTheDocument();
   });
 
   it("starts a new blank scene after a result", async () => {

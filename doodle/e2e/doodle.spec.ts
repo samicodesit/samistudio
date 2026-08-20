@@ -4,13 +4,8 @@ import path from "node:path";
 
 const referencePng = fs.readFileSync(path.join(process.cwd(), "public/references/doodle-reference-kiss.png"));
 
-async function unlock(page: Page) {
-  await page.goto("/");
-  const passphrase = page.getByRole("textbox", { name: "Passphrase" });
-  if (await passphrase.isVisible().catch(() => false)) {
-    await passphrase.fill("test-passphrase");
-    await page.getByRole("button", { name: "Unlock" }).click();
-  }
+async function openTool(page: Page, path = "/") {
+  await page.goto(path);
   await expect(page.getByRole("heading", { name: "What should we doodle?" })).toBeVisible();
 }
 
@@ -34,8 +29,8 @@ async function expectSuggestionsFit(page: Page) {
 test.describe("Doodle mobile workflow", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("unlocks, creates, downloads, retries, and starts a new scene", async ({ page }, testInfo) => {
-    await unlock(page);
+  test("creates, downloads, retries, and starts a new scene", async ({ page }, testInfo) => {
+    await openTool(page);
     await page.reload();
     await expect(page.getByRole("heading", { name: "What should we doodle?" })).toBeVisible();
     await expectNoOverflow(page);
@@ -76,7 +71,7 @@ test.describe("Doodle mobile workflow", () => {
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText("Doodle, up close")).toBeHidden();
     await expect(dialog.getByRole("heading", { name: "A closer look" })).toBeHidden();
-    const nativeLink = dialog.getByRole("link", { name: "View at 100%" });
+    const nativeLink = dialog.getByRole("link", { name: "Open in new tab" });
     await expect(nativeLink).toHaveAttribute("target", "_blank");
     await expect(nativeLink).toHaveAttribute("rel", "noreferrer");
     await page.keyboard.press("Escape");
@@ -98,15 +93,8 @@ test.describe("Doodle mobile workflow", () => {
     await expectNoOverflow(page);
   });
 
-  test("shows the incorrect passphrase message", async ({ page }) => {
-    await page.goto("/");
-    await page.getByRole("textbox", { name: "Passphrase" }).fill("nope");
-    await page.getByRole("button", { name: "Unlock" }).click();
-    await expect(page.getByText("That passphrase is not correct.")).toBeVisible();
-  });
-
   test("preserves the scene for refusal, timeout, and temporary errors", async ({ page }, testInfo) => {
-    await unlock(page);
+    await openTool(page);
     const scenarios = [
       { status: 422, message: "That scene could not be drawn." },
       { status: 504, message: "took too long" },
@@ -131,17 +119,23 @@ test.describe("Doodle mobile workflow", () => {
     }
   });
 
-  test("returns to the composer after a session expiry without losing the scene", async ({ page }) => {
-    await unlock(page);
+  test("keeps the public composer available if generation is unavailable", async ({ page }) => {
+    await openTool(page);
     await page.route("**/api/generate", async (route) => {
       await route.fulfill({ status: 401, contentType: "application/json", body: "{}" });
     });
     await page.getByRole("textbox").fill("A scene that must stay here");
     await page.getByRole("button", { name: /Create doodle/ }).click();
-    await expect(page.getByRole("heading", { name: "Enter the passphrase" })).toBeVisible();
-    await page.getByRole("textbox", { name: "Passphrase" }).fill("test-passphrase");
-    await page.getByRole("button", { name: "Unlock" }).click();
+    await expect(page.locator(".doodle-stage-error")).toContainText("temporarily unavailable");
     await expect(page.getByRole("textbox")).toHaveValue("A scene that must stay here");
+  });
+
+  test("serves localized pages with matching discovery metadata", async ({ page }) => {
+    await page.goto("/de");
+    await expect(page.getByRole("heading", { name: "Was sollen wir zeichnen?" })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "de");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://doodle.samistudio.nl/de");
+    await expect(page.locator('link[hreflang="nl"]')).toHaveAttribute("href", "https://doodle.samistudio.nl/nl");
   });
 });
 
@@ -150,7 +144,7 @@ test.describe("Doodle desktop and accessibility", () => {
 
   test("stays centered, one-column, keyboard reachable, and works with reduced motion", async ({ page }, testInfo) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await unlock(page);
+    await openTool(page);
     await page.reload();
     const main = page.locator(".doodle-main");
     await expect(main).toHaveCSS("width", "1180px");
@@ -159,7 +153,7 @@ test.describe("Doodle desktop and accessibility", () => {
     await page.getByRole("textbox").fill("Two cats hug");
 
     await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
-    const focusableSelector = ".doodle-wordmark, textarea, .composer-footer button, .suggestions-list button";
+    const focusableSelector = ".doodle-wordmark, .language-switcher summary, textarea, .composer-footer button, .suggestions-list button";
     const controls = page.locator(focusableSelector);
     for (let index = 0; index < await controls.count(); index += 1) {
       await page.keyboard.press("Tab");

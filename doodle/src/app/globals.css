@@ -84,12 +84,76 @@ dialog:focus-visible {
 }
 
 .doodle-header {
+  position: relative;
+  z-index: 5;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   height: 64px;
   padding: 0 max(20px, calc((100vw - 1180px) / 2));
   border-bottom: 1px solid var(--soft-line);
   background: var(--paper);
+}
+
+.language-switcher {
+  position: relative;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.language-switcher summary {
+  min-width: 104px;
+  padding: 9px 30px 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  cursor: pointer;
+  list-style: none;
+  text-align: center;
+}
+
+.language-switcher summary::-webkit-details-marker {
+  display: none;
+}
+
+.language-switcher summary::after {
+  position: absolute;
+  top: 50%;
+  right: 13px;
+  content: "↓";
+  transform: translateY(-52%);
+}
+
+.language-switcher[open] summary,
+.language-switcher summary:hover {
+  border-color: var(--moss);
+  color: var(--moss);
+}
+
+.language-switcher[open] summary::after {
+  content: "↑";
+}
+
+.language-switcher nav {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  display: grid;
+  width: 190px;
+  padding: 7px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  box-shadow: 8px 10px 0 rgba(32, 35, 31, 0.045), 0 18px 34px rgba(32, 35, 31, 0.12);
+}
+
+.language-switcher nav a {
+  padding: 9px 10px;
+  border-radius: 7px;
+}
+
+.language-switcher nav a:hover {
+  background: rgba(25, 92, 71, 0.07);
+  color: var(--moss);
 }
 
 .doodle-wordmark {
@@ -748,6 +812,50 @@ dialog:focus-visible {
   box-shadow: 0 3px 0 #0f3c2f;
 }
 
+.seo-content {
+  display: grid;
+  width: min(960px, calc(100vw - 40px));
+  margin: 0 auto;
+  padding: clamp(72px, 10vw, 128px) 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(40px, 7vw, 84px);
+  border-top: 1px solid var(--line);
+}
+
+.seo-intro {
+  grid-column: 1 / -1;
+  max-width: 760px;
+}
+
+.seo-content h2 {
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: clamp(30px, 4vw, 48px);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.seo-content p,
+.seo-content li {
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.seo-content p {
+  margin: 0;
+}
+
+.seo-content ol {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.seo-content li + li {
+  margin-top: 8px;
+}
+
 @media (hover: none) {
   .stage-inspect-label {
     opacity: 1;
@@ -760,6 +868,14 @@ dialog:focus-visible {
   .doodle-header {
     height: 58px;
     padding: 0 18px;
+  }
+
+  .language-switcher summary {
+    min-width: 0;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .doodle-main {
@@ -883,6 +999,17 @@ dialog:focus-visible {
   .result-dialog-viewport,
   .result-dialog-image {
     max-height: calc(100svh - 220px);
+  }
+
+  .seo-content {
+    width: calc(100vw - 36px);
+    padding: 72px 0;
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .seo-intro {
+    grid-column: auto;
   }
 }
 

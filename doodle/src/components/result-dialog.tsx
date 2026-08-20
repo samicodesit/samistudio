@@ -3,14 +3,16 @@
 /* eslint-disable @next/next/no-img-element -- generated images are browser-owned object URLs. */
 import { Download, X } from "lucide-react";
 import { useEffect, useRef } from "react";
+import type { DoodleCopy } from "@/lib/i18n";
 
 interface ResultDialogProps {
   imageUrl: string;
   open: boolean;
   onClose: () => void;
+  copy: DoodleCopy["dialog"];
 }
 
-export function ResultDialog({ imageUrl, open, onClose }: ResultDialogProps) {
+export function ResultDialog({ imageUrl, open, onClose, copy }: ResultDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
 
@@ -40,7 +42,7 @@ export function ResultDialog({ imageUrl, open, onClose }: ResultDialogProps) {
     <dialog
       ref={dialogRef}
       className="result-dialog"
-      aria-label="Doodle image viewer"
+      aria-label={copy.label}
       onCancel={(event) => {
         event.preventDefault();
         onClose();
@@ -51,20 +53,20 @@ export function ResultDialog({ imageUrl, open, onClose }: ResultDialogProps) {
     >
       <div className="result-dialog-card">
         <div className="result-dialog-header result-dialog-header-compact">
-          <button className="icon-button" type="button" data-dialog-close onClick={onClose} aria-label="Close image">
+          <button className="icon-button" type="button" data-dialog-close onClick={onClose} aria-label={copy.close}>
             <X size={18} aria-hidden="true" />
           </button>
         </div>
         <div className="result-dialog-viewport">
-          <img className="result-dialog-image" src={imageUrl} alt="Sticky-note doodle" />
+          <img className="result-dialog-image" src={imageUrl} alt={copy.imageAlt} />
         </div>
         <div className="result-dialog-actions">
           <a className="dialog-secondary-action" href={imageUrl} target="_blank" rel="noreferrer">
-            View at 100%
+            {copy.native}
           </a>
           <a className="dialog-download-action" href={imageUrl} download="doodle.png">
             <Download size={16} aria-hidden="true" />
-            Download
+            {copy.download}
           </a>
         </div>
       </div>

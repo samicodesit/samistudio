@@ -1,11 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { UnlockForm } from "./unlock-form";
 import { SceneComposer } from "./scene-composer";
 import { DoodleStage } from "./doodle-stage";
 import { ResultActions } from "./result-actions";
 import { ResultDialog } from "./result-dialog";
+import type { DoodleCopy } from "@/lib/i18n";
 
 type GenerationState =
   | { status: "idle"; imageUrl: null; error: null }
@@ -14,20 +14,19 @@ type GenerationState =
   | { status: "error"; imageUrl: null; error: string };
 
 interface DoodleClientProps {
-  initialAuthenticated: boolean;
-  suggestions: readonly [string, string, string];
+  copy: DoodleCopy;
 }
 
 const IDLE_STATE: GenerationState = { status: "idle", imageUrl: null, error: null };
 
-function messageForStatus(status: number): string {
-  if (status === 422) return "That scene could not be drawn. Try describing it differently.";
-  if (status === 504) return "The doodle took too long. Please try again.";
-  return "Doodle could not finish that image. Please try again.";
+function messageForStatus(status: number, copy: DoodleCopy["errors"]): string {
+  if (status === 401) return copy.unavailable;
+  if (status === 422) return copy.refused;
+  if (status === 504) return copy.timeout;
+  return copy.general;
 }
 
-export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClientProps) {
-  const [authenticated, setAuthenticated] = useState(initialAuthenticated);
+export function DoodleClient({ copy }: DoodleClientProps) {
   const [scene, setScene] = useState("");
   const [generation, setGeneration] = useState<GenerationState>(IDLE_STATE);
   const [isResultOpen, setIsResultOpen] = useState(false);
@@ -48,7 +47,7 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
   useEffect(() => revokeCurrentUrl, [revokeCurrentUrl]);
 
   async function createDoodle() {
-    if (!authenticated || !scene.trim() || generation.status === "generating") return;
+    if (!scene.trim() || generation.status === "generating") return;
 
     revokeCurrentUrl();
     setGeneration({ status: "generating", imageUrl: null, error: null });
@@ -59,13 +58,8 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
         body: JSON.stringify({ scene }),
       });
 
-      if (response.status === 401) {
-        setAuthenticated(false);
-        setGeneration(IDLE_STATE);
-        return;
-      }
       if (!response.ok) {
-        setGeneration({ status: "error", imageUrl: null, error: messageForStatus(response.status) });
+        setGeneration({ status: "error", imageUrl: null, error: messageForStatus(response.status, copy.errors) });
         return;
       }
 
@@ -76,14 +70,9 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
       setGeneration({
         status: "error",
         imageUrl: null,
-        error: "Doodle could not finish that image. Please try again.",
+        error: copy.errors.general,
       });
     }
-  }
-
-  function handleUnlocked() {
-    setAuthenticated(true);
-    clearGeneration();
   }
 
   function handleNewScene() {
@@ -98,10 +87,6 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
     clearGeneration();
   }
 
-  if (!authenticated) {
-    return <UnlockForm onUnlocked={handleUnlocked} />;
-  }
-
   const inspectedImageUrl =
     generation.status === "ready" && generation.imageUrl
       ? generation.imageUrl
@@ -112,17 +97,17 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
       <div className="workspace-copy">
         {generation.status === "generating" ? (
           <section className="state-copy" aria-labelledby="generating-title">
-            <p className="eyebrow">A small moment in progress</p>
-            <h1 id="generating-title">Drawing your doodle.</h1>
+            <p className="eyebrow">{copy.status.generatingEyebrow}</p>
+            <h1 id="generating-title">{copy.status.generatingTitle}</h1>
             <p className="scene-summary">“{scene}”</p>
-            <p className="wait-hint">The simple lines take a little time. You can stay right here.</p>
+            <p className="wait-hint">{copy.status.waitHint}</p>
           </section>
         ) : generation.status === "ready" ? (
           <section className="state-copy" aria-labelledby="ready-title">
-            <p className="eyebrow">A fresh doodle, made</p>
-            <h1 id="ready-title">Your doodle is ready.</h1>
+            <p className="eyebrow">{copy.status.readyEyebrow}</p>
+            <h1 id="ready-title">{copy.status.readyTitle}</h1>
             <p className="scene-summary">“{scene}”</p>
-            <ResultActions imageUrl={generation.imageUrl} onTryAgain={createDoodle} onNewScene={handleNewScene} />
+            <ResultActions imageUrl={generation.imageUrl} onTryAgain={createDoodle} onNewScene={handleNewScene} copy={copy.actions} />
           </section>
         ) : (
           <SceneComposer
@@ -130,15 +115,16 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
             isGenerating={false}
             onSceneChange={setScene}
             onCreate={createDoodle}
+            copy={copy.composer}
           />
         )}
         {generation.status !== "generating" && generation.status !== "ready" ? (
         <section className="suggestions-section" aria-labelledby="suggestions-title">
           <div className="suggestions-heading">
-            <h2 id="suggestions-title">Or try one</h2>
+            <h2 id="suggestions-title">{copy.suggestions.title}</h2>
           </div>
           <div className="suggestions-list">
-            {suggestions.map((suggestion) => (
+            {copy.suggestions.items.map((suggestion) => (
               <button key={suggestion} type="button" onClick={() => handleSuggestion(suggestion)}>
                 <span>{suggestion}</span>
                 <span className="suggestion-plus" aria-hidden="true">
@@ -157,6 +143,7 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
           imageUrl={generation.imageUrl}
           error={generation.error}
           onInspect={() => setIsResultOpen(true)}
+          copy={copy.stage}
         />
       </div>
       {isResultOpen ? (
@@ -165,6 +152,7 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
           imageUrl={inspectedImageUrl}
           open={isResultOpen}
           onClose={() => setIsResultOpen(false)}
+          copy={copy.dialog}
         />
       ) : null}
     </div>

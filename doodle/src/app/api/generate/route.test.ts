@@ -4,13 +4,9 @@ import { POST } from "./route";
 import { GenerationError } from "@/lib/generation/generate-doodle";
 
 const mocks = vi.hoisted(() => ({
-  authorizeGeneration: vi.fn(),
   generateDoodle: vi.fn(),
 }));
 
-vi.mock("@/lib/auth/authorize-generation", () => ({
-  authorizeGeneration: mocks.authorizeGeneration,
-}));
 vi.mock("@/lib/generation/generate-doodle", async () => {
   const actual = await vi.importActual<typeof import("@/lib/generation/generate-doodle")>("@/lib/generation/generate-doodle");
   return { ...actual, generateDoodle: mocks.generateDoodle };
@@ -30,21 +26,18 @@ function request(scene: unknown, origin = "http://localhost:3000") {
 
 describe("generate route", () => {
   beforeEach(() => {
-    mocks.authorizeGeneration.mockResolvedValue({ authorized: true, subject: "private-owner" });
     mocks.generateDoodle.mockReset();
   });
 
-  it("rejects an unauthorized request", async () => {
-    mocks.authorizeGeneration.mockResolvedValueOnce({ authorized: false, subject: null });
+  it("allows an anonymous same-origin request", async () => {
+    mocks.generateDoodle.mockResolvedValue({ bytes: Buffer.from("png"), mimeType: "image/png" });
     const response = await POST(request("Two cats hug"));
-    expect(response.status).toBe(401);
-    expect(mocks.generateDoodle).not.toHaveBeenCalled();
+    expect(response.status).toBe(200);
   });
 
-  it("rejects a cross-origin request before authorizing generation", async () => {
+  it("rejects a cross-origin request before generation", async () => {
     const response = await POST(request("Two cats hug", "https://evil.example"));
     expect(response.status).toBe(403);
-    expect(mocks.authorizeGeneration).not.toHaveBeenCalled();
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
   });
 

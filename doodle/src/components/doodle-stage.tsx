@@ -3,6 +3,7 @@
 /* eslint-disable @next/next/no-img-element -- generated images are browser-owned object URLs. */
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import type { DoodleCopy } from "@/lib/i18n";
 
 type StageStatus = "idle" | "generating" | "ready" | "error";
 
@@ -11,19 +12,12 @@ interface DoodleStageProps {
   imageUrl: string | null;
   error: string | null;
   onInspect?: () => void;
+  copy: DoodleCopy["stage"];
 }
-
-const LOADING_MESSAGES = [
-  "Clearing a fresh note…",
-  "Sketching the main shapes…",
-  "Keeping the lines simple…",
-  "Adding the last little details…",
-  "Still drawing — this one needs a moment.",
-] as const;
 
 const LOADING_DELAYS = [8000, 12000, 25000, 30000];
 
-export function DoodleStage({ status, imageUrl, error, onInspect }: DoodleStageProps) {
+export function DoodleStage({ status, imageUrl, error, onInspect, copy }: DoodleStageProps) {
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -54,20 +48,20 @@ export function DoodleStage({ status, imageUrl, error, onInspect }: DoodleStageP
           <span className="loading-ink-line loading-ink-line-two" />
           <span className="loading-ink-line loading-ink-line-three" />
         </div>
-        <span className="loading-primary">Drawing your doodle...</span>
+        <span className="loading-primary">{copy.loadingPrimary}</span>
         <span className="loading-message" aria-hidden="true">
-          {LOADING_MESSAGES[loadingMessageIndex]}
+          {copy.loadingMessages[loadingMessageIndex]}
         </span>
-        <span className="sr-only">This can take up to two minutes.</span>
+        <span className="sr-only">{copy.loadingSr}</span>
       </div>
     );
   }
 
   if (status === "ready" && imageUrl) {
     return (
-      <button className="doodle-stage doodle-stage-result" type="button" onClick={onInspect} aria-label="View larger">
-        <img src={imageUrl} alt="Generated sticky-note doodle" />
-        <span className="stage-inspect-label">View larger</span>
+      <button className="doodle-stage doodle-stage-result" type="button" onClick={onInspect} aria-label={copy.viewLarger}>
+        <img src={imageUrl} alt={copy.generatedAlt} />
+        <span className="stage-inspect-label">{copy.viewLarger}</span>
       </button>
     );
   }
@@ -85,16 +79,16 @@ export function DoodleStage({ status, imageUrl, error, onInspect }: DoodleStageP
       className="doodle-stage doodle-stage-reference doodle-stage-result"
       type="button"
       onClick={onInspect}
-      aria-label="View example doodle larger"
+      aria-label={copy.referenceAria}
     >
       <Image
         src="/references/doodle-reference-kiss.png"
-        alt="Simple sticky-note doodle of two cats kissing upside down"
+        alt={copy.referenceAlt}
         width={1024}
         height={1024}
         priority
       />
-      <span className="stage-inspect-label">View larger</span>
+      <span className="stage-inspect-label">{copy.viewLarger}</span>
     </button>
   );
 }
