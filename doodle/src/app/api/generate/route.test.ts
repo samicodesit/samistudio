@@ -16,10 +16,14 @@ vi.mock("@/lib/generation/generate-doodle", async () => {
   return { ...actual, generateDoodle: mocks.generateDoodle };
 });
 
-function request(scene: unknown) {
+function request(scene: unknown, origin = "http://localhost:3000") {
   return new NextRequest("http://localhost:3000/api/generate", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: {
+      host: "localhost:3000",
+      origin,
+      "content-type": "application/json",
+    },
     body: JSON.stringify({ scene }),
   });
 }
@@ -37,8 +41,21 @@ describe("generate route", () => {
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
   });
 
+  it("rejects a cross-origin request before authorizing generation", async () => {
+    const response = await POST(request("Two cats hug", "https://evil.example"));
+    expect(response.status).toBe(403);
+    expect(mocks.authorizeGeneration).not.toHaveBeenCalled();
+    expect(mocks.generateDoodle).not.toHaveBeenCalled();
+  });
+
   it("rejects invalid scenes without calling OpenAI", async () => {
     const response = await POST(request(" "));
+    expect(response.status).toBe(400);
+    expect(mocks.generateDoodle).not.toHaveBeenCalled();
+  });
+
+  it("rejects an over-limit scene without calling OpenAI", async () => {
+    const response = await POST(request("x".repeat(181)));
     expect(response.status).toBe(400);
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
   });

@@ -91,7 +91,10 @@ export async function generateDoodle(scene: string, client: ImageClient = produc
 
   try {
     const bytes = Buffer.from(encoded, "base64");
-    if (bytes.length === 0) throw new Error("empty image");
+    const pngSignature = [0x89, 0x50, 0x4e, 0x47];
+    if (bytes.length < pngSignature.length || !pngSignature.every((byte, index) => bytes[index] === byte)) {
+      throw new Error("invalid PNG");
+    }
     return { bytes, mimeType: "image/png" };
   } catch {
     throw new GenerationError("malformed", "The image response was invalid.");

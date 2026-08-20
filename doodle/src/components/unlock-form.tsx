@@ -24,8 +24,12 @@ export function UnlockForm({ onUnlocked }: UnlockFormProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ passphrase }),
       });
-      if (!response.ok) {
+      if (response.status === 401) {
         setError("That passphrase is not correct.");
+        return;
+      }
+      if (!response.ok) {
+        setError("Could not unlock Doodle. Please try again.");
         return;
       }
       setPassphrase("");

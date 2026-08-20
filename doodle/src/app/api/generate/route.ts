@@ -2,12 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { authorizeGeneration } from "@/lib/auth/authorize-generation";
 import { generateDoodle, GenerationError } from "@/lib/generation/generate-doodle";
 import { normalizeScene, SceneValidationError } from "@/lib/scenes/scene";
+import { hasSameOrigin } from "@/lib/auth/same-origin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 export const maxDuration = 180;
 
 export async function POST(request: NextRequest) {
+  if (!hasSameOrigin(request)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
+
   const authorization = await authorizeGeneration(request);
   if (!authorization.authorized) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });

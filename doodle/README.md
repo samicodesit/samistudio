@@ -17,11 +17,14 @@ The app keeps prompts and generated images in browser memory only. The root Sami
 ## Production shape
 
 - Vercel project: `doodle`
-- Root directory: `doodle/`
-- Domain: `doodle.samistudio.nl`
+- Production URL: `https://doodle.samistudio.nl`
+- Vercel fallback URL: `https://doodle-puce.vercel.app`
+- Git root directory when the repository is connected: `doodle/`
 - Image model: `gpt-image-1-mini`
 - Image quality: `low`
 
 ## Deployment checklist
 
-Configure the Vercel project with root directory `doodle/`, Fluid Compute, and the encrypted environment variables from `.env.example`. Attach `doodle.samistudio.nl` without changing the apex site. Local release verification was run on 2026-08-20; production deployment and one real generation remain pending until the project key and Vercel settings are supplied.
+The app was deployed directly to the `doodle` Vercel project on 2026-08-20 with encrypted production environment variables. The custom domain is a CNAME managed in Netlify DNS, so the existing apex site remains unchanged. Production authentication, security headers, and one real low-quality image generation were verified successfully.
+
+The Vercel project is not yet connected to Git. When it is connected to the existing `samistudio` repository, set its root directory to `doodle/` before enabling automatic deployments.

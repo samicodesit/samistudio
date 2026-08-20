@@ -5,20 +5,7 @@ import {
   createSessionToken,
   verifyPassphrase,
 } from "@/lib/auth/session";
-
-function hasSameOrigin(request: Request): boolean {
-  const origin = request.headers.get("origin");
-  if (!origin) return true;
-
-  const host = request.headers.get("host");
-  if (!host) return false;
-
-  try {
-    return new URL(origin).host === host;
-  } catch {
-    return false;
-  }
-}
+import { hasSameOrigin } from "@/lib/auth/same-origin";
 
 export async function POST(request: Request) {
   if (!hasSameOrigin(request)) {

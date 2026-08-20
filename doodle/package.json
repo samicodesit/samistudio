@@ -12,7 +12,7 @@
     "test:e2e": "playwright test",
     "typecheck": "tsc --noEmit",
     "test:real": "RUN_REAL_IMAGE_TEST=1 vitest run src/lib/generation/generate-doodle.real.test.ts",
-    "eval:prompt": "node --import tsx scripts/evaluate-prompt.mts"
+    "eval:prompt": "node --env-file=.env.local --import tsx scripts/evaluate-prompt.mts"
   },
   "dependencies": {
     "lucide-react": "^1.33.0",

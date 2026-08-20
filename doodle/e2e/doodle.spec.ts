@@ -30,12 +30,18 @@ test.describe("Doodle mobile workflow", () => {
 
   test("unlocks, creates, downloads, retries, and starts a new scene", async ({ page }, testInfo) => {
     await unlock(page);
+    await page.reload();
+    await expect(page.getByRole("heading", { name: "What should we doodle?" })).toBeVisible();
     await expectNoOverflow(page);
 
+    const createButton = page.getByRole("button", { name: /Create doodle/ });
+    await expect(createButton).toBeDisabled();
     const suggestion = page.locator(".suggestions-list button").first();
     const suggestionText = await suggestion.locator("span").first().innerText();
     await suggestion.click();
     await expect(page.getByRole("textbox")).toHaveValue(suggestionText);
+    await expect(createButton).toBeEnabled();
+    await testInfo.attach("create.png", { body: await page.screenshot(), contentType: "image/png" });
 
     let generationCount = 0;
     await page.route("**/api/generate", async (route) => {
@@ -46,6 +52,7 @@ test.describe("Doodle mobile workflow", () => {
 
     await page.getByRole("button", { name: /Create doodle/ }).click();
     await expect(page.getByRole("status")).toHaveText("Drawing your doodle...");
+    await testInfo.attach("loading.png", { body: await page.screenshot(), contentType: "image/png" });
     await expectNoOverflow(page);
     await expect(page.getByAltText("Generated sticky-note doodle")).toBeVisible();
     await expectNoOverflow(page);
@@ -74,7 +81,7 @@ test.describe("Doodle mobile workflow", () => {
     await expect(page.getByText("That passphrase is not correct.")).toBeVisible();
   });
 
-  test("preserves the scene for refusal, timeout, and temporary errors", async ({ page }) => {
+  test("preserves the scene for refusal, timeout, and temporary errors", async ({ page }, testInfo) => {
     await unlock(page);
     const scenarios = [
       { status: 422, message: "That scene could not be drawn." },
@@ -91,6 +98,10 @@ test.describe("Doodle mobile workflow", () => {
       await page.getByRole("button", { name: /Create doodle/ }).click();
       await expect(page.locator(".doodle-stage-error")).toContainText(scenario.message);
       await expect(page.getByRole("textbox")).toHaveValue(scene);
+      await expectNoOverflow(page);
+      if (scenario.status === 422) {
+        await testInfo.attach("error.png", { body: await page.screenshot(), contentType: "image/png" });
+      }
       await page.unroute("**/api/generate");
     }
   });
@@ -115,28 +126,32 @@ test.describe("Doodle desktop and accessibility", () => {
   test("stays centered, one-column, keyboard reachable, and works with reduced motion", async ({ page }, testInfo) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await unlock(page);
+    await page.reload();
     const main = page.locator(".doodle-main");
     await expect(main).toHaveCSS("width", "610px");
     await expect(page.getByRole("heading", { name: "What should we doodle?" })).toBeVisible();
     await expectNoOverflow(page);
+    await page.getByRole("textbox").fill("Two cats hug");
 
-    const controls = page.locator(
-      ".doodle-wordmark, textarea, .composer-footer button, .suggestions-list button",
-    );
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    const focusableSelector = ".doodle-wordmark, textarea, .composer-footer button, .suggestions-list button";
+    const controls = page.locator(focusableSelector);
     for (let index = 0; index < await controls.count(); index += 1) {
-      await controls.nth(index).focus();
-      expect(
-        await page.evaluate(() => {
-          const element = document.activeElement;
-          return Boolean(element && ["A", "BUTTON", "INPUT", "TEXTAREA"].includes(element.tagName));
-        }),
-      ).toBe(true);
+      await page.keyboard.press("Tab");
+      await expect(page.locator(":focus-visible")).toHaveCount(1);
+      const focusedIndex = await page.evaluate((selector) => {
+        const activeElement = document.activeElement;
+        return activeElement
+          ? Array.from(document.querySelectorAll(selector)).indexOf(activeElement)
+          : -1;
+      }, focusableSelector);
+      expect(focusedIndex).toBe(index);
     }
 
     await page.route("**/api/generate", fulfillImage);
-    await page.getByRole("textbox").fill("Two cats hug");
     await page.getByRole("button", { name: /Create doodle/ }).click();
     await expect(page.getByAltText("Generated sticky-note doodle")).toBeVisible();
     await testInfo.attach("desktop-result.png", { body: await page.screenshot(), contentType: "image/png" });
+    await expectNoOverflow(page);
   });
 });
