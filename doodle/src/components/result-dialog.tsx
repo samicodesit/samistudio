@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element -- generated images are browser-owned object URLs. */
 import { Download, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 interface ResultDialogProps {
   imageUrl: string;
@@ -13,7 +13,6 @@ interface ResultDialogProps {
 export function ResultDialog({ imageUrl, open, onClose }: ResultDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
-  const [view, setView] = useState<"fit" | "native">("fit");
 
   useEffect(() => {
     const dialog = dialogRef.current;
@@ -41,8 +40,7 @@ export function ResultDialog({ imageUrl, open, onClose }: ResultDialogProps) {
     <dialog
       ref={dialogRef}
       className="result-dialog"
-      data-view={view}
-      aria-labelledby="result-dialog-title"
+      aria-label="Doodle image viewer"
       onCancel={(event) => {
         event.preventDefault();
         onClose();
@@ -52,11 +50,7 @@ export function ResultDialog({ imageUrl, open, onClose }: ResultDialogProps) {
       }}
     >
       <div className="result-dialog-card">
-        <div className="result-dialog-header">
-          <div>
-            <p className="result-dialog-kicker">Doodle, up close</p>
-            <h2 id="result-dialog-title">A closer look</h2>
-          </div>
+        <div className="result-dialog-header result-dialog-header-compact">
           <button className="icon-button" type="button" data-dialog-close onClick={onClose} aria-label="Close image">
             <X size={18} aria-hidden="true" />
           </button>
@@ -65,9 +59,9 @@ export function ResultDialog({ imageUrl, open, onClose }: ResultDialogProps) {
           <img className="result-dialog-image" src={imageUrl} alt="Sticky-note doodle" />
         </div>
         <div className="result-dialog-actions">
-          <button type="button" className="dialog-secondary-action" onClick={() => setView(view === "fit" ? "native" : "fit")}>
-            {view === "fit" ? "View at 100%" : "Fit to window"}
-          </button>
+          <a className="dialog-secondary-action" href={imageUrl} target="_blank" rel="noreferrer">
+            View at 100%
+          </a>
           <a className="dialog-download-action" href={imageUrl} download="doodle.png">
             <Download size={16} aria-hidden="true" />
             Download

@@ -74,9 +74,11 @@ test.describe("Doodle mobile workflow", () => {
     await page.getByRole("button", { name: /View larger/ }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
-    await expect(dialog.getByRole("button", { name: /View at 100%/ })).toBeVisible();
-    await dialog.getByRole("button", { name: /View at 100%/ }).click();
-    await expect(dialog).toHaveAttribute("data-view", "native");
+    await expect(dialog.getByText("Doodle, up close")).toBeHidden();
+    await expect(dialog.getByRole("heading", { name: "A closer look" })).toBeHidden();
+    const nativeLink = dialog.getByRole("link", { name: "View at 100%" });
+    await expect(nativeLink).toHaveAttribute("target", "_blank");
+    await expect(nativeLink).toHaveAttribute("rel", "noreferrer");
     await page.keyboard.press("Escape");
     await expect(dialog).toBeHidden();
 

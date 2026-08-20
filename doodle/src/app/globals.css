@@ -416,8 +416,7 @@ dialog:focus-visible {
   box-shadow: none;
 }
 
-.eyebrow,
-.result-dialog-kicker {
+.eyebrow {
   margin: 0 0 12px;
   color: var(--moss);
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
@@ -704,13 +703,9 @@ dialog:focus-visible {
   margin-bottom: 6px;
 }
 
-.result-dialog-header h2 {
-  margin: 0;
-  font-family: var(--font-display);
-  font-size: clamp(28px, 4vw, 42px);
-  font-weight: 600;
-  letter-spacing: -0.06em;
-  line-height: 0.92;
+.result-dialog-header-compact {
+  justify-content: flex-end;
+  margin-bottom: 10px;
 }
 
 .icon-button {
@@ -734,17 +729,6 @@ dialog:focus-visible {
   max-width: 100%;
   max-height: 70svh;
   object-fit: contain;
-}
-
-.result-dialog[data-view="native"] .result-dialog-viewport {
-  display: block;
-  overflow: auto;
-}
-
-.result-dialog[data-view="native"] .result-dialog-image {
-  width: 1024px;
-  max-width: none;
-  max-height: none;
 }
 
 .result-dialog-actions {

@@ -3,15 +3,17 @@ import { describe, expect, it, vi } from "vitest";
 import { ResultDialog } from "./result-dialog";
 
 describe("ResultDialog", () => {
-  it("opens at fit size and toggles to native resolution", () => {
+  it("opens the image at native resolution in a new tab", () => {
     render(<ResultDialog imageUrl="blob:one" open onClose={vi.fn()} />);
 
-    expect(screen.getByRole("dialog")).toHaveAttribute("data-view", "fit");
+    expect(screen.queryByText("Doodle, up close")).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "A closer look" })).not.toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Sticky-note doodle" })).toBeVisible();
 
-    fireEvent.click(screen.getByRole("button", { name: /100%/ }));
-
-    expect(screen.getByRole("dialog")).toHaveAttribute("data-view", "native");
+    const nativeLink = screen.getByRole("link", { name: "View at 100%" });
+    expect(nativeLink).toHaveAttribute("href", "blob:one");
+    expect(nativeLink).toHaveAttribute("target", "_blank");
+    expect(nativeLink).toHaveAttribute("rel", "noreferrer");
   });
 
   it("closes through the explicit close control", () => {
