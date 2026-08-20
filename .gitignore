@@ -11,3 +11,9 @@ build/
 .netlify
 .superpowers/
 .worktrees/
+
+# Doodle local-only outputs
+doodle/.env.local
+doodle/test-results/
+doodle/playwright-report/
+doodle/tmp/
