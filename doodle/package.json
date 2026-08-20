@@ -10,7 +10,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:real": "RUN_REAL_IMAGE_TEST=1 vitest run src/lib/generation/generate-doodle.real.test.ts",
+    "eval:prompt": "node --import tsx scripts/evaluate-prompt.mts"
   },
   "dependencies": {
     "lucide-react": "^1.33.0",
@@ -31,6 +33,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.1",
     "jsdom": "^27.0.1",
+    "tsx": "^4.23.12",
     "typescript": "^5",
     "vitest": "^3.2.7"
   }
