@@ -10,3 +10,4 @@ build/
 # Local Netlify folder
 .netlify
 .superpowers/
+.worktrees/
