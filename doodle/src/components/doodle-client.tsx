@@ -5,6 +5,7 @@ import { UnlockForm } from "./unlock-form";
 import { SceneComposer } from "./scene-composer";
 import { DoodleStage } from "./doodle-stage";
 import { ResultActions } from "./result-actions";
+import { ResultDialog } from "./result-dialog";
 
 type GenerationState =
   | { status: "idle"; imageUrl: null; error: null }
@@ -29,6 +30,7 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
   const [authenticated, setAuthenticated] = useState(initialAuthenticated);
   const [scene, setScene] = useState("");
   const [generation, setGeneration] = useState<GenerationState>(IDLE_STATE);
+  const [isResultOpen, setIsResultOpen] = useState(false);
   const currentObjectUrl = useRef<string | null>(null);
 
   const revokeCurrentUrl = useCallback(() => {
@@ -86,11 +88,13 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
 
   function handleNewScene() {
     setScene("");
+    setIsResultOpen(false);
     clearGeneration();
   }
 
   function handleSuggestion(sceneSuggestion: string) {
     setScene(sceneSuggestion);
+    setIsResultOpen(false);
     clearGeneration();
   }
 
@@ -99,18 +103,31 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
   }
 
   return (
-    <div className="doodle-workspace">
-      <DoodleStage status={generation.status} imageUrl={generation.imageUrl} error={generation.error} />
-      <SceneComposer
-        scene={scene}
-        isGenerating={generation.status === "generating"}
-        onSceneChange={setScene}
-        onCreate={createDoodle}
-      />
-      {generation.status === "ready" && generation.imageUrl ? (
-        <ResultActions imageUrl={generation.imageUrl} onTryAgain={createDoodle} onNewScene={handleNewScene} />
-      ) : null}
-      {generation.status !== "generating" && generation.status !== "ready" ? (
+    <div className={`doodle-workspace doodle-workspace-${generation.status}`}>
+      <div className="workspace-copy">
+        {generation.status === "generating" ? (
+          <section className="state-copy" aria-labelledby="generating-title">
+            <p className="eyebrow">A small moment in progress</p>
+            <h1 id="generating-title">Drawing your doodle.</h1>
+            <p className="scene-summary">“{scene}”</p>
+            <p className="wait-hint">The simple lines take a little time. You can stay right here.</p>
+          </section>
+        ) : generation.status === "ready" ? (
+          <section className="state-copy" aria-labelledby="ready-title">
+            <p className="eyebrow">A fresh doodle, made</p>
+            <h1 id="ready-title">Your doodle is ready.</h1>
+            <p className="scene-summary">“{scene}”</p>
+            <ResultActions imageUrl={generation.imageUrl} onTryAgain={createDoodle} onNewScene={handleNewScene} />
+          </section>
+        ) : (
+          <SceneComposer
+            scene={scene}
+            isGenerating={false}
+            onSceneChange={setScene}
+            onCreate={createDoodle}
+          />
+        )}
+        {generation.status !== "generating" && generation.status !== "ready" ? (
         <section className="suggestions-section" aria-labelledby="suggestions-title">
           <div className="suggestions-heading">
             <h2 id="suggestions-title">Or try one</h2>
@@ -126,6 +143,24 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
             ))}
           </div>
         </section>
+        ) : null}
+      </div>
+      <div className="workspace-visual">
+        <DoodleStage
+          key={generation.status}
+          status={generation.status}
+          imageUrl={generation.imageUrl}
+          error={generation.error}
+          onInspect={() => setIsResultOpen(true)}
+        />
+      </div>
+      {generation.status === "ready" && generation.imageUrl ? (
+        <ResultDialog
+          key={isResultOpen ? "open" : "closed"}
+          imageUrl={generation.imageUrl}
+          open={isResultOpen}
+          onClose={() => setIsResultOpen(false)}
+        />
       ) : null}
     </div>
   );

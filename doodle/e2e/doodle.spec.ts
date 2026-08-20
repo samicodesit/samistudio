@@ -51,12 +51,22 @@ test.describe("Doodle mobile workflow", () => {
     });
 
     await page.getByRole("button", { name: /Create doodle/ }).click();
-    await expect(page.getByRole("status")).toHaveText("Drawing your doodle...");
+    await expect(page.getByRole("status")).toContainText("Drawing your doodle...");
     await testInfo.attach("loading.png", { body: await page.screenshot(), contentType: "image/png" });
     await expectNoOverflow(page);
     await expect(page.getByAltText("Generated sticky-note doodle")).toBeVisible();
     await expectNoOverflow(page);
     await testInfo.attach("result.png", { body: await page.screenshot(), contentType: "image/png" });
+
+    await expect(page.getByRole("button", { name: /View larger/ })).toBeVisible();
+    await page.getByRole("button", { name: /View larger/ }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("button", { name: /View at 100%/ })).toBeVisible();
+    await dialog.getByRole("button", { name: /View at 100%/ }).click();
+    await expect(dialog).toHaveAttribute("data-view", "native");
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
 
     const downloadPromise = page.waitForEvent("download");
     await page.getByRole("link", { name: /Download/ }).click();
@@ -128,7 +138,7 @@ test.describe("Doodle desktop and accessibility", () => {
     await unlock(page);
     await page.reload();
     const main = page.locator(".doodle-main");
-    await expect(main).toHaveCSS("width", "610px");
+    await expect(main).toHaveCSS("width", "1180px");
     await expect(page.getByRole("heading", { name: "What should we doodle?" })).toBeVisible();
     await expectNoOverflow(page);
     await page.getByRole("textbox").fill("Two cats hug");

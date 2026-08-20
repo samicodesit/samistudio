@@ -41,6 +41,8 @@ describe("DoodleClient", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Drawing your doodle...");
     await waitFor(() => expect(screen.getByAltText("Generated sticky-note doodle")).toBeInTheDocument());
     expect(screen.getByRole("link", { name: /Download/ })).toHaveAttribute("download", "doodle.png");
+    expect(screen.getByRole("button", { name: /View larger/ })).toBeVisible();
+    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Try again/ })).toBeVisible();
     expect(screen.getByRole("button", { name: /New scene/ })).toBeVisible();
   });

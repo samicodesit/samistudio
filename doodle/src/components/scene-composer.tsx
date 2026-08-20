@@ -1,6 +1,5 @@
 "use client";
 
-import { Sparkles } from "lucide-react";
 import { MAX_SCENE_LENGTH } from "@/lib/app-config";
 
 interface SceneComposerProps {
@@ -35,7 +34,6 @@ export function SceneComposer({ scene, isGenerating, onSceneChange, onCreate }: 
             {showCounter ? `${scene.length} / ${MAX_SCENE_LENGTH}` : ""}
           </span>
           <button type="button" onClick={onCreate} disabled={!scene.trim() || isGenerating}>
-            <Sparkles size={16} aria-hidden="true" />
             {isGenerating ? "Drawing..." : "Create doodle"}
           </button>
         </div>
