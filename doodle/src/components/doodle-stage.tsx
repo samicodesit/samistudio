@@ -1,5 +1,8 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element -- generated images are browser-owned object URLs. */
+import Image from "next/image";
+
 type StageStatus = "idle" | "generating" | "ready" | "error";
 
 interface DoodleStageProps {
@@ -36,7 +39,13 @@ export function DoodleStage({ status, imageUrl, error }: DoodleStageProps) {
 
   return (
     <div className="doodle-stage doodle-stage-reference">
-      <img src="/references/doodle-reference-kiss.png" alt="Simple sticky-note doodle of two cats kissing upside down" />
+      <Image
+        src="/references/doodle-reference-kiss.png"
+        alt="Simple sticky-note doodle of two cats kissing upside down"
+        width={1024}
+        height={1024}
+        priority
+      />
     </div>
   );
 }

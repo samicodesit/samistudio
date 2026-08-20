@@ -23,6 +23,16 @@ describe("DoodleClient", () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
+  it("keeps the visual surface focused and the suggestions keyboard accessible", () => {
+    renderClient();
+    expect(screen.getByAltText(/two cats kissing upside down/)).toBeInTheDocument();
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+    expect(screen.getByRole("heading", { level: 1, name: "What should we doodle?" })).toBeInTheDocument();
+    expect(screen.queryByText(/One tiny moment|Private space|private little space|Your prompts/)).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Two cats hug/ })).toBeVisible();
+    expect(screen.getByRole("button", { name: /Create doodle/ })).toBeVisible();
+  });
+
   it("moves from idle to generating to ready", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(new Blob(["png"]), { status: 200 }));
     renderClient();
@@ -31,6 +41,8 @@ describe("DoodleClient", () => {
     expect(screen.getByRole("status")).toHaveTextContent("Drawing your doodle...");
     await waitFor(() => expect(screen.getByAltText("Generated sticky-note doodle")).toBeInTheDocument());
     expect(screen.getByRole("link", { name: /Download/ })).toHaveAttribute("download", "doodle.png");
+    expect(screen.getByRole("button", { name: /Try again/ })).toBeVisible();
+    expect(screen.getByRole("button", { name: /New scene/ })).toBeVisible();
   });
 
   it("preserves the scene when generation fails", async () => {

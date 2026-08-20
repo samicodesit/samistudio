@@ -43,7 +43,6 @@ export function UnlockForm({ onUnlocked }: UnlockFormProps) {
         <LockKeyhole size={18} strokeWidth={1.8} />
       </div>
       <h1 id="unlock-title">Enter the passphrase</h1>
-      <p className="unlock-copy">Doodle is a private little space.</p>
       <form onSubmit={handleSubmit} className="unlock-form">
         <label htmlFor="passphrase">Passphrase</label>
         <input
