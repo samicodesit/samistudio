@@ -7,7 +7,7 @@ describe("ResultDialog", () => {
     render(<ResultDialog imageUrl="blob:one" open onClose={vi.fn()} />);
 
     expect(screen.getByRole("dialog")).toHaveAttribute("data-view", "fit");
-    expect(screen.getByRole("img", { name: /generated sticky-note doodle/i })).toBeVisible();
+    expect(screen.getByRole("img", { name: "Sticky-note doodle" })).toBeVisible();
 
     fireEvent.click(screen.getByRole("button", { name: /100%/ }));
 

@@ -25,6 +25,12 @@ async function expectNoOverflow(page: Page) {
   expect(overflow).toBe(true);
 }
 
+async function expectSuggestionsFit(page: Page) {
+  const suggestions = page.locator(".suggestions-list");
+  const fits = await suggestions.evaluate((element) => element.scrollWidth <= element.clientWidth);
+  expect(fits).toBe(true);
+}
+
 test.describe("Doodle mobile workflow", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
@@ -33,6 +39,12 @@ test.describe("Doodle mobile workflow", () => {
     await page.reload();
     await expect(page.getByRole("heading", { name: "What should we doodle?" })).toBeVisible();
     await expectNoOverflow(page);
+    await expectSuggestionsFit(page);
+
+    await page.getByRole("button", { name: "View example doodle larger" }).click();
+    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("dialog")).toBeHidden();
 
     const createButton = page.getByRole("button", { name: /Create doodle/ });
     await expect(createButton).toBeDisabled();
@@ -110,6 +122,7 @@ test.describe("Doodle mobile workflow", () => {
       await expect(page.getByRole("textbox")).toHaveValue(scene);
       await expectNoOverflow(page);
       if (scenario.status === 422) {
+        await expect(page.locator(".doodle-stage-error")).toHaveCSS("width", "220px");
         await testInfo.attach("error.png", { body: await page.screenshot(), contentType: "image/png" });
       }
       await page.unroute("**/api/generate");

@@ -62,7 +62,7 @@ export function ResultDialog({ imageUrl, open, onClose }: ResultDialogProps) {
           </button>
         </div>
         <div className="result-dialog-viewport">
-          <img className="result-dialog-image" src={imageUrl} alt="Generated sticky-note doodle" />
+          <img className="result-dialog-image" src={imageUrl} alt="Sticky-note doodle" />
         </div>
         <div className="result-dialog-actions">
           <button type="button" className="dialog-secondary-action" onClick={() => setView(view === "fit" ? "native" : "fit")}>

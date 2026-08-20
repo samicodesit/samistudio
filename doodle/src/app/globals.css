@@ -833,32 +833,24 @@ dialog:focus-visible {
   }
 
   .suggestions-list {
-    display: flex;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 10px 0 5px;
-    scrollbar-width: none;
-  }
-
-  .suggestions-list::-webkit-scrollbar {
-    display: none;
+    display: grid;
+    gap: 0;
+    padding: 0;
   }
 
   .suggestions-list button {
-    width: auto;
-    min-height: 42px;
-    flex: 0 0 auto;
-    gap: 10px;
-    padding: 0 11px 0 14px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: rgba(252, 252, 248, 0.35);
+    min-height: 46px;
+    padding: 8px 0;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
     font-size: 13px;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .suggestions-list button:hover {
-    padding-left: 14px;
+    padding-left: 5px;
   }
 
   .suggestion-plus {
@@ -870,6 +862,23 @@ dialog:focus-visible {
   .scene-summary {
     margin-top: 18px;
     font-size: 19px;
+  }
+
+  .doodle-workspace-error .doodle-stage {
+    width: min(100%, 220px);
+  }
+
+  .doodle-stage-error {
+    padding: 24px;
+    font-size: 20px;
+  }
+
+  .doodle-stage-reference .stage-inspect-label {
+    right: 8px;
+    bottom: 8px;
+    padding: 5px 8px;
+    font-size: 10px;
+    letter-spacing: 0;
   }
 
   .result-actions {

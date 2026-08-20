@@ -81,7 +81,12 @@ export function DoodleStage({ status, imageUrl, error, onInspect }: DoodleStageP
   }
 
   return (
-    <div className="doodle-stage doodle-stage-reference">
+    <button
+      className="doodle-stage doodle-stage-reference doodle-stage-result"
+      type="button"
+      onClick={onInspect}
+      aria-label="View example doodle larger"
+    >
       <Image
         src="/references/doodle-reference-kiss.png"
         alt="Simple sticky-note doodle of two cats kissing upside down"
@@ -89,6 +94,7 @@ export function DoodleStage({ status, imageUrl, error, onInspect }: DoodleStageP
         height={1024}
         priority
       />
-    </div>
+      <span className="stage-inspect-label">View larger</span>
+    </button>
   );
 }

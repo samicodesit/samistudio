@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DoodleClient } from "./doodle-client";
 
@@ -31,6 +31,16 @@ describe("DoodleClient", () => {
     expect(screen.queryByText(/One tiny moment|Private space|private little space|Your prompts/)).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Two cats hug/ })).toBeVisible();
     expect(screen.getByRole("button", { name: /Create doodle/ })).toBeVisible();
+  });
+
+  it("opens the reference doodle for a closer look", () => {
+    renderClient();
+
+    fireEvent.click(screen.getByRole("button", { name: "View example doodle larger" }));
+
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toBeVisible();
+    expect(within(dialog).getByRole("img", { name: "Sticky-note doodle" })).toBeVisible();
   });
 
   it("moves from idle to generating to ready", async () => {

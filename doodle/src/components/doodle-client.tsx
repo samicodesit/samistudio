@@ -102,6 +102,11 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
     return <UnlockForm onUnlocked={handleUnlocked} />;
   }
 
+  const inspectedImageUrl =
+    generation.status === "ready" && generation.imageUrl
+      ? generation.imageUrl
+      : "/references/doodle-reference-kiss.png";
+
   return (
     <div className={`doodle-workspace doodle-workspace-${generation.status}`}>
       <div className="workspace-copy">
@@ -154,10 +159,10 @@ export function DoodleClient({ initialAuthenticated, suggestions }: DoodleClient
           onInspect={() => setIsResultOpen(true)}
         />
       </div>
-      {generation.status === "ready" && generation.imageUrl ? (
+      {isResultOpen ? (
         <ResultDialog
           key={isResultOpen ? "open" : "closed"}
-          imageUrl={generation.imageUrl}
+          imageUrl={inspectedImageUrl}
           open={isResultOpen}
           onClose={() => setIsResultOpen(false)}
         />
