@@ -272,6 +272,16 @@ Outputs are manually compared with the two references for:
 - No unwanted text or extra color
 - Copyability in under two minutes
 
+## Future Evolution
+
+The MVP does not build the following features, but its module boundaries must leave room for them:
+
+- Detail levels: generation settings live behind a `GenerationProfile` boundary. The MVP exposes only `simple`; future `medium` and `detailed` profiles may select different prompt fragments, models, and quality settings without changing the API route or UI state machine.
+- Photo conversion: OpenAI calls live behind a generation service rather than directly in route handlers. A later photo-upload specification must cover file type and size validation, metadata removal, input moderation, retention, abuse reporting, and applicable legal obligations before uploads are accepted.
+- Monetization: authorization is separate from image generation. The MVP authorization boundary validates the shared passphrase session. A later implementation may replace it with user identity plus subscription, credit, or entitlement checks without changing prompt construction or image decoding.
+
+The MVP still excludes accounts, a database, Stripe, a usage ledger, uploads, an upload-moderation pipeline, and multiple visible detail levels. These are separate design and implementation projects rather than dormant code paths in the first release.
+
 ## Acceptance Criteria
 
 - A valid private user can generate and download one doodle from a scene of 180 characters or fewer.
