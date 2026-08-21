@@ -5,10 +5,11 @@ import { POST } from "./route";
 const mocks = vi.hoisted(() => ({
   constructEvent: vi.fn(),
   fulfillCheckout: vi.fn(),
+  getStripe: vi.fn(),
 }));
 
 vi.mock("@/lib/billing/stripe", () => ({
-  getStripe: () => ({ webhooks: { constructEvent: mocks.constructEvent } }),
+  getStripe: mocks.getStripe,
 }));
 vi.mock("@/lib/billing/checkout", () => ({ fulfillCheckout: mocks.fulfillCheckout }));
 
@@ -26,6 +27,7 @@ describe("Stripe webhook route", () => {
     vi.stubEnv("STRIPE_WEBHOOK_SECRET", "whsec_test");
     Object.values(mocks).forEach((mock) => mock.mockReset());
     mocks.fulfillCheckout.mockResolvedValue(10);
+    mocks.getStripe.mockReturnValue({ webhooks: { constructEvent: mocks.constructEvent } });
   });
 
   it("rejects a missing signature without parsing or fulfillment", async () => {
@@ -44,6 +46,18 @@ describe("Stripe webhook route", () => {
     const response = await POST(webhookRequest("payload", "bad"));
 
     expect(response.status).toBe(400);
+    expect(mocks.fulfillCheckout).not.toHaveBeenCalled();
+  });
+
+  it("returns 500 when Stripe client initialization fails", async () => {
+    mocks.getStripe.mockImplementation(() => {
+      throw new Error("Stripe configuration unavailable");
+    });
+
+    const response = await POST(webhookRequest("payload", "valid"));
+
+    expect(response.status).toBe(500);
+    expect(mocks.constructEvent).not.toHaveBeenCalled();
     expect(mocks.fulfillCheckout).not.toHaveBeenCalled();
   });
 

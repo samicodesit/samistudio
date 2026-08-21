@@ -13,8 +13,10 @@ export async function POST(request: Request) {
   }
 
   let secret: string;
+  let stripe: ReturnType<typeof getStripe>;
   try {
     secret = required("STRIPE_WEBHOOK_SECRET");
+    stripe = getStripe();
   } catch {
     return NextResponse.json({ error: "webhook_unavailable" }, { status: 500 });
   }
@@ -22,7 +24,7 @@ export async function POST(request: Request) {
   const rawBody = await request.text();
   let event;
   try {
-    event = getStripe().webhooks.constructEvent(rawBody, signature, secret);
+    event = stripe.webhooks.constructEvent(rawBody, signature, secret);
   } catch {
     return NextResponse.json({ error: "invalid_signature" }, { status: 400 });
   }
