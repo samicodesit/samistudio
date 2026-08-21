@@ -161,11 +161,17 @@ test.describe("Task 7 purchase and account QA", () => {
 
     for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 700 }]) {
       await page.setViewportSize(viewport);
+      await page.emulateMedia({ reducedMotion: "reduce" });
       await openTool(page);
       await page.getByRole("textbox").fill("A tiny cat with an umbrella");
       await page.getByRole("button", { name: "Create doodle" }).click();
+      await expect(page.getByRole("button", { name: "Get 10 doodles" })).toBeFocused();
       await page.getByRole("button", { name: "Get 10 doodles" }).click();
       await expect(page.getByRole("button", { name: "Continue with Google" })).toBeFocused();
+      await page.keyboard.press("Tab");
+      await expect(page.getByRole("button", { name: "Continue with email" })).toBeFocused();
+      await page.keyboard.press("Tab");
+      await expect(page.getByRole("button", { name: "Not now" })).toBeFocused();
 
       const slip = page.locator(".purchase-slip");
       await slip.evaluate(async (element) => {
@@ -217,6 +223,120 @@ test.describe("Task 7 purchase and account QA", () => {
 
     await expect(dialog).toBeHidden();
     await expect(deleteTrigger).toBeFocused();
+  });
+});
+
+test.describe("Task 8 monetized workflow", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("keeps the scene through two free doodles, a refunded failure, and the purchase gate", async ({ page }, testInfo) => {
+    await page.route("**/api/account", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ authenticated: false, email: null, balance: 0, freeRemaining: 2 }),
+    }));
+    let generationCount = 0;
+    await page.route("**/api/generate", async (route) => {
+      generationCount += 1;
+      if (generationCount === 1) {
+        await route.fulfill({ status: 200, contentType: "image/png", headers: { "X-Doodle-Free-Remaining": "1" }, body: referencePng });
+      } else if (generationCount === 2) {
+        await route.fulfill({ status: 502, contentType: "application/json", headers: { "X-Doodle-Free-Remaining": "1" }, body: "{}" });
+      } else if (generationCount === 3) {
+        await route.fulfill({ status: 200, contentType: "image/png", headers: { "X-Doodle-Free-Remaining": "0" }, body: referencePng });
+      } else {
+        await route.fulfill({ status: 402, contentType: "application/json", headers: { "X-Doodle-Free-Remaining": "0" }, body: JSON.stringify({ error: "payment_required" }) });
+      }
+    });
+
+    await openTool(page);
+    await page.getByRole("textbox").fill("A cat under an umbrella");
+    await page.getByRole("button", { name: "Create doodle" }).click();
+    await expect(page.getByText("1 free doodle left")).toBeVisible();
+
+    await page.getByRole("button", { name: "Try again" }).click();
+    await expect(page.locator(".doodle-stage-error")).toContainText("could not finish");
+    await expect(page.getByRole("textbox")).toHaveValue("A cat under an umbrella");
+    await expect(page.getByText("1 free doodle left")).toBeVisible();
+
+    await page.getByRole("button", { name: "Create doodle" }).click();
+    await expect(page.getByText("0 free doodles left")).toBeVisible();
+    await page.getByRole("button", { name: "Try again" }).click();
+    await expect(page.getByRole("dialog", { name: "Keep doodling" })).toBeVisible();
+    await expect(page.getByRole("textbox")).toHaveValue("A cat under an umbrella");
+    await expectNoOverflow(page);
+    await testInfo.attach("task-8-mobile-gate.png", { body: await page.screenshot(), contentType: "image/png" });
+  });
+
+  test("restores a cancelled Checkout scene and spends confirmed paid credit", async ({ page }, testInfo) => {
+    await page.route("**/api/account", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: null }),
+    }));
+    await page.route("**/api/generate", (route) => route.fulfill({
+      status: 402,
+      contentType: "application/json",
+      headers: { "X-Doodle-Paid-Remaining": "0" },
+      body: JSON.stringify({ error: "payment_required" }),
+    }));
+    await page.route("**/api/checkout", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ url: "/?checkout=cancelled" }),
+    }));
+    await openTool(page);
+    await page.getByRole("textbox").fill("A kite above the sea");
+    await page.getByRole("button", { name: "Create doodle" }).click();
+    await page.getByRole("button", { name: "Get 10 doodles" }).click();
+    await expect(page.getByRole("textbox")).toHaveValue("A kite above the sea");
+
+    await page.addInitScript(() => {
+      sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "A kite above the sea", intent: "checkout" }));
+    });
+    await page.route("**/api/checkout/confirm", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ balance: 10 }),
+    }));
+    await page.goto("/?checkout=cs_paid", { waitUntil: "commit" });
+    await expect(page.getByRole("dialog", { name: "10 doodles added" })).toBeVisible();
+    await page.getByRole("button", { name: "Start drawing" }).click();
+    await expect(page.getByRole("textbox")).toHaveValue("A kite above the sea");
+
+    await page.unroute("**/api/generate");
+    await page.route("**/api/generate", (route) => route.fulfill({
+      status: 200,
+      contentType: "image/png",
+      headers: { "X-Doodle-Paid-Remaining": "9" },
+      body: referencePng,
+    }));
+    await page.getByRole("button", { name: "Create doodle" }).click();
+    await expect(page.locator(".workspace-usage > span")).toHaveText("9 doodles left");
+    await expectNoOverflow(page);
+    await testInfo.attach("task-8-mobile-paid.png", { body: await page.screenshot(), contentType: "image/png" });
+  });
+
+  test("keeps the Arabic purchase sheet inside its RTL viewport", async ({ page }) => {
+    await page.route("**/api/account", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ authenticated: false, email: null, balance: 0, freeRemaining: 0 }),
+    }));
+    await page.route("**/api/generate", (route) => route.fulfill({
+      status: 402,
+      contentType: "application/json",
+      headers: { "X-Doodle-Free-Remaining": "0" },
+      body: JSON.stringify({ error: "payment_required" }),
+    }));
+    await page.goto("/ar");
+    await expect(page.getByRole("heading", { name: "ماذا نرسم؟" })).toBeVisible();
+    await page.getByRole("textbox").fill("قطة تحت مظلة");
+    await page.getByRole("button", { name: "أنشئ رسمة" }).click();
+    const dialog = page.getByRole("dialog", { name: "واصل الرسم" });
+    await expect(dialog).toBeInViewport();
+    await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+    await expectNoOverflow(page);
   });
 });
 
