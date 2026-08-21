@@ -20,6 +20,7 @@ interface DoodleClientProps {
 const IDLE_STATE: GenerationState = { status: "idle", imageUrl: null, error: null };
 
 function messageForStatus(status: number, copy: DoodleCopy["errors"]): string {
+  if (status === 429) return copy.rateLimited;
   if (status === 401) return copy.unavailable;
   if (status === 422) return copy.refused;
   if (status === 504) return copy.timeout;

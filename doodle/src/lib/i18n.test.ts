@@ -27,6 +27,7 @@ describe("internationalization", () => {
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getCopy(locale);
       expect(copy.composer.title).not.toBe("");
+      expect(copy.errors.rateLimited).not.toBe("");
       expect(copy.seo.introTitle).not.toBe("");
       expect(copy.suggestions.items).toHaveLength(3);
       expect(new Set(copy.suggestions.items).size).toBe(3);

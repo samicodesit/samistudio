@@ -73,6 +73,16 @@ describe("DoodleClient", () => {
     expect(screen.getByRole("textbox")).toHaveValue("A scene that takes time");
   });
 
+  it("shows a localized daily-limit message", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 429 }));
+    renderClient("ar");
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "قطة تحمل مظلة" } });
+    fireEvent.click(screen.getByRole("button", { name: "أنشئ رسمة" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("أنشأت رسومات كثيرة اليوم");
+    expect(screen.getByRole("textbox")).toHaveValue("قطة تحمل مظلة");
+  });
+
   it("keeps the public composer visible when generation is unavailable", async () => {
     vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response(null, { status: 401 }));
     renderClient();
