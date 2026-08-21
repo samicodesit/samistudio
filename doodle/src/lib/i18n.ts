@@ -5,6 +5,15 @@ export const SUPPORTED_LOCALES = ["en", "nl", "de", "fr", "es", "pt-br", "it", "
 
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 
+export type PluralTemplates = {
+  zero?: string;
+  one?: string;
+  two?: string;
+  few?: string;
+  many?: string;
+  other: string;
+};
+
 export interface DoodleCopy {
   localeLabel: string;
   header: { homeLabel: string; languageLabel: string };
@@ -41,6 +50,44 @@ export interface DoodleCopy {
     imageAlt: string;
     native: string;
     download: string;
+  };
+  usage: {
+    firstTwoFree: string;
+    freeLeft: PluralTemplates;
+    paidLeft: PluralTemplates;
+  };
+  purchase: {
+    label: string;
+    title: string;
+    quantity: string;
+    price: string;
+    reassurance: string;
+    failedDontCount: string;
+    buy: string;
+    cancel: string;
+    restore: string;
+    added: string;
+    startDrawing: string;
+    checkoutError: string;
+  };
+  auth: {
+    google: string;
+    email: string;
+    emailLabel: string;
+    sendCode: string;
+    codeLabel: string;
+    verifyCode: string;
+    invalidCode: string;
+    authError: string;
+  };
+  account: {
+    label: string;
+    balance: PluralTemplates;
+    signOut: string;
+    delete: string;
+    deleteWarning: string;
+    confirmDelete: string;
+    cancelDelete: string;
   };
   seo: {
     title: string;
@@ -107,6 +154,44 @@ const COPY = {
       native: "Open in new tab",
       download: "Download",
     },
+    usage: {
+      firstTwoFree: "First 2 doodles free",
+      freeLeft: { one: "# free doodle left", other: "# free doodles left" },
+      paidLeft: { one: "# doodle left", other: "# doodles left" },
+    },
+    purchase: {
+      label: "Doodle refill",
+      title: "Keep doodling",
+      quantity: "10 more doodles",
+      price: "€4.99",
+      reassurance: "One payment. No subscription.",
+      failedDontCount: "Failed generations don't count.",
+      buy: "Get 10 doodles",
+      cancel: "Not now",
+      restore: "Already bought? Sign in",
+      added: "10 doodles added",
+      startDrawing: "Start drawing",
+      checkoutError: "Checkout could not start. Please try again.",
+    },
+    auth: {
+      google: "Continue with Google",
+      email: "Continue with email",
+      emailLabel: "Email address",
+      sendCode: "Send code",
+      codeLabel: "Six-digit code",
+      verifyCode: "Verify code",
+      invalidCode: "Enter the six-digit code from your email.",
+      authError: "Sign-in could not finish. Please try again.",
+    },
+    account: {
+      label: "Account",
+      balance: { one: "# doodle left", other: "# doodles left" },
+      signOut: "Sign out",
+      delete: "Delete account",
+      deleteWarning: "Deleting your account also removes any unused doodles. This can't be undone.",
+      confirmDelete: "Delete permanently",
+      cancelDelete: "Keep account",
+    },
     seo: {
       title: "AI Doodle Generator – Simple Drawings to Copy | Doodle",
       description: "Turn text into a simple AI doodle you can copy by hand. Describe a small scene and create a charming sticky-note drawing in moments.",
@@ -158,6 +243,10 @@ const COPY = {
     },
     actions: { download: "Downloaden", tryAgain: "Opnieuw", newScene: "Nieuwe scène" },
     dialog: { label: "Doodle-afbeelding", close: "Afbeelding sluiten", imageAlt: "Doodle op een notitieblaadje", native: "Openen in nieuw tabblad", download: "Downloaden" },
+    usage: { firstTwoFree: "De eerste 2 doodles zijn gratis", freeLeft: { one: "Nog # gratis doodle", other: "Nog # gratis doodles" }, paidLeft: { one: "Nog # doodle", other: "Nog # doodles" } },
+    purchase: { label: "Doodles aanvullen", title: "Blijf tekenen", quantity: "10 extra doodles", price: "€4.99", reassurance: "Eenmalige betaling. Geen abonnement.", failedDontCount: "Mislukte tekeningen tellen niet mee.", buy: "Koop 10 doodles", cancel: "Niet nu", restore: "Al gekocht? Log in", added: "10 doodles toegevoegd", startDrawing: "Begin met tekenen", checkoutError: "Betalen kon niet worden gestart. Probeer het opnieuw." },
+    auth: { google: "Doorgaan met Google", email: "Doorgaan met e-mail", emailLabel: "E-mailadres", sendCode: "Code versturen", codeLabel: "Zescijferige code", verifyCode: "Code controleren", invalidCode: "Vul de zescijferige code uit je e-mail in.", authError: "Inloggen is niet gelukt. Probeer het opnieuw." },
+    account: { label: "Account", balance: { one: "Nog # doodle", other: "Nog # doodles" }, signOut: "Uitloggen", delete: "Account verwijderen", deleteWarning: "Als je je account verwijdert, vervallen ook je ongebruikte doodles. Dit kan niet ongedaan worden gemaakt.", confirmDelete: "Definitief verwijderen", cancelDelete: "Account behouden" },
     seo: {
       title: "AI-doodlegenerator – simpele tekeningen om na te tekenen | Doodle",
       description: "Zet tekst om in een simpele AI-doodle die je met de hand kunt natekenen. Beschrijf een klein moment en maak direct een leuke tekening.",
@@ -179,6 +268,10 @@ const COPY = {
     stage: { loadingPrimary: "Dein Doodle wird gezeichnet...", loadingMessages: ["Ein frischer Notizzettel liegt bereit…", "Die wichtigsten Formen entstehen…", "Die Linien bleiben schön einfach…", "Die letzten kleinen Details kommen dazu…", "Noch einen Moment — dieses Bild braucht etwas Zeit."], loadingSr: "Das kann bis zu zwei Minuten dauern.", generatedAlt: "Erstelltes Doodle auf einem Notizzettel", viewLarger: "Größer ansehen", referenceAria: "Beispiel-Doodle größer ansehen", referenceAlt: "Einfaches Doodle von zwei kopfüber küssenden Katzen auf einem gelben Notizzettel" },
     actions: { download: "Herunterladen", tryAgain: "Noch einmal", newScene: "Neue Szene" },
     dialog: { label: "Doodle-Bildansicht", close: "Bild schließen", imageAlt: "Doodle auf einem Notizzettel", native: "In neuem Tab öffnen", download: "Herunterladen" },
+    usage: { firstTwoFree: "Die ersten 2 Doodles sind kostenlos", freeLeft: { one: "Noch # kostenloses Doodle", other: "Noch # kostenlose Doodles" }, paidLeft: { one: "Noch # Doodle", other: "Noch # Doodles" } },
+    purchase: { label: "Doodles auffüllen", title: "Weiterzeichnen", quantity: "10 weitere Doodles", price: "€4.99", reassurance: "Einmal zahlen. Kein Abo.", failedDontCount: "Fehlgeschlagene Bilder werden nicht abgezogen.", buy: "10 Doodles kaufen", cancel: "Nicht jetzt", restore: "Schon gekauft? Anmelden", added: "10 Doodles hinzugefügt", startDrawing: "Jetzt zeichnen", checkoutError: "Die Zahlung konnte nicht gestartet werden. Versuch es noch einmal." },
+    auth: { google: "Mit Google fortfahren", email: "Mit E-Mail fortfahren", emailLabel: "E-Mail-Adresse", sendCode: "Code senden", codeLabel: "Sechsstelliger Code", verifyCode: "Code bestätigen", invalidCode: "Gib den sechsstelligen Code aus deiner E-Mail ein.", authError: "Die Anmeldung konnte nicht abgeschlossen werden. Versuch es noch einmal." },
+    account: { label: "Konto", balance: { one: "Noch # Doodle", other: "Noch # Doodles" }, signOut: "Abmelden", delete: "Konto löschen", deleteWarning: "Beim Löschen deines Kontos verfallen auch ungenutzte Doodles. Das lässt sich nicht rückgängig machen.", confirmDelete: "Endgültig löschen", cancelDelete: "Konto behalten" },
     seo: { title: "KI-Doodle-Generator – einfache Bilder zum Nachzeichnen | Doodle", description: "Verwandle Text in ein einfaches KI-Doodle zum Nachzeichnen. Beschreibe eine kleine Szene und erstelle in wenigen Augenblicken eine charmante Zeichnung.", introTitle: "Aus einem kleinen Moment wird ein einfaches Doodle", introBody: "Doodle ist ein Text-zu-Zeichnung-Tool für alle, die ein einfaches Bild statt aufwendiger KI-Kunst suchen. Beschreibe eine kleine Szene und erhalte ein klares Doodle, das du leicht von Hand nachzeichnen kannst.", howTitle: "So funktioniert es", steps: ["Beschreibe eine kleine, klare Szene.", "Doodle vereinfacht sie zu freundlichen Linien.", "Öffne oder lade das Bild herunter und zeichne es von Hand nach."], useTitle: "Für Notizen, Karten und kleine Überraschungen", useBody: "Erstelle einfache Doodles für Brotdosen-Zettel, Grußkarten, Journals, den Unterricht oder jeden Moment, der ein kleines handgezeichnetes Bild verdient." },
   },
   fr: {
@@ -191,6 +284,10 @@ const COPY = {
     stage: { loadingPrimary: "Votre dessin prend vie...", loadingMessages: ["Une nouvelle note se prépare…", "Les formes principales apparaissent…", "Les lignes restent toutes simples…", "Les derniers petits détails arrivent…", "Encore un instant — ce dessin demande un peu de temps."], loadingSr: "Cela peut prendre jusqu’à deux minutes.", generatedAlt: "Doodle généré sur une note adhésive", viewLarger: "Agrandir", referenceAria: "Agrandir l’exemple de doodle", referenceAlt: "Doodle simple de deux chats qui s’embrassent la tête en bas sur une note jaune" },
     actions: { download: "Télécharger", tryAgain: "Réessayer", newScene: "Nouvelle scène" },
     dialog: { label: "Visionneuse du doodle", close: "Fermer l’image", imageAlt: "Doodle sur une note adhésive", native: "Ouvrir dans un nouvel onglet", download: "Télécharger" },
+    usage: { firstTwoFree: "Vos 2 premiers dessins sont gratuits", freeLeft: { one: "Il vous reste # dessin gratuit", other: "Il vous reste # dessins gratuits" }, paidLeft: { one: "Il vous reste # dessin", other: "Il vous reste # dessins" } },
+    purchase: { label: "Recharge de dessins", title: "Continuez à dessiner", quantity: "10 dessins de plus", price: "€4.99", reassurance: "Un seul paiement. Aucun abonnement.", failedDontCount: "Les créations qui échouent ne sont pas décomptées.", buy: "Obtenir 10 dessins", cancel: "Pas maintenant", restore: "Déjà acheté ? Se connecter", added: "10 dessins ajoutés", startDrawing: "Commencer à dessiner", checkoutError: "Impossible d’ouvrir le paiement. Veuillez réessayer." },
+    auth: { google: "Continuer avec Google", email: "Continuer par e-mail", emailLabel: "Adresse e-mail", sendCode: "Envoyer le code", codeLabel: "Code à six chiffres", verifyCode: "Vérifier le code", invalidCode: "Saisissez le code à six chiffres reçu par e-mail.", authError: "La connexion n’a pas abouti. Veuillez réessayer." },
+    account: { label: "Compte", balance: { one: "Il vous reste # dessin", other: "Il vous reste # dessins" }, signOut: "Se déconnecter", delete: "Supprimer le compte", deleteWarning: "La suppression de votre compte efface aussi les dessins inutilisés. Cette action est irréversible.", confirmDelete: "Supprimer définitivement", cancelDelete: "Garder le compte" },
     seo: { title: "Générateur de dessins IA – doodles simples à recopier | Doodle", description: "Transformez un texte en dessin IA simple à recopier à la main. Décrivez une petite scène et créez un doodle charmant en quelques instants.", introTitle: "Transformez un petit moment en doodle facile", introBody: "Doodle est un outil texte-vers-dessin pour celles et ceux qui veulent une image simple, et non une œuvre IA trop travaillée. Décrivez une petite scène et obtenez un dessin clair, facile à reproduire à la main.", howTitle: "Comment ça marche", steps: ["Décrivez une seule petite scène, clairement.", "Doodle la simplifie en quelques lignes chaleureuses.", "Ouvrez, téléchargez ou recopiez le dessin à la main."], useTitle: "Pour les petits mots, les cartes et les surprises", useBody: "Créez des doodles faciles pour un mot dans la boîte à goûter, une carte, un journal, la classe ou tout moment qui mérite un petit dessin fait main." },
   },
   es: {
@@ -203,6 +300,10 @@ const COPY = {
     stage: { loadingPrimary: "Estamos dibujando tu idea...", loadingMessages: ["Preparando una nota nueva…", "Trazando las formas principales…", "Manteniendo las líneas sencillas…", "Añadiendo los últimos detalles…", "Seguimos dibujando — esta escena necesita un momento."], loadingSr: "Puede tardar hasta dos minutos.", generatedAlt: "Doodle generado sobre una nota adhesiva", viewLarger: "Ver más grande", referenceAria: "Ver el doodle de ejemplo más grande", referenceAlt: "Doodle sencillo de dos gatos besándose boca abajo sobre una nota amarilla" },
     actions: { download: "Descargar", tryAgain: "Intentar de nuevo", newScene: "Nueva escena" },
     dialog: { label: "Visor del dibujo", close: "Cerrar imagen", imageAlt: "Doodle sobre una nota adhesiva", native: "Abrir en una pestaña nueva", download: "Descargar" },
+    usage: { firstTwoFree: "Tus primeros 2 dibujos son gratis", freeLeft: { one: "Te queda # dibujo gratis", other: "Te quedan # dibujos gratis" }, paidLeft: { one: "Te queda # dibujo", other: "Te quedan # dibujos" } },
+    purchase: { label: "Recarga de dibujos", title: "Sigue dibujando", quantity: "10 dibujos más", price: "€4.99", reassurance: "Un solo pago. Sin suscripción.", failedDontCount: "Los intentos fallidos no se descuentan.", buy: "Conseguir 10 dibujos", cancel: "Ahora no", restore: "¿Ya compraste? Inicia sesión", added: "Se añadieron 10 dibujos", startDrawing: "Empezar a dibujar", checkoutError: "No se pudo abrir el pago. Inténtalo de nuevo." },
+    auth: { google: "Continuar con Google", email: "Continuar con correo electrónico", emailLabel: "Correo electrónico", sendCode: "Enviar código", codeLabel: "Código de seis dígitos", verifyCode: "Verificar código", invalidCode: "Introduce el código de seis dígitos que recibiste por correo.", authError: "No se pudo completar el inicio de sesión. Inténtalo de nuevo." },
+    account: { label: "Cuenta", balance: { one: "Te queda # dibujo", other: "Te quedan # dibujos" }, signOut: "Cerrar sesión", delete: "Eliminar cuenta", deleteWarning: "Al eliminar tu cuenta también perderás los dibujos que no hayas usado. Esta acción no se puede deshacer.", confirmDelete: "Eliminar definitivamente", cancelDelete: "Conservar cuenta" },
     seo: { title: "Generador de dibujos con IA – doodles fáciles de copiar | Doodle", description: "Convierte texto en un dibujo sencillo con IA que puedas copiar a mano. Describe una pequeña escena y crea un doodle encantador en unos instantes.", introTitle: "Convierte un pequeño momento en un dibujo fácil", introBody: "Doodle es una herramienta de texto a dibujo para quien busca una imagen sencilla, no una obra de IA recargada. Describe una pequeña escena y recibe un doodle claro que puedas copiar fácilmente a mano.", howTitle: "Cómo funciona", steps: ["Describe una escena pequeña y concreta.", "Doodle la simplifica con líneas claras y amables.", "Abre, descarga o copia el dibujo a mano."], useTitle: "Para notas, tarjetas y pequeñas sorpresas", useBody: "Crea doodles fáciles para notas de almuerzo, tarjetas, diarios, ideas para clase o cualquier momento que merezca un dibujo hecho a mano." },
   },
   "pt-br": {
@@ -215,6 +316,10 @@ const COPY = {
     stage: { loadingPrimary: "Estamos fazendo seu desenho...", loadingMessages: ["Preparando um novo bloquinho…", "Rascunhando as formas principais…", "Mantendo os traços simples…", "Acrescentando os últimos detalhes…", "Ainda desenhando — esta cena precisa de mais um momento."], loadingSr: "Isso pode levar até dois minutos.", generatedAlt: "Desenho gerado em um bloquinho adesivo", viewLarger: "Ver maior", referenceAria: "Ver o desenho de exemplo em tamanho maior", referenceAlt: "Desenho simples de dois gatos se beijando de cabeça para baixo em um bloquinho amarelo" },
     actions: { download: "Baixar", tryAgain: "Tentar novamente", newScene: "Nova cena" },
     dialog: { label: "Visualizador do desenho", close: "Fechar imagem", imageAlt: "Desenho em um bloquinho adesivo", native: "Abrir em nova aba", download: "Baixar" },
+    usage: { firstTwoFree: "Os primeiros 2 desenhos são grátis", freeLeft: { one: "Resta # desenho grátis", other: "Restam # desenhos grátis" }, paidLeft: { one: "Resta # desenho", other: "Restam # desenhos" } },
+    purchase: { label: "Recarga de desenhos", title: "Continue desenhando", quantity: "Mais 10 desenhos", price: "€4.99", reassurance: "Pagamento único. Sem assinatura.", failedDontCount: "Tentativas que falharem não serão descontadas.", buy: "Comprar 10 desenhos", cancel: "Agora não", restore: "Já comprou? Entre na conta", added: "10 desenhos adicionados", startDrawing: "Começar a desenhar", checkoutError: "Não foi possível abrir o pagamento. Tente novamente." },
+    auth: { google: "Continuar com o Google", email: "Continuar com e-mail", emailLabel: "Endereço de e-mail", sendCode: "Enviar código", codeLabel: "Código de seis dígitos", verifyCode: "Confirmar código", invalidCode: "Digite o código de seis dígitos enviado por e-mail.", authError: "Não foi possível concluir o acesso. Tente novamente." },
+    account: { label: "Conta", balance: { one: "Resta # desenho", other: "Restam # desenhos" }, signOut: "Sair", delete: "Excluir conta", deleteWarning: "Ao excluir sua conta, você também perde os desenhos que ainda não usou. Essa ação não pode ser desfeita.", confirmDelete: "Excluir definitivamente", cancelDelete: "Manter conta" },
     seo: { title: "Gerador de desenho com IA – desenhos fáceis de copiar | Doodle", description: "Transforme texto em um desenho simples com IA para copiar à mão. Descreva uma pequena cena e crie um doodle encantador em instantes.", introTitle: "Transforme um pequeno momento em um desenho fácil", introBody: "Doodle é uma ferramenta de texto para desenho feita para quem quer uma imagem simples, não uma arte de IA cheia de detalhes. Descreva uma pequena cena e receba um desenho claro e fácil de copiar à mão.", howTitle: "Como funciona", steps: ["Descreva uma cena pequena e objetiva.", "O Doodle simplifica a ideia em traços leves e claros.", "Abra, baixe ou copie o resultado à mão."], useTitle: "Para bilhetes, cartões e pequenas surpresas", useBody: "Crie desenhos fáceis para bilhetes na lancheira, cartões, diários, atividades escolares ou qualquer momento que mereça um toque feito à mão." },
   },
   it: {
@@ -227,6 +332,10 @@ const COPY = {
     stage: { loadingPrimary: "Sto creando il tuo disegno...", loadingMessages: ["Preparo un nuovo foglietto…", "Disegno le forme principali…", "Mantengo le linee semplici…", "Aggiungo gli ultimi dettagli…", "Sto ancora disegnando — serve ancora un momento."], loadingSr: "Potrebbero volerci fino a due minuti.", generatedAlt: "Doodle generato su un foglietto adesivo", viewLarger: "Ingrandisci", referenceAria: "Ingrandisci il doodle di esempio", referenceAlt: "Doodle semplice di due gatti che si baciano a testa in giù su un foglietto giallo" },
     actions: { download: "Scarica", tryAgain: "Riprova", newScene: "Nuova scena" },
     dialog: { label: "Visualizzatore del doodle", close: "Chiudi immagine", imageAlt: "Doodle su un foglietto adesivo", native: "Apri in una nuova scheda", download: "Scarica" },
+    usage: { firstTwoFree: "I primi 2 disegni sono gratis", freeLeft: { one: "Ti resta # disegno gratis", other: "Ti restano # disegni gratis" }, paidLeft: { one: "Ti resta # disegno", other: "Ti restano # disegni" } },
+    purchase: { label: "Ricarica disegni", title: "Continua a disegnare", quantity: "Altri 10 disegni", price: "€4.99", reassurance: "Un solo pagamento. Nessun abbonamento.", failedDontCount: "I tentativi non riusciti non vengono scalati.", buy: "Ottieni 10 disegni", cancel: "Non ora", restore: "Hai già acquistato? Accedi", added: "Aggiunti 10 disegni", startDrawing: "Inizia a disegnare", checkoutError: "Non è stato possibile aprire il pagamento. Riprova." },
+    auth: { google: "Continua con Google", email: "Continua con l’e-mail", emailLabel: "Indirizzo e-mail", sendCode: "Invia codice", codeLabel: "Codice a sei cifre", verifyCode: "Verifica codice", invalidCode: "Inserisci il codice a sei cifre ricevuto via e-mail.", authError: "Non è stato possibile completare l’accesso. Riprova." },
+    account: { label: "Account", balance: { one: "Ti resta # disegno", other: "Ti restano # disegni" }, signOut: "Esci", delete: "Elimina account", deleteWarning: "Eliminando l’account perderai anche i disegni non ancora usati. L’operazione è irreversibile.", confirmDelete: "Elimina definitivamente", cancelDelete: "Mantieni account" },
     seo: { title: "Generatore di disegni IA – doodle facili da copiare | Doodle", description: "Trasforma il testo in un semplice disegno IA da copiare a mano. Descrivi una piccola scena e crea un doodle in pochi istanti.", introTitle: "Trasforma un piccolo momento in un doodle facile", introBody: "Doodle è uno strumento da testo a disegno per chi cerca un’immagine semplice, non un’elaborata opera d’arte IA. Descrivi una piccola scena e ottieni un doodle chiaro e facile da riprodurre a mano.", howTitle: "Come funziona", steps: ["Descrivi una scena piccola e precisa.", "Doodle la semplifica in linee chiare e amichevoli.", "Apri, scarica o copia il disegno a mano."], useTitle: "Per biglietti, cartoline e piccole sorprese", useBody: "Crea doodle facili per messaggi nella merenda, biglietti d’auguri, diari, attività in classe o qualsiasi momento che meriti un piccolo disegno fatto a mano." },
   },
   ja: {
@@ -239,6 +348,10 @@ const COPY = {
     stage: { loadingPrimary: "イラストを描いています...", loadingMessages: ["新しい付箋を用意しています…", "大まかな形を描いています…", "線をシンプルに整えています…", "最後の小さなディテールを加えています…", "もう少しだけお待ちください。"], loadingSr: "完成まで最大2分ほどかかることがあります。", generatedAlt: "付箋に描かれた生成イラスト", viewLarger: "大きく見る", referenceAria: "サンプルのイラストを大きく見る", referenceAlt: "黄色い付箋に描かれた、逆さまでキスをする2匹の猫のシンプルなイラスト" },
     actions: { download: "ダウンロード", tryAgain: "もう一度", newScene: "新しい場面" },
     dialog: { label: "イラスト画像ビューア", close: "画像を閉じる", imageAlt: "付箋に描かれたイラスト", native: "新しいタブで開く", download: "ダウンロード" },
+    usage: { firstTwoFree: "最初の2枚は無料です", freeLeft: { other: "無料分はあと#枚" }, paidLeft: { other: "あと#枚描けます" } },
+    purchase: { label: "イラストの追加", title: "もっと描こう", quantity: "あと10枚のイラスト", price: "€4.99", reassurance: "お支払いは1回だけ。定期購入ではありません。", failedDontCount: "作成に失敗した分は減りません。", buy: "10枚追加する", cancel: "今はしない", restore: "購入済みですか？ログイン", added: "10枚追加しました", startDrawing: "描き始める", checkoutError: "お支払い画面を開けませんでした。もう一度お試しください。" },
+    auth: { google: "Googleで続ける", email: "メールで続ける", emailLabel: "メールアドレス", sendCode: "コードを送信", codeLabel: "6桁のコード", verifyCode: "コードを確認", invalidCode: "メールに届いた6桁のコードを入力してください。", authError: "ログインを完了できませんでした。もう一度お試しください。" },
+    account: { label: "アカウント", balance: { other: "残り#枚" }, signOut: "ログアウト", delete: "アカウントを削除", deleteWarning: "アカウントを削除すると、未使用のイラストも失われます。この操作は取り消せません。", confirmDelete: "完全に削除", cancelDelete: "アカウントを残す" },
     seo: { title: "AI落書きジェネレーター – まねして描ける簡単イラスト | Doodle", description: "文章から、手でまねして描けるシンプルなAIイラストを作成。小さな場面を説明するだけで、かわいい付箋風の絵ができます。", introTitle: "小さなひとときを、描きやすいイラストに", introBody: "Doodleは、細かすぎるAIアートではなく、シンプルな絵が欲しい人のための文章からイラストを作るツールです。小さな場面を入力すると、手でまねしやすい分かりやすい線画になります。", howTitle: "使い方", steps: ["小さくて分かりやすい場面を入力します。", "Doodleが親しみやすいシンプルな線にまとめます。", "画像を開く、保存する、または見ながら手で描きます。"], useTitle: "メモやカード、小さなサプライズに", useBody: "お弁当のメモ、グリーティングカード、日記、授業のアイデアなど、手描きのひと工夫を添えたい場面に使える簡単なイラストを作れます。" },
   },
   ko: {
@@ -251,6 +364,10 @@ const COPY = {
     stage: { loadingPrimary: "그림을 만들고 있어요...", loadingMessages: ["새 메모지를 준비하고 있어요…", "큰 모양부터 그리고 있어요…", "선을 단순하게 다듬고 있어요…", "마지막 작은 디테일을 더하고 있어요…", "조금만 더 기다려 주세요."], loadingSr: "완성까지 최대 2분 정도 걸릴 수 있어요.", generatedAlt: "메모지에 생성된 낙서 그림", viewLarger: "크게 보기", referenceAria: "예시 그림 크게 보기", referenceAlt: "노란 메모지에 거꾸로 키스하는 고양이 두 마리를 그린 단순한 그림" },
     actions: { download: "다운로드", tryAgain: "다시 만들기", newScene: "새 장면" },
     dialog: { label: "그림 이미지 뷰어", close: "이미지 닫기", imageAlt: "메모지 낙서 그림", native: "새 탭에서 열기", download: "다운로드" },
+    usage: { firstTwoFree: "처음 2장은 무료예요", freeLeft: { other: "무료 그림 #장 남음" }, paidLeft: { other: "그림 #장 남음" } },
+    purchase: { label: "그림 채우기", title: "계속 그려 보세요", quantity: "그림 10장 더", price: "€4.99", reassurance: "한 번만 결제해요. 구독이 아니에요.", failedDontCount: "만들기에 실패한 그림은 차감되지 않아요.", buy: "그림 10장 받기", cancel: "나중에", restore: "이미 구매했나요? 로그인", added: "그림 10장을 추가했어요", startDrawing: "그리기 시작", checkoutError: "결제 화면을 열 수 없어요. 다시 시도해 주세요." },
+    auth: { google: "Google로 계속", email: "이메일로 계속", emailLabel: "이메일 주소", sendCode: "코드 보내기", codeLabel: "6자리 코드", verifyCode: "코드 확인", invalidCode: "이메일로 받은 6자리 코드를 입력해 주세요.", authError: "로그인을 완료하지 못했어요. 다시 시도해 주세요." },
+    account: { label: "계정", balance: { other: "그림 #장 남음" }, signOut: "로그아웃", delete: "계정 삭제", deleteWarning: "계정을 삭제하면 사용하지 않은 그림도 사라져요. 이 작업은 되돌릴 수 없어요.", confirmDelete: "영구 삭제", cancelDelete: "계정 유지" },
     seo: { title: "AI 낙서 생성기 – 따라 그리기 쉬운 간단한 그림 | Doodle", description: "글을 손으로 따라 그리기 쉬운 간단한 AI 그림으로 바꿔 보세요. 작은 장면을 설명하면 귀여운 메모지 그림을 만들 수 있어요.", introTitle: "작은 순간을 따라 그리기 쉬운 그림으로", introBody: "Doodle은 화려한 AI 작품보다 단순한 그림이 필요한 사람을 위한 텍스트 그림 도구예요. 작은 장면을 적으면 손으로 쉽게 따라 그릴 수 있는 분명한 낙서 그림을 만들어 줍니다.", howTitle: "이용 방법", steps: ["작고 분명한 장면 하나를 설명합니다.", "Doodle이 친근하고 단순한 선으로 정리합니다.", "그림을 열거나 내려받아 손으로 따라 그립니다."], useTitle: "메모, 카드, 작은 깜짝 선물에", useBody: "도시락 쪽지, 카드, 다이어리, 수업 아이디어처럼 손그림 한 장을 더하고 싶은 순간에 어울리는 간단한 그림을 만들 수 있어요." },
   },
   ar: {
@@ -263,6 +380,22 @@ const COPY = {
     stage: { loadingPrimary: "نرسم فكرتك...", loadingMessages: ["نحضّر ورقة ملاحظات جديدة…", "نرسم الأشكال الأساسية…", "نبقي الخطوط بسيطة…", "نضيف اللمسات الصغيرة الأخيرة…", "ما زلنا نرسم — يحتاج هذا المشهد إلى لحظة أخرى."], loadingSr: "قد يستغرق ذلك ما يصل إلى دقيقتين.", generatedAlt: "رسمة مولّدة على ورقة ملاحظات لاصقة", viewLarger: "عرض بحجم أكبر", referenceAria: "عرض الرسمة النموذجية بحجم أكبر", referenceAlt: "رسمة بسيطة لشخصية معلّقة رأسًا على عقب تقبّل قطة على ورقة ملاحظات صفراء" },
     actions: { download: "تنزيل", tryAgain: "جرّب مرة أخرى", newScene: "مشهد جديد" },
     dialog: { label: "عارض الرسمة", close: "إغلاق الصورة", imageAlt: "رسمة على ورقة ملاحظات لاصقة", native: "فتح في علامة تبويب جديدة", download: "تنزيل" },
+    usage: {
+      firstTwoFree: "أول رسمتين مجانًا",
+      freeLeft: { zero: "لم تتبقَّ أي رسومات مجانية", one: "تبقّت لك رسمة مجانية واحدة", two: "تبقّت لك رسمتان مجانيتان", few: "تبقّت لك # رسومات مجانية", many: "تبقّت لك # رسمة مجانية", other: "تبقّت لك # رسمة مجانية" },
+      paidLeft: { zero: "لا توجد رسومات مدفوعة متبقية", one: "تبقّت لك رسمة مدفوعة واحدة", two: "تبقّت لك رسمتان مدفوعتان", few: "تبقّت لك # رسومات مدفوعة", many: "تبقّت لك # رسمة مدفوعة", other: "تبقّت لك # رسمة مدفوعة" },
+    },
+    purchase: { label: "تعبئة رصيد الرسم", title: "واصل الرسم", quantity: "10 رسومات إضافية", price: "€4.99", reassurance: "دفعة واحدة فقط، بلا اشتراك.", failedDontCount: "لن تُخصم المحاولات التي لا تكتمل.", buy: "احصل على 10 رسومات", cancel: "ليس الآن", restore: "اشتريت من قبل؟ سجّل الدخول", added: "تمت إضافة 10 رسومات", startDrawing: "ابدأ الرسم", checkoutError: "تعذّر فتح صفحة الدفع. حاول مرة أخرى." },
+    auth: { google: "المتابعة باستخدام جوجل", email: "المتابعة بالبريد الإلكتروني", emailLabel: "البريد الإلكتروني", sendCode: "إرسال الرمز", codeLabel: "الرمز المكوّن من ستة أرقام", verifyCode: "تأكيد الرمز", invalidCode: "أدخل الرمز المكوّن من ستة أرقام الذي وصلك عبر البريد.", authError: "تعذّر إكمال تسجيل الدخول. حاول مرة أخرى." },
+    account: {
+      label: "الحساب",
+      balance: { zero: "لا توجد رسومات متبقية", one: "تبقّت لك رسمة واحدة", two: "تبقّت لك رسمتان", few: "تبقّت لك # رسومات", many: "تبقّت لك # رسمة", other: "تبقّت لك # رسمة" },
+      signOut: "تسجيل الخروج",
+      delete: "حذف الحساب",
+      deleteWarning: "سيؤدي حذف حسابك إلى فقدان أي رسومات لم تستخدمها. لا يمكن التراجع عن ذلك.",
+      confirmDelete: "حذف نهائي",
+      cancelDelete: "الاحتفاظ بالحساب",
+    },
     seo: { title: "مولّد رسومات بسيطة بالذكاء الاصطناعي | Doodle", description: "اكتب ما تريد رسمه، وسيحوّل Doodle وصفك إلى رسمة بسيطة بالذكاء الاصطناعي يمكنك تقليدها باليد. أداة سهلة وسريعة لأفكار الرسم البسيطة.", introTitle: "حوّل فكرتك إلى رسمة بسيطة", introBody: "اكتب وصفًا قصيرًا، وسيحوّله Doodle إلى رسمة واضحة يمكنك تقليدها باليد. لا صور معقّدة ولا تفاصيل زائدة—مجرد خطوط بسيطة ولطيفة.", howTitle: "طريقة الاستخدام", steps: ["اكتب وصفًا قصيرًا لمشهد واحد.", "يحوّل Doodle وصفك إلى خطوط بسيطة وواضحة.", "افتح الرسمة أو نزّلها، ثم جرّب رسمها بنفسك."], useTitle: "للبطاقات والدفاتر وكل مناسبة", useBody: "أنشئ رسومات بسيطة للبطاقات والدفاتر والأنشطة المدرسية، أو شاركها مع من تحب كلفتة لطيفة." },
   },
 } satisfies Record<Locale, DoodleCopy>;
@@ -311,6 +444,11 @@ export function htmlLang(locale: Locale): string {
 
 export function textDirection(locale: Locale): "ltr" | "rtl" {
   return locale === "ar" ? "rtl" : "ltr";
+}
+
+export function formatCount(locale: Locale, templates: PluralTemplates, count: number): string {
+  const category = new Intl.PluralRules(htmlLang(locale)).select(count);
+  return (templates[category] ?? templates.other).replaceAll("#", String(count));
 }
 
 export function getLanguageAlternates(): Record<string, string> {

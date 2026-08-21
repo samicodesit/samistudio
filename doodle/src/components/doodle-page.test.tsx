@@ -20,7 +20,10 @@ describe("DoodlePage", () => {
       "@type": "WebApplication",
       name: "Doodle",
       inLanguage: "ja",
-      offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+      offers: [
+        { "@type": "Offer", price: "0", priceCurrency: "EUR", description: "最初の2枚は無料です" },
+        { "@type": "Offer", price: "4.99", priceCurrency: "EUR", description: "あと10枚のイラスト" },
+      ],
     });
   });
 

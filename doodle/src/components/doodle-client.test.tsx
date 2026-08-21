@@ -4,7 +4,27 @@ import { getCopy, type Locale } from "@/lib/i18n";
 import { DoodleClient } from "./doodle-client";
 
 function renderClient(locale: Locale = "en") {
-  return render(<DoodleClient copy={getCopy(locale)} />);
+  return render(<DoodleClient locale={locale} copy={getCopy(locale)} />);
+}
+
+const anonymousAccount = {
+  authenticated: false,
+  email: null,
+  balance: 0,
+  freeRemaining: 2,
+};
+
+function json(body: unknown, init?: ResponseInit) {
+  return new Response(JSON.stringify(body), {
+    headers: { "Content-Type": "application/json" },
+    ...init,
+  });
+}
+
+function mockGeneration(response: Response) {
+  vi.mocked(fetch).mockImplementation(async (input) =>
+    input === "/api/account" ? json(anonymousAccount) : response,
+  );
 }
 
 describe("DoodleClient", () => {
@@ -12,14 +32,21 @@ describe("DoodleClient", () => {
     vi.restoreAllMocks();
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:one");
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
+      if (input === "/api/account") return json(anonymousAccount);
+      throw new Error(`Unexpected fetch: ${String(input)}`);
+    });
+    sessionStorage.clear();
+    history.replaceState({}, "", "/");
   });
 
-  it("fills a suggestion without fetching", () => {
-    const fetchMock = vi.spyOn(globalThis, "fetch");
+  it("fills a suggestion without generating", () => {
+    const fetchMock = vi.mocked(fetch);
     renderClient();
     fireEvent.click(screen.getByRole("button", { name: /warm scarf/ }));
     expect(screen.getByRole("textbox")).toHaveValue("A person giving someone a warm scarf");
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith("/api/account", { cache: "no-store" });
   });
 
   it("keeps the visual surface focused and the suggestions keyboard accessible", () => {
@@ -51,7 +78,7 @@ describe("DoodleClient", () => {
   });
 
   it("moves from idle to generating to ready", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(new Blob(["png"]), { status: 200 }));
+    mockGeneration(new Response(new Blob(["png"]), { status: 200 }));
     renderClient();
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
     fireEvent.click(screen.getByRole("button", { name: /Create doodle/ }));
@@ -65,7 +92,7 @@ describe("DoodleClient", () => {
   });
 
   it("preserves the scene when generation fails", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 504 }));
+    mockGeneration(new Response(null, { status: 504 }));
     renderClient();
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "A scene that takes time" } });
     fireEvent.click(screen.getByRole("button", { name: /Create doodle/ }));
@@ -74,7 +101,7 @@ describe("DoodleClient", () => {
   });
 
   it("shows a localized daily-limit message", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 429 }));
+    mockGeneration(new Response(null, { status: 429 }));
     renderClient("ar");
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "قطة تحمل مظلة" } });
     fireEvent.click(screen.getByRole("button", { name: "أنشئ رسمة" }));
@@ -84,7 +111,7 @@ describe("DoodleClient", () => {
   });
 
   it("keeps the public composer visible when generation is unavailable", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response(null, { status: 401 }));
+    mockGeneration(new Response(null, { status: 401 }));
     renderClient();
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Keep this scene" } });
     fireEvent.click(screen.getByRole("button", { name: /Create doodle/ }));
@@ -94,7 +121,7 @@ describe("DoodleClient", () => {
   });
 
   it("starts a new blank scene after a result", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(new Blob(["png"]), { status: 200 }));
+    mockGeneration(new Response(new Blob(["png"]), { status: 200 }));
     renderClient();
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "A finished scene" } });
     fireEvent.click(screen.getByRole("button", { name: /Create doodle/ }));
@@ -102,5 +129,115 @@ describe("DoodleClient", () => {
     fireEvent.click(screen.getByRole("button", { name: /New scene/ }));
     expect(screen.getByRole("textbox")).toHaveValue("");
     expect(screen.getByAltText(/two cats kissing upside down/)).toBeInTheDocument();
+  });
+
+  it("opens purchase without losing the scene on payment_required", async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(json(anonymousAccount))
+      .mockResolvedValueOnce(
+        json(
+          { error: "payment_required" },
+          { status: 402, headers: { "X-Doodle-Free-Remaining": "0", "Content-Type": "application/json" } },
+        ),
+      );
+    renderClient();
+
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Keep this exact scene" } });
+    const createButton = screen.getByRole("button", { name: "Create doodle" });
+    createButton.focus();
+    fireEvent.click(createButton);
+
+    const dialog = await screen.findByRole("dialog", { name: "Keep doodling" });
+    expect(dialog).toBeVisible();
+    expect(screen.getByRole("textbox")).toHaveValue("Keep this exact scene");
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+
+    fireEvent(dialog, new Event("cancel", { bubbles: false, cancelable: true }));
+
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "Create doodle" })).toHaveFocus();
+  });
+
+  it("updates remaining usage from generation headers", async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(json(anonymousAccount))
+      .mockResolvedValueOnce(
+        new Response(new Blob(["png"]), {
+          status: 200,
+          headers: { "X-Doodle-Free-Remaining": "1" },
+        }),
+      );
+    renderClient();
+
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
+    fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+
+    expect(await screen.findByText("1 free doodle left")).toBeVisible();
+  });
+
+  it("shows a zero paid balance instead of anonymous trial copy when signed in", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(
+      json({ authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: null }),
+    );
+
+    renderClient();
+
+    await waitFor(() => expect(screen.getByText("0 doodles left", { selector: ".usage-copy" })).toBeVisible());
+    expect(screen.queryByText("First 2 doodles free")).not.toBeInTheDocument();
+  });
+
+  it("restores the exact scene and offer after OAuth returns", async () => {
+    history.replaceState({}, "", "/?auth=success");
+    sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "A cat & a moon", intent: "auth" }));
+    vi.mocked(fetch).mockResolvedValueOnce(
+      json({ authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: null }),
+    );
+
+    renderClient();
+
+    expect(await screen.findByRole("dialog", { name: "Keep doodling" })).toBeVisible();
+    expect(screen.getByRole("textbox")).toHaveValue("A cat & a moon");
+  });
+
+  it("restores the exact scene after Checkout is cancelled", async () => {
+    history.replaceState({}, "", "/?checkout=cancelled");
+    sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "A cat + a kite", intent: "checkout" }));
+
+    renderClient();
+
+    await waitFor(() => expect(screen.getByRole("textbox")).toHaveValue("A cat + a kite"));
+    expect(screen.queryByRole("dialog", { name: "Keep doodling" })).not.toBeInTheDocument();
+  });
+
+  it("confirms a returned Checkout session once before showing success", async () => {
+    history.replaceState({}, "", "/?checkout=cs_paid");
+    sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "A cat", intent: "checkout" }));
+    const authenticatedAccount = {
+      authenticated: true,
+      email: "buyer@example.com",
+      balance: 0,
+      freeRemaining: null,
+    };
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(json(authenticatedAccount))
+      .mockResolvedValueOnce(json({ balance: 10 }));
+
+    renderClient();
+
+    expect(await screen.findByText("10 doodles added")).toBeVisible();
+    expect(screen.getByRole("textbox")).toHaveValue("A cat");
+    const confirmationCalls = vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/checkout/confirm");
+    expect(confirmationCalls).toEqual([
+      [
+        "/api/checkout/confirm",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ sessionId: "cs_paid" }),
+        },
+      ],
+    ]);
+    expect(sessionStorage.getItem("doodle:return")).toBeNull();
+    expect(location.search).toBe("");
   });
 });

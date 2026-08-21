@@ -20,7 +20,20 @@ export function DoodlePage({ locale }: { locale: Locale }) {
     applicationCategory: "DesignApplication",
     operatingSystem: "Any",
     inLanguage: htmlLang(locale),
-    offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+    offers: [
+      {
+        "@type": "Offer",
+        price: "0",
+        priceCurrency: "EUR",
+        description: copy.usage.firstTwoFree,
+      },
+      {
+        "@type": "Offer",
+        price: "4.99",
+        priceCurrency: "EUR",
+        description: copy.purchase.quantity,
+      },
+    ],
   };
 
   return (
@@ -42,7 +55,7 @@ export function DoodlePage({ locale }: { locale: Locale }) {
       </header>
       <main>
         <section className="doodle-main" aria-label={copy.seo.title}>
-          <DoodleClient copy={copy} />
+          <DoodleClient locale={locale} copy={copy} />
         </section>
         <section className="seo-content">
           <div className="seo-intro">

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   SUPPORTED_LOCALES,
   buildPageMetadata,
+  formatCount,
   getCopy,
   getLanguageAlternates,
   hasLocale,
@@ -9,6 +10,13 @@ import {
   localePath,
   textDirection,
 } from "./i18n";
+
+function stringValues(value: unknown): string[] {
+  if (typeof value === "string") return [value];
+  if (Array.isArray(value)) return value.flatMap(stringValues);
+  if (value && typeof value === "object") return Object.values(value).flatMap(stringValues);
+  return [];
+}
 
 describe("internationalization", () => {
   it("supports the ten approved language routes", () => {
@@ -26,17 +34,35 @@ describe("internationalization", () => {
   it("provides complete localized tool copy", () => {
     for (const locale of SUPPORTED_LOCALES) {
       const copy = getCopy(locale);
-      expect(copy.composer.title).not.toBe("");
-      expect(copy.errors.rateLimited).not.toBe("");
-      expect(copy.seo.introTitle).not.toBe("");
+      expect(stringValues(copy).every((value) => value.trim() !== "")).toBe(true);
+      expect(JSON.parse(JSON.stringify(copy))).toEqual(copy);
       expect(copy.suggestions.items).toHaveLength(3);
       expect(new Set(copy.suggestions.items).size).toBe(3);
+      expect(formatCount(locale, copy.usage.freeLeft, 1)).not.toBe("");
+      expect(formatCount(locale, copy.usage.freeLeft, 2)).not.toBe("");
+      expect(formatCount(locale, copy.usage.paidLeft, 1)).not.toBe("");
+      expect(formatCount(locale, copy.usage.paidLeft, 2)).not.toBe("");
+      expect(formatCount(locale, copy.account.balance, 1)).not.toBe("");
+      expect(formatCount(locale, copy.account.balance, 2)).not.toBe("");
     }
 
     expect(getCopy("de").composer.title).toBe("Was sollen wir zeichnen?");
     expect(getCopy("ja").composer.create).toBe("イラストを作る");
     expect(getCopy("ar").composer.title).toBe("ماذا نرسم؟");
     expect(getCopy("ar").seo.title).toContain("مولّد رسومات بسيطة بالذكاء الاصطناعي");
+  });
+
+  it("formats every Arabic plural category without crossing the RSC boundary with functions", () => {
+    const templates = getCopy("ar").usage.freeLeft;
+
+    expect(Object.keys(templates)).toEqual(["zero", "one", "two", "few", "many", "other"]);
+    expect(formatCount("ar", templates, 0)).toBe("لم تتبقَّ أي رسومات مجانية");
+    expect(formatCount("ar", templates, 1)).toBe("تبقّت لك رسمة مجانية واحدة");
+    expect(formatCount("ar", templates, 2)).toBe("تبقّت لك رسمتان مجانيتان");
+    expect(formatCount("ar", templates, 3)).toBe("تبقّت لك 3 رسومات مجانية");
+    expect(formatCount("ar", templates, 11)).toBe("تبقّت لك 11 رسمة مجانية");
+    expect(formatCount("ar", templates, 100)).toBe("تبقّت لك 100 رسمة مجانية");
+    expect(stringValues(getCopy("ar")).join(" ").replaceAll("Doodle", "")).not.toMatch(/[A-Za-z]/);
   });
 
   it("builds self-canonical localized metadata with reciprocal alternatives", () => {
