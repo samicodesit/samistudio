@@ -1,7 +1,7 @@
 # Doodle Monetization Design
 
 Date: 2026-08-21
-Status: Proposed for review
+Status: Approved
 
 ## Summary
 
