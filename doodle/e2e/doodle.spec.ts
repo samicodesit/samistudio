@@ -1,4 +1,4 @@
-import { expect, test, type Page, type Route } from "@playwright/test";
+import { expect, test, type Locator, type Page, type Route } from "@playwright/test";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -20,11 +20,33 @@ async function expectNoOverflow(page: Page) {
   expect(overflow).toBe(true);
 }
 
+async function expectFullyInViewport(page: Page, locator: Locator) {
+  await locator.evaluate(async (element) => {
+    await Promise.all(element.getAnimations().map((animation) => animation.finished));
+  });
+  const box = await locator.boundingBox();
+  const viewport = page.viewportSize();
+  expect(box).not.toBeNull();
+  expect(viewport).not.toBeNull();
+  expect(box!.x).toBeGreaterThanOrEqual(0);
+  expect(box!.y).toBeGreaterThanOrEqual(0);
+  expect(box!.x + box!.width).toBeLessThanOrEqual(viewport!.width);
+  expect(box!.y + box!.height).toBeLessThanOrEqual(viewport!.height);
+}
+
 async function expectSuggestionsFit(page: Page) {
   const suggestions = page.locator(".suggestions-list");
   const fits = await suggestions.evaluate((element) => element.scrollWidth <= element.clientWidth);
   expect(fits).toBe(true);
 }
+
+test.beforeEach(async ({ page }) => {
+  await page.route("**/api/account", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ authenticated: false, email: null, balance: 0, freeRemaining: 2 }),
+  }));
+});
 
 test.describe("Doodle mobile workflow", () => {
   test.use({ viewport: { width: 390, height: 844 } });
@@ -146,7 +168,7 @@ test.describe("Doodle mobile workflow", () => {
 });
 
 test.describe("Task 7 purchase and account QA", () => {
-  test("keeps auth actions separated and the narrow sheet in view", async ({ page }, testInfo) => {
+  test("keeps the reduced-motion offer and auth sheet contained at launch sizes", async ({ page }, testInfo) => {
     await page.route("**/api/account", (route) => route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -159,12 +181,19 @@ test.describe("Task 7 purchase and account QA", () => {
       body: JSON.stringify({ error: "payment_required" }),
     }));
 
-    for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 700 }]) {
+    for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 700 }, { width: 1440, height: 1000 }]) {
       await page.setViewportSize(viewport);
       await page.emulateMedia({ reducedMotion: "reduce" });
       await openTool(page);
       await page.getByRole("textbox").fill("A tiny cat with an umbrella");
       await page.getByRole("button", { name: "Create doodle" }).click();
+      const slip = page.locator(".purchase-slip");
+      await expectFullyInViewport(page, slip);
+      await expect(slip).toHaveCSS("animation-name", "none");
+      await testInfo.attach(`offer-${viewport.width}x${viewport.height}.png`, {
+        body: await page.screenshot(),
+        contentType: "image/png",
+      });
       await expect(page.getByRole("button", { name: "Get 10 doodles" })).toBeFocused();
       await page.getByRole("button", { name: "Get 10 doodles" }).click();
       await expect(page.getByRole("button", { name: "Continue with Google" })).toBeFocused();
@@ -173,10 +202,7 @@ test.describe("Task 7 purchase and account QA", () => {
       await page.keyboard.press("Tab");
       await expect(page.getByRole("button", { name: "Not now" })).toBeFocused();
 
-      const slip = page.locator(".purchase-slip");
-      await slip.evaluate(async (element) => {
-        await Promise.all(element.getAnimations().map((animation) => animation.finished));
-      });
+      await expectFullyInViewport(page, slip);
       const actionBoxes = await page.locator(".purchase-auth > button").evaluateAll((buttons) =>
         buttons.map((button) => {
           const box = button.getBoundingClientRect();
@@ -189,10 +215,6 @@ test.describe("Task 7 purchase and account QA", () => {
         expect(actionBoxes[index].top - actionBoxes[index - 1].bottom).toBeGreaterThanOrEqual(8);
       }
 
-      const slipBox = await slip.boundingBox();
-      expect(slipBox).not.toBeNull();
-      expect(slipBox!.y).toBeGreaterThanOrEqual(0);
-      expect(slipBox!.y + slipBox!.height).toBeLessThanOrEqual(viewport.height);
       await testInfo.attach(`auth-${viewport.width}x${viewport.height}.png`, {
         body: await page.screenshot(),
         contentType: "image/png",
@@ -203,7 +225,7 @@ test.describe("Task 7 purchase and account QA", () => {
     }
   });
 
-  test("returns focus to the delete trigger after Escape", async ({ page }) => {
+  test("reaches and activates account deletion controls by keyboard", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.route("**/api/account", (route) => route.fulfill({
       status: 200,
@@ -212,15 +234,40 @@ test.describe("Task 7 purchase and account QA", () => {
     }));
     await openTool(page);
 
-    await page.locator(".account-menu summary").click();
+    const accountTrigger = page.locator(".account-menu summary");
+    await expect(accountTrigger).toBeVisible();
+    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+    for (let index = 0; index < 10 && !(await accountTrigger.evaluate((element) => element === document.activeElement)); index += 1) {
+      await page.keyboard.press("Tab");
+    }
+    await expect(accountTrigger).toBeFocused();
+    await page.keyboard.press("Enter");
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Sign out" })).toBeFocused();
+    await page.keyboard.press("Tab");
     const deleteTrigger = page.getByRole("button", { name: "Delete account" });
-    await deleteTrigger.click();
+    await expect(deleteTrigger).toBeFocused();
+    await page.keyboard.press("Enter");
     const dialog = page.getByRole("dialog", { name: "Delete account" });
     await expect(dialog).toBeVisible();
-    await expect(page.getByRole("button", { name: "Keep account" })).toBeFocused();
+    const keepAccount = page.getByRole("button", { name: "Keep account" });
+    const deletePermanently = page.getByRole("button", { name: "Delete permanently" });
+    await expect(keepAccount).toBeFocused();
+    for (let index = 0; index < 4 && !(await deletePermanently.evaluate((element) => element === document.activeElement)); index += 1) {
+      await page.keyboard.press("Tab");
+    }
+    await expect(deletePermanently).toBeFocused();
+    for (let index = 0; index < 4 && !(await keepAccount.evaluate((element) => element === document.activeElement)); index += 1) {
+      await page.keyboard.press("Shift+Tab");
+    }
+    await expect(keepAccount).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expect(dialog).toBeHidden();
+    await expect(deleteTrigger).toBeFocused();
 
+    await page.keyboard.press("Enter");
+    await expect(dialog).toBeVisible();
     await page.keyboard.press("Escape");
-
     await expect(dialog).toBeHidden();
     await expect(deleteTrigger).toBeFocused();
   });
@@ -288,7 +335,11 @@ test.describe("Task 8 monetized workflow", () => {
     await openTool(page);
     await page.getByRole("textbox").fill("A kite above the sea");
     await page.getByRole("button", { name: "Create doodle" }).click();
-    await page.getByRole("button", { name: "Get 10 doodles" }).click();
+    await Promise.all([
+      page.waitForURL((url) => url.searchParams.get("checkout") === "cancelled", { waitUntil: "commit" }),
+      page.getByRole("button", { name: "Get 10 doodles" }).click(),
+    ]);
+    await expect(page).toHaveURL("http://127.0.0.1:3100/");
     await expect(page.getByRole("textbox")).toHaveValue("A kite above the sea");
 
     await page.addInitScript(() => {
@@ -299,7 +350,7 @@ test.describe("Task 8 monetized workflow", () => {
       contentType: "application/json",
       body: JSON.stringify({ balance: 10 }),
     }));
-    await page.goto("/?checkout=cs_paid", { waitUntil: "commit" });
+    await page.goto("/?checkout=cs_paid");
     await expect(page.getByRole("dialog", { name: "10 doodles added" })).toBeVisible();
     await page.getByRole("button", { name: "Start drawing" }).click();
     await expect(page.getByRole("textbox")).toHaveValue("A kite above the sea");
@@ -317,11 +368,12 @@ test.describe("Task 8 monetized workflow", () => {
     await testInfo.attach("task-8-mobile-paid.png", { body: await page.screenshot(), contentType: "image/png" });
   });
 
-  test("keeps the Arabic purchase sheet inside its RTL viewport", async ({ page }) => {
+  test("fully contains Arabic offer, auth, account, and success states", async ({ page }, testInfo) => {
+    let account = { authenticated: false, email: null as string | null, balance: 0, freeRemaining: 0 as number | null };
     await page.route("**/api/account", (route) => route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ authenticated: false, email: null, balance: 0, freeRemaining: 0 }),
+      body: JSON.stringify(account),
     }));
     await page.route("**/api/generate", (route) => route.fulfill({
       status: 402,
@@ -334,9 +386,43 @@ test.describe("Task 8 monetized workflow", () => {
     await page.getByRole("textbox").fill("قطة تحت مظلة");
     await page.getByRole("button", { name: "أنشئ رسمة" }).click();
     const dialog = page.getByRole("dialog", { name: "واصل الرسم" });
-    await expect(dialog).toBeInViewport();
+    const slip = page.locator(".purchase-slip");
+    await expectFullyInViewport(page, slip);
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expectNoOverflow(page);
+    await testInfo.attach("arabic-offer-390x844.png", { body: await page.screenshot(), contentType: "image/png" });
+
+    await page.getByRole("button", { name: "احصل على 10 رسومات" }).click();
+    await expect(page.getByRole("button", { name: "المتابعة باستخدام جوجل" })).toBeFocused();
+    await expectFullyInViewport(page, slip);
+    await page.getByRole("button", { name: "المتابعة بالبريد الإلكتروني" }).click();
+    await expect(page.getByLabel("البريد الإلكتروني")).toBeFocused();
+    await expectFullyInViewport(page, slip);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+
+    account = { authenticated: true, email: "buyer@example.com", balance: 4, freeRemaining: null };
+    await page.goto("/ar");
+    const accountTrigger = page.locator(".account-menu summary");
+    await expect(accountTrigger).toBeVisible();
+    await expectFullyInViewport(page, accountTrigger);
+    await accountTrigger.click();
+    const accountPopover = page.locator(".account-popover");
+    await expect(accountPopover).toContainText("تبقّت لك 4 رسومات");
+    await expectFullyInViewport(page, accountPopover);
+    await expectNoOverflow(page);
+
+    await page.evaluate(() => sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "قطة تحت مظلة", intent: "checkout" })));
+    await page.route("**/api/checkout/confirm", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ balance: 10 }),
+    }));
+    await page.goto("/ar?checkout=cs_ar_paid");
+    await expect(page.getByRole("dialog", { name: "تمت إضافة 10 رسومات" })).toBeVisible();
+    await expectFullyInViewport(page, slip);
+    await expectNoOverflow(page);
+    await testInfo.attach("arabic-success-390x844.png", { body: await page.screenshot(), contentType: "image/png" });
   });
 });
 

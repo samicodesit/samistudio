@@ -23,6 +23,9 @@ export default defineConfig({
       OPENAI_API_KEY: "test-key-not-used-because-generation-is-mocked",
       OPENAI_IMAGE_MODEL: "gpt-image-1-mini",
       OPENAI_IMAGE_QUALITY: "low",
+      NEXT_PUBLIC_SUPABASE_URL: "https://doodle-e2e.supabase.co",
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "e2e-publishable-key",
+      SUPABASE_SERVICE_ROLE_KEY: "e2e-service-role-key",
     },
   },
 });

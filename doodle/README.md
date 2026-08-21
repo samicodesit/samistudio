@@ -14,8 +14,8 @@ Required server-side values:
 OPENAI_API_KEY=
 OPENAI_IMAGE_MODEL=gpt-image-1-mini
 OPENAI_IMAGE_QUALITY=low
-UPSTASH_REDIS_REST_URL=
-UPSTASH_REDIS_REST_TOKEN=
+KV_REST_API_URL=
+KV_REST_API_TOKEN=
 SESSION_SECRET=
 SUPABASE_SERVICE_ROLE_KEY=
 STRIPE_SECRET_KEY=
@@ -47,19 +47,25 @@ Create a dedicated Supabase project for Doodle. Do not reuse AutoLister users, d
 3. Add `http://localhost:3000/auth/callback` and `https://doodle.samistudio.nl/auth/callback` to Supabase Auth redirect URLs.
 4. Use a Doodle-specific Google OAuth client. Its authorized redirect URI is the Supabase Google provider callback URL shown in the Supabase dashboard; Doodle itself always returns through `/auth/callback`.
 
-## Stripe setup
+## Stripe test-mode setup
 
-Use the existing Stripe account, but create Doodle-only billing objects in test mode first:
+Use the existing Stripe account, but create Doodle-only billing objects in Stripe test mode first:
 
 1. Create `Doodle — 10 doodles` and one non-recurring EUR Price at **€4.99**. Set the Price tax behavior to **inclusive**.
 2. Disable Adaptive Pricing, quantity adjustment, and promotion codes. The customer-facing currency is always EUR.
 3. Enable Automatic Tax and verify Slovakia is the business origin with the real active registrations configured; Stripe Tax can calculate only from those registrations.
-4. Add a separate Doodle webhook endpoint: `https://doodle.samistudio.nl/api/stripe/webhook`. Subscribe it only to `checkout.session.completed` and `checkout.session.async_payment_succeeded`.
-5. Put its Doodle Price ID and endpoint-specific signing secret in `STRIPE_DOODLE_PRICE_ID` and `STRIPE_WEBHOOK_SECRET`. Never copy these from AutoLister.
+4. Add a test-mode Doodle webhook endpoint for `/api/stripe/webhook`. Subscribe it only to `checkout.session.completed` and `checkout.session.async_payment_succeeded`.
+5. Use its test Price ID and endpoint-specific test signing secret only in local or Vercel Preview variables. Never copy AutoLister billing objects.
 
 For a local signed-webhook purchase test, run `stripe listen --forward-to localhost:3000/api/stripe/webhook`, copy the printed endpoint signing secret into `.env.local`, then complete a test-mode €4.99 Checkout in the browser.
 
-Before production, complete a test-mode €4.99 Checkout, send a signed webhook delivery and replay it once, then confirm the balance is granted only once. At launch, refunds and disputes need a manual remaining-credit adjustment for the affected Doodle account; there is no automatic credit clawback yet.
+Complete a test-mode €4.99 Checkout, send a signed webhook delivery and replay it once, then confirm the balance is granted only once. Test-mode products, Prices, keys, payments, and webhook endpoints do not exist in Stripe live mode.
+
+## Stripe live-mode setup
+
+After test-mode validation, switch Stripe to live mode and recreate the Doodle product, inclusive one-time EUR €4.99 Price, and dedicated `https://doodle.samistudio.nl/api/stripe/webhook` endpoint with the same two events. Put the live secret key, live Price ID, and that live endpoint's new signing secret in the Vercel **Production** values for `STRIPE_SECRET_KEY`, `STRIPE_DOODLE_PRICE_ID`, and `STRIPE_WEBHOOK_SECRET`. Keep Adaptive Pricing disabled in live mode too; never put test keys, test Price IDs, or test webhook secrets in Production.
+
+At launch, refunds and disputes need a manual remaining-credit adjustment for the affected Doodle account; there is no automatic credit clawback yet.
 
 ## Production shape
 
@@ -71,6 +77,6 @@ Before production, complete a test-mode €4.99 Checkout, send a signed webhook 
 
 ## Deployment checklist
 
-Set every value above as an encrypted Production environment variable in the `doodle` Vercel project, then deploy from the `doodle/` root with `vercel --prod`. Production verification is `npm run build`, the test-mode purchase/webhook replay described above, and a visual pass at 390×844, 320×700, 1440×1000, reduced motion, and Arabic RTL.
+Set the live Supabase, OpenAI, Redis, and Stripe values above as encrypted Production environment variables in the `doodle` Vercel project, then deploy from the `doodle/` root with `vercel --prod`. Production verification uses a live €4.99 purchase and live signed webhook replay, followed by a visual pass at 390×844, 320×700, 1440×1000, reduced motion, and Arabic RTL. Test-mode validation remains separate and must be completed before live deployment.
 
 Vercel Firewall, BotID, and the existing 3-per-60-second burst rule still protect the public endpoint. Paid credits bypass only the daily free budget, not those protections.
