@@ -126,9 +126,42 @@ Review found and corrected four polish defects:
 
 The sheet is intentionally restrained. Its only decorative gesture is the lower paper edge; there are no gradients, SVG ornaments, card-brand graphics, crossed prices, badges, pricing tables, dashboards, or permanent header counters.
 
-### Remaining concern
+### Accessibility repair
 
-In the final headless-browser check, Escape closed the account-deletion dialog, but Chromium reported focus on the document body rather than the delete trigger after React unmounted the dialog. Purchase-dialog focus restoration is explicitly covered and passes. This account-dialog return-focus edge remains the only known UI concern; all functional cancellation, deletion, and native-dialog tests pass.
+The native account-deletion dialog now retains its Delete account trigger before opening and restores focus to that live trigger when Escape, backdrop cancellation, or component cleanup closes the dialog. The cleanup also cancels the pending initial-focus frame before closing the native dialog.
+
+Focused verification after the repair:
+
+```bash
+npm test -- src/components/account-menu.test.tsx
+```
+
+Result: **PASS** — 1 file, 5 tests.
+
+```bash
+CI=1 npx playwright test e2e/doodle.spec.ts -g 'Task 7 purchase and account QA'
+```
+
+Result: **PASS** — 2 Chromium tests. At both 390×844 and 320×700, all three auth actions had an intentional gap of at least 8px and the purchase sheet stayed inside the viewport. The native account-delete Escape path restored focus to Delete account.
+
+### Fix round 2: async auth and Checkout recovery
+
+Four independent-review findings were reproduced with focused component tests and fixed at their shared state boundaries:
+
+- Every account snapshot mutation now advances one revision, so a delayed pre-auth account request cannot overwrite a newer authenticated identity, email, or balance.
+- Returned Checkout sessions are marked handled only after successful confirmation. A transient failure preserves both the query session and `doodle:return`; the localized Try again action retries confirmation without creating another Checkout, while an in-flight guard prevents duplicate confirmation requests.
+- OTP verification and account refresh now have distinct failure paths. Once Supabase accepts a code, a failed account refresh shows the sign-in recovery error and retries only the refresh.
+- Arabic-Indic and Persian OTP digits are normalized to ASCII before local validation and Supabase verification.
+
+Verification:
+
+```bash
+npm test -- src/components/doodle-client.test.tsx src/components/purchase-dialog.test.tsx
+npm run typecheck
+npm run lint
+```
+
+Result: **PASS** — 2 files, 26 tests; TypeScript and ESLint completed with no errors.
 
 ## Files changed
 

@@ -140,6 +140,54 @@ describe("PurchaseDialog", () => {
     expect(screen.getByRole("button", { name: "Get 10 doodles" })).toBeVisible();
   });
 
+  it("retries account refresh after OTP succeeds without consuming the code again", async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(json({ error: "temporary" }, { status: 503 }))
+      .mockResolvedValueOnce(json(authenticatedAccount));
+    const { onAccountChange } = renderDialog();
+
+    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+    await user.click(screen.getByRole("button", { name: "Continue with email" }));
+    await user.type(screen.getByLabelText("Email address"), "buyer@example.com");
+    await user.click(screen.getByRole("button", { name: "Send code" }));
+    await user.type(screen.getByLabelText("Six-digit code"), "123456");
+    await user.click(screen.getByRole("button", { name: "Verify code" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Sign-in could not finish");
+    expect(screen.getByRole("alert")).not.toHaveTextContent("Enter the six-digit code");
+    expect(auth.verifyOtp).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByRole("button", { name: "Verify code" }));
+
+    await waitFor(() => expect(onAccountChange).toHaveBeenCalledWith(authenticatedAccount));
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(auth.verifyOtp).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: "Get 10 doodles" })).toBeVisible();
+  });
+
+  it.each([
+    ["Arabic-Indic", "١٢٣٤٥٦"],
+    ["Persian", "۱۲۳۴۵۶"],
+  ])("normalizes %s OTP digits before verification", async (_label, localizedCode) => {
+    const user = userEvent.setup();
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(json(authenticatedAccount));
+    renderDialog();
+
+    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+    await user.click(screen.getByRole("button", { name: "Continue with email" }));
+    await user.type(screen.getByLabelText("Email address"), "buyer@example.com");
+    await user.click(screen.getByRole("button", { name: "Send code" }));
+    await user.type(screen.getByLabelText("Six-digit code"), localizedCode);
+    await user.click(screen.getByRole("button", { name: "Verify code" }));
+
+    expect(auth.verifyOtp).toHaveBeenCalledWith({
+      email: "buyer@example.com",
+      token: "123456",
+      type: "email",
+    });
+  });
+
   it("saves the scene and redirects an authenticated buyer to Stripe", async () => {
     const user = userEvent.setup();
     const fetchMock = vi

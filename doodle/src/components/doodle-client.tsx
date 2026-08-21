@@ -44,10 +44,13 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
+  const [checkoutRetry, setCheckoutRetry] = useState<string | null>(null);
+  const [checkoutConfirming, setCheckoutConfirming] = useState(false);
   const [isResultOpen, setIsResultOpen] = useState(false);
   const currentObjectUrl = useRef<string | null>(null);
   const handledCheckout = useRef<string | null>(null);
-  const remainingRevision = useRef(0);
+  const pendingCheckout = useRef<string | null>(null);
+  const accountRevision = useRef(0);
   const createButtonRef = useRef<HTMLButtonElement>(null);
 
   const revokeCurrentUrl = useCallback(() => {
@@ -64,6 +67,52 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
 
   const restoreCreateFocus = useCallback(() => createButtonRef.current?.focus(), []);
 
+  const replaceAccount = useCallback((nextAccount: AccountSummary) => {
+    accountRevision.current += 1;
+    setAccount(nextAccount);
+  }, []);
+
+  const removeQuery = useCallback((name: "auth" | "checkout") => {
+    const url = new URL(location.href);
+    url.searchParams.delete(name);
+    history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
+  }, []);
+
+  const confirmCheckout = useCallback(async (sessionId: string) => {
+    if (handledCheckout.current === sessionId || pendingCheckout.current === sessionId) return;
+    pendingCheckout.current = sessionId;
+    setCheckoutRetry(sessionId);
+    setCheckoutConfirming(true);
+    setPurchaseError(null);
+    try {
+      const response = await fetch("/api/checkout/confirm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId }),
+      });
+      if (!response.ok) throw new Error("confirmation failed");
+      const body = (await response.json()) as { balance?: unknown };
+      if (typeof body.balance !== "number" || !Number.isInteger(body.balance) || body.balance < 0) {
+        throw new Error("invalid balance");
+      }
+      accountRevision.current += 1;
+      setAccount((current) => ({ ...current, authenticated: true, balance: body.balance as number }));
+      handledCheckout.current = sessionId;
+      setCheckoutRetry(null);
+      setPurchaseError(null);
+      setPurchaseSuccess(true);
+      setIsPurchaseOpen(true);
+      sessionStorage.removeItem("doodle:return");
+      removeQuery("checkout");
+    } catch {
+      setPurchaseError(copy.purchase.checkoutError);
+      setIsPurchaseOpen(true);
+    } finally {
+      pendingCheckout.current = null;
+      setCheckoutConfirming(false);
+    }
+  }, [copy.purchase.checkoutError, removeQuery]);
+
   useEffect(() => revokeCurrentUrl, [revokeCurrentUrl]);
 
   useEffect(() => {
@@ -79,21 +128,13 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
       }
     } catch {}
 
-    function removeQuery(name: "auth" | "checkout") {
-      const url = new URL(location.href);
-      url.searchParams.delete(name);
-      history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
-    }
-
     void (async () => {
-      const revision = remainingRevision.current;
+      const revision = accountRevision.current;
       try {
         const response = await fetch("/api/account", { cache: "no-store" });
         if (response.ok && active) {
           const nextAccount = (await response.json()) as AccountSummary;
-          setAccount((current) => remainingRevision.current === revision
-            ? nextAccount
-            : { ...nextAccount, balance: current.balance, freeRemaining: current.freeRemaining });
+          if (accountRevision.current === revision) setAccount(nextAccount);
         }
       } catch {}
       if (!active) return;
@@ -112,45 +153,22 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
       }
 
       if (!checkoutReturn?.startsWith("cs_") || handledCheckout.current === checkoutReturn) return;
-      handledCheckout.current = checkoutReturn;
-      try {
-        const response = await fetch("/api/checkout/confirm", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sessionId: checkoutReturn }),
-        });
-        if (!response.ok) throw new Error("confirmation failed");
-        const body = (await response.json()) as { balance?: unknown };
-        if (typeof body.balance !== "number" || !Number.isInteger(body.balance) || body.balance < 0) {
-          throw new Error("invalid balance");
-        }
-        if (!active) return;
-        setAccount((current) => ({ ...current, authenticated: true, balance: body.balance as number }));
-        setPurchaseError(null);
-        setPurchaseSuccess(true);
-        setIsPurchaseOpen(true);
-        sessionStorage.removeItem("doodle:return");
-        removeQuery("checkout");
-      } catch {
-        if (!active) return;
-        setPurchaseError(copy.purchase.checkoutError);
-        setIsPurchaseOpen(true);
-      }
+      await confirmCheckout(checkoutReturn);
     })();
 
     return () => {
       active = false;
     };
-  }, [copy.auth.authError, copy.purchase.checkoutError]);
+  }, [confirmCheckout, copy.auth.authError, removeQuery]);
 
   function updateRemaining(response: Response) {
     const paid = response.headers.get("X-Doodle-Paid-Remaining");
     const free = response.headers.get("X-Doodle-Free-Remaining");
     if (paid !== null && Number.isInteger(Number(paid)) && Number(paid) >= 0) {
-      remainingRevision.current += 1;
+      accountRevision.current += 1;
       setAccount((current) => ({ ...current, balance: Number(paid) }));
     } else if (free !== null && Number.isInteger(Number(free)) && Number(free) >= 0) {
-      remainingRevision.current += 1;
+      accountRevision.current += 1;
       setAccount((current) => ({ ...current, freeRemaining: Number(free) }));
     }
   }
@@ -216,7 +234,7 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
       ? formatCount(locale, copy.usage.freeLeft, account.freeRemaining)
       : copy.usage.firstTwoFree;
   const accountMenu = account.authenticated ? (
-    <AccountMenu account={account} locale={locale} copy={copy.account} onAccountChange={setAccount} />
+    <AccountMenu account={account} locale={locale} copy={copy.account} onAccountChange={replaceAccount} />
   ) : undefined;
 
   function closePurchase() {
@@ -304,9 +322,11 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
           copy={copy}
           success={purchaseSuccess}
           errorMessage={purchaseError}
+          confirmationBusy={checkoutConfirming}
+          onRetryConfirmation={checkoutRetry ? () => void confirmCheckout(checkoutRetry) : undefined}
           onRestoreFocus={restoreCreateFocus}
           onClose={closePurchase}
-          onAccountChange={setAccount}
+          onAccountChange={replaceAccount}
         />
       ) : null}
     </div>

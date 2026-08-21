@@ -7,6 +7,16 @@ import { getBrowserSupabase } from "@/lib/supabase/browser";
 
 type PurchaseStep = "offer" | "signIn" | "emailCode" | "checkout";
 
+function normalizeOtp(value: string) {
+  return value
+    .replace(/[٠-٩۰-۹]/g, (digit) => {
+      const point = digit.charCodeAt(0);
+      return String(point - (point <= 0x0669 ? 0x0660 : 0x06f0));
+    })
+    .replace(/\D/g, "")
+    .slice(0, 6);
+}
+
 interface PurchaseDialogProps {
   open: boolean;
   account: AccountSummary;
@@ -15,6 +25,8 @@ interface PurchaseDialogProps {
   copy: DoodleCopy;
   success: boolean;
   errorMessage?: string | null;
+  confirmationBusy?: boolean;
+  onRetryConfirmation?: () => void;
   onRestoreFocus?: () => void;
   onClose: () => void;
   onAccountChange: (account: AccountSummary) => void;
@@ -28,6 +40,8 @@ export function PurchaseDialog({
   copy,
   success,
   errorMessage,
+  confirmationBusy = false,
+  onRetryConfirmation,
   onRestoreFocus,
   onClose,
   onAccountChange,
@@ -38,6 +52,7 @@ export function PurchaseDialog({
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [codeSent, setCodeSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -108,6 +123,7 @@ export function PurchaseDialog({
       });
       if (authError) throw authError;
       setCodeSent(true);
+      setOtpVerified(false);
     } catch {
       setError(copy.auth.authError);
     } finally {
@@ -117,25 +133,36 @@ export function PurchaseDialog({
 
   async function verifyCode(event: FormEvent) {
     event.preventDefault();
-    if (!/^\d{6}$/.test(code)) {
+    const token = normalizeOtp(code);
+    if (!otpVerified && !/^\d{6}$/.test(token)) {
       setError(copy.auth.invalidCode);
       return;
     }
     setBusy(true);
     setError(null);
+    if (!otpVerified) {
+      try {
+        const { error: authError } = await getBrowserSupabase().auth.verifyOtp({
+          email: email.trim(),
+          token,
+          type: "email",
+        });
+        if (authError) throw authError;
+        setOtpVerified(true);
+      } catch {
+        setError(copy.auth.invalidCode);
+        setBusy(false);
+        return;
+      }
+    }
     try {
-      const { error: authError } = await getBrowserSupabase().auth.verifyOtp({
-        email: email.trim(),
-        token: code,
-        type: "email",
-      });
-      if (authError) throw authError;
       await refreshAccount();
       setStep("offer");
       setCode("");
       setCodeSent(false);
+      setOtpVerified(false);
     } catch {
-      setError(copy.auth.invalidCode);
+      setError(copy.auth.authError);
     } finally {
       setBusy(false);
     }
@@ -210,8 +237,14 @@ export function PurchaseDialog({
                 <p className="purchase-fine-print">{copy.purchase.failedDontCount}</p>
                 {error || errorMessage ? <p role="alert" className="purchase-error">{error ?? errorMessage}</p> : null}
                 <div className="purchase-actions">
-                  <button className="purchase-primary" type="button" data-purchase-focus onClick={startCheckout} disabled={busy}>
-                    {copy.purchase.buy}
+                  <button
+                    className="purchase-primary"
+                    type="button"
+                    data-purchase-focus
+                    onClick={onRetryConfirmation ?? startCheckout}
+                    disabled={busy || confirmationBusy}
+                  >
+                    {onRetryConfirmation ? copy.actions.tryAgain : copy.purchase.buy}
                   </button>
                   <button className="purchase-secondary" type="button" onClick={onClose}>
                     {copy.purchase.cancel}
@@ -261,7 +294,7 @@ export function PurchaseDialog({
                         pattern="[0-9]{6}"
                         maxLength={6}
                         value={code}
-                        onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))}
+                        onChange={(event) => setCode(normalizeOtp(event.target.value))}
                         disabled={busy}
                         data-purchase-focus
                       />

@@ -1,7 +1,17 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getCopy, type Locale } from "@/lib/i18n";
 import { DoodleClient } from "./doodle-client";
+
+const auth = vi.hoisted(() => ({
+  signInWithOtp: vi.fn(),
+  verifyOtp: vi.fn(),
+}));
+
+vi.mock("@/lib/supabase/browser", () => ({
+  getBrowserSupabase: () => ({ auth }),
+}));
 
 function renderClient(locale: Locale = "en") {
   return render(<DoodleClient locale={locale} copy={getCopy(locale)} />);
@@ -27,6 +37,12 @@ function mockGeneration(response: Response) {
   );
 }
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((next) => { resolve = next; });
+  return { promise, resolve };
+}
+
 describe("DoodleClient", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
@@ -36,6 +52,8 @@ describe("DoodleClient", () => {
       if (input === "/api/account") return json(anonymousAccount);
       throw new Error(`Unexpected fetch: ${String(input)}`);
     });
+    auth.signInWithOtp.mockReset().mockResolvedValue({ error: null });
+    auth.verifyOtp.mockReset().mockResolvedValue({ error: null });
     sessionStorage.clear();
     history.replaceState({}, "", "/");
   });
@@ -186,6 +204,48 @@ describe("DoodleClient", () => {
     expect(screen.queryByText("First 2 doodles free")).not.toBeInTheDocument();
   });
 
+  it("ignores a delayed anonymous account response after OTP refresh authenticates the user", async () => {
+    const user = userEvent.setup();
+    const initialAccount = deferred<Response>();
+    const authenticatedAccount = {
+      authenticated: true,
+      email: "buyer@example.com",
+      balance: 0,
+      freeRemaining: null,
+    };
+    let accountRequests = 0;
+    vi.mocked(fetch).mockImplementation(async (input) => {
+      if (input === "/api/account") {
+        accountRequests += 1;
+        return accountRequests === 1 ? initialAccount.promise : json(authenticatedAccount);
+      }
+      if (input === "/api/generate") {
+        return json({ error: "payment_required" }, { status: 402 });
+      }
+      throw new Error(`Unexpected fetch: ${String(input)}`);
+    });
+
+    renderClient();
+    await waitFor(() => expect(accountRequests).toBe(1));
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "A cat" } });
+    await user.click(screen.getByRole("button", { name: "Create doodle" }));
+    await user.click(await screen.findByRole("button", { name: "Get 10 doodles" }));
+    await user.click(screen.getByRole("button", { name: "Continue with email" }));
+    await user.type(screen.getByLabelText("Email address"), "buyer@example.com");
+    await user.click(screen.getByRole("button", { name: "Send code" }));
+    await user.type(screen.getByLabelText("Six-digit code"), "123456");
+    await user.click(screen.getByRole("button", { name: "Verify code" }));
+
+    await waitFor(() => expect(accountRequests).toBe(2));
+    expect(auth.verifyOtp).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(screen.getByText("0 doodles left", { selector: ".usage-copy" })).toBeVisible());
+    await act(async () => initialAccount.resolve(json(anonymousAccount)));
+
+    expect(screen.getByText("0 doodles left", { selector: ".usage-copy" })).toBeVisible();
+    expect(screen.getByText("Account")).toBeInTheDocument();
+    expect(screen.queryByText("First 2 doodles free")).not.toBeInTheDocument();
+  });
+
   it("restores the exact scene and offer after OAuth returns", async () => {
     history.replaceState({}, "", "/?auth=success");
     sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "A cat & a moon", intent: "auth" }));
@@ -237,6 +297,30 @@ describe("DoodleClient", () => {
         },
       ],
     ]);
+    expect(sessionStorage.getItem("doodle:return")).toBeNull();
+    expect(location.search).toBe("");
+  });
+
+  it("retries a failed returned Checkout confirmation without starting another Checkout", async () => {
+    history.replaceState({}, "", "/?checkout=cs_retry");
+    sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "A cat", intent: "checkout" }));
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(json({ authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: null }))
+      .mockResolvedValueOnce(json({ error: "temporary" }, { status: 503 }))
+      .mockResolvedValueOnce(json({ balance: 10 }));
+
+    renderClient();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Checkout could not start");
+    expect(sessionStorage.getItem("doodle:return")).not.toBeNull();
+    expect(location.search).toBe("?checkout=cs_retry");
+
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+
+    expect(await screen.findByText("10 doodles added")).toBeVisible();
+    const confirmationCalls = vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/checkout/confirm");
+    expect(confirmationCalls).toHaveLength(2);
+    expect(vi.mocked(fetch).mock.calls.some(([input]) => input === "/api/checkout")).toBe(false);
     expect(sessionStorage.getItem("doodle:return")).toBeNull();
     expect(location.search).toBe("");
   });
