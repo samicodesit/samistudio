@@ -28,4 +28,16 @@ describe("checkGenerationLimit", () => {
     expect(command[3]).toContain(expectedClient);
     expect(command.slice(5)).toEqual([20, 200, 172_800]);
   });
+
+  it("fails closed before Redis when SESSION_SECRET is missing", async () => {
+    vi.stubEnv("KV_REST_API_URL", "https://redis.example");
+    vi.stubEnv("KV_REST_API_TOKEN", "token");
+    vi.stubEnv("SESSION_SECRET", "");
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+
+    await expect(
+      checkGenerationLimit(new Request("https://doodle.example/api/generate")),
+    ).resolves.toBe("unavailable");
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
 });

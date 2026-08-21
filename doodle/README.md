@@ -28,9 +28,10 @@ Required browser-safe values:
 ```dotenv
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
+NEXT_PUBLIC_EMAIL_OTP_ENABLED=false
 ```
 
-Keep every key except the two `NEXT_PUBLIC_` values server-only. Generate `SESSION_SECRET` with `openssl rand -base64 32`.
+Keep every key outside the browser-safe block server-only. Generate `SESSION_SECRET` with `openssl rand -base64 32`.
 
 The app keeps prompts and generated images in browser memory only. The root Sami Studio site is separate from this Next.js app.
 
@@ -47,9 +48,11 @@ After PNG bytes exist, finalization is replayed once if its response is ambiguou
 Create a dedicated Supabase project for Doodle. Do not reuse AutoLister users, database, product records, or webhook secrets.
 
 1. Apply `supabase/migrations/202608210001_doodle_credits.sql` in that project's SQL editor.
-2. In Supabase Auth, enable Google and email OTP. Keep password sign-in disabled/unused, set OTP expiry to 600 seconds, and use `{{ .Token }}` in the email template.
+2. Launch with Google only: enable Google, keep password sign-in disabled/unused, disable Supabase Email Auth, and leave `NEXT_PUBLIC_EMAIL_OTP_ENABLED=false`.
 3. Add `http://localhost:3000/auth/callback` and `https://doodle.samistudio.nl/auth/callback` to Supabase Auth redirect URLs.
 4. Use a Doodle-specific Google OAuth client. Its authorized redirect URI is the Supabase Google provider callback URL shown in the Supabase dashboard; Doodle itself always returns through `/auth/callback`.
+
+To add email OTP later, configure custom SMTP and the Supabase email provider, set OTP expiry to 600 seconds, use `{{ .Token }}` in the email template, then set `NEXT_PUBLIC_EMAIL_OTP_ENABLED=true`. The flag only controls the Doodle UI, so do not enable Supabase Email Auth while it is false.
 
 ## Stripe test-mode setup
 

@@ -67,7 +67,10 @@ describe("PurchaseDialog", () => {
     });
   });
 
-  afterEach(() => vi.unstubAllGlobals());
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
 
   it("shows one honest offer and no subscription pricing patterns", () => {
     renderDialog();
@@ -80,7 +83,20 @@ describe("PurchaseDialog", () => {
     expect(screen.queryByText(/discount|most popular|per month/i)).not.toBeInTheDocument();
   });
 
-  it("offers only Google and email after an anonymous buyer continues", async () => {
+  it("shows Google but hides email OTP by default", async () => {
+    vi.stubEnv("NEXT_PUBLIC_EMAIL_OTP_ENABLED", undefined);
+    const user = userEvent.setup();
+    renderDialog();
+
+    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+
+    expect(screen.getByRole("button", { name: "Continue with Google" })).toBeVisible();
+    expect(screen.queryByRole("button", { name: "Continue with email" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Apple/ })).not.toBeInTheDocument();
+  });
+
+  it("shows email OTP when explicitly enabled", async () => {
+    vi.stubEnv("NEXT_PUBLIC_EMAIL_OTP_ENABLED", "true");
     const user = userEvent.setup();
     renderDialog();
 
@@ -88,7 +104,6 @@ describe("PurchaseDialog", () => {
 
     expect(screen.getByRole("button", { name: "Continue with Google" })).toBeVisible();
     expect(screen.getByRole("button", { name: "Continue with email" })).toBeVisible();
-    expect(screen.queryByRole("button", { name: /Apple/ })).not.toBeInTheDocument();
   });
 
   it("saves the scene before starting Google OAuth", async () => {
@@ -109,6 +124,7 @@ describe("PurchaseDialog", () => {
   });
 
   it("sends and verifies a six-digit email code", async () => {
+    vi.stubEnv("NEXT_PUBLIC_EMAIL_OTP_ENABLED", "true");
     const user = userEvent.setup();
     const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(json(authenticatedAccount));
     const { onAccountChange } = renderDialog();
@@ -141,6 +157,7 @@ describe("PurchaseDialog", () => {
   });
 
   it("retries account refresh after OTP succeeds without consuming the code again", async () => {
+    vi.stubEnv("NEXT_PUBLIC_EMAIL_OTP_ENABLED", "true");
     const user = userEvent.setup();
     const fetchMock = vi.spyOn(globalThis, "fetch")
       .mockResolvedValueOnce(json({ error: "temporary" }, { status: 503 }))
@@ -170,6 +187,7 @@ describe("PurchaseDialog", () => {
     ["Arabic-Indic", "١٢٣٤٥٦"],
     ["Persian", "۱۲۳۴۵۶"],
   ])("normalizes %s OTP digits before verification", async (_label, localizedCode) => {
+    vi.stubEnv("NEXT_PUBLIC_EMAIL_OTP_ENABLED", "true");
     const user = userEvent.setup();
     vi.spyOn(globalThis, "fetch").mockResolvedValue(json(authenticatedAccount));
     renderDialog();

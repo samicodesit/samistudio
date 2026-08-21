@@ -262,9 +262,11 @@ export function PurchaseDialog({
                 <button className="purchase-primary" type="button" data-purchase-focus onClick={startGoogle} disabled={busy}>
                   {copy.auth.google}
                 </button>
-                <button className="purchase-secondary" type="button" onClick={() => setStep("emailCode")} disabled={busy}>
-                  {copy.auth.email}
-                </button>
+                {process.env.NEXT_PUBLIC_EMAIL_OTP_ENABLED === "true" ? (
+                  <button className="purchase-secondary" type="button" onClick={() => setStep("emailCode")} disabled={busy}>
+                    {copy.auth.email}
+                  </button>
+                ) : null}
                 <button className="purchase-text-action" type="button" onClick={onClose}>
                   {copy.purchase.cancel}
                 </button>

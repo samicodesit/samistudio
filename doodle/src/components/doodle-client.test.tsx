@@ -1,6 +1,6 @@
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getCopy, type Locale } from "@/lib/i18n";
 import { DoodleClient } from "./doodle-client";
 
@@ -44,6 +44,8 @@ function deferred<T>() {
 }
 
 describe("DoodleClient", () => {
+  afterEach(() => vi.unstubAllEnvs());
+
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:one");
@@ -332,6 +334,7 @@ describe("DoodleClient", () => {
   });
 
   it("ignores a delayed anonymous account response after OTP refresh authenticates the user", async () => {
+    vi.stubEnv("NEXT_PUBLIC_EMAIL_OTP_ENABLED", "true");
     const user = userEvent.setup();
     const initialAccount = deferred<Response>();
     const authenticatedAccount = {

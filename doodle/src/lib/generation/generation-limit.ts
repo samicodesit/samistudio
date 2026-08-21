@@ -18,11 +18,13 @@ export type GenerationLimitStatus = "allowed" | "rate_limited" | "unavailable";
 export async function checkGenerationLimit(request: Request): Promise<GenerationLimitStatus> {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
+  const secret = process.env.SESSION_SECRET;
 
   if (!url || !token) return process.env.VERCEL ? "unavailable" : "allowed";
+  if (!secret) return "unavailable";
 
   const ip = request.headers.get("x-vercel-forwarded-for") ?? request.headers.get("x-forwarded-for") ?? "unknown";
-  const client = createHmac("sha256", process.env.SESSION_SECRET ?? token).update(ip).digest("hex");
+  const client = createHmac("sha256", secret).update(ip).digest("hex");
   const day = new Date().toISOString().slice(0, 10);
 
   try {
