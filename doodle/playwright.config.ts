@@ -19,7 +19,6 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
     env: {
-      DOODLE_PASSWORD: "test-passphrase",
       SESSION_SECRET: "test-session-secret-with-at-least-32-characters",
       OPENAI_API_KEY: "test-key-not-used-because-generation-is-mocked",
       OPENAI_IMAGE_MODEL: "gpt-image-1-mini",

@@ -1,10 +1,10 @@
 # Doodle
 
-Private, mobile-first sticky-note doodle generation for `doodle.samistudio.nl`.
+Public, mobile-first sticky-note doodle generation.
 
 ## Local development
 
-1. Copy `.env.example` to `.env.local` and fill `DOODLE_PASSWORD`, `SESSION_SECRET`, and the Doodle project `OPENAI_API_KEY`.
+1. Copy `.env.example` to `.env.local` and fill `SESSION_SECRET` and the Doodle project `OPENAI_API_KEY`.
 2. Run `npm run dev`.
 3. Run `npm test`, `npm run typecheck`, and `npm run lint`.
 
@@ -17,14 +17,13 @@ The app keeps prompts and generated images in browser memory only. The root Sami
 ## Production shape
 
 - Vercel project: `doodle`
-- Production URL: `https://doodle.samistudio.nl`
-- Vercel fallback URL: `https://doodle-puce.vercel.app`
+- Production URL: `https://doodle-puce.vercel.app`
 - Git root directory when the repository is connected: `doodle/`
 - Image model: `gpt-image-1-mini`
 - Image quality: `low`
 
 ## Deployment checklist
 
-The app was deployed directly to the `doodle` Vercel project on 2026-08-20 with encrypted production environment variables. The custom domain is a CNAME managed in Netlify DNS, so the existing apex site remains unchanged. Production authentication, security headers, and one real low-quality image generation were verified successfully.
+The app is deployed directly to the `doodle` Vercel project with encrypted production environment variables. Vercel Firewall and application-level daily limits protect the public generation endpoint.
 
 The Vercel project is not yet connected to Git. When it is connected to the existing `samistudio` repository, set its root directory to `doodle/` before enabling automatic deployments.
