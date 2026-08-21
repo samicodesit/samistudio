@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountSummary } from "@/app/api/account/route";
@@ -76,6 +76,22 @@ describe("AccountMenu", () => {
 
     expect(screen.queryByRole("dialog", { name: "Delete account" })).not.toBeInTheDocument();
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("returns focus to the delete trigger after native Escape cancellation", async () => {
+    const user = userEvent.setup();
+    render(<AccountMenu account={account} locale="en" copy={copy} onAccountChange={vi.fn()} />);
+
+    await user.click(screen.getByText("Account"));
+    const deleteTrigger = screen.getByRole("button", { name: "Delete account" });
+    await user.click(deleteTrigger);
+    const dialog = screen.getByRole("dialog", { name: "Delete account" });
+    await waitFor(() => expect(screen.getByRole("button", { name: "Keep account" })).toHaveFocus());
+
+    fireEvent(dialog, new Event("cancel", { bubbles: false, cancelable: true }));
+
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    expect(deleteTrigger).toHaveFocus();
   });
 
   it("deletes only after explicit confirmation, signs out, and refreshes account state", async () => {

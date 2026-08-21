@@ -145,6 +145,81 @@ test.describe("Doodle mobile workflow", () => {
   });
 });
 
+test.describe("Task 7 purchase and account QA", () => {
+  test("keeps auth actions separated and the narrow sheet in view", async ({ page }, testInfo) => {
+    await page.route("**/api/account", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ authenticated: false, email: null, balance: 0, freeRemaining: 0 }),
+    }));
+    await page.route("**/api/generate", (route) => route.fulfill({
+      status: 402,
+      contentType: "application/json",
+      headers: { "X-Doodle-Free-Remaining": "0" },
+      body: JSON.stringify({ error: "payment_required" }),
+    }));
+
+    for (const viewport of [{ width: 390, height: 844 }, { width: 320, height: 700 }]) {
+      await page.setViewportSize(viewport);
+      await openTool(page);
+      await page.getByRole("textbox").fill("A tiny cat with an umbrella");
+      await page.getByRole("button", { name: "Create doodle" }).click();
+      await page.getByRole("button", { name: "Get 10 doodles" }).click();
+      await expect(page.getByRole("button", { name: "Continue with Google" })).toBeFocused();
+
+      const slip = page.locator(".purchase-slip");
+      await slip.evaluate(async (element) => {
+        await Promise.all(element.getAnimations().map((animation) => animation.finished));
+      });
+      const actionBoxes = await page.locator(".purchase-auth > button").evaluateAll((buttons) =>
+        buttons.map((button) => {
+          const box = button.getBoundingClientRect();
+          return { top: box.top, bottom: box.bottom };
+        }),
+      );
+      expect(actionBoxes).toHaveLength(3);
+      for (let index = 1; index < actionBoxes.length; index += 1) {
+        expect(actionBoxes[index - 1].bottom).toBeLessThanOrEqual(actionBoxes[index].top);
+        expect(actionBoxes[index].top - actionBoxes[index - 1].bottom).toBeGreaterThanOrEqual(8);
+      }
+
+      const slipBox = await slip.boundingBox();
+      expect(slipBox).not.toBeNull();
+      expect(slipBox!.y).toBeGreaterThanOrEqual(0);
+      expect(slipBox!.y + slipBox!.height).toBeLessThanOrEqual(viewport.height);
+      await testInfo.attach(`auth-${viewport.width}x${viewport.height}.png`, {
+        body: await page.screenshot(),
+        contentType: "image/png",
+      });
+
+      await page.keyboard.press("Escape");
+      await expect(page.getByRole("dialog")).toBeHidden();
+    }
+  });
+
+  test("returns focus to the delete trigger after Escape", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.route("**/api/account", (route) => route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({ authenticated: true, email: "buyer@example.com", balance: 4, freeRemaining: null }),
+    }));
+    await openTool(page);
+
+    await page.locator(".account-menu summary").click();
+    const deleteTrigger = page.getByRole("button", { name: "Delete account" });
+    await deleteTrigger.click();
+    const dialog = page.getByRole("dialog", { name: "Delete account" });
+    await expect(dialog).toBeVisible();
+    await expect(page.getByRole("button", { name: "Keep account" })).toBeFocused();
+
+    await page.keyboard.press("Escape");
+
+    await expect(dialog).toBeHidden();
+    await expect(deleteTrigger).toBeFocused();
+  });
+});
+
 test.describe("Doodle desktop and accessibility", () => {
   test.use({ viewport: { width: 1440, height: 1000 } });
 

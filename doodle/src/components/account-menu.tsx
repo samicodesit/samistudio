@@ -14,18 +14,22 @@ interface AccountMenuProps {
 
 export function AccountMenu({ account, locale, copy, onAccountChange }: AccountMenuProps) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
+  const deleteTriggerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     const dialog = dialogRef.current;
+    const deleteTrigger = deleteTriggerRef.current;
     if (!dialog || !confirmingDelete) return;
     if (typeof dialog.showModal === "function") dialog.showModal();
     else dialog.setAttribute("open", "");
-    requestAnimationFrame(() => dialog.querySelector<HTMLButtonElement>("[data-delete-cancel]")?.focus());
+    const frame = requestAnimationFrame(() => dialog.querySelector<HTMLButtonElement>("[data-delete-cancel]")?.focus());
     return () => {
+      cancelAnimationFrame(frame);
       if (dialog.open && typeof dialog.close === "function") dialog.close();
+      deleteTrigger?.focus();
     };
   }, [confirmingDelete]);
 
@@ -69,7 +73,7 @@ export function AccountMenu({ account, locale, copy, onAccountChange }: AccountM
           <p className="account-email" dir="ltr">{account.email}</p>
           <p>{formatCount(locale, copy.balance, account.balance)}</p>
           <button type="button" onClick={signOut} disabled={busy}>{copy.signOut}</button>
-          <button className="account-delete" type="button" onClick={() => setConfirmingDelete(true)} disabled={busy}>
+          <button ref={deleteTriggerRef} className="account-delete" type="button" onClick={() => setConfirmingDelete(true)} disabled={busy}>
             {copy.delete}
           </button>
         </div>
