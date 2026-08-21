@@ -36,6 +36,8 @@ The app keeps prompts and generated images in browser memory only. The root Sami
 
 Generation reservations are 10-minute expiring holds. Failed requests never change permanent free usage or paid balance; only atomic successful finalization consumes a doodle.
 
+After PNG bytes exist, finalization is replayed once if its response is ambiguous. If both responses remain ambiguous, the API delivers the PNG with `X-Doodle-Balance-Uncertain: 1` and the browser quietly refreshes `/api/account`. This deliberately bounded fail-open may rarely grant one uncharged image, but prevents a possibly charged generation from being withheld; it is not used for explicit uncharged failures or ordinary generation errors.
+
 ## Paid checks
 
 `npm run test:real` makes one low-quality Image API request and is skipped by the normal test command. `npm run eval:prompt` makes eight sequential requests and writes numbered PNGs under `tmp/prompt-eval/`. Both commands incur Doodle-project API costs and are never run by CI.

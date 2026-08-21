@@ -24,6 +24,14 @@ function unavailable() {
   return NextResponse.json({ error: "limit_unavailable" }, { status: 503 });
 }
 
+async function finalizeWithReplay(operation: () => Promise<{ finalized: boolean; remaining: number }>) {
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      return await operation();
+    } catch {}
+  }
+}
+
 export async function POST(request: NextRequest) {
   if (!hasSameOrigin(request)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
@@ -68,14 +76,14 @@ export async function POST(request: NextRequest) {
   }
 
   let reservation:
-    | { kind: "paid"; userId: string; remaining: number }
-    | { kind: "free"; identity: TrialIdentity; remaining: number }
+    | { kind: "paid"; userId: string }
+    | { kind: "free"; identity: TrialIdentity }
     | undefined;
 
   if (user) {
     try {
       const paid = await reservePaidCredit(user.id, reservationId);
-      if (paid.reserved) reservation = { kind: "paid", userId: user.id, remaining: paid.remaining };
+      if (paid.reserved) reservation = { kind: "paid", userId: user.id };
     } catch {
       try {
         await releasePaidCredit(user.id, reservationId);
@@ -114,7 +122,7 @@ export async function POST(request: NextRequest) {
         return unavailable();
       }
     }
-    reservation = { kind: "free", identity, remaining: free.remaining };
+    reservation = { kind: "free", identity };
   }
 
   let released = false;
@@ -155,21 +163,23 @@ export async function POST(request: NextRequest) {
         "Cache-Control": "no-store",
       },
     });
-    if (reservation.kind === "free") {
-      infrastructureFailure = true;
-      setTrialCookie(response, reservation.identity);
-      const finalized = await finalizeFreeDoodle(reservation.identity, reservationId);
-      if (!finalized.finalized) {
-        throw new Error("Free reservation finalization failed");
-      }
-      response.headers.set("X-Doodle-Free-Remaining", String(finalized.remaining));
-    } else {
-      const finalized = await finalizePaidCredit(reservation.userId, reservationId);
-      if (!finalized.finalized) {
-        throw new Error("Paid reservation finalization failed");
-      }
-      response.headers.set("X-Doodle-Paid-Remaining", String(finalized.remaining));
+    if (reservation.kind === "free") setTrialCookie(response, reservation.identity);
+    const finalized = await finalizeWithReplay(
+      reservation.kind === "paid"
+        ? () => finalizePaidCredit(reservation.userId, reservationId)
+        : () => finalizeFreeDoodle(reservation.identity, reservationId),
+    );
+    if (!finalized) {
+      response.headers.set("X-Doodle-Balance-Uncertain", "1");
+      return response;
     }
+    if (!finalized.finalized) {
+      throw new Error(`${reservation.kind} reservation finalization failed`);
+    }
+    response.headers.set(
+      reservation.kind === "paid" ? "X-Doodle-Paid-Remaining" : "X-Doodle-Free-Remaining",
+      String(finalized.remaining),
+    );
 
     return response;
   } catch (error) {

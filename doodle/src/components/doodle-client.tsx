@@ -212,6 +212,20 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
       const imageUrl = URL.createObjectURL(await response.blob());
       currentObjectUrl.current = imageUrl;
       setGeneration({ status: "ready", imageUrl, error: null });
+      if (response.headers.get("X-Doodle-Balance-Uncertain") === "1") {
+        const identity = identityRevision.current;
+        const usage = usageRevision.current;
+        void (async () => {
+          try {
+            const accountResponse = await fetch("/api/account", { cache: "no-store" });
+            if (!accountResponse.ok) return;
+            const nextAccount = (await accountResponse.json()) as AccountSummary;
+            if (identityRevision.current === identity && usageRevision.current === usage) {
+              replaceAccount(nextAccount);
+            }
+          } catch {}
+        })();
+      }
     } catch {
       setGeneration({
         status: "error",

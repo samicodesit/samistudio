@@ -165,17 +165,77 @@ describe("generate route", () => {
     expect(response.headers.get("X-Doodle-Free-Remaining")).toBe("1");
   });
 
-  it("returns 503 without success when paid finalization is unavailable", async () => {
+  it.each([
+    ["paid", { id: "user", email: "buyer@example.com" }],
+    ["free", null],
+  ])("delivers the generated PNG when %s finalization stays ambiguous", async (kind, user) => {
+    mocks.getCurrentUser.mockResolvedValue(user);
+    if (user) {
+      mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
+      mocks.finalizePaidCredit.mockRejectedValue(new Error("response lost"));
+    } else {
+      mocks.finalizeFreeDoodle.mockRejectedValue(new Error("response lost"));
+    }
+
+    const response = await POST(request("Two cats hug"));
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Doodle-Balance-Uncertain")).toBe("1");
+    expect(response.headers.get("X-Doodle-Paid-Remaining")).toBeNull();
+    expect(response.headers.get("X-Doodle-Free-Remaining")).toBeNull();
+    expect(Buffer.from(await response.arrayBuffer()).toString()).toBe("png");
+    if (kind === "paid") {
+      expect(mocks.finalizePaidCredit).toHaveBeenCalledTimes(2);
+      expect(mocks.releasePaidCredit).not.toHaveBeenCalled();
+    } else {
+      expect(mocks.finalizeFreeDoodle).toHaveBeenCalledTimes(2);
+      expect(response.headers.get("set-cookie")).toContain("doodle_trial=signed");
+      expect(mocks.releaseFreeDoodle).not.toHaveBeenCalled();
+    }
+  });
+
+  it("retries an ambiguous paid finalization and returns an exact balance when replay resolves it", async () => {
     mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
     mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
-    mocks.finalizePaidCredit.mockRejectedValue(new Error("offline"));
-    mocks.releasePaidCredit.mockRejectedValue(new Error("offline"));
+    mocks.finalizePaidCredit
+      .mockRejectedValueOnce(new Error("response lost"))
+      .mockResolvedValueOnce({ finalized: true, remaining: 9 });
+
+    const response = await POST(request("Two cats hug"));
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Doodle-Paid-Remaining")).toBe("9");
+    expect(response.headers.get("X-Doodle-Balance-Uncertain")).toBeNull();
+    expect(mocks.finalizePaidCredit).toHaveBeenCalledTimes(2);
+    expect(mocks.releasePaidCredit).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ["paid", { id: "user", email: "buyer@example.com" }],
+    ["free", null],
+  ])("returns 503 without an image when %s finalization is explicitly uncharged", async (kind, user) => {
+    mocks.getCurrentUser.mockResolvedValue(user);
+    if (user) {
+      mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
+      mocks.finalizePaidCredit
+        .mockRejectedValueOnce(new Error("response lost"))
+        .mockResolvedValueOnce({ finalized: false, remaining: 9 });
+    } else {
+      mocks.finalizeFreeDoodle.mockResolvedValue({ finalized: false, remaining: 2 });
+    }
 
     const response = await POST(request("Two cats hug"));
 
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ error: "limit_unavailable" });
-    expect(mocks.releasePaidCredit).toHaveBeenCalledOnce();
+    expect(response.headers.get("X-Doodle-Balance-Uncertain")).toBeNull();
+    if (kind === "paid") {
+      expect(mocks.finalizePaidCredit).toHaveBeenCalledTimes(2);
+      expect(mocks.releasePaidCredit).toHaveBeenCalledOnce();
+    } else {
+      expect(mocks.finalizeFreeDoodle).toHaveBeenCalledOnce();
+      expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
+    }
   });
 
   it.each([
@@ -273,19 +333,6 @@ describe("generate route", () => {
     expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
     expect(mocks.releaseFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
     expect(mocks.finalizeFreeDoodle).not.toHaveBeenCalled();
-  });
-
-  it.each([new Error("offline"), { finalized: false, remaining: 1 }])("releases once and returns 503 when free finalization fails with %s", async (failure) => {
-    if (failure instanceof Error) mocks.finalizeFreeDoodle.mockRejectedValue(failure);
-    else mocks.finalizeFreeDoodle.mockResolvedValue(failure);
-
-    const response = await POST(request("Two cats hug"));
-    const reservationId = mocks.reserveFreeDoodle.mock.calls[0][1];
-
-    expect(response.status).toBe(503);
-    expect(await response.json()).toEqual({ error: "limit_unavailable" });
-    expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
-    expect(mocks.releaseFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
   });
 
   it.each([
