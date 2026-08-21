@@ -24,14 +24,14 @@ const USER_ID = "7d9ac733-9336-4c2a-93c1-5d597d0f7f8e";
 const paidMatchingSession = {
   payment_status: "paid",
   metadata: { userId: USER_ID, pack: "doodle_10" },
-  line_items: { data: [{ price: { id: "price_doodle" }, quantity: 1 }] },
+  line_items: { data: [{ price: { id: "price_doodle" }, quantity: 1 }], has_more: false },
   payment_intent: "pi_paid",
 };
 
 function sessionWithPrice(price: string) {
   return {
     ...paidMatchingSession,
-    line_items: { data: [{ price: { id: price }, quantity: 1 }] },
+    line_items: { data: [{ price: { id: price }, quantity: 1 }], has_more: false },
   };
 }
 
@@ -84,14 +84,24 @@ describe("fixed credit pack checkout", () => {
     expect(mocks.fulfillCreditPack).toHaveBeenCalledWith(USER_ID, "cs_paid", "pi_paid");
   });
 
+  it("rejects one matching visible item when Stripe reports more line items", async () => {
+    mocks.retrieve.mockResolvedValue({
+      ...paidMatchingSession,
+      line_items: { ...paidMatchingSession.line_items, has_more: true },
+    });
+
+    await expect(fulfillCheckout("cs_paginated", USER_ID)).rejects.toThrow();
+    expect(mocks.fulfillCreditPack).not.toHaveBeenCalled();
+  });
+
   it.each([
     ["unpaid", { ...paidMatchingSession, payment_status: "unpaid" }],
     ["wrong pack", { ...paidMatchingSession, metadata: { userId: USER_ID, pack: "other" } }],
     ["invalid user", { ...paidMatchingSession, metadata: { userId: "not-a-uuid", pack: "doodle_10" } }],
     ["wrong expected user", paidMatchingSession, "1d2cd760-c288-4ad7-8464-6d5db84eaf59"],
-    ["extra line item", { ...paidMatchingSession, line_items: { data: [...paidMatchingSession.line_items.data, ...paidMatchingSession.line_items.data] } }],
+    ["extra line item", { ...paidMatchingSession, line_items: { data: [...paidMatchingSession.line_items.data, ...paidMatchingSession.line_items.data], has_more: false } }],
     ["wrong price", sessionWithPrice("price_other")],
-    ["wrong quantity", { ...paidMatchingSession, line_items: { data: [{ price: { id: "price_doodle" }, quantity: 2 }] } }],
+    ["wrong quantity", { ...paidMatchingSession, line_items: { data: [{ price: { id: "price_doodle" }, quantity: 2 }], has_more: false } }],
     ["missing payment intent", { ...paidMatchingSession, payment_intent: null }],
   ])("rejects %s sessions", async (_label, session, expectedUserId = USER_ID) => {
     mocks.retrieve.mockResolvedValue(session);

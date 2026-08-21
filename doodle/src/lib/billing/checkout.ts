@@ -49,6 +49,7 @@ export async function fulfillCheckout(sessionId: string, expectedUserId?: string
     !userId ||
     !UUID_PATTERN.test(userId) ||
     (expectedUserId !== undefined && userId !== expectedUserId) ||
+    session.line_items?.has_more !== false ||
     lineItems?.length !== 1 ||
     lineItems[0]?.price?.id !== required("STRIPE_DOODLE_PRICE_ID") ||
     lineItems[0]?.quantity !== 1 ||
