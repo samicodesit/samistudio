@@ -7,16 +7,20 @@ import {
   hasLocale,
   htmlLang,
   localePath,
+  textDirection,
 } from "./i18n";
 
 describe("internationalization", () => {
-  it("supports the nine approved language routes", () => {
-    expect(SUPPORTED_LOCALES).toEqual(["en", "nl", "de", "fr", "es", "pt-br", "it", "ja", "ko"]);
+  it("supports the ten approved language routes", () => {
+    expect(SUPPORTED_LOCALES).toEqual(["en", "nl", "de", "fr", "es", "pt-br", "it", "ja", "ko", "ar"]);
     expect(localePath("en")).toBe("/");
     expect(localePath("pt-br")).toBe("/pt-br");
     expect(hasLocale("ko")).toBe(true);
     expect(hasLocale("unknown")).toBe(false);
     expect(htmlLang("pt-br")).toBe("pt-BR");
+    expect(htmlLang("ar")).toBe("ar");
+    expect(textDirection("ar")).toBe("rtl");
+    expect(textDirection("en")).toBe("ltr");
   });
 
   it("provides complete localized tool copy", () => {
@@ -30,6 +34,8 @@ describe("internationalization", () => {
 
     expect(getCopy("de").composer.title).toBe("Was sollen wir zeichnen?");
     expect(getCopy("ja").composer.create).toBe("イラストを作る");
+    expect(getCopy("ar").composer.title).toBe("ماذا نرسم؟");
+    expect(getCopy("ar").seo.title).toContain("مولّد رسومات بسيطة بالذكاء الاصطناعي");
   });
 
   it("builds self-canonical localized metadata with reciprocal alternatives", () => {

@@ -26,7 +26,7 @@ export function DoodlePage({ locale }: { locale: Locale }) {
   return (
     <>
       <header className="doodle-header">
-        <Link className="doodle-wordmark" href={localePath(locale)} aria-label={copy.header.homeLabel}>
+        <Link className="doodle-wordmark" href={localePath(locale)} aria-label={copy.header.homeLabel} dir="ltr">
           Doodle<span aria-hidden="true">.</span>
         </Link>
         <details className="language-switcher">

@@ -136,6 +136,12 @@ test.describe("Doodle mobile workflow", () => {
     await expect(page.locator("html")).toHaveAttribute("lang", "de");
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://doodle.samistudio.nl/de");
     await expect(page.locator('link[hreflang="nl"]')).toHaveAttribute("href", "https://doodle.samistudio.nl/nl");
+
+    await page.goto("/ar");
+    await expect(page.getByRole("heading", { name: "ماذا نرسم؟" })).toBeVisible();
+    await expect(page.locator("html")).toHaveAttribute("lang", "ar");
+    await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://doodle.samistudio.nl/ar");
   });
 });
 

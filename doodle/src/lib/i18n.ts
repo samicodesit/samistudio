@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const SITE_URL = "https://doodle.samistudio.nl";
-export const SUPPORTED_LOCALES = ["en", "nl", "de", "fr", "es", "pt-br", "it", "ja", "ko"] as const;
+export const SUPPORTED_LOCALES = ["en", "nl", "de", "fr", "es", "pt-br", "it", "ja", "ko", "ar"] as const;
 
 export type Locale = (typeof SUPPORTED_LOCALES)[number];
 
@@ -251,6 +251,18 @@ const COPY = {
     dialog: { label: "그림 이미지 뷰어", close: "이미지 닫기", imageAlt: "메모지 낙서 그림", native: "새 탭에서 열기", download: "다운로드" },
     seo: { title: "AI 낙서 생성기 – 따라 그리기 쉬운 간단한 그림 | Doodle", description: "글을 손으로 따라 그리기 쉬운 간단한 AI 그림으로 바꿔 보세요. 작은 장면을 설명하면 귀여운 메모지 그림을 만들 수 있어요.", introTitle: "작은 순간을 따라 그리기 쉬운 그림으로", introBody: "Doodle은 화려한 AI 작품보다 단순한 그림이 필요한 사람을 위한 텍스트 그림 도구예요. 작은 장면을 적으면 손으로 쉽게 따라 그릴 수 있는 분명한 낙서 그림을 만들어 줍니다.", howTitle: "이용 방법", steps: ["작고 분명한 장면 하나를 설명합니다.", "Doodle이 친근하고 단순한 선으로 정리합니다.", "그림을 열거나 내려받아 손으로 따라 그립니다."], useTitle: "메모, 카드, 작은 깜짝 선물에", useBody: "도시락 쪽지, 카드, 다이어리, 수업 아이디어처럼 손그림 한 장을 더하고 싶은 순간에 어울리는 간단한 그림을 만들 수 있어요." },
   },
+  ar: {
+    localeLabel: "العربية",
+    header: { homeLabel: "الصفحة الرئيسية لـ Doodle", languageLabel: "اللغة" },
+    composer: { title: "ماذا نرسم؟", hint: "اكتب فكرة بسيطة وواضحة.", label: "صِف ما تريد رسمه", placeholder: "اكتب فكرتك هنا...", create: "أنشئ رسمة", drawing: "جارٍ الرسم..." },
+    status: { generatingEyebrow: "لحظة صغيرة قيد الرسم", generatingTitle: "نرسم فكرتك الآن.", waitHint: "تحتاج الخطوط البسيطة إلى قليل من الوقت. يمكنك الانتظار هنا.", readyEyebrow: "رسمة جديدة", readyTitle: "رسمتك جاهزة." },
+    errors: { refused: "تعذّر رسم هذا المشهد. جرّب وصفه بطريقة مختلفة.", timeout: "استغرق الرسم وقتًا أطول من اللازم. حاول مرة أخرى.", general: "تعذّر على Doodle إكمال الرسمة. حاول مرة أخرى.", unavailable: "إنشاء الرسومات غير متاح مؤقتًا. حاول لاحقًا." },
+    suggestions: { title: "أو جرّب فكرة", items: ["شخص يهدي آخر وشاحًا دافئًا", "شخصان يرقصان في المطبخ", "كلب يرتدي قبعة احتفالية"] },
+    stage: { loadingPrimary: "نرسم فكرتك...", loadingMessages: ["نحضّر ورقة ملاحظات جديدة…", "نرسم الأشكال الأساسية…", "نبقي الخطوط بسيطة…", "نضيف اللمسات الصغيرة الأخيرة…", "ما زلنا نرسم — يحتاج هذا المشهد إلى لحظة أخرى."], loadingSr: "قد يستغرق ذلك ما يصل إلى دقيقتين.", generatedAlt: "رسمة مولّدة على ورقة ملاحظات لاصقة", viewLarger: "عرض بحجم أكبر", referenceAria: "عرض الرسمة النموذجية بحجم أكبر", referenceAlt: "رسمة بسيطة لشخصية معلّقة رأسًا على عقب تقبّل قطة على ورقة ملاحظات صفراء" },
+    actions: { download: "تنزيل", tryAgain: "جرّب مرة أخرى", newScene: "مشهد جديد" },
+    dialog: { label: "عارض الرسمة", close: "إغلاق الصورة", imageAlt: "رسمة على ورقة ملاحظات لاصقة", native: "فتح في علامة تبويب جديدة", download: "تنزيل" },
+    seo: { title: "مولّد رسومات بسيطة بالذكاء الاصطناعي | Doodle", description: "اكتب ما تريد رسمه، وسيحوّل Doodle وصفك إلى رسمة بسيطة بالذكاء الاصطناعي يمكنك تقليدها باليد. أداة سهلة وسريعة لأفكار الرسم البسيطة.", introTitle: "حوّل فكرتك إلى رسمة بسيطة", introBody: "اكتب وصفًا قصيرًا، وسيحوّله Doodle إلى رسمة واضحة يمكنك تقليدها باليد. لا صور معقّدة ولا تفاصيل زائدة—مجرد خطوط بسيطة ولطيفة.", howTitle: "طريقة الاستخدام", steps: ["اكتب وصفًا قصيرًا لمشهد واحد.", "يحوّل Doodle وصفك إلى خطوط بسيطة وواضحة.", "افتح الرسمة أو نزّلها، ثم جرّب رسمها بنفسك."], useTitle: "للبطاقات والدفاتر وكل مناسبة", useBody: "أنشئ رسومات بسيطة للبطاقات والدفاتر والأنشطة المدرسية، أو شاركها مع من تحب كلفتة لطيفة." },
+  },
 } satisfies Record<Locale, DoodleCopy>;
 
 const HREFLANG_CODES: Record<Locale, string> = {
@@ -263,6 +275,7 @@ const HREFLANG_CODES: Record<Locale, string> = {
   it: "it",
   ja: "ja",
   ko: "ko",
+  ar: "ar",
 };
 
 const OPEN_GRAPH_LOCALES: Record<Locale, string> = {
@@ -275,6 +288,7 @@ const OPEN_GRAPH_LOCALES: Record<Locale, string> = {
   it: "it_IT",
   ja: "ja_JP",
   ko: "ko_KR",
+  ar: "ar_SA",
 };
 
 export function hasLocale(value: string): value is Locale {
@@ -291,6 +305,10 @@ export function localePath(locale: Locale): string {
 
 export function htmlLang(locale: Locale): string {
   return HREFLANG_CODES[locale];
+}
+
+export function textDirection(locale: Locale): "ltr" | "rtl" {
+  return locale === "ar" ? "rtl" : "ltr";
 }
 
 export function getLanguageAlternates(): Record<string, string> {

@@ -33,6 +33,11 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+html[dir="rtl"] body {
+  --font-display: var(--font-arabic);
+  --font-body: var(--font-arabic);
+}
+
 button,
 textarea,
 input {
@@ -103,7 +108,8 @@ dialog:focus-visible {
 
 .language-switcher summary {
   min-width: 104px;
-  padding: 9px 30px 9px 12px;
+  padding: 9px 12px;
+  padding-inline-end: 30px;
   border: 1px solid var(--line);
   border-radius: 999px;
   cursor: pointer;
@@ -118,7 +124,7 @@ dialog:focus-visible {
 .language-switcher summary::after {
   position: absolute;
   top: 50%;
-  right: 13px;
+  inset-inline-end: 13px;
   content: "↓";
   transform: translateY(-52%);
 }
@@ -136,7 +142,7 @@ dialog:focus-visible {
 .language-switcher nav {
   position: absolute;
   top: calc(100% + 8px);
-  right: 0;
+  inset-inline-end: 0;
   display: grid;
   width: 190px;
   padding: 7px;
@@ -232,13 +238,13 @@ dialog:focus-visible {
   appearance: none;
   padding: 0;
   color: inherit;
-  text-align: left;
+  text-align: start;
 }
 
 .stage-inspect-label {
   position: absolute;
   z-index: 1;
-  right: 14px;
+  inset-inline-end: 14px;
   bottom: 14px;
   padding: 9px 12px;
   border: 1px solid rgba(252, 252, 248, 0.32);
@@ -494,8 +500,8 @@ dialog:focus-visible {
 .scene-summary {
   max-width: 500px;
   margin: 24px 0 0;
-  padding-left: 18px;
-  border-left: 2px solid var(--sticky);
+  padding-inline-start: 18px;
+  border-inline-start: 2px solid var(--sticky);
   color: var(--muted);
   font-family: var(--font-display);
   font-size: 21px;
@@ -547,7 +553,7 @@ dialog:focus-visible {
   color: var(--graphite);
   font-size: 14px;
   line-height: 1.35;
-  text-align: left;
+  text-align: start;
   transition: color 140ms ease, padding 180ms ease;
 }
 
@@ -556,7 +562,7 @@ dialog:focus-visible {
 }
 
 .suggestions-list button:hover {
-  padding-left: 5px;
+  padding-inline-start: 5px;
   color: var(--moss);
 }
 
@@ -849,7 +855,7 @@ dialog:focus-visible {
 
 .seo-content ol {
   margin: 0;
-  padding-left: 22px;
+  padding-inline-start: 22px;
 }
 
 .seo-content li + li {
@@ -950,7 +956,7 @@ dialog:focus-visible {
   }
 
   .suggestions-list button:hover {
-    padding-left: 5px;
+    padding-inline-start: 5px;
   }
 
   .suggestion-plus {
@@ -974,7 +980,7 @@ dialog:focus-visible {
   }
 
   .doodle-stage-reference .stage-inspect-label {
-    right: 8px;
+    inset-inline-end: 8px;
     bottom: 8px;
     padding: 5px 8px;
     font-size: 10px;

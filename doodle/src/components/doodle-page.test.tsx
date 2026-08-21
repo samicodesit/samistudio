@@ -23,4 +23,13 @@ describe("DoodlePage", () => {
       offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
     });
   });
+
+  it("renders the Arabic tool in natural Modern Standard Arabic", () => {
+    render(<DoodlePage locale="ar" />);
+
+    expect(screen.getByRole("heading", { level: 1, name: "ماذا نرسم؟" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "أنشئ رسمة" })).toBeDisabled();
+    expect(screen.getByRole("link", { name: "English" })).toHaveAttribute("hrefLang", "en");
+    expect(screen.getByRole("link", { name: "الصفحة الرئيسية لـ Doodle" })).toHaveAttribute("dir", "ltr");
+  });
 });
