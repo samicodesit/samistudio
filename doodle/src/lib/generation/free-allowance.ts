@@ -3,24 +3,30 @@ import type { NextRequest, NextResponse } from "next/server";
 
 const COOKIE_NAME = "doodle_trial";
 const TTL_SECONDS = 31_536_000;
+const FINALIZED_TTL_SECONDS = 300;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SIGNATURE_PATTERN = /^[A-Za-z0-9_-]+$/;
 
 const RESERVE_SCRIPT = `
 local used = tonumber(redis.call('GET', KEYS[1]) or '0')
 if used >= 2 then return {0, 0} end
-if not redis.call('SET', KEYS[2], '1', 'NX', 'EX', ARGV[1]) then return {0, 2 - used} end
+if not redis.call('SET', KEYS[2], 'reserved', 'NX', 'EX', ARGV[1]) then return {0, 2 - used} end
 used = redis.call('INCR', KEYS[1])
 redis.call('EXPIRE', KEYS[1], ARGV[1])
 return {1, 2 - used}
 `;
 
 const FINALIZE_SCRIPT = `
-return redis.call('DEL', KEYS[1])
+local state = redis.call('GET', KEYS[1])
+if state ~= 'reserved' then return 0 end
+redis.call('SET', KEYS[1], 'finalized', 'XX', 'EX', ARGV[1])
+return 1
 `;
 
 const REFUND_SCRIPT = `
-if redis.call('DEL', KEYS[2]) == 0 then return 0 end
+local state = redis.call('GET', KEYS[2])
+if state ~= 'reserved' and state ~= 'finalized' then return 0 end
+redis.call('DEL', KEYS[2])
 local used = math.max(0, tonumber(redis.call('GET', KEYS[1]) or '0') - 1)
 redis.call('SET', KEYS[1], used, 'EX', ARGV[1])
 return 1
@@ -112,6 +118,7 @@ function commandResult(value: unknown) {
 }
 
 export function getTrialIdentity(request: NextRequest): TrialIdentity {
+  sessionSecret();
   return { id: verifiedId(request.cookies.get(COOKIE_NAME)?.value) ?? randomUUID() };
 }
 
@@ -146,7 +153,13 @@ export async function reserveFreeDoodle(identity: TrialIdentity, reservationId: 
 }
 
 export async function finalizeFreeDoodle(identity: TrialIdentity, reservationId: string) {
-  return commandResult(await redis(["EVAL", FINALIZE_SCRIPT, "1", reservationKey(identity, reservationId)]));
+  return commandResult(await redis([
+    "EVAL",
+    FINALIZE_SCRIPT,
+    "1",
+    reservationKey(identity, reservationId),
+    FINALIZED_TTL_SECONDS,
+  ]));
 }
 
 export async function refundFreeDoodle(identity: TrialIdentity, reservationId: string) {

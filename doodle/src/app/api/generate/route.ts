@@ -77,26 +77,44 @@ export async function POST(request: NextRequest) {
       const paid = await reservePaidCredit(user.id, reservationId);
       if (paid.reserved) reservation = { kind: "paid", userId: user.id, remaining: paid.remaining };
     } catch {
+      try {
+        await refundPaidCredit(user.id, reservationId);
+      } catch {}
       return unavailable();
     }
   }
 
   if (!reservation) {
+    let identity: TrialIdentity;
     try {
-      const identity = getTrialIdentity(request);
-      const free = await reserveFreeDoodle(identity, reservationId);
-      if (!free.reserved) {
+      identity = getTrialIdentity(request);
+    } catch {
+      return unavailable();
+    }
+
+    let free;
+    try {
+      free = await reserveFreeDoodle(identity, reservationId);
+    } catch {
+      try {
+        await refundFreeDoodle(identity, reservationId);
+      } catch {}
+      return unavailable();
+    }
+
+    if (!free.reserved) {
+      try {
         const response = NextResponse.json(
           { error: "payment_required" },
           { status: 402, headers: { "X-Doodle-Free-Remaining": String(free.remaining) } },
         );
         setTrialCookie(response, identity);
         return response;
+      } catch {
+        return unavailable();
       }
-      reservation = { kind: "free", identity, remaining: free.remaining };
-    } catch {
-      return unavailable();
     }
+    reservation = { kind: "free", identity, remaining: free.remaining };
   }
 
   let refunded = false;
@@ -129,6 +147,7 @@ export async function POST(request: NextRequest) {
 
     infrastructureFailure = false;
     const result = await generateDoodle(scene);
+    infrastructureFailure = true;
     const response = new NextResponse(Buffer.from(result.bytes), {
       status: 200,
       headers: {
