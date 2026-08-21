@@ -141,7 +141,7 @@ export async function reserveFreeDoodle(identity: TrialIdentity, reservationId: 
   ]);
   if (!Array.isArray(result) || result.length !== 2) throw redisError();
   const [reserved, remaining] = result.map(integer);
-  if ((reserved !== 0 && reserved !== 1) || remaining < 0 || remaining > 2) throw redisError();
+  if ((reserved !== 0 && reserved !== 1) || remaining < 0 || remaining > 2 - reserved) throw redisError();
   return { reserved: reserved === 1, remaining };
 }
 

@@ -57,6 +57,13 @@ describe("free allowance", () => {
     await expect(reserveFreeDoodle(identity, "three")).resolves.toMatchObject({ reserved: false, remaining: 0 });
   });
 
+  it("fails closed for an impossible successful reservation response", async () => {
+    redisResult.mockResolvedValueOnce([1, 2]);
+    const identity = getTrialIdentity(new NextRequest("https://doodle.test"));
+
+    await expect(reserveFreeDoodle(identity, "one")).rejects.toThrow("Redis");
+  });
+
   it("refunds a failed reservation once", async () => {
     redisResult.mockResolvedValueOnce(1).mockResolvedValueOnce(0);
     const identity = getTrialIdentity(new NextRequest("https://doodle.test"));
