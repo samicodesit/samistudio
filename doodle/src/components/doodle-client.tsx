@@ -52,6 +52,7 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
   const pendingCheckout = useRef<string | null>(null);
   const identityRevision = useRef(0);
   const usageRevision = useRef(0);
+  const uncertaintyRevision = useRef(0);
   const createButtonRef = useRef<HTMLButtonElement>(null);
 
   const revokeCurrentUrl = useCallback(() => {
@@ -215,12 +216,17 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
       if (response.headers.get("X-Doodle-Balance-Uncertain") === "1") {
         const identity = identityRevision.current;
         const usage = usageRevision.current;
+        const uncertainty = ++uncertaintyRevision.current;
         void (async () => {
           try {
             const accountResponse = await fetch("/api/account", { cache: "no-store" });
             if (!accountResponse.ok) return;
             const nextAccount = (await accountResponse.json()) as AccountSummary;
-            if (identityRevision.current === identity && usageRevision.current === usage) {
+            if (
+              uncertaintyRevision.current === uncertainty
+              && identityRevision.current === identity
+              && usageRevision.current === usage
+            ) {
               replaceAccount(nextAccount);
             }
           } catch {}

@@ -243,6 +243,51 @@ describe("DoodleClient", () => {
     expect(screen.getByText("First 2 doodles free")).toBeVisible();
   });
 
+  it("only applies the latest overlapping uncertainty reconciliation", async () => {
+    const firstRefresh = deferred<Response>();
+    const secondRefresh = deferred<Response>();
+    let accountRequests = 0;
+    vi.mocked(URL.createObjectURL)
+      .mockReturnValueOnce("blob:first")
+      .mockReturnValueOnce("blob:second");
+    vi.mocked(fetch).mockImplementation(async (input) => {
+      if (input === "/api/account") {
+        accountRequests += 1;
+        if (accountRequests === 1) return json(anonymousAccount);
+        return accountRequests === 2 ? firstRefresh.promise : secondRefresh.promise;
+      }
+      if (input === "/api/generate") {
+        return new Response(new Blob(["png"]), {
+          status: 200,
+          headers: { "X-Doodle-Balance-Uncertain": "1" },
+        });
+      }
+      throw new Error(`Unexpected fetch: ${String(input)}`);
+    });
+    renderClient();
+    await screen.findByText("First 2 doodles free");
+
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
+    fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+    await waitFor(() => expect(accountRequests).toBe(2));
+    fireEvent.click(await screen.findByRole("button", { name: "Try again" }));
+    await waitFor(() => expect(accountRequests).toBe(3));
+    expect(screen.getByAltText("Generated sticky-note doodle")).toHaveAttribute("src", "blob:second");
+
+    await act(async () => firstRefresh.resolve(json({ ...anonymousAccount, freeRemaining: 1 })));
+    expect(screen.getByText("First 2 doodles free")).toBeVisible();
+
+    await act(async () => secondRefresh.resolve(json({
+      authenticated: true,
+      email: "buyer@example.com",
+      balance: 8,
+      freeRemaining: null,
+    })));
+    expect(screen.getByText("8 doodles left", { selector: ".workspace-usage > span" })).toBeVisible();
+    expect(screen.getByText("Account")).toBeVisible();
+    expect(screen.getByAltText("Generated sticky-note doodle")).toHaveAttribute("src", "blob:second");
+  });
+
   it("adopts delayed authenticated identity without replacing a newer paid balance header", async () => {
     const initialAccount = deferred<Response>();
     vi.mocked(fetch).mockImplementation(async (input) => {
