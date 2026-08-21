@@ -193,6 +193,38 @@ describe("DoodleClient", () => {
     expect(await screen.findByText("1 free doodle left")).toBeVisible();
   });
 
+  it("adopts delayed authenticated identity without replacing a newer paid balance header", async () => {
+    const initialAccount = deferred<Response>();
+    vi.mocked(fetch).mockImplementation(async (input) => {
+      if (input === "/api/account") return initialAccount.promise;
+      if (input === "/api/generate") {
+        return new Response(new Blob(["png"]), {
+          status: 200,
+          headers: { "X-Doodle-Paid-Remaining": "7" },
+        });
+      }
+      throw new Error(`Unexpected fetch: ${String(input)}`);
+    });
+
+    renderClient();
+    await waitFor(() => expect(fetch).toHaveBeenCalledWith("/api/account", { cache: "no-store" }));
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "A paid doodle" } });
+    fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+    await screen.findByAltText("Generated sticky-note doodle");
+
+    await act(async () => initialAccount.resolve(json({
+      authenticated: true,
+      email: "buyer@example.com",
+      balance: 2,
+      freeRemaining: null,
+    })));
+
+    expect(screen.getByText("7 doodles left", { selector: ".workspace-usage > span" })).toBeVisible();
+    fireEvent.click(screen.getByText("Account"));
+    expect(screen.getByText("buyer@example.com")).toBeVisible();
+    expect(screen.getAllByText("7 doodles left")).toHaveLength(2);
+  });
+
   it("shows a zero paid balance instead of anonymous trial copy when signed in", async () => {
     vi.mocked(fetch).mockResolvedValueOnce(
       json({ authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: null }),

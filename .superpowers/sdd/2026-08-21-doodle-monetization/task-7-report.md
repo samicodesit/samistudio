@@ -163,6 +163,25 @@ npm run lint
 
 Result: **PASS** — 2 files, 26 tests; TypeScript and ESLint completed with no errors.
 
+### Fix round 3: independent identity and usage freshness
+
+The single account revision from round 2 was too coarse: a generation response could make the initial account response stale for balance purposes without making its authenticated identity and email stale. DoodleClient now tracks identity replacement and usage freshness independently.
+
+- Generation headers advance only usage freshness.
+- OTP, sign-out, and deletion account replacements advance both identity and usage freshness.
+- Checkout confirmation advances both because it authoritatively changes authentication state and paid balance.
+- A delayed initial account response merges each half only when that half is still current.
+
+Focused verification:
+
+```bash
+npm test -- src/components/doodle-client.test.tsx
+npm run typecheck
+npm run lint
+```
+
+Result: **PASS** — 1 file, 18 tests; TypeScript and ESLint completed with no errors. The new regression preserves a paid remaining balance of 7 from the generation header while adopting the delayed authenticated email; the existing OTP regression confirms an explicit newer account replacement still rejects stale initial identity.
+
 ## Files changed
 
 - `doodle/src/lib/i18n.ts`

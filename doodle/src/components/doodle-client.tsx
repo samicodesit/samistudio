@@ -50,7 +50,8 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
   const currentObjectUrl = useRef<string | null>(null);
   const handledCheckout = useRef<string | null>(null);
   const pendingCheckout = useRef<string | null>(null);
-  const accountRevision = useRef(0);
+  const identityRevision = useRef(0);
+  const usageRevision = useRef(0);
   const createButtonRef = useRef<HTMLButtonElement>(null);
 
   const revokeCurrentUrl = useCallback(() => {
@@ -68,7 +69,8 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
   const restoreCreateFocus = useCallback(() => createButtonRef.current?.focus(), []);
 
   const replaceAccount = useCallback((nextAccount: AccountSummary) => {
-    accountRevision.current += 1;
+    identityRevision.current += 1;
+    usageRevision.current += 1;
     setAccount(nextAccount);
   }, []);
 
@@ -95,7 +97,8 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
       if (typeof body.balance !== "number" || !Number.isInteger(body.balance) || body.balance < 0) {
         throw new Error("invalid balance");
       }
-      accountRevision.current += 1;
+      identityRevision.current += 1;
+      usageRevision.current += 1;
       setAccount((current) => ({ ...current, authenticated: true, balance: body.balance as number }));
       handledCheckout.current = sessionId;
       setCheckoutRetry(null);
@@ -129,12 +132,18 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
     } catch {}
 
     void (async () => {
-      const revision = accountRevision.current;
+      const identity = identityRevision.current;
+      const usage = usageRevision.current;
       try {
         const response = await fetch("/api/account", { cache: "no-store" });
         if (response.ok && active) {
           const nextAccount = (await response.json()) as AccountSummary;
-          if (accountRevision.current === revision) setAccount(nextAccount);
+          setAccount((current) => ({
+            authenticated: identityRevision.current === identity ? nextAccount.authenticated : current.authenticated,
+            email: identityRevision.current === identity ? nextAccount.email : current.email,
+            balance: usageRevision.current === usage ? nextAccount.balance : current.balance,
+            freeRemaining: usageRevision.current === usage ? nextAccount.freeRemaining : current.freeRemaining,
+          }));
         }
       } catch {}
       if (!active) return;
@@ -165,10 +174,10 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
     const paid = response.headers.get("X-Doodle-Paid-Remaining");
     const free = response.headers.get("X-Doodle-Free-Remaining");
     if (paid !== null && Number.isInteger(Number(paid)) && Number(paid) >= 0) {
-      accountRevision.current += 1;
+      usageRevision.current += 1;
       setAccount((current) => ({ ...current, balance: Number(paid) }));
     } else if (free !== null && Number.isInteger(Number(free)) && Number(free) >= 0) {
-      accountRevision.current += 1;
+      usageRevision.current += 1;
       setAccount((current) => ({ ...current, freeRemaining: Number(free) }));
     }
   }
