@@ -5,11 +5,11 @@ import { normalizeScene, SceneValidationError } from "@/lib/scenes/scene";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { checkGenerationLimit } from "@/lib/generation/generation-limit";
 import { getCurrentUser } from "@/lib/supabase/session";
-import { refundPaidCredit, reservePaidCredit } from "@/lib/billing/credits";
+import { finalizePaidCredit, releasePaidCredit, reservePaidCredit } from "@/lib/billing/credits";
 import {
   finalizeFreeDoodle,
   getTrialIdentity,
-  refundFreeDoodle,
+  releaseFreeDoodle,
   reserveFreeDoodle,
   setTrialCookie,
   type TrialIdentity,
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       if (paid.reserved) reservation = { kind: "paid", userId: user.id, remaining: paid.remaining };
     } catch {
       try {
-        await refundPaidCredit(user.id, reservationId);
+        await releasePaidCredit(user.id, reservationId);
       } catch {}
       return unavailable();
     }
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
       free = await reserveFreeDoodle(identity, reservationId);
     } catch {
       try {
-        await refundFreeDoodle(identity, reservationId);
+        await releaseFreeDoodle(identity, reservationId);
       } catch {}
       return unavailable();
     }
@@ -117,15 +117,15 @@ export async function POST(request: NextRequest) {
     reservation = { kind: "free", identity, remaining: free.remaining };
   }
 
-  let refunded = false;
-  const refund = async () => {
-    if (refunded) return;
-    refunded = true;
+  let released = false;
+  const release = async () => {
+    if (released) return;
+    released = true;
     try {
-      if (reservation.kind === "paid") await refundPaidCredit(reservation.userId, reservationId);
-      else await refundFreeDoodle(reservation.identity, reservationId);
+      if (reservation.kind === "paid") await releasePaidCredit(reservation.userId, reservationId);
+      else await releaseFreeDoodle(reservation.identity, reservationId);
     } catch {
-      // The reservation APIs are idempotent; one best-effort attempt is the safe boundary here.
+      // Holds expire after ten minutes, so release is only a latency optimization.
     }
   };
 
@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
           { status: limit === "rate_limited" ? 429 : 503 },
         );
         setTrialCookie(response, reservation.identity);
-        await refund();
+        await release();
         return response;
       }
     }
@@ -155,22 +155,25 @@ export async function POST(request: NextRequest) {
         "Cache-Control": "no-store",
       },
     });
-    response.headers.set(
-      reservation.kind === "paid" ? "X-Doodle-Paid-Remaining" : "X-Doodle-Free-Remaining",
-      String(reservation.remaining),
-    );
-
     if (reservation.kind === "free") {
       infrastructureFailure = true;
       setTrialCookie(response, reservation.identity);
-      if ((await finalizeFreeDoodle(reservation.identity, reservationId)) !== 1) {
+      const finalized = await finalizeFreeDoodle(reservation.identity, reservationId);
+      if (!finalized.finalized) {
         throw new Error("Free reservation finalization failed");
       }
+      response.headers.set("X-Doodle-Free-Remaining", String(finalized.remaining));
+    } else {
+      const finalized = await finalizePaidCredit(reservation.userId, reservationId);
+      if (!finalized.finalized) {
+        throw new Error("Paid reservation finalization failed");
+      }
+      response.headers.set("X-Doodle-Paid-Remaining", String(finalized.remaining));
     }
 
     return response;
   } catch (error) {
-    await refund();
+    await release();
     if (infrastructureFailure) return unavailable();
     if (error instanceof GenerationError) {
       if (error.kind === "refused") {

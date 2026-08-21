@@ -4,7 +4,7 @@ import {
   finalizeFreeDoodle,
   getFreeRemaining,
   getTrialIdentity,
-  refundFreeDoodle,
+  releaseFreeDoodle,
   reserveFreeDoodle,
   setTrialCookie,
 } from "./free-allowance";
@@ -55,7 +55,7 @@ describe("free allowance", () => {
     expect(() => getTrialIdentity(new NextRequest("https://doodle.test"))).toThrow("SESSION_SECRET is required");
   });
 
-  it("allows exactly two reservations with a recognizable reserved marker", async () => {
+  it("reserves one of two expiring hold slots without incrementing permanent usage", async () => {
     redisResult.mockResolvedValueOnce([1, 1]).mockResolvedValueOnce([1, 0]).mockResolvedValueOnce([0, 0]);
     const identity = getTrialIdentity(new NextRequest("https://doodle.test"));
 
@@ -64,12 +64,16 @@ describe("free allowance", () => {
     await expect(reserveFreeDoodle(identity, "three")).resolves.toMatchObject({ reserved: false, remaining: 0 });
 
     const command = JSON.parse(String(vi.mocked(globalThis.fetch).mock.calls[0][1]?.body));
-    expect(command.slice(0, 3)).toEqual(["EVAL", expect.stringContaining("'reserved'"), "2"]);
-    expect(command.slice(3)).toEqual([
+    expect(command.slice(0, 3)).toEqual(["EVAL", expect.stringContaining("ZADD"), "3"]);
+    expect(command[1]).toContain("ZREMRANGEBYSCORE");
+    expect(command[1]).toContain("ZCARD");
+    expect(command[1]).not.toContain("redis.call('INCR', KEYS[1])");
+    expect(command.slice(3, 6)).toEqual([
       `doodle:trial:used:${identity.id}`,
-      `doodle:trial:reservation:${identity.id}:one`,
-      31_536_000,
+      `doodle:trial:holds:${identity.id}`,
+      `doodle:trial:finalized:${identity.id}:one`,
     ]);
+    expect(command.at(-1)).toBe(600);
   });
 
   it("fails closed for an impossible successful reservation response", async () => {
@@ -79,34 +83,37 @@ describe("free allowance", () => {
     await expect(reserveFreeDoodle(identity, "one")).rejects.toThrow("Redis");
   });
 
-  it("finalizes once into a five-minute compensatable tombstone", async () => {
-    redisResult.mockResolvedValueOnce(1).mockResolvedValueOnce(0);
+  it("finalizes one live hold into permanent usage and returns permanent remaining", async () => {
+    redisResult.mockResolvedValueOnce([1, 1]).mockResolvedValueOnce([1, 1]);
     const identity = getTrialIdentity(new NextRequest("https://doodle.test"));
 
-    await expect(finalizeFreeDoodle(identity, "one")).resolves.toBe(1);
-    await expect(finalizeFreeDoodle(identity, "one")).resolves.toBe(0);
+    await expect(finalizeFreeDoodle(identity, "one")).resolves.toEqual({ finalized: true, remaining: 1 });
+    await expect(finalizeFreeDoodle(identity, "one")).resolves.toEqual({ finalized: true, remaining: 1 });
 
     const command = JSON.parse(String(vi.mocked(globalThis.fetch).mock.calls[0][1]?.body));
-    expect(command.slice(0, 3)).toEqual(["EVAL", expect.stringContaining("'finalized'"), "1"]);
-    expect(command[1]).toContain("~= 'reserved'");
-    expect(command.slice(3)).toEqual([`doodle:trial:reservation:${identity.id}:one`, 300]);
+    expect(command.slice(0, 3)).toEqual(["EVAL", expect.stringContaining("ZREM"), "3"]);
+    expect(command[1]).toContain("ZREMRANGEBYSCORE");
+    expect(command[1]).toContain("INCR");
+    expect(command.slice(3, 6)).toEqual([
+      `doodle:trial:used:${identity.id}`,
+      `doodle:trial:holds:${identity.id}`,
+      `doodle:trial:finalized:${identity.id}:one`,
+    ]);
+    expect(command.at(-1)).toBe(31_536_000);
   });
 
-  it("refunds either reserved or finalized state once", async () => {
+  it("releases only an active hold so release failure can at worst block until expiry", async () => {
     redisResult.mockResolvedValueOnce(1).mockResolvedValueOnce(0);
     const identity = getTrialIdentity(new NextRequest("https://doodle.test"));
 
-    await expect(refundFreeDoodle(identity, "one")).resolves.toBe(1);
-    await expect(refundFreeDoodle(identity, "one")).resolves.toBe(0);
+    await expect(releaseFreeDoodle(identity, "one")).resolves.toBe(1);
+    await expect(releaseFreeDoodle(identity, "one")).resolves.toBe(0);
 
     const command = JSON.parse(String(vi.mocked(globalThis.fetch).mock.calls[0][1]?.body));
-    expect(command[1]).toContain("state ~= 'reserved' and state ~= 'finalized'");
-    expect(command.slice(2)).toEqual([
-      "2",
-      `doodle:trial:used:${identity.id}`,
-      `doodle:trial:reservation:${identity.id}:one`,
-      31_536_000,
-    ]);
+    expect(command[1]).toContain("ZREMRANGEBYSCORE");
+    expect(command[1]).toContain("ZREM");
+    expect(command[1]).not.toContain("SET', KEYS[1]");
+    expect(command.slice(2, 4)).toEqual(["1", `doodle:trial:holds:${identity.id}`]);
   });
 
   it("fails closed on malformed or unsuccessful Redis responses", async () => {
@@ -117,6 +124,8 @@ describe("free allowance", () => {
     redisResult.mockResolvedValueOnce({ reserved: true });
     await expect(reserveFreeDoodle(identity, "one")).rejects.toThrow("Redis");
     redisResult.mockResolvedValueOnce("no");
+    await expect(finalizeFreeDoodle(identity, "one")).rejects.toThrow("Redis");
+    redisResult.mockResolvedValueOnce([1, 3]);
     await expect(finalizeFreeDoodle(identity, "one")).rejects.toThrow("Redis");
     redisResult.mockResolvedValueOnce(" ");
     await expect(getFreeRemaining(identity)).rejects.toThrow("Redis");

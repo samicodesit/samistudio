@@ -10,11 +10,12 @@ const mocks = vi.hoisted(() => ({
   checkBotId: vi.fn(),
   checkGenerationLimit: vi.fn(),
   finalizeFreeDoodle: vi.fn(),
+  finalizePaidCredit: vi.fn(),
   generateDoodle: vi.fn(),
   getCurrentUser: vi.fn(),
   getTrialIdentity: vi.fn(),
-  refundFreeDoodle: vi.fn(),
-  refundPaidCredit: vi.fn(),
+  releaseFreeDoodle: vi.fn(),
+  releasePaidCredit: vi.fn(),
   reserveFreeDoodle: vi.fn(),
   reservePaidCredit: vi.fn(),
   setTrialCookie: vi.fn(),
@@ -26,13 +27,14 @@ vi.mock("@/lib/generation/generate-doodle", async () => {
 });
 vi.mock("@/lib/supabase/session", () => ({ getCurrentUser: mocks.getCurrentUser }));
 vi.mock("@/lib/billing/credits", () => ({
-  refundPaidCredit: mocks.refundPaidCredit,
+  finalizePaidCredit: mocks.finalizePaidCredit,
+  releasePaidCredit: mocks.releasePaidCredit,
   reservePaidCredit: mocks.reservePaidCredit,
 }));
 vi.mock("@/lib/generation/free-allowance", () => ({
   finalizeFreeDoodle: mocks.finalizeFreeDoodle,
   getTrialIdentity: mocks.getTrialIdentity,
-  refundFreeDoodle: mocks.refundFreeDoodle,
+  releaseFreeDoodle: mocks.releaseFreeDoodle,
   reserveFreeDoodle: mocks.reserveFreeDoodle,
   setTrialCookie: mocks.setTrialCookie,
 }));
@@ -67,12 +69,13 @@ describe("generate route", () => {
     Object.values(mocks).forEach((mock) => mock.mockReset());
     mocks.checkBotId.mockResolvedValue({ isBot: false });
     mocks.checkGenerationLimit.mockResolvedValue("allowed");
-    mocks.finalizeFreeDoodle.mockResolvedValue(1);
+    mocks.finalizeFreeDoodle.mockResolvedValue({ finalized: true, remaining: 1 });
+    mocks.finalizePaidCredit.mockResolvedValue({ finalized: true, remaining: 9 });
     mocks.generateDoodle.mockResolvedValue(png);
     mocks.getCurrentUser.mockResolvedValue(null);
     mocks.getTrialIdentity.mockReturnValue(trialIdentity);
-    mocks.refundFreeDoodle.mockResolvedValue(1);
-    mocks.refundPaidCredit.mockResolvedValue(10);
+    mocks.releaseFreeDoodle.mockResolvedValue(1);
+    mocks.releasePaidCredit.mockResolvedValue(1);
     mocks.reserveFreeDoodle.mockResolvedValue({ reserved: true, remaining: 1 });
     mocks.reservePaidCredit.mockResolvedValue({ reserved: false, remaining: 0 });
     mocks.setTrialCookie.mockImplementation((response: NextResponse) => {
@@ -135,9 +138,44 @@ describe("generate route", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("X-Doodle-Paid-Remaining")).toBe("9");
     expect(mocks.reservePaidCredit).toHaveBeenCalledWith("user", expect.stringMatching(/^[0-9a-f-]{36}$/));
+    expect(mocks.finalizePaidCredit).toHaveBeenCalledWith("user", mocks.reservePaidCredit.mock.calls[0][1]);
     expect(mocks.reserveFreeDoodle).not.toHaveBeenCalled();
     expect(mocks.checkGenerationLimit).not.toHaveBeenCalled();
     expect(mocks.finalizeFreeDoodle).not.toHaveBeenCalled();
+  });
+
+  it("uses finalized permanent paid balance in the success header", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
+    mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 8 });
+    mocks.finalizePaidCredit.mockResolvedValue({ finalized: true, remaining: 9 });
+
+    const response = await POST(request("Two cats hug"));
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Doodle-Paid-Remaining")).toBe("9");
+  });
+
+  it("uses finalized permanent free balance in the success header", async () => {
+    mocks.reserveFreeDoodle.mockResolvedValue({ reserved: true, remaining: 0 });
+    mocks.finalizeFreeDoodle.mockResolvedValue({ finalized: true, remaining: 1 });
+
+    const response = await POST(request("Two cats hug"));
+
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Doodle-Free-Remaining")).toBe("1");
+  });
+
+  it("returns 503 without success when paid finalization is unavailable", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
+    mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
+    mocks.finalizePaidCredit.mockRejectedValue(new Error("offline"));
+    mocks.releasePaidCredit.mockRejectedValue(new Error("offline"));
+
+    const response = await POST(request("Two cats hug"));
+
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ error: "limit_unavailable" });
+    expect(mocks.releasePaidCredit).toHaveBeenCalledOnce();
   });
 
   it.each([
@@ -155,7 +193,7 @@ describe("generate route", () => {
     expect(mocks.reserveFreeDoodle).toHaveBeenCalledWith(trialIdentity, expect.stringMatching(/^[0-9a-f-]{36}$/));
     expect(mocks.checkGenerationLimit).toHaveBeenCalledOnce();
     expect(mocks.finalizeFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
-    expect(mocks.refundFreeDoodle).not.toHaveBeenCalled();
+    expect(mocks.releaseFreeDoodle).not.toHaveBeenCalled();
     expect(mocks.reservePaidCredit).toHaveBeenCalledTimes(user ? 1 : 0);
   });
 
@@ -170,13 +208,13 @@ describe("generate route", () => {
     expect(response.headers.get("set-cookie")).toContain("doodle_trial=signed");
     expect(mocks.checkGenerationLimit).not.toHaveBeenCalled();
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
-    expect(mocks.refundFreeDoodle).not.toHaveBeenCalled();
+    expect(mocks.releaseFreeDoodle).not.toHaveBeenCalled();
   });
 
   it.each([
     ["rate_limited", 429, "rate_limited"],
     ["unavailable", 503, "limit_unavailable"],
-  ])("refunds a free reservation once when the daily limit is %s", async (limit, status, code) => {
+  ])("releases a free hold once when the daily limit is %s", async (limit, status, code) => {
     mocks.checkGenerationLimit.mockResolvedValue(limit);
 
     const response = await POST(request("Two cats hug"));
@@ -184,12 +222,12 @@ describe("generate route", () => {
 
     expect(response.status).toBe(status);
     expect(await response.json()).toEqual({ error: code });
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledOnce();
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
   });
 
-  it("refunds a free reservation when the daily limit throws", async () => {
+  it("releases a free hold when the daily limit throws", async () => {
     mocks.checkGenerationLimit.mockRejectedValue(new Error("offline"));
 
     const response = await POST(request("Two cats hug"));
@@ -197,7 +235,7 @@ describe("generate route", () => {
 
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ error: "limit_unavailable" });
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
   });
 
@@ -206,7 +244,7 @@ describe("generate route", () => {
     ["timeout", 504],
     ["upstream", 502],
     ["malformed", 502],
-  ] as const)("refunds paid %s failures once", async (kind, status) => {
+  ] as const)("releases paid %s failures once", async (kind, status) => {
     mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
     mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
     mocks.generateDoodle.mockRejectedValue(new GenerationError(kind, "failed"));
@@ -215,9 +253,9 @@ describe("generate route", () => {
     const reservationId = mocks.reservePaidCredit.mock.calls[0][1];
 
     expect(response.status).toBe(status);
-    expect(mocks.refundPaidCredit).toHaveBeenCalledOnce();
-    expect(mocks.refundPaidCredit).toHaveBeenCalledWith("user", reservationId);
-    expect(mocks.refundFreeDoodle).not.toHaveBeenCalled();
+    expect(mocks.releasePaidCredit).toHaveBeenCalledOnce();
+    expect(mocks.releasePaidCredit).toHaveBeenCalledWith("user", reservationId);
+    expect(mocks.releaseFreeDoodle).not.toHaveBeenCalled();
   });
 
   it.each([
@@ -225,19 +263,19 @@ describe("generate route", () => {
     ["timeout", 504],
     ["upstream", 502],
     ["malformed", 502],
-  ] as const)("refunds free %s failures once", async (kind, status) => {
+  ] as const)("releases free %s failures once", async (kind, status) => {
     mocks.generateDoodle.mockRejectedValue(new GenerationError(kind, "failed"));
 
     const response = await POST(request("Two cats hug"));
     const reservationId = mocks.reserveFreeDoodle.mock.calls[0][1];
 
     expect(response.status).toBe(status);
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledOnce();
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
     expect(mocks.finalizeFreeDoodle).not.toHaveBeenCalled();
   });
 
-  it.each([new Error("offline"), 0])("refunds once and returns 503 when free finalization fails with %s", async (failure) => {
+  it.each([new Error("offline"), { finalized: false, remaining: 1 }])("releases once and returns 503 when free finalization fails with %s", async (failure) => {
     if (failure instanceof Error) mocks.finalizeFreeDoodle.mockRejectedValue(failure);
     else mocks.finalizeFreeDoodle.mockResolvedValue(failure);
 
@@ -246,37 +284,14 @@ describe("generate route", () => {
 
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ error: "limit_unavailable" });
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledOnce();
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
-  });
-
-  it("reverses a finalized free tombstone when finalization commits but its response is lost", async () => {
-    let state: "reserved" | "finalized" | undefined = "reserved";
-    let used = 1;
-    mocks.finalizeFreeDoodle.mockImplementation(async () => {
-      state = "finalized";
-      throw new Error("response lost");
-    });
-    mocks.refundFreeDoodle.mockImplementation(async () => {
-      if (state !== "reserved" && state !== "finalized") return 0;
-      state = undefined;
-      used -= 1;
-      return 1;
-    });
-
-    const response = await POST(request("Two cats hug"));
-
-    expect(response.status).toBe(503);
-    expect(await response.json()).toEqual({ error: "limit_unavailable" });
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledOnce();
-    expect(state).toBeUndefined();
-    expect(used).toBe(0);
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
   });
 
   it.each([
     ["paid", { id: "user", email: "buyer@example.com" }],
     ["free", null],
-  ])("refunds a %s reservation with 503 when post-generation response construction fails", async (kind, user) => {
+  ])("releases a %s hold with 503 when post-generation response construction fails", async (kind, user) => {
     mocks.getCurrentUser.mockResolvedValue(user);
     if (user) mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
     mocks.generateDoodle.mockResolvedValue({ bytes: null, mimeType: "image/png" });
@@ -285,33 +300,33 @@ describe("generate route", () => {
 
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ error: "limit_unavailable" });
-    if (kind === "paid") expect(mocks.refundPaidCredit).toHaveBeenCalledOnce();
+    if (kind === "paid") expect(mocks.releasePaidCredit).toHaveBeenCalledOnce();
     else {
-      expect(mocks.refundFreeDoodle).toHaveBeenCalledOnce();
+      expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
       expect(mocks.finalizeFreeDoodle).not.toHaveBeenCalled();
     }
   });
 
-  it("refunds a free reservation when writing its trial cookie fails", async () => {
+  it("releases a free hold when writing its trial cookie fails", async () => {
     mocks.setTrialCookie.mockImplementation(() => { throw new Error("cookie failure"); });
 
     const response = await POST(request("Two cats hug"));
 
     expect(response.status).toBe(503);
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledOnce();
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
     expect(mocks.finalizeFreeDoodle).not.toHaveBeenCalled();
   });
 
-  it("keeps the mapped failure when the matching refund is unavailable", async () => {
+  it("keeps the mapped failure when release is unavailable", async () => {
     mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
     mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
     mocks.generateDoodle.mockRejectedValue(new GenerationError("refused", "failed"));
-    mocks.refundPaidCredit.mockRejectedValue(new Error("offline"));
+    mocks.releasePaidCredit.mockRejectedValue(new Error("offline"));
 
     const response = await POST(request("Two cats hug"));
 
     expect(response.status).toBe(422);
-    expect(mocks.refundPaidCredit).toHaveBeenCalledOnce();
+    expect(mocks.releasePaidCredit).toHaveBeenCalledOnce();
   });
 
   it("fails closed when the session lookup is unavailable", async () => {
@@ -324,7 +339,7 @@ describe("generate route", () => {
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
   });
 
-  it("refunds the same paid reservation once when its committed response is lost", async () => {
+  it("releases the same paid hold once when its reserve response is lost", async () => {
     mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
     mocks.reservePaidCredit.mockRejectedValue(new Error("offline"));
 
@@ -333,8 +348,8 @@ describe("generate route", () => {
 
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ error: "limit_unavailable" });
-    expect(mocks.refundPaidCredit).toHaveBeenCalledOnce();
-    expect(mocks.refundPaidCredit).toHaveBeenCalledWith("user", reservationId);
+    expect(mocks.releasePaidCredit).toHaveBeenCalledOnce();
+    expect(mocks.releasePaidCredit).toHaveBeenCalledWith("user", reservationId);
     expect(mocks.reserveFreeDoodle).not.toHaveBeenCalled();
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
   });
@@ -355,7 +370,7 @@ describe("generate route", () => {
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
   });
 
-  it("refunds the same free reservation once when its committed response is lost", async () => {
+  it("releases the same free hold once when its reserve response is lost", async () => {
     mocks.reserveFreeDoodle.mockRejectedValue(new Error("offline"));
 
     const response = await POST(request("Two cats hug"));
@@ -363,8 +378,8 @@ describe("generate route", () => {
 
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ error: "limit_unavailable" });
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledOnce();
-    expect(mocks.refundFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledWith(trialIdentity, reservationId);
     expect(mocks.checkGenerationLimit).not.toHaveBeenCalled();
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
   });

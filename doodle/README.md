@@ -34,6 +34,8 @@ Keep every key except the two `NEXT_PUBLIC_` values server-only. Generate `SESSI
 
 The app keeps prompts and generated images in browser memory only. The root Sami Studio site is separate from this Next.js app.
 
+Generation reservations are 10-minute expiring holds. Failed requests never change permanent free usage or paid balance; only atomic successful finalization consumes a doodle.
+
 ## Paid checks
 
 `npm run test:real` makes one low-quality Image API request and is skipped by the normal test command. `npm run eval:prompt` makes eight sequential requests and writes numbered PNGs under `tmp/prompt-eval/`. Both commands incur Doodle-project API costs and are never run by CI.

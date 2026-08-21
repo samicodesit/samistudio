@@ -3,33 +3,36 @@ import type { NextRequest, NextResponse } from "next/server";
 
 const COOKIE_NAME = "doodle_trial";
 const TTL_SECONDS = 31_536_000;
-const FINALIZED_TTL_SECONDS = 300;
+const HOLD_TTL_SECONDS = 600;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SIGNATURE_PATTERN = /^[A-Za-z0-9_-]+$/;
 
 const RESERVE_SCRIPT = `
+redis.call('ZREMRANGEBYSCORE', KEYS[2], '-inf', ARGV[1])
 local used = tonumber(redis.call('GET', KEYS[1]) or '0')
-if used >= 2 then return {0, 0} end
-if not redis.call('SET', KEYS[2], 'reserved', 'NX', 'EX', ARGV[1]) then return {0, 2 - used} end
-used = redis.call('INCR', KEYS[1])
-redis.call('EXPIRE', KEYS[1], ARGV[1])
-return {1, 2 - used}
+local active = redis.call('ZCARD', KEYS[2])
+if redis.call('EXISTS', KEYS[3]) == 1 then return {0, math.max(0, 2 - used - active)} end
+if redis.call('ZSCORE', KEYS[2], ARGV[3]) then return {1, math.max(0, 2 - used - active)} end
+if used + active >= 2 then return {0, 0} end
+redis.call('ZADD', KEYS[2], ARGV[2], ARGV[3])
+redis.call('EXPIRE', KEYS[2], ARGV[4])
+return {1, 2 - used - active - 1}
 `;
 
 const FINALIZE_SCRIPT = `
-local state = redis.call('GET', KEYS[1])
-if state ~= 'reserved' then return 0 end
-redis.call('SET', KEYS[1], 'finalized', 'XX', 'EX', ARGV[1])
-return 1
+redis.call('ZREMRANGEBYSCORE', KEYS[2], '-inf', ARGV[1])
+local used = tonumber(redis.call('GET', KEYS[1]) or '0')
+if redis.call('EXISTS', KEYS[3]) == 1 then return {1, math.max(0, 2 - used)} end
+if redis.call('ZREM', KEYS[2], ARGV[2]) == 0 then return {0, math.max(0, 2 - used)} end
+used = redis.call('INCR', KEYS[1])
+redis.call('EXPIRE', KEYS[1], ARGV[3])
+redis.call('SET', KEYS[3], 'finalized', 'NX', 'EX', ARGV[3])
+return {1, math.max(0, 2 - used)}
 `;
 
-const REFUND_SCRIPT = `
-local state = redis.call('GET', KEYS[2])
-if state ~= 'reserved' and state ~= 'finalized' then return 0 end
-redis.call('DEL', KEYS[2])
-local used = math.max(0, tonumber(redis.call('GET', KEYS[1]) or '0') - 1)
-redis.call('SET', KEYS[1], used, 'EX', ARGV[1])
-return 1
+const RELEASE_SCRIPT = `
+redis.call('ZREMRANGEBYSCORE', KEYS[1], '-inf', ARGV[1])
+return redis.call('ZREM', KEYS[1], ARGV[2])
 `;
 
 export type TrialIdentity = { id: string };
@@ -62,8 +65,12 @@ function usedKey(identity: TrialIdentity) {
   return `doodle:trial:used:${identity.id}`;
 }
 
-function reservationKey(identity: TrialIdentity, reservationId: string) {
-  return `doodle:trial:reservation:${identity.id}:${reservationId}`;
+function holdsKey(identity: TrialIdentity) {
+  return `doodle:trial:holds:${identity.id}`;
+}
+
+function finalizedKey(identity: TrialIdentity, reservationId: string) {
+  return `doodle:trial:finalized:${identity.id}:${reservationId}`;
 }
 
 function redisError() {
@@ -117,6 +124,13 @@ function commandResult(value: unknown) {
   return result;
 }
 
+function finalizationResult(value: unknown) {
+  if (!Array.isArray(value) || value.length !== 2) throw redisError();
+  const [finalized, remaining] = value.map(integer);
+  if ((finalized !== 0 && finalized !== 1) || remaining < 0 || remaining > 2) throw redisError();
+  return { finalized: finalized === 1, remaining };
+}
+
 export function getTrialIdentity(request: NextRequest): TrialIdentity {
   sessionSecret();
   return { id: verifiedId(request.cookies.get(COOKIE_NAME)?.value) ?? randomUUID() };
@@ -138,13 +152,18 @@ export async function getFreeRemaining(identity: TrialIdentity) {
 }
 
 export async function reserveFreeDoodle(identity: TrialIdentity, reservationId: string) {
+  const now = Date.now();
   const result = await redis([
     "EVAL",
     RESERVE_SCRIPT,
-    "2",
+    "3",
     usedKey(identity),
-    reservationKey(identity, reservationId),
-    TTL_SECONDS,
+    holdsKey(identity),
+    finalizedKey(identity, reservationId),
+    now,
+    now + HOLD_TTL_SECONDS * 1000,
+    reservationId,
+    HOLD_TTL_SECONDS,
   ]);
   if (!Array.isArray(result) || result.length !== 2) throw redisError();
   const [reserved, remaining] = result.map(integer);
@@ -153,24 +172,28 @@ export async function reserveFreeDoodle(identity: TrialIdentity, reservationId: 
 }
 
 export async function finalizeFreeDoodle(identity: TrialIdentity, reservationId: string) {
-  return commandResult(await redis([
+  return finalizationResult(await redis([
     "EVAL",
     FINALIZE_SCRIPT,
-    "1",
-    reservationKey(identity, reservationId),
-    FINALIZED_TTL_SECONDS,
+    "3",
+    usedKey(identity),
+    holdsKey(identity),
+    finalizedKey(identity, reservationId),
+    Date.now(),
+    reservationId,
+    TTL_SECONDS,
   ]));
 }
 
-export async function refundFreeDoodle(identity: TrialIdentity, reservationId: string) {
+export async function releaseFreeDoodle(identity: TrialIdentity, reservationId: string) {
   return commandResult(
     await redis([
       "EVAL",
-      REFUND_SCRIPT,
-      "2",
-      usedKey(identity),
-      reservationKey(identity, reservationId),
-      TTL_SECONDS,
+      RELEASE_SCRIPT,
+      "1",
+      holdsKey(identity),
+      Date.now(),
+      reservationId,
     ]),
   );
 }
