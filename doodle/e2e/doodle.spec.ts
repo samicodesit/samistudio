@@ -168,6 +168,12 @@ test.describe("Doodle mobile workflow", () => {
 });
 
 test.describe("Task 7 purchase and account QA", () => {
+  test("shares the site origin with cross-origin sign-in providers", async ({ page }) => {
+    const response = await page.goto("/");
+
+    expect(response?.headers()["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+  });
+
   test("keeps the reduced-motion offer and auth sheet contained at launch sizes", async ({ page }, testInfo) => {
     await page.route("**/api/account", (route) => route.fulfill({
       status: 200,
