@@ -10,7 +10,8 @@ interface SceneComposerProps {
   onSceneChange: (scene: string) => void;
   onCreate: () => void;
   copy: DoodleCopy["composer"];
-  usage: string;
+  usage: string | null;
+  usageLoadingLabel: string;
   accountMenu?: ReactNode;
   createButtonRef?: Ref<HTMLButtonElement>;
 }
@@ -22,6 +23,7 @@ export function SceneComposer({
   onCreate,
   copy,
   usage,
+  usageLoadingLabel,
   accountMenu,
   createButtonRef,
 }: SceneComposerProps) {
@@ -46,7 +48,9 @@ export function SceneComposer({
         />
         <div className="composer-footer">
           <div className="composer-meta">
-            <span className="usage-copy" aria-live="polite">{usage}</span>
+            {usage === null
+              ? <span className="usage-loading" role="status" aria-label={usageLoadingLabel} />
+              : <span className="usage-copy" aria-live="polite">{usage}</span>}
             {accountMenu}
             <span className="character-count" aria-live="polite">
               {showCounter ? `${scene.length} / ${MAX_SCENE_LENGTH}` : ""}

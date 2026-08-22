@@ -12,6 +12,12 @@ const signedIn: AccountSummary = { authenticated: true, email: "buyer@example.co
 const copy = getCopy("en");
 const json = (body: unknown, init?: ResponseInit) => new Response(JSON.stringify(body), { headers: { "Content-Type": "application/json" }, ...init });
 
+function deferred<T>() {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((next) => { resolve = next; });
+  return { promise, resolve };
+}
+
 function renderDialog(account = anonymous) {
   const onClose = vi.fn(); const onAccountChange = vi.fn();
   render(<PurchaseDialog open account={account} scene="A cat" locale="en" copy={copy} success={false} onClose={onClose} onAccountChange={onAccountChange} />);
@@ -27,6 +33,22 @@ describe("PurchaseDialog", () => {
     expect(screen.getByText("€4.99")).toBeVisible();
     expect(screen.getByText("One payment. No subscription.")).toBeVisible();
     expect(screen.queryByText(/discount|per month/i)).not.toBeInTheDocument();
+  });
+
+  it("shows that Checkout is opening while the request is pending", async () => {
+    const user = userEvent.setup();
+    const checkout = deferred<Response>();
+    vi.spyOn(globalThis, "fetch").mockReturnValueOnce(checkout.promise);
+    renderDialog(signedIn);
+
+    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+
+    const button = screen.getByRole("button", { name: "Get 10 doodles" });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute("aria-busy", "true");
+
+    checkout.resolve(json({ url: "https://checkout.stripe.com/test" }));
+    await waitFor(() => expect(location.assign).toHaveBeenCalledWith("https://checkout.stripe.com/test"));
   });
 
   it("posts a Google credential, refreshes the account, then continues to Checkout", async () => {

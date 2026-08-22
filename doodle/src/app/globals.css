@@ -459,6 +459,20 @@ dialog:focus-visible {
   line-height: 1.25;
 }
 
+.usage-loading {
+  display: inline-block;
+  width: 84px;
+  height: 10px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(25, 92, 71, 0.08), rgba(25, 92, 71, 0.2), rgba(25, 92, 71, 0.08));
+  background-size: 200% 100%;
+  animation: account-wait 1.2s ease-in-out infinite;
+}
+
+@keyframes account-wait {
+  to { background-position: -200% 0; }
+}
+
 .workspace-usage {
   display: flex;
   max-width: 430px;
@@ -767,20 +781,33 @@ dialog:focus-visible {
 
 .account-menu summary {
   display: inline-flex;
-  min-height: 44px;
+  width: 38px;
+  min-height: 38px;
   align-items: center;
-  padding: 0 10px;
+  justify-content: center;
+  padding: 0;
   border: 1px solid var(--line);
   border-radius: 999px;
+  background: var(--paper);
   color: var(--moss);
   cursor: pointer;
   font-weight: 600;
+  box-shadow: 0 2px 0 rgba(32, 35, 31, 0.08);
+  transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease, transform 140ms ease;
 }
 
 .account-menu[open] summary,
 .account-menu summary:hover {
   border-color: var(--moss);
   background: rgba(25, 92, 71, 0.06);
+  box-shadow: 0 3px 0 rgba(25, 92, 71, 0.13);
+  transform: translateY(-1px);
+}
+
+.account-initial {
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1;
 }
 
 .account-popover {
@@ -788,9 +815,9 @@ dialog:focus-visible {
   top: calc(100% + 7px);
   inset-inline-start: 0;
   display: grid;
-  width: min(240px, calc(100vw - 40px));
-  gap: 6px;
-  padding: 12px;
+  width: min(252px, calc(100vw - 40px));
+  gap: 8px;
+  padding: 14px;
   border: 1px solid var(--line);
   border-radius: 11px 9px 13px 10px;
   background: var(--paper);
@@ -806,6 +833,13 @@ dialog:focus-visible {
   color: var(--graphite);
   font-weight: 600;
   text-align: start;
+}
+
+.account-balance {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--soft-line);
+  color: var(--muted);
+  font-size: 11px;
 }
 
 .account-popover button,
@@ -828,6 +862,28 @@ dialog:focus-visible {
 .account-popover .account-delete,
 .account-delete-actions .account-delete-confirm {
   color: var(--coral);
+}
+
+.is-loading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+}
+
+.is-loading::before {
+  width: 13px;
+  height: 13px;
+  flex: 0 0 auto;
+  border: 2px solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  content: "";
+  animation: button-wait 700ms linear infinite;
+}
+
+@keyframes button-wait {
+  to { transform: rotate(1turn); }
 }
 
 .account-delete-dialog {
@@ -1591,6 +1647,32 @@ dialog:focus-visible {
 
 .ideas-hero-link {
   width: fit-content;
+}
+
+.ideas-hero .ideas-hero-link {
+  display: inline-flex;
+  min-height: 50px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 22px;
+  border: 1px solid var(--moss);
+  border-radius: 10px 9px 12px 8px;
+  background: var(--moss);
+  box-shadow: 0 3px 0 #0f3c2f;
+  color: var(--paper);
+  font-size: 15px;
+  text-decoration: none;
+  transition: background 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+}
+
+.ideas-hero .ideas-hero-link:hover {
+  background: #0f3c2f;
+  transform: translateY(-1px);
+}
+
+.ideas-hero .ideas-hero-link:active {
+  box-shadow: none;
+  transform: translateY(2px);
 }
 
 .ideas-grid {

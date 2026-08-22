@@ -40,6 +40,21 @@ describe("AccountMenu", () => {
     expect(screen.getByText("4 doodles left")).toBeVisible();
   });
 
+  it("closes when clicking outside or pressing Escape", async () => {
+    const user = userEvent.setup();
+    render(<AccountMenu account={account} locale="en" copy={copy} onAccountChange={vi.fn()} />);
+
+    await user.click(screen.getByText("Account"));
+    expect(screen.getByText("buyer@example.com")).toBeVisible();
+
+    fireEvent.pointerDown(document.body);
+    expect(screen.getByText("buyer@example.com")).not.toBeVisible();
+
+    await user.click(screen.getByText("Account"));
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.getByText("buyer@example.com")).not.toBeVisible();
+  });
+
   it("signs out and refreshes the anonymous account summary", async () => {
     const user = userEvent.setup();
     const onAccountChange = vi.fn();

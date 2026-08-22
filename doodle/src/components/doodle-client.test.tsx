@@ -73,6 +73,22 @@ describe("DoodleClient", () => {
     expect(fetchMock).toHaveBeenCalledWith("/api/account", { cache: "no-store" });
   });
 
+  it("does not flash anonymous allowance while the account is loading", async () => {
+    const initialAccount = deferred<Response>();
+    vi.mocked(fetch).mockImplementation(async (input) => {
+      if (input === "/api/account") return initialAccount.promise;
+      throw new Error(`Unexpected fetch: ${String(input)}`);
+    });
+
+    renderClient();
+
+    expect(screen.queryByText("First 2 doodles free")).not.toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Account" })).toBeVisible();
+
+    await act(async () => initialAccount.resolve(json(anonymousAccount)));
+    expect(await screen.findByText("First 2 doodles free")).toBeVisible();
+  });
+
   it("keeps the visual surface focused and the suggestions keyboard accessible", () => {
     renderClient();
     expect(screen.getByAltText(/two cats kissing upside down/)).toBeInTheDocument();

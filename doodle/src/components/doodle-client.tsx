@@ -43,6 +43,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
   const [scene, setScene] = useState(initialScene);
   const [generation, setGeneration] = useState<GenerationState>(IDLE_STATE);
   const [account, setAccount] = useState<AccountSummary>(INITIAL_ACCOUNT);
+  const [accountReady, setAccountReady] = useState(false);
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
@@ -75,6 +76,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
     identityRevision.current += 1;
     usageRevision.current += 1;
     setAccount(nextAccount);
+    setAccountReady(true);
   }, []);
 
   const removeQuery = useCallback((name: "auth" | "checkout") => {
@@ -149,6 +151,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
           }));
         }
       } catch {}
+      if (active) setAccountReady(true);
       if (!active) return;
       if (restoredScene !== null) setScene(restoredScene);
 
@@ -260,12 +263,14 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
     generation.status === "ready" && generation.imageUrl
       ? generation.imageUrl
       : "/references/doodle-reference-kiss.png";
-  const usage = account.authenticated
-    ? formatCount(locale, copy.usage.paidLeft, account.balance)
-    : account.freeRemaining !== null && account.freeRemaining < 2
-      ? formatCount(locale, copy.usage.freeLeft, account.freeRemaining)
-      : copy.usage.firstTwoFree;
-  const accountMenu = account.authenticated ? (
+  const usage = accountReady
+    ? account.authenticated
+      ? formatCount(locale, copy.usage.paidLeft, account.balance)
+      : account.freeRemaining !== null && account.freeRemaining < 2
+        ? formatCount(locale, copy.usage.freeLeft, account.freeRemaining)
+        : copy.usage.firstTwoFree
+    : null;
+  const accountMenu = accountReady && account.authenticated ? (
     <AccountMenu account={account} locale={locale} copy={copy.account} onAccountChange={replaceAccount} />
   ) : undefined;
 
@@ -292,7 +297,9 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
             <p className="scene-summary">“{scene}”</p>
             <ResultActions imageUrl={generation.imageUrl} onTryAgain={createDoodle} onNewScene={handleNewScene} copy={copy.actions} />
             <div className="workspace-usage">
-              <span>{usage}</span>
+              {usage === null
+                ? <span className="usage-loading" role="status" aria-label={copy.account.label} />
+                : <span>{usage}</span>}
               {accountMenu}
             </div>
           </section>
@@ -304,6 +311,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
             onCreate={createDoodle}
             copy={copy.composer}
             usage={usage}
+            usageLoadingLabel={copy.account.label}
             accountMenu={accountMenu}
             createButtonRef={createButtonRef}
           />
