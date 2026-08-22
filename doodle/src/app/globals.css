@@ -1082,6 +1082,37 @@ dialog:focus-visible {
   outline-offset: 1px;
 }
 
+.google-sign-in {
+  position: relative;
+  min-height: 44px;
+  width: 100%;
+}
+
+.google-sign-in-control,
+.google-sign-in-control > div,
+.google-sign-in-control iframe {
+  width: 100% !important;
+}
+
+.google-sign-in-loading {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--line);
+  border-radius: 9px 8px 10px 7px;
+  background: linear-gradient(90deg, rgba(25, 92, 71, 0.04), rgba(25, 92, 71, 0.1), rgba(25, 92, 71, 0.04));
+  background-size: 200% 100%;
+  animation: google-button-wait 1.2s ease-in-out infinite;
+}
+
+.google-sign-in.is-busy {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+@keyframes google-button-wait {
+  to { background-position: -200% 0; }
+}
+
 .purchase-success {
   display: grid;
   min-height: 220px;

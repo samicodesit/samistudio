@@ -4,14 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getCopy, type Locale } from "@/lib/i18n";
 import { DoodleClient } from "./doodle-client";
 
-const auth = vi.hoisted(() => ({
-  signInWithOtp: vi.fn(),
-  verifyOtp: vi.fn(),
-}));
-
-vi.mock("@/lib/supabase/browser", () => ({
-  getBrowserSupabase: () => ({ auth }),
-}));
+vi.mock("./google-sign-in-button", () => ({ GoogleSignInButton: ({ onCredential }: { onCredential(token: string): void }) => <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button> }));
 
 function renderClient(locale: Locale = "en") {
   return render(<DoodleClient locale={locale} copy={getCopy(locale)} />);
@@ -54,8 +47,6 @@ describe("DoodleClient", () => {
       if (input === "/api/account") return json(anonymousAccount);
       throw new Error(`Unexpected fetch: ${String(input)}`);
     });
-    auth.signInWithOtp.mockReset().mockResolvedValue({ error: null });
-    auth.verifyOtp.mockReset().mockResolvedValue({ error: null });
     sessionStorage.clear();
     history.replaceState({}, "", "/");
   });
@@ -333,8 +324,7 @@ describe("DoodleClient", () => {
     expect(screen.queryByText("First 2 doodles free")).not.toBeInTheDocument();
   });
 
-  it("ignores a delayed anonymous account response after OTP refresh authenticates the user", async () => {
-    vi.stubEnv("NEXT_PUBLIC_EMAIL_OTP_ENABLED", "true");
+  it("ignores a delayed anonymous account response after Google refresh authenticates the user", async () => {
     const user = userEvent.setup();
     const initialAccount = deferred<Response>();
     const authenticatedAccount = {
@@ -345,6 +335,7 @@ describe("DoodleClient", () => {
     };
     let accountRequests = 0;
     vi.mocked(fetch).mockImplementation(async (input) => {
+      if (input === "/api/auth/google") return new Response(null, { status: 204 });
       if (input === "/api/account") {
         accountRequests += 1;
         return accountRequests === 1 ? initialAccount.promise : json(authenticatedAccount);
@@ -352,6 +343,7 @@ describe("DoodleClient", () => {
       if (input === "/api/generate") {
         return json({ error: "payment_required" }, { status: 402 });
       }
+      if (input === "/api/checkout") return json({ error: "unavailable" }, { status: 503 });
       throw new Error(`Unexpected fetch: ${String(input)}`);
     });
 
@@ -360,14 +352,9 @@ describe("DoodleClient", () => {
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "A cat" } });
     await user.click(screen.getByRole("button", { name: "Create doodle" }));
     await user.click(await screen.findByRole("button", { name: "Get 10 doodles" }));
-    await user.click(screen.getByRole("button", { name: "Continue with email" }));
-    await user.type(screen.getByLabelText("Email address"), "buyer@example.com");
-    await user.click(screen.getByRole("button", { name: "Send code" }));
-    await user.type(screen.getByLabelText("Six-digit code"), "123456");
-    await user.click(screen.getByRole("button", { name: "Verify code" }));
+    await user.click(screen.getByRole("button", { name: "Continue with Google" }));
 
     await waitFor(() => expect(accountRequests).toBe(2));
-    expect(auth.verifyOtp).toHaveBeenCalledTimes(1);
     await waitFor(() => expect(screen.getByText("0 doodles left", { selector: ".usage-copy" })).toBeVisible());
     await act(async () => initialAccount.resolve(json(anonymousAccount)));
 

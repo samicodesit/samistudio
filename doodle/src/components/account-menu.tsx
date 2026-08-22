@@ -3,7 +3,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { AccountSummary } from "@/app/api/account/route";
 import { formatCount, type DoodleCopy, type Locale } from "@/lib/i18n";
-import { getBrowserSupabase } from "@/lib/supabase/browser";
 
 interface AccountMenuProps {
   account: AccountSummary;
@@ -44,8 +43,8 @@ export function AccountMenu({ account, locale, copy, onAccountChange }: AccountM
 
   async function signOut() {
     setBusy(true);
-    const { error } = await getBrowserSupabase().auth.signOut();
-    if (!error) await refreshAccount();
+    const response = await fetch("/api/auth/sign-out", { method: "POST" });
+    if (response.ok) await refreshAccount();
     setBusy(false);
   }
 
@@ -58,7 +57,6 @@ export function AccountMenu({ account, locale, copy, onAccountChange }: AccountM
       body: JSON.stringify({ confirm: true }),
     });
     if (response.ok) {
-      await getBrowserSupabase().auth.signOut();
       await refreshAccount();
       setConfirmingDelete(false);
     }

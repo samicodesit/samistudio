@@ -5,12 +5,6 @@ import type { AccountSummary } from "@/app/api/account/route";
 import { getCopy } from "@/lib/i18n";
 import { AccountMenu } from "./account-menu";
 
-const signOut = vi.hoisted(() => vi.fn());
-
-vi.mock("@/lib/supabase/browser", () => ({
-  getBrowserSupabase: () => ({ auth: { signOut } }),
-}));
-
 const account: AccountSummary = {
   authenticated: true,
   email: "buyer@example.com",
@@ -34,8 +28,6 @@ function json(body: unknown, init?: ResponseInit) {
 
 describe("AccountMenu", () => {
   beforeEach(() => {
-    signOut.mockReset();
-    signOut.mockResolvedValue({ error: null });
   });
 
   it("shows the signed-in email and localized balance", async () => {
@@ -51,14 +43,14 @@ describe("AccountMenu", () => {
   it("signs out and refreshes the anonymous account summary", async () => {
     const user = userEvent.setup();
     const onAccountChange = vi.fn();
-    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(json(anonymousAccount));
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response(null, { status: 204 })).mockResolvedValueOnce(json(anonymousAccount));
     render(<AccountMenu account={account} locale="en" copy={copy} onAccountChange={onAccountChange} />);
 
     await user.click(screen.getByText("Account"));
     await user.click(screen.getByRole("button", { name: "Sign out" }));
 
-    expect(signOut).toHaveBeenCalledOnce();
-    expect(fetchMock).toHaveBeenCalledWith("/api/account", { cache: "no-store" });
+    expect(fetchMock).toHaveBeenNthCalledWith(1, "/api/auth/sign-out", { method: "POST" });
+    expect(fetchMock).toHaveBeenNthCalledWith(2, "/api/account", { cache: "no-store" });
     await waitFor(() => expect(onAccountChange).toHaveBeenCalledWith(anonymousAccount));
   });
 
@@ -94,7 +86,7 @@ describe("AccountMenu", () => {
     expect(deleteTrigger).toHaveFocus();
   });
 
-  it("deletes only after explicit confirmation, signs out, and refreshes account state", async () => {
+  it("deletes only after explicit confirmation and refreshes account state", async () => {
     const user = userEvent.setup();
     const onAccountChange = vi.fn();
     const fetchMock = vi
@@ -113,7 +105,6 @@ describe("AccountMenu", () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ confirm: true }),
     });
-    expect(signOut).toHaveBeenCalledOnce();
     expect(fetchMock).toHaveBeenNthCalledWith(2, "/api/account", { cache: "no-store" });
     await waitFor(() => expect(onAccountChange).toHaveBeenCalledWith(anonymousAccount));
     expect(screen.queryByRole("dialog", { name: "Delete account" })).not.toBeInTheDocument();
