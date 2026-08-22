@@ -1,7 +1,7 @@
 import "server-only";
 
 import Stripe from "stripe";
-import { required } from "@/lib/supabase/env";
+import { required } from "@/lib/env";
 
 let client: Stripe | undefined;
 

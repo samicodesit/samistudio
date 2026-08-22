@@ -4,7 +4,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import type { NextResponse } from "next/server";
 import { isPaidAccountActive } from "@/lib/billing/credits";
-import { required } from "@/lib/supabase/env";
+import { required } from "@/lib/env";
 
 const COOKIE_NAME = "doodle_session";
 const TTL_SECONDS = 2_592_000;

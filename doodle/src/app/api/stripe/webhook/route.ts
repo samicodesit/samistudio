@@ -1,6 +1,6 @@
 import { fulfillCheckout } from "@/lib/billing/checkout";
 import { getStripe } from "@/lib/billing/stripe";
-import { required } from "@/lib/supabase/env";
+import { required } from "@/lib/env";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { OAuth2Client } from "google-auth-library";
-import { required } from "@/lib/supabase/env";
+import { required } from "@/lib/env";
 
 const client = new OAuth2Client();
 

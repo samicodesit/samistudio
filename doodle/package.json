@@ -15,8 +15,6 @@
     "eval:prompt": "node --env-file=.env.local --import tsx scripts/evaluate-prompt.mts"
   },
   "dependencies": {
-    "@supabase/ssr": "^0.12.4",
-    "@supabase/supabase-js": "^2.112.3",
     "botid": "^1.5.11",
     "google-auth-library": "^11.0.2",
     "lucide-react": "^1.33.0",

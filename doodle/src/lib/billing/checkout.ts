@@ -3,7 +3,7 @@ import "server-only";
 import type Stripe from "stripe";
 import type { Locale } from "@/lib/i18n";
 import { localePath } from "@/lib/i18n";
-import { required } from "@/lib/supabase/env";
+import { required } from "@/lib/env";
 import { fulfillCreditPack } from "./credits";
 import { getStripe } from "./stripe";
 
