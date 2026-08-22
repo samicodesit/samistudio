@@ -17,6 +17,7 @@ export type PluralTemplates = {
 export interface DoodleCopy {
   localeLabel: string;
   header: { homeLabel: string; languageLabel: string };
+  footer: { privacy: string; terms: string; refunds: string; contact: string };
   composer: {
     title: string;
     hint: string;
@@ -99,6 +100,7 @@ const COPY = {
   en: {
     localeLabel: "English",
     header: { homeLabel: "Doodle home", languageLabel: "Language" },
+    footer: { privacy: "Privacy", terms: "Terms", refunds: "Refunds", contact: "Contact" },
     composer: {
       title: "What should we doodle?",
       hint: "Keep it small and clear.",
@@ -194,6 +196,7 @@ const COPY = {
   nl: {
     localeLabel: "Nederlands",
     header: { homeLabel: "Doodle-startpagina", languageLabel: "Taal" },
+    footer: { privacy: "Privacy", terms: "Voorwaarden", refunds: "Terugbetalingen", contact: "Contact" },
     composer: {
       title: "Wat zullen we tekenen?",
       hint: "Hou het klein en duidelijk.",
@@ -249,6 +252,7 @@ const COPY = {
   de: {
     localeLabel: "Deutsch",
     header: { homeLabel: "Doodle-Startseite", languageLabel: "Sprache" },
+    footer: { privacy: "Datenschutz", terms: "Bedingungen", refunds: "Rückerstattungen", contact: "Kontakt" },
     composer: { title: "Was sollen wir zeichnen?", hint: "Klein und eindeutig ist am besten.", label: "Beschreibe eine Szene", placeholder: "Ein kleiner Moment...", create: "Doodle erstellen", drawing: "Wird gezeichnet..." },
     status: { generatingEyebrow: "Ein kleiner Moment entsteht", generatingTitle: "Dein Doodle wird gezeichnet.", waitHint: "Die einfachen Linien brauchen einen Moment. Bleib einfach hier.", readyEyebrow: "Frisch gezeichnet", readyTitle: "Dein Doodle ist fertig." },
     errors: { refused: "Diese Szene konnte nicht gezeichnet werden. Beschreibe sie anders.", timeout: "Das Doodle hat zu lange gebraucht. Versuch es noch einmal.", general: "Doodle konnte das Bild nicht fertigstellen. Versuch es noch einmal.", unavailable: "Das Erstellen von Doodles ist vorübergehend nicht verfügbar. Versuch es später erneut.", rateLimited: "Du hast heute schon viele Doodles erstellt. Versuch es morgen wieder." },
@@ -265,6 +269,7 @@ const COPY = {
   fr: {
     localeLabel: "Français",
     header: { homeLabel: "Accueil de Doodle", languageLabel: "Langue" },
+    footer: { privacy: "Confidentialité", terms: "Conditions", refunds: "Remboursements", contact: "Contact" },
     composer: { title: "Qu’allons-nous dessiner ?", hint: "Choisissez une scène simple et précise.", label: "Décrivez une scène", placeholder: "Un petit moment...", create: "Créer le dessin", drawing: "Dessin en cours..." },
     status: { generatingEyebrow: "Un petit moment prend forme", generatingTitle: "Votre dessin prend vie.", waitHint: "Les lignes simples demandent un peu de temps. Restez ici.", readyEyebrow: "Tout juste dessiné", readyTitle: "Votre dessin est prêt." },
     errors: { refused: "Cette scène n’a pas pu être dessinée. Essayez de la décrire autrement.", timeout: "Le dessin a pris trop de temps. Veuillez réessayer.", general: "Doodle n’a pas pu terminer l’image. Veuillez réessayer.", unavailable: "La création de dessins est momentanément indisponible. Réessayez plus tard.", rateLimited: "Vous avez créé beaucoup de dessins aujourd’hui. Réessayez demain." },
@@ -281,6 +286,7 @@ const COPY = {
   es: {
     localeLabel: "Español",
     header: { homeLabel: "Inicio de Doodle", languageLabel: "Idioma" },
+    footer: { privacy: "Privacidad", terms: "Condiciones", refunds: "Reembolsos", contact: "Contacto" },
     composer: { title: "¿Qué dibujamos?", hint: "Elige una escena pequeña y clara.", label: "Describe una escena", placeholder: "Un pequeño momento...", create: "Crear dibujo", drawing: "Dibujando..." },
     status: { generatingEyebrow: "Un pequeño momento en proceso", generatingTitle: "Estamos dibujando tu idea.", waitHint: "Las líneas sencillas llevan un poco de tiempo. Puedes quedarte aquí.", readyEyebrow: "Recién dibujado", readyTitle: "Tu dibujo está listo." },
     errors: { refused: "No pudimos dibujar esa escena. Prueba a describirla de otra manera.", timeout: "El dibujo tardó demasiado. Inténtalo de nuevo.", general: "Doodle no pudo terminar la imagen. Inténtalo de nuevo.", unavailable: "La creación de dibujos no está disponible temporalmente. Vuelve a intentarlo más tarde.", rateLimited: "Has creado muchos dibujos hoy. Vuelve a intentarlo mañana." },
@@ -297,6 +303,7 @@ const COPY = {
   "pt-br": {
     localeLabel: "Português (Brasil)",
     header: { homeLabel: "Início do Doodle", languageLabel: "Idioma" },
+    footer: { privacy: "Privacidade", terms: "Termos", refunds: "Reembolsos", contact: "Contato" },
     composer: { title: "O que vamos desenhar?", hint: "Escolha uma cena pequena e clara.", label: "Descreva uma cena", placeholder: "Um pequeno momento...", create: "Criar desenho", drawing: "Desenhando..." },
     status: { generatingEyebrow: "Um pequeno momento ganhando forma", generatingTitle: "Estamos fazendo seu desenho.", waitHint: "Linhas simples levam um tempinho. Pode ficar por aqui.", readyEyebrow: "Desenho novinho", readyTitle: "Seu desenho está pronto." },
     errors: { refused: "Não foi possível desenhar essa cena. Tente descrevê-la de outro jeito.", timeout: "O desenho demorou demais. Tente novamente.", general: "O Doodle não conseguiu terminar a imagem. Tente novamente.", unavailable: "A criação de desenhos está temporariamente indisponível. Tente mais tarde.", rateLimited: "Você já criou muitos desenhos hoje. Tente de novo amanhã." },
@@ -313,6 +320,7 @@ const COPY = {
   it: {
     localeLabel: "Italiano",
     header: { homeLabel: "Home di Doodle", languageLabel: "Lingua" },
+    footer: { privacy: "Privacy", terms: "Termini", refunds: "Rimborsi", contact: "Contatti" },
     composer: { title: "Cosa disegniamo?", hint: "Scegli una scena piccola e chiara.", label: "Descrivi una scena", placeholder: "Un piccolo momento...", create: "Crea disegno", drawing: "Sto disegnando..." },
     status: { generatingEyebrow: "Un piccolo momento prende forma", generatingTitle: "Sto creando il tuo disegno.", waitHint: "Le linee semplici richiedono un po’ di tempo. Puoi restare qui.", readyEyebrow: "Appena disegnato", readyTitle: "Il tuo disegno è pronto." },
     errors: { refused: "Non è stato possibile disegnare questa scena. Prova a descriverla in un altro modo.", timeout: "Il disegno ha impiegato troppo tempo. Riprova.", general: "Doodle non è riuscito a completare l’immagine. Riprova.", unavailable: "La creazione dei disegni non è momentaneamente disponibile. Riprova più tardi.", rateLimited: "Hai già creato molti doodle oggi. Riprova domani." },
@@ -329,6 +337,7 @@ const COPY = {
   ja: {
     localeLabel: "日本語",
     header: { homeLabel: "Doodle ホーム", languageLabel: "言語" },
+    footer: { privacy: "プライバシー", terms: "利用規約", refunds: "返金", contact: "お問い合わせ" },
     composer: { title: "何を描こう？", hint: "小さくて分かりやすい場面がおすすめです。", label: "場面を入力", placeholder: "小さなひととき...", create: "イラストを作る", drawing: "描いています..." },
     status: { generatingEyebrow: "小さなひとときを制作中", generatingTitle: "イラストを描いています。", waitHint: "シンプルな線にするまで少し時間がかかります。このままお待ちください。", readyEyebrow: "できたてのイラスト", readyTitle: "イラストができました。" },
     errors: { refused: "この場面は描けませんでした。別の言い方で説明してみてください。", timeout: "時間がかかりすぎました。もう一度お試しください。", general: "イラストを完成できませんでした。もう一度お試しください。", unavailable: "現在イラストを作成できません。時間をおいてお試しください。", rateLimited: "今日はたくさん作りました。また明日お試しください。" },
@@ -345,6 +354,7 @@ const COPY = {
   ko: {
     localeLabel: "한국어",
     header: { homeLabel: "Doodle 홈", languageLabel: "언어" },
+    footer: { privacy: "개인정보처리방침", terms: "이용약관", refunds: "환불", contact: "문의" },
     composer: { title: "무엇을 그려 볼까요?", hint: "작고 분명한 장면을 적어 주세요.", label: "장면 설명", placeholder: "작은 순간 하나...", create: "그림 만들기", drawing: "그리는 중..." },
     status: { generatingEyebrow: "작은 순간을 그리고 있어요", generatingTitle: "그림을 만들고 있어요.", waitHint: "단순한 선으로 다듬는 데 시간이 조금 걸려요. 여기서 기다려 주세요.", readyEyebrow: "방금 완성된 그림", readyTitle: "그림이 완성됐어요." },
     errors: { refused: "이 장면은 그릴 수 없었어요. 다른 말로 설명해 보세요.", timeout: "그림을 만드는 데 너무 오래 걸렸어요. 다시 시도해 주세요.", general: "그림을 완성하지 못했어요. 다시 시도해 주세요.", unavailable: "지금은 그림을 만들 수 없어요. 잠시 후 다시 시도해 주세요.", rateLimited: "오늘은 그림을 많이 만들었어요. 내일 다시 시도해 주세요." },
@@ -361,6 +371,7 @@ const COPY = {
   ar: {
     localeLabel: "العربية",
     header: { homeLabel: "الصفحة الرئيسية لـ Doodle", languageLabel: "اللغة" },
+    footer: { privacy: "الخصوصية", terms: "الشروط", refunds: "استرداد الأموال", contact: "تواصل معنا" },
     composer: { title: "ماذا نرسم؟", hint: "اكتب فكرة بسيطة وواضحة.", label: "صِف ما تريد رسمه", placeholder: "اكتب فكرتك هنا...", create: "أنشئ رسمة", drawing: "جارٍ الرسم..." },
     status: { generatingEyebrow: "لحظة صغيرة قيد الرسم", generatingTitle: "نرسم فكرتك الآن.", waitHint: "تحتاج الخطوط البسيطة إلى قليل من الوقت. يمكنك الانتظار هنا.", readyEyebrow: "رسمة جديدة", readyTitle: "رسمتك جاهزة." },
     errors: { refused: "تعذّر رسم هذا المشهد. جرّب وصفه بطريقة مختلفة.", timeout: "استغرق الرسم وقتًا أطول من اللازم. حاول مرة أخرى.", general: "تعذّر على Doodle إكمال الرسمة. حاول مرة أخرى.", unavailable: "إنشاء الرسومات غير متاح مؤقتًا. حاول لاحقًا.", rateLimited: "أنشأت رسومات كثيرة اليوم. جرّب مرة أخرى غدًا." },

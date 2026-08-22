@@ -10,6 +10,8 @@ describe("DoodlePage", () => {
     expect(screen.getByRole("heading", { level: 2, name: "So funktioniert es" })).toBeInTheDocument();
     expect(screen.getByText("Deutsch")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Nederlands" })).toHaveAttribute("href", "/nl");
+    expect(screen.getByRole("link", { name: "Datenschutz" })).toHaveAttribute("href", "/privacy");
+    expect(screen.getByRole("link", { name: "Rückerstattungen" })).toHaveAttribute("href", "/refund");
   });
 
   it("adds visible-content-matching WebApplication structured data", () => {

@@ -12,15 +12,21 @@ describe("search engine routes", () => {
     });
   });
 
-  it("lists every localized page with reciprocal language alternatives", () => {
+  it("lists every localized and legal page", () => {
     const entries = sitemap();
 
-    expect(entries).toHaveLength(SUPPORTED_LOCALES.length);
-    expect(entries.map(({ url }) => url)).toEqual(
+    expect(entries).toHaveLength(SUPPORTED_LOCALES.length + 4);
+    expect(entries.slice(0, SUPPORTED_LOCALES.length).map(({ url }) => url)).toEqual(
       SUPPORTED_LOCALES.map((locale) => `${SITE_URL}${localePath(locale)}`),
     );
-    for (const entry of entries) {
+    for (const entry of entries.slice(0, SUPPORTED_LOCALES.length)) {
       expect(entry.alternates?.languages).toEqual(getLanguageAlternates());
     }
+    expect(entries.slice(SUPPORTED_LOCALES.length).map(({ url }) => url)).toEqual([
+      `${SITE_URL}/privacy`,
+      `${SITE_URL}/terms`,
+      `${SITE_URL}/refund`,
+      `${SITE_URL}/contact`,
+    ]);
   });
 });

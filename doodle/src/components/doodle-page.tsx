@@ -74,6 +74,15 @@ export function DoodlePage({ locale }: { locale: Locale }) {
           </div>
         </section>
       </main>
+      <footer className="site-footer">
+        <nav aria-label="Legal">
+          <Link href="/privacy">{copy.footer.privacy}</Link>
+          <Link href="/terms">{copy.footer.terms}</Link>
+          <Link href="/refund">{copy.footer.refunds}</Link>
+          <Link href="/contact">{copy.footer.contact}</Link>
+        </nav>
+        <span>© {new Date().getUTCFullYear()} Doodle</span>
+      </footer>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }}
