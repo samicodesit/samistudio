@@ -18,6 +18,12 @@ export const metadata: Metadata = {
     type: "website",
     images: [{ url: `${SITE_URL}${DOODLE_IDEAS[0].image}`, alt: DOODLE_IDEAS[0].alt }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [`${SITE_URL}${DOODLE_IDEAS[0].image}`],
+  },
 };
 
 export default function DoodleIdeasPage() {
