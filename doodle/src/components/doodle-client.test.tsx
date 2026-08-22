@@ -4,6 +4,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getCopy, type Locale } from "@/lib/i18n";
 import { DoodleClient } from "./doodle-client";
 
+const mocks = vi.hoisted(() => ({ track: vi.fn() }));
+
+vi.mock("@vercel/analytics", () => ({ track: mocks.track }));
 vi.mock("./google-sign-in-button", () => ({ GoogleSignInButton: ({ onCredential }: { onCredential(token: string): void }) => <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button> }));
 
 function renderClient(locale: Locale = "en") {
@@ -41,6 +44,7 @@ describe("DoodleClient", () => {
 
   beforeEach(() => {
     vi.restoreAllMocks();
+    mocks.track.mockReset();
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:one");
     vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
     vi.spyOn(globalThis, "fetch").mockImplementation(async (input) => {
@@ -100,6 +104,18 @@ describe("DoodleClient", () => {
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Try again/ })).toBeVisible();
     expect(screen.getByRole("button", { name: /New scene/ })).toBeVisible();
+  });
+
+  it("tracks one anonymous event after a doodle is created", async () => {
+    mockGeneration(new Response(new Blob(["png"]), { status: 200 }));
+    renderClient();
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
+    fireEvent.click(screen.getByRole("button", { name: /Create doodle/ }));
+
+    expect(mocks.track).not.toHaveBeenCalled();
+    await screen.findByAltText("Generated sticky-note doodle");
+    expect(mocks.track).toHaveBeenCalledOnce();
+    expect(mocks.track).toHaveBeenCalledWith("Doodle Created");
   });
 
   it("preserves the scene when generation fails", async () => {

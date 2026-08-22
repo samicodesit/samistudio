@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { track } from "@vercel/analytics";
 import type { AccountSummary } from "@/app/api/account/route";
 import { formatCount, type DoodleCopy, type Locale } from "@/lib/i18n";
 import { AccountMenu } from "./account-menu";
@@ -213,6 +214,7 @@ export function DoodleClient({ locale, copy }: DoodleClientProps) {
       const imageUrl = URL.createObjectURL(await response.blob());
       currentObjectUrl.current = imageUrl;
       setGeneration({ status: "ready", imageUrl, error: null });
+      track("Doodle Created");
       if (response.headers.get("X-Doodle-Balance-Uncertain") === "1") {
         const identity = identityRevision.current;
         const usage = usageRevision.current;
