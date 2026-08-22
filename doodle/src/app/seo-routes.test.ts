@@ -12,23 +12,27 @@ describe("search engine routes", () => {
     });
   });
 
-  it("lists every localized, ideas, and legal page", () => {
+  it("lists every localized home, localized ideas, and legal page", () => {
     const entries = sitemap();
 
-    expect(entries).toHaveLength(SUPPORTED_LOCALES.length + 5);
+    expect(entries).toHaveLength(SUPPORTED_LOCALES.length * 2 + 4);
     expect(entries.slice(0, SUPPORTED_LOCALES.length).map(({ url }) => url)).toEqual(
       SUPPORTED_LOCALES.map((locale) => `${SITE_URL}${localePath(locale)}`),
     );
     for (const entry of entries.slice(0, SUPPORTED_LOCALES.length)) {
       expect(entry.alternates?.languages).toEqual(getLanguageAlternates());
     }
-    expect(entries.slice(SUPPORTED_LOCALES.length).map(({ url }) => url)).toEqual([
-      `${SITE_URL}/doodle-ideas`,
+    expect(entries.slice(SUPPORTED_LOCALES.length, SUPPORTED_LOCALES.length * 2).map(({ url }) => url)).toEqual(
+      SUPPORTED_LOCALES.map((locale) => `${SITE_URL}${localePath(locale) === "/" ? "" : localePath(locale)}/doodle-ideas`),
+    );
+    expect(entries.slice(SUPPORTED_LOCALES.length * 2).map(({ url }) => url)).toEqual([
       `${SITE_URL}/privacy`,
       `${SITE_URL}/terms`,
       `${SITE_URL}/refund`,
       `${SITE_URL}/contact`,
     ]);
-    expect(entries.find(({ url }) => url.endsWith("/doodle-ideas"))?.images).toHaveLength(8);
+    for (const entry of entries.slice(SUPPORTED_LOCALES.length, SUPPORTED_LOCALES.length * 2)) {
+      expect(entry.images).toHaveLength(8);
+    }
   });
 });

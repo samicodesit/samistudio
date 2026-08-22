@@ -12,6 +12,7 @@ describe("DoodlePage", () => {
     expect(screen.getByRole("link", { name: "Nederlands" })).toHaveAttribute("href", "/nl");
     expect(screen.getByRole("link", { name: "Datenschutz" })).toHaveAttribute("href", "/privacy");
     expect(screen.getByRole("link", { name: "Rückerstattungen" })).toHaveAttribute("href", "/refund");
+    expect(screen.getByRole("link", { name: "Doodle-Ideen ansehen" })).toHaveAttribute("href", "/de/doodle-ideas");
   });
 
   it("adds visible-content-matching WebApplication structured data", () => {

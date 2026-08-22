@@ -441,6 +441,10 @@ export function htmlLang(locale: Locale): string {
   return HREFLANG_CODES[locale];
 }
 
+export function openGraphLocale(locale: Locale): string {
+  return OPEN_GRAPH_LOCALES[locale];
+}
+
 export function textDirection(locale: Locale): "ltr" | "rtl" {
   return locale === "ar" ? "rtl" : "ltr";
 }

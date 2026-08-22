@@ -1,10 +1,10 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import DoodleIdeasPage, { metadata } from "./page";
+import DoodleIdeasRoute, { metadata } from "./page";
 
 describe("DoodleIdeasPage", () => {
   it("offers eight real examples that lead back to a prefilled generator", () => {
-    render(<DoodleIdeasPage />);
+    render(<DoodleIdeasRoute />);
 
     expect(screen.getAllByRole("img")).toHaveLength(8);
     expect(screen.getAllByRole("link", { name: "Try this idea" })).toHaveLength(8);
@@ -12,6 +12,13 @@ describe("DoodleIdeasPage", () => {
       "href",
       "/?scene=A%20steaming%20mug%20beside%20a%20folded%20thank-you%20note%20with%20a%20tiny%20heart%20on%20it#composer",
     );
+  });
+
+  it("does not repeat arbitrary use-case labels on every drawing", () => {
+    render(<DoodleIdeasRoute />);
+
+    expect(screen.queryByText("Lunchboxes")).not.toBeInTheDocument();
+    expect(screen.queryByText("Classroom")).not.toBeInTheDocument();
   });
 
   it("uses the gallery metadata for social previews", () => {

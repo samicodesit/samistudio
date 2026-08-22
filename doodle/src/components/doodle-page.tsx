@@ -8,9 +8,11 @@ import {
   htmlLang,
   localePath,
 } from "@/lib/i18n";
+import { getDoodleIdeas, ideasPath } from "@/lib/doodle-ideas";
 
 export function DoodlePage({ locale, initialScene = "" }: { locale: Locale; initialScene?: string }) {
   const copy = getCopy(locale);
+  const ideasCopy = getDoodleIdeas(locale);
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -72,13 +74,11 @@ export function DoodlePage({ locale, initialScene = "" }: { locale: Locale; init
             <h2>{copy.seo.useTitle}</h2>
             <p>{copy.seo.useBody}</p>
           </div>
-          {locale === "en" ? (
-            <div>
-              <h2>Need a starting point?</h2>
-              <p>Browse simple examples for notes, cards, lunchboxes and classrooms.</p>
-              <Link href="/doodle-ideas">Browse doodle ideas</Link>
-            </div>
-          ) : null}
+          <div>
+            <h2>{ideasCopy.moreTitle}</h2>
+            <p>{ideasCopy.moreBody}</p>
+            <Link href={ideasPath(locale)}>{ideasCopy.browse}</Link>
+          </div>
         </section>
       </main>
       <footer className="site-footer">
