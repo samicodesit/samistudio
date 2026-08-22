@@ -38,7 +38,7 @@ describe("fixed credit pack checkout", () => {
     mocks.fulfillCreditPack.mockResolvedValue(10);
   });
 
-  it("creates one fixed EUR pack with inclusive automatic tax", async () => {
+  it("creates one fixed EUR pack and accepts promotion codes", async () => {
     await createPackCheckout({
       userId: "user",
       email: "buyer@example.com",
@@ -51,7 +51,7 @@ describe("fixed credit pack checkout", () => {
       line_items: [{ price: "price_doodle", quantity: 1 }],
       automatic_tax: { enabled: true },
       adaptive_pricing: { enabled: false },
-      allow_promotion_codes: false,
+      allow_promotion_codes: true,
       branding_settings: {
         display_name: "Doodle",
         background_color: "#fcfcf8",

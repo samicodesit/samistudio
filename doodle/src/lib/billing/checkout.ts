@@ -27,7 +27,7 @@ export function createPackCheckout({ userId, email, locale, origin }: CheckoutIn
     line_items: [{ price: required("STRIPE_DOODLE_PRICE_ID"), quantity: 1 }],
     automatic_tax: { enabled: true },
     adaptive_pricing: { enabled: false },
-    allow_promotion_codes: false,
+    allow_promotion_codes: true,
     branding_settings: {
       display_name: "Doodle",
       background_color: "#fcfcf8",
