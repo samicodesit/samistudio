@@ -1,12 +1,11 @@
 import { hasSameOrigin } from "@/lib/auth/same-origin";
-import { getPaidBalance } from "@/lib/billing/credits";
+import { clearSessionCookie, getCurrentUser } from "@/lib/auth/session";
+import { deletePaidAccount, getPaidBalance } from "@/lib/billing/credits";
 import {
   getFreeRemaining,
   getTrialIdentity,
   setTrialCookie,
 } from "@/lib/generation/free-allowance";
-import { getAdminSupabase } from "@/lib/supabase/admin";
-import { getCurrentUser } from "@/lib/supabase/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -66,8 +65,12 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  const { error } = await getAdminSupabase().auth.admin.deleteUser(user.id);
-  return error
-    ? NextResponse.json({ error: "delete_failed" }, { status: 500 })
-    : new Response(null, { status: 204 });
+  try {
+    await deletePaidAccount(user.id, user.identityKey);
+    const response = new NextResponse(null, { status: 204 });
+    clearSessionCookie(response);
+    return response;
+  } catch {
+    return NextResponse.json({ error: "delete_failed" }, { status: 500 });
+  }
 }

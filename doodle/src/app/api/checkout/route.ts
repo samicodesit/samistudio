@@ -1,7 +1,7 @@
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { createPackCheckout } from "@/lib/billing/checkout";
 import { hasLocale } from "@/lib/i18n";
-import { getCurrentUser } from "@/lib/supabase/session";
+import { getCurrentUser } from "@/lib/auth/session";
 import { checkBotId } from "botid/server";
 import { NextRequest, NextResponse } from "next/server";
 

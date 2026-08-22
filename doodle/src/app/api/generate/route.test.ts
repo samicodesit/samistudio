@@ -25,7 +25,7 @@ vi.mock("@/lib/generation/generate-doodle", async () => {
   const actual = await vi.importActual<typeof import("@/lib/generation/generate-doodle")>("@/lib/generation/generate-doodle");
   return { ...actual, generateDoodle: mocks.generateDoodle };
 });
-vi.mock("@/lib/supabase/session", () => ({ getCurrentUser: mocks.getCurrentUser }));
+vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.getCurrentUser }));
 vi.mock("@/lib/billing/credits", () => ({
   finalizePaidCredit: mocks.finalizePaidCredit,
   releasePaidCredit: mocks.releasePaidCredit,

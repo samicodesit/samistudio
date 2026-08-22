@@ -6,7 +6,6 @@ vi.mock("server-only", () => ({}));
 const mocks = vi.hoisted(() => ({
   create: vi.fn(),
   fulfillCreditPack: vi.fn(),
-  getUserById: vi.fn(),
   retrieve: vi.fn(),
 }));
 
@@ -15,10 +14,6 @@ vi.mock("./stripe", () => ({
 }));
 
 vi.mock("./credits", () => ({ fulfillCreditPack: mocks.fulfillCreditPack }));
-
-vi.mock("@/lib/supabase/admin", () => ({
-  getAdminSupabase: () => ({ auth: { admin: { getUserById: mocks.getUserById } } }),
-}));
 
 const USER_ID = "7d9ac733-9336-4c2a-93c1-5d597d0f7f8e";
 const paidMatchingSession = {
@@ -40,7 +35,6 @@ describe("fixed credit pack checkout", () => {
     vi.unstubAllEnvs();
     vi.stubEnv("STRIPE_DOODLE_PRICE_ID", "price_doodle");
     Object.values(mocks).forEach((mock) => mock.mockReset());
-    mocks.getUserById.mockResolvedValue({ data: { user: { id: USER_ID } }, error: null });
     mocks.fulfillCreditPack.mockResolvedValue(10);
   });
 
@@ -80,7 +74,6 @@ describe("fixed credit pack checkout", () => {
 
     await expect(fulfillCheckout("cs_paid", USER_ID)).resolves.toBe(10);
     expect(mocks.retrieve).toHaveBeenCalledWith("cs_paid", { expand: ["line_items"] });
-    expect(mocks.getUserById).toHaveBeenCalledWith(USER_ID);
     expect(mocks.fulfillCreditPack).toHaveBeenCalledWith(USER_ID, "cs_paid", "pi_paid");
   });
 
@@ -107,15 +100,14 @@ describe("fixed credit pack checkout", () => {
     mocks.retrieve.mockResolvedValue(session);
 
     await expect(fulfillCheckout("cs_bad", expectedUserId)).rejects.toThrow();
-    expect(mocks.getUserById).not.toHaveBeenCalled();
     expect(mocks.fulfillCreditPack).not.toHaveBeenCalled();
   });
 
-  it("rejects a deleted user before granting credits", async () => {
+  it("propagates a deleted-account ledger rejection without granting credits", async () => {
     mocks.retrieve.mockResolvedValue(paidMatchingSession);
-    mocks.getUserById.mockResolvedValue({ data: { user: null }, error: null });
+    mocks.fulfillCreditPack.mockRejectedValue(new Error("Account deleted"));
 
     await expect(fulfillCheckout("cs_bad", USER_ID)).rejects.toThrow();
-    expect(mocks.fulfillCreditPack).not.toHaveBeenCalled();
+    expect(mocks.fulfillCreditPack).toHaveBeenCalledWith(USER_ID, "cs_bad", "pi_paid");
   });
 });

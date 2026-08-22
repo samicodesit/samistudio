@@ -8,7 +8,7 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock("@/lib/billing/checkout", () => ({ fulfillCheckout: mocks.fulfillCheckout }));
-vi.mock("@/lib/supabase/session", () => ({ getCurrentUser: mocks.getCurrentUser }));
+vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.getCurrentUser }));
 
 function request(body?: unknown, origin = "https://doodle.test", query = "") {
   return new NextRequest("https://doodle.test/api/checkout/confirm" + query, {

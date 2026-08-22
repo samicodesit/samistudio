@@ -4,17 +4,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DELETE, GET } from "./route";
 
 const mocks = vi.hoisted(() => ({
-  deleteUser: vi.fn(),
+  clearSessionCookie: vi.fn(),
+  deletePaidAccount: vi.fn(),
   getCurrentUser: vi.fn(),
   getFreeRemaining: vi.fn(),
   getPaidBalance: vi.fn(),
 }));
 
-vi.mock("@/lib/supabase/session", () => ({ getCurrentUser: mocks.getCurrentUser }));
-vi.mock("@/lib/billing/credits", () => ({ getPaidBalance: mocks.getPaidBalance }));
-vi.mock("@/lib/supabase/admin", () => ({
-  getAdminSupabase: () => ({ auth: { admin: { deleteUser: mocks.deleteUser } } }),
-}));
+vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.getCurrentUser, clearSessionCookie: mocks.clearSessionCookie }));
+vi.mock("@/lib/billing/credits", () => ({ getPaidBalance: mocks.getPaidBalance, deletePaidAccount: mocks.deletePaidAccount }));
 vi.mock("@/lib/generation/free-allowance", async () => {
   const actual = await vi.importActual<typeof import("@/lib/generation/free-allowance")>(
     "@/lib/generation/free-allowance",
@@ -35,7 +33,7 @@ describe("account route", () => {
     vi.unstubAllEnvs();
     vi.stubEnv("SESSION_SECRET", "account-route-test-secret");
     Object.values(mocks).forEach((mock) => mock.mockReset());
-    mocks.deleteUser.mockResolvedValue({ error: null });
+    mocks.deletePaidAccount.mockResolvedValue(undefined);
   });
 
   it("reports anonymous free usage with a signed trial cookie and no caching", async () => {
@@ -64,7 +62,7 @@ describe("account route", () => {
   });
 
   it("reports the signed-in paid balance without reading anonymous usage", async () => {
-    mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", identityKey: "a".repeat(64), email: "buyer@example.com" });
     mocks.getPaidBalance.mockResolvedValue(7);
 
     const response = await GET(request());
@@ -84,7 +82,7 @@ describe("account route", () => {
 
     expect(response.status).toBe(403);
     expect(mocks.getCurrentUser).not.toHaveBeenCalled();
-    expect(mocks.deleteUser).not.toHaveBeenCalled();
+    expect(mocks.deletePaidAccount).not.toHaveBeenCalled();
   });
 
   it("requires an explicit irreversible-deletion confirmation", async () => {
@@ -92,7 +90,7 @@ describe("account route", () => {
 
     expect(response.status).toBe(400);
     expect(mocks.getCurrentUser).not.toHaveBeenCalled();
-    expect(mocks.deleteUser).not.toHaveBeenCalled();
+    expect(mocks.deletePaidAccount).not.toHaveBeenCalled();
   });
 
   it("requires authentication before deleting an account", async () => {
@@ -101,21 +99,22 @@ describe("account route", () => {
     const response = await DELETE(request("DELETE", { confirm: true }));
 
     expect(response.status).toBe(401);
-    expect(mocks.deleteUser).not.toHaveBeenCalled();
+    expect(mocks.deletePaidAccount).not.toHaveBeenCalled();
   });
 
-  it("deletes the authenticated Supabase user so database cascades remove application rows", async () => {
-    mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
+  it("deletes the authenticated account and expires its session", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", identityKey: "a".repeat(64), email: "buyer@example.com" });
 
     const response = await DELETE(request("DELETE", { confirm: true }));
 
     expect(response.status).toBe(204);
-    expect(mocks.deleteUser).toHaveBeenCalledWith("user");
+    expect(mocks.deletePaidAccount).toHaveBeenCalledWith("user", "a".repeat(64));
+    expect(mocks.clearSessionCookie).toHaveBeenCalledWith(response);
   });
 
-  it("does not report success when Supabase rejects deletion", async () => {
-    mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
-    mocks.deleteUser.mockResolvedValue({ error: new Error("database unavailable") });
+  it("does not report success when Redis rejects deletion", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", identityKey: "a".repeat(64), email: "buyer@example.com" });
+    mocks.deletePaidAccount.mockRejectedValue(new Error("Redis unavailable"));
 
     const response = await DELETE(request("DELETE", { confirm: true }));
 

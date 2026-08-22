@@ -4,7 +4,7 @@ import { generateDoodle, GenerationError } from "@/lib/generation/generate-doodl
 import { normalizeScene, SceneValidationError } from "@/lib/scenes/scene";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { checkGenerationLimit } from "@/lib/generation/generation-limit";
-import { getCurrentUser } from "@/lib/supabase/session";
+import { getCurrentUser } from "@/lib/auth/session";
 import { finalizePaidCredit, releasePaidCredit, reservePaidCredit } from "@/lib/billing/credits";
 import {
   finalizeFreeDoodle,

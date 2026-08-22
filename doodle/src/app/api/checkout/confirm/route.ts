@@ -1,6 +1,6 @@
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { fulfillCheckout } from "@/lib/billing/checkout";
-import { getCurrentUser } from "@/lib/supabase/session";
+import { getCurrentUser } from "@/lib/auth/session";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";

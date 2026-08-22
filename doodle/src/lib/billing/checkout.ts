@@ -3,7 +3,6 @@ import "server-only";
 import type Stripe from "stripe";
 import type { Locale } from "@/lib/i18n";
 import { localePath } from "@/lib/i18n";
-import { getAdminSupabase } from "@/lib/supabase/admin";
 import { required } from "@/lib/supabase/env";
 import { fulfillCreditPack } from "./credits";
 import { getStripe } from "./stripe";
@@ -57,10 +56,6 @@ export async function fulfillCheckout(sessionId: string, expectedUserId?: string
   ) {
     throw new Error("Checkout session does not match the fixed credit pack");
   }
-
-  const { data, error } = await getAdminSupabase().auth.admin.getUserById(userId);
-  if (error) throw error;
-  if (!data.user) throw new Error("Checkout user no longer exists");
 
   return fulfillCreditPack(userId, sessionId, session.payment_intent);
 }
