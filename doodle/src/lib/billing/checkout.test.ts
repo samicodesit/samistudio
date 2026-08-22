@@ -52,6 +52,17 @@ describe("fixed credit pack checkout", () => {
       automatic_tax: { enabled: true },
       adaptive_pricing: { enabled: false },
       allow_promotion_codes: false,
+      branding_settings: {
+        display_name: "Doodle",
+        background_color: "#fcfcf8",
+        button_color: "#195c47",
+        border_style: "rounded",
+        font_family: "inter",
+        icon: {
+          type: "url",
+          url: "https://doodle.test/references/doodle-reference-kiss.png",
+        },
+      },
       client_reference_id: "user",
       customer_email: "buyer@example.com",
       metadata: { userId: "user", pack: "doodle_10" },
