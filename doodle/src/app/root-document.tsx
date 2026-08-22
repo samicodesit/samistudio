@@ -1,4 +1,5 @@
 import { Alexandria, Bricolage_Grotesque, IBM_Plex_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import type { Locale } from "@/lib/i18n";
 import { htmlLang, textDirection } from "@/lib/i18n";
 import "./globals.css";
@@ -29,6 +30,7 @@ export function RootDocument({ locale, children }: { locale: Locale; children: R
     <html lang={htmlLang(locale)} dir={textDirection(locale)}>
       <body className={`${displayFont.variable} ${bodyFont.variable}${locale === "ar" ? ` ${arabicFont.variable}` : ""}`}>
         {children}
+        <Analytics />
       </body>
     </html>
   );

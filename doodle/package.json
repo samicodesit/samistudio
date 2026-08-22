@@ -15,6 +15,7 @@
     "eval:prompt": "node --env-file=.env.local --import tsx scripts/evaluate-prompt.mts"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "botid": "^1.5.11",
     "google-auth-library": "^11.0.2",
     "lucide-react": "^1.33.0",
