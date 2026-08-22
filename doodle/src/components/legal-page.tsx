@@ -7,12 +7,14 @@ export const CONTACT_EMAIL = "samicodesit@gmail.com";
 
 export function legalMetadata(path: string, title: string, description: string): Metadata {
   const canonical = `${SITE_URL}/${path}`;
+  const fullTitle = `${title} | Doodle`;
   return {
-    title: `${title} | Doodle`,
+    title: fullTitle,
     description,
     alternates: { canonical },
     robots: { index: true, follow: true },
-    openGraph: { type: "website", url: canonical, siteName: "Doodle", title: `${title} | Doodle`, description },
+    openGraph: { type: "website", url: canonical, siteName: "Doodle", title: fullTitle, description },
+    twitter: { card: "summary", title: fullTitle, description },
   };
 }
 

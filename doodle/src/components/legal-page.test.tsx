@@ -15,6 +15,10 @@ describe("legal pages", () => {
       "href", "mailto:samicodesit@gmail.com",
     );
     expect(privacyMetadata.alternates).toEqual({ canonical: "https://doodle.samistudio.nl/privacy" });
+    expect(privacyMetadata.twitter).toMatchObject({
+      title: "Privacy policy | Doodle",
+      description: "How Doodle collects, uses, shares and protects personal information.",
+    });
   });
 
   it("states the refund window and provides a working contact route", () => {
