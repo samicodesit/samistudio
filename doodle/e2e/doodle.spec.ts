@@ -174,6 +174,12 @@ test.describe("Task 7 purchase and account QA", () => {
     expect(response?.headers()["referrer-policy"]).toBe("strict-origin-when-cross-origin");
   });
 
+  test("allows cross-origin sign-in popups to message their opener", async ({ page }) => {
+    const response = await page.goto("/");
+
+    expect(response?.headers()["cross-origin-opener-policy"]).toBe("same-origin-allow-popups");
+  });
+
   test("keeps the reduced-motion offer and auth sheet contained at launch sizes", async ({ page }, testInfo) => {
     await page.route("**/api/account", (route) => route.fulfill({
       status: 200,
