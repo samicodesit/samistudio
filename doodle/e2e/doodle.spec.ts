@@ -196,8 +196,7 @@ test.describe("Task 7 purchase and account QA", () => {
       });
       await expect(page.getByRole("button", { name: "Get 10 doodles" })).toBeFocused();
       await page.getByRole("button", { name: "Get 10 doodles" }).click();
-      await expect(page.getByRole("button", { name: "Continue with Google" })).toBeFocused();
-      await page.keyboard.press("Tab");
+      await expect(page.locator(".google-sign-in")).toBeVisible();
       await expect(page.getByRole("button", { name: "Not now" })).toBeFocused();
 
       await expectFullyInViewport(page, slip);
@@ -207,7 +206,7 @@ test.describe("Task 7 purchase and account QA", () => {
           return { top: box.top, bottom: box.bottom };
         }),
       );
-      expect(actionBoxes).toHaveLength(2);
+      expect(actionBoxes).toHaveLength(1);
       for (let index = 1; index < actionBoxes.length; index += 1) {
         expect(actionBoxes[index - 1].bottom).toBeLessThanOrEqual(actionBoxes[index].top);
         expect(actionBoxes[index].top - actionBoxes[index - 1].bottom).toBeGreaterThanOrEqual(8);
@@ -391,9 +390,7 @@ test.describe("Task 8 monetized workflow", () => {
     await testInfo.attach("arabic-offer-390x844.png", { body: await page.screenshot(), contentType: "image/png" });
 
     await page.getByRole("button", { name: "احصل على 10 رسومات" }).click();
-    await expect(page.getByRole("button", { name: "المتابعة باستخدام جوجل" })).toBeFocused();
-    await expect(page.getByRole("button", { name: "المتابعة بالبريد الإلكتروني" })).toHaveCount(0);
-    await page.keyboard.press("Tab");
+    await expect(page.locator(".google-sign-in")).toBeVisible();
     await expect(page.getByRole("button", { name: "ليس الآن" })).toBeFocused();
     await expectFullyInViewport(page, slip);
     await page.keyboard.press("Escape");

@@ -28,6 +28,12 @@ export function PurchaseDialog({ open, account, scene, locale, copy, success, er
     return () => { if (dialog.open && typeof dialog.close === "function") dialog.close(); if (onRestoreFocus) onRestoreFocus(); else previousFocus.current?.focus(); previousFocus.current = null; };
   }, [onRestoreFocus, open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const frame = requestAnimationFrame(() => dialogRef.current?.querySelector<HTMLElement>("[data-purchase-focus]")?.focus());
+    return () => cancelAnimationFrame(frame);
+  }, [open, step, success]);
+
   if (!open) return null;
   const saveReturn = (intent: "auth" | "checkout") => sessionStorage.setItem("doodle:return", JSON.stringify({ scene, intent }));
   const refreshAccount = async () => {

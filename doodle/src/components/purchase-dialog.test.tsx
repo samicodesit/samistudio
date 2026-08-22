@@ -54,6 +54,13 @@ describe("PurchaseDialog", () => {
     await waitFor(() => expect(onClose).toHaveBeenCalled());
   });
 
+  it("moves keyboard focus into the sign-in sheet", async () => {
+    const user = userEvent.setup();
+    renderDialog();
+    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Not now" })).toHaveFocus());
+  });
+
   it("closes through native cancel and backdrop", () => {
     const { onClose } = renderDialog(); const dialog = screen.getByRole("dialog");
     fireEvent(dialog, new Event("cancel", { bubbles: false, cancelable: true })); fireEvent.click(dialog);
