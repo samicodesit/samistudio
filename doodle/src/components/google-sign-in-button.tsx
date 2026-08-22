@@ -18,6 +18,7 @@ interface GoogleSignInButtonProps {
 export function GoogleSignInButton({ locale, busy, onCredential, onError }: GoogleSignInButtonProps) {
   const container = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
+  const rendered = useRef("");
   const credential = useRef(onCredential);
   const error = useRef(onError);
   const [ready, setReady] = useState(false);
@@ -40,11 +41,15 @@ export function GoogleSignInButton({ locale, busy, onCredential, onError }: Goog
       });
       initialized.current = true;
     }
+    const width = Math.max(1, Math.floor(element.clientWidth));
+    const renderKey = `${locale}:${width}`;
+    if (rendered.current === renderKey) return;
     element.replaceChildren();
     api.renderButton(element, {
       type: "standard", theme: "outline", size: "large", text: "continue_with", shape: "rectangular", logo_alignment: "left",
-      width: Math.max(1, Math.floor(element.clientWidth)), locale: GOOGLE_LOCALE[locale],
+      width, locale: GOOGLE_LOCALE[locale],
     });
+    rendered.current = renderKey;
     setReady(true);
   }, [locale]);
 

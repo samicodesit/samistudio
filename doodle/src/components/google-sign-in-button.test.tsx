@@ -10,6 +10,7 @@ const initialize = vi.fn();
 describe("Google sign-in button", () => {
   beforeEach(() => {
     vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
     vi.stubEnv("NEXT_PUBLIC_GOOGLE_CLIENT_ID", "google-client-id");
     renderButton.mockReset();
     initialize.mockReset();
@@ -26,5 +27,20 @@ describe("Google sign-in button", () => {
     const options = initialize.mock.calls[0][0];
     options.callback({ credential: "google-token" });
     expect(onCredential).toHaveBeenCalledWith("google-token");
+  });
+
+  it("does not rebuild Google's iframe when its width is unchanged", async () => {
+    let resize: ResizeObserverCallback = () => undefined;
+    vi.stubGlobal("ResizeObserver", class {
+      constructor(callback: ResizeObserverCallback) { resize = callback; }
+      observe() {}
+      disconnect() {}
+    });
+    render(<GoogleSignInButton locale="en" busy={false} onCredential={vi.fn()} onError={vi.fn()} />);
+    await waitFor(() => expect(renderButton).toHaveBeenCalledTimes(1));
+
+    resize([], {} as ResizeObserver);
+
+    expect(renderButton).toHaveBeenCalledTimes(1);
   });
 });
