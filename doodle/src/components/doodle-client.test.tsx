@@ -9,8 +9,8 @@ const mocks = vi.hoisted(() => ({ track: vi.fn() }));
 vi.mock("@vercel/analytics", () => ({ track: mocks.track }));
 vi.mock("./google-sign-in-button", () => ({ GoogleSignInButton: ({ onCredential }: { onCredential(token: string): void }) => <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button> }));
 
-function renderClient(locale: Locale = "en") {
-  return render(<DoodleClient locale={locale} copy={getCopy(locale)} />);
+function renderClient(locale: Locale = "en", initialScene = "") {
+  return render(<DoodleClient locale={locale} copy={getCopy(locale)} initialScene={initialScene} />);
 }
 
 const anonymousAccount = {
@@ -61,6 +61,15 @@ describe("DoodleClient", () => {
     fireEvent.click(screen.getByRole("button", { name: /warm scarf/ }));
     expect(screen.getByRole("textbox")).toHaveValue("A person giving someone a warm scarf");
     expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith("/api/account", { cache: "no-store" });
+  });
+
+  it("prefills an idea without generating", () => {
+    const fetchMock = vi.mocked(fetch);
+    renderClient("en", "A dog holding one birthday balloon");
+
+    expect(screen.getByRole("textbox")).toHaveValue("A dog holding one birthday balloon");
+    expect(fetchMock).toHaveBeenCalledOnce();
     expect(fetchMock).toHaveBeenCalledWith("/api/account", { cache: "no-store" });
   });
 

@@ -37,4 +37,10 @@ describe("DoodlePage", () => {
     expect(screen.getByRole("link", { name: "English" })).toHaveAttribute("hrefLang", "en");
     expect(screen.getByRole("link", { name: "الصفحة الرئيسية لـ Doodle" })).toHaveAttribute("dir", "ltr");
   });
+
+  it("links English visitors to the doodle ideas gallery", () => {
+    render(<DoodlePage locale="en" />);
+
+    expect(screen.getByRole("link", { name: "Browse doodle ideas" })).toHaveAttribute("href", "/doodle-ideas");
+  });
 });

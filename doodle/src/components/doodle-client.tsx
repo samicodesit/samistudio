@@ -20,6 +20,7 @@ type GenerationState =
 interface DoodleClientProps {
   locale: Locale;
   copy: DoodleCopy;
+  initialScene?: string;
 }
 
 const IDLE_STATE: GenerationState = { status: "idle", imageUrl: null, error: null };
@@ -38,8 +39,8 @@ function messageForStatus(status: number, copy: DoodleCopy["errors"]): string {
   return copy.general;
 }
 
-export function DoodleClient({ locale, copy }: DoodleClientProps) {
-  const [scene, setScene] = useState("");
+export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientProps) {
+  const [scene, setScene] = useState(initialScene);
   const [generation, setGeneration] = useState<GenerationState>(IDLE_STATE);
   const [account, setAccount] = useState<AccountSummary>(INITIAL_ACCOUNT);
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);

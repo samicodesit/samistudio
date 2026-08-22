@@ -1,0 +1,73 @@
+export const DOODLE_IDEAS = [
+  {
+    category: "Notes",
+    prompt: "A steaming mug beside a folded thank-you note with a tiny heart on it",
+    image: "/ideas/thank-you-mug.webp",
+    alt: "Simple doodle of a steaming mug beside a folded thank-you note",
+  },
+  {
+    category: "Notes",
+    prompt: "A curious cat peeking over a folded paper note",
+    image: "/ideas/cat-note.webp",
+    alt: "Simple doodle of a curious cat peeking over a paper note",
+  },
+  {
+    category: "Cards",
+    prompt: "A cheerful dog holding one birthday balloon",
+    image: "/ideas/birthday-dog.webp",
+    alt: "Simple birthday doodle of a cheerful dog holding one balloon",
+  },
+  {
+    category: "Cards",
+    prompt: "Two little friends hugging beneath a small heart",
+    image: "/ideas/warm-hug.webp",
+    alt: "Simple friendship doodle of two little friends hugging",
+  },
+  {
+    category: "Lunchboxes",
+    prompt: "A brave banana wearing a superhero cape",
+    image: "/ideas/super-banana.webp",
+    alt: "Funny lunchbox doodle of a banana wearing a superhero cape",
+  },
+  {
+    category: "Lunchboxes",
+    prompt: "A happy apple and sandwich giving each other a high-five",
+    image: "/ideas/lunch-high-five.webp",
+    alt: "Cute lunchbox doodle of an apple and sandwich high-fiving",
+  },
+  {
+    category: "Classroom",
+    prompt: "A pencil helping an eraser climb onto a schoolbook",
+    image: "/ideas/pencil-helps-eraser.webp",
+    alt: "Classroom doodle of a pencil helping an eraser onto a book",
+  },
+  {
+    category: "Classroom",
+    prompt: "A smiling snail carrying a school backpack and pencil",
+    image: "/ideas/school-snail.webp",
+    alt: "School doodle of a smiling snail with a backpack and pencil",
+  },
+] as const;
+
+export const QUICK_DOODLE_IDEAS = [
+  "A tiny frog sheltering under a leaf",
+  "Two socks reunited after laundry day",
+  "A sleepy moon tucked under a cloud",
+  "A flower handing a bee a tiny gift",
+  "A toast slice waving good morning",
+  "A penguin carrying a warm cup",
+  "A bear mailing a little heart",
+  "A happy plant growing from a teacup",
+  "Two strawberries sharing an umbrella",
+  "A puppy asleep beside one slipper",
+  "A star giving the moon a high-five",
+  "A turtle wearing a party hat",
+  "A pencil finishing a tiny finish line",
+  "A book hugging a bookmark",
+  "A cloud watering one small flower",
+  "A fox wrapped in a warm scarf",
+  "A cupcake presenting one candle",
+  "A whale balancing a paper boat",
+  "A snail delivering a birthday card",
+  "Two cherries dancing together",
+] as const;

@@ -28,7 +28,7 @@ export function SceneComposer({
   const showCounter = scene.length >= 150;
 
   return (
-    <section className="composer-section" aria-labelledby="scene-title">
+    <section id="composer" className="composer-section" aria-labelledby="scene-title">
       <h1 id="scene-title">{copy.title}</h1>
       <p className="scene-hint">{copy.hint}</p>
       <div className="doodle-composer">

@@ -9,7 +9,7 @@ import {
   localePath,
 } from "@/lib/i18n";
 
-export function DoodlePage({ locale }: { locale: Locale }) {
+export function DoodlePage({ locale, initialScene = "" }: { locale: Locale; initialScene?: string }) {
   const copy = getCopy(locale);
   const structuredData = {
     "@context": "https://schema.org",
@@ -55,7 +55,7 @@ export function DoodlePage({ locale }: { locale: Locale }) {
       </header>
       <main>
         <section className="doodle-main" aria-label={copy.seo.title}>
-          <DoodleClient locale={locale} copy={copy} />
+          <DoodleClient locale={locale} copy={copy} initialScene={initialScene} />
         </section>
         <section className="seo-content">
           <div className="seo-intro">
@@ -72,6 +72,13 @@ export function DoodlePage({ locale }: { locale: Locale }) {
             <h2>{copy.seo.useTitle}</h2>
             <p>{copy.seo.useBody}</p>
           </div>
+          {locale === "en" ? (
+            <div>
+              <h2>Need a starting point?</h2>
+              <p>Browse simple examples for notes, cards, lunchboxes and classrooms.</p>
+              <Link href="/doodle-ideas">Browse doodle ideas</Link>
+            </div>
+          ) : null}
         </section>
       </main>
       <footer className="site-footer">
