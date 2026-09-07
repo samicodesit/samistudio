@@ -51,6 +51,23 @@ test.beforeEach(async ({ page }) => {
 test.describe("Doodle mobile workflow", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
+  test("offers sharing and a usable manual fallback on a narrow screen", async ({ page }, testInfo) => {
+    await page.setViewportSize({ width: 320, height: 740 });
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, "share", { value: undefined, configurable: true });
+      Object.defineProperty(navigator, "clipboard", { value: undefined, configurable: true });
+    });
+    await page.route("**/api/generate", fulfillImage);
+    await openTool(page);
+    await page.getByRole("textbox").fill("A cat holding a heart");
+    await page.getByRole("button", { name: "Create doodle", exact: true }).click();
+    await page.getByRole("button", { name: "Share doodle", exact: true }).click();
+    await expect(page.getByRole("textbox", { name: "Link to Doodle" })).toHaveValue("https://doodle.samistudio.nl/?utm_source=doodle&utm_medium=share&utm_campaign=made_with_doodle");
+    await expect(page.getByRole("status")).toContainText("Copy this link");
+    await expectNoOverflow(page);
+    await page.screenshot({ path: testInfo.outputPath("share-mobile.png"), fullPage: true });
+  });
+
   test("creates, downloads, retries, and starts a new scene", async ({ page }, testInfo) => {
     await openTool(page);
     await page.reload();

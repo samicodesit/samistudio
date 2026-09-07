@@ -14,7 +14,7 @@ import { ResultDialog } from "./result-dialog";
 type GenerationState =
   | { status: "idle"; imageUrl: null; error: null }
   | { status: "generating"; imageUrl: null; error: null }
-  | { status: "ready"; imageUrl: string; error: null }
+  | { status: "ready"; imageUrl: string; imageFile: File; error: null }
   | { status: "error"; imageUrl: null; error: string };
 
 interface DoodleClientProps {
@@ -215,9 +215,11 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
         return;
       }
 
-      const imageUrl = URL.createObjectURL(await response.blob());
+      const imageBlob = await response.blob();
+      const imageFile = new File([imageBlob], "doodle.png", { type: imageBlob.type || "image/png" });
+      const imageUrl = URL.createObjectURL(imageBlob);
       currentObjectUrl.current = imageUrl;
-      setGeneration({ status: "ready", imageUrl, error: null });
+      setGeneration({ status: "ready", imageUrl, imageFile, error: null });
       track("Doodle Created");
       if (response.headers.get("X-Doodle-Balance-Uncertain") === "1") {
         const identity = identityRevision.current;
@@ -295,7 +297,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
             <p className="eyebrow">{copy.status.readyEyebrow}</p>
             <h1 id="ready-title">{copy.status.readyTitle}</h1>
             <p className="scene-summary">“{scene}”</p>
-            <ResultActions imageUrl={generation.imageUrl} onTryAgain={createDoodle} onNewScene={handleNewScene} copy={copy.actions} />
+            <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} locale={locale} onTryAgain={createDoodle} onNewScene={handleNewScene} copy={copy.actions} />
             <div className="workspace-usage">
               {usage === null
                 ? <span className="usage-loading" role="status" aria-label={copy.account.label} />
