@@ -1,5 +1,7 @@
 import { defineConfig, devices } from "@playwright/test";
 
+const useProductionServer = process.env.PLAYWRIGHT_PRODUCTION === "1";
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: false,
@@ -14,15 +16,16 @@ export default defineConfig({
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
   ],
   webServer: {
-    command: "npm run dev -- --port 3100",
+    command: useProductionServer ? "npm run start -- --port 3100" : "npm run dev -- --port 3100",
     url: "http://127.0.0.1:3100",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: !process.env.CI && !useProductionServer,
     timeout: 120_000,
     env: {
       SESSION_SECRET: "test-session-secret-with-at-least-32-characters",
       OPENAI_API_KEY: "test-key-not-used-because-generation-is-mocked",
       OPENAI_IMAGE_MODEL: "gpt-image-1-mini",
       OPENAI_IMAGE_QUALITY: "low",
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: "playwright-google-client-id",
     },
   },
 });

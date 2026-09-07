@@ -468,6 +468,7 @@ export function buildPageMetadata(locale: Locale): Metadata {
   return {
     title: copy.seo.title,
     description: copy.seo.description,
+    manifest: "/manifest.webmanifest",
     applicationName: "Doodle",
     category: "design",
     alternates: { canonical, languages: getLanguageAlternates() },

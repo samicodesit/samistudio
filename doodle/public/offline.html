@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#195c47">
+  <title>Doodle — Offline</title>
+  <style>
+    * { box-sizing: border-box; }
+    html { min-width: 320px; background: #eef1ea; color: #20231f; font-family: Arial, sans-serif; }
+    body { min-height: 100svh; margin: 0; display: grid; place-items: center; padding: 24px; }
+    main { width: min(100%, 520px); padding: clamp(28px, 8vw, 52px); border: 1px solid rgba(32,35,31,.14); border-radius: 12px 10px 14px 9px; background: #fcfcf8; box-shadow: 10px 13px 0 rgba(32,35,31,.05); }
+    .wordmark { margin: 0 0 48px; direction: ltr; font-size: 22px; font-weight: 700; letter-spacing: -.04em; text-align: left; unicode-bidi: isolate; }
+    .wordmark span { color: #195c47; }
+    .eyebrow { margin: 0 0 16px; color: #195c47; font-size: 11px; font-weight: 700; letter-spacing: .09em; line-height: 1.5; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(42px, 12vw, 68px); letter-spacing: -.065em; line-height: .94; }
+    p { margin: 20px 0 28px; color: #687068; font-size: 17px; line-height: 1.55; }
+    button { width: 100%; min-height: 50px; padding: 0 18px; border: 1px solid #195c47; border-radius: 10px 9px 11px 8px; background: #195c47; box-shadow: 0 3px 0 #0f3c2f; color: #fcfcf8; font: inherit; font-weight: 700; cursor: pointer; }
+    button:focus-visible { outline: 3px solid rgba(25,92,71,.22); outline-offset: 4px; }
+    html[dir="rtl"] main, html[dir="rtl"] .wordmark { text-align: right; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="wordmark">Doodle<span>.</span></div>
+    <div class="eyebrow" id="eyebrow">Connection needed</div>
+    <h1 id="title">You’re offline</h1>
+    <p id="message">Creating a doodle needs an internet connection. Reconnect, then try again.</p>
+    <button id="retry" type="button">Try again</button>
+  </main>
+  <script>
+    const copy = {
+      en: ["Connection needed", "You’re offline", "Creating a doodle needs an internet connection. Reconnect, then try again.", "Try again"],
+      nl: ["Verbinding nodig", "Je bent offline", "Om een doodle te maken heb je internet nodig. Maak opnieuw verbinding en probeer het nog eens.", "Opnieuw proberen"],
+      de: ["Verbindung erforderlich", "Du bist offline", "Zum Erstellen eines Doodles brauchst du eine Internetverbindung. Verbinde dich erneut und versuche es noch einmal.", "Erneut versuchen"],
+      fr: ["Connexion requise", "Vous êtes hors ligne", "Une connexion internet est nécessaire pour créer un doodle. Reconnectez-vous, puis réessayez.", "Réessayer"],
+      es: ["Conexión necesaria", "No tienes conexión", "Necesitas conexión a internet para crear un doodle. Vuelve a conectarte e inténtalo de nuevo.", "Intentar de nuevo"],
+      "pt-br": ["Conexão necessária", "Você está offline", "É preciso ter conexão com a internet para criar um doodle. Reconecte-se e tente de novo.", "Tentar novamente"],
+      it: ["Connessione necessaria", "Sei offline", "Per creare un doodle serve una connessione internet. Riconnettiti e riprova.", "Riprova"],
+      ja: ["接続が必要です", "オフラインです", "イラストを作るにはインターネット接続が必要です。接続してからもう一度お試しください。", "もう一度試す"],
+      ko: ["인터넷 연결 필요", "오프라인 상태예요", "그림을 만들려면 인터넷 연결이 필요해요. 다시 연결한 후 시도해 주세요.", "다시 시도"],
+      ar: ["يلزم الاتصال", "أنت غير متصل", "تحتاج إلى اتصال بالإنترنت لإنشاء رسمة. أعد الاتصال ثم حاول مرة أخرى.", "حاول مرة أخرى"]
+    };
+    const segment = location.pathname.split("/").filter(Boolean)[0] || "en";
+    const locale = Object.prototype.hasOwnProperty.call(copy, segment) ? segment : "en";
+    const [eyebrow, title, message, retry] = copy[locale];
+    document.documentElement.lang = locale === "pt-br" ? "pt-BR" : locale;
+    document.documentElement.dir = locale === "ar" ? "rtl" : "ltr";
+    document.getElementById("eyebrow").textContent = eyebrow;
+    document.getElementById("title").textContent = title;
+    document.getElementById("message").textContent = message;
+    document.getElementById("retry").textContent = retry;
+    document.getElementById("retry").addEventListener("click", () => location.reload());
+  </script>
+</body>
+</html>

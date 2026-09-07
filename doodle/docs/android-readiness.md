@@ -8,7 +8,7 @@ Doodle is useful enough to qualify as a mobile app: it is an interactive, mobile
 
 Proceed with the policy and PWA preparation now. Do **not** submit the current site in a wrapper. It has unresolved Play policy requirements because the packaged experience would sell consumable digital credits through Stripe and has no in-app AI-output reporting feature. Google Play normally requires Play Billing for digital goods sold in a Play-distributed app, and generative AI apps must let users report offensive output without leaving the app.
 
-The signed-in Google identity inspected in Play Console does not yet have an active developer account. The newly raised US$25 budget exactly covers Google's one-time US$25 registration fee. It does not cover any exchange-rate or card costs. Because neither prospective owner has a registered company, **Personal is the accurate account type today**. A new personal account also requires a closed test with at least 12 testers opted in continuously for 14 days before production access. Do not spend the US$25 until there is a working, locally installable TWA build and a credible recruitment route for roughly 15–20 willing volunteer testers; that buffer protects the 12-person continuous minimum if a few drop out. The owner cannot recruit from a personal circle, so this remains an unresolved acquisition problem, not an assumed source of free testers. Actual Play Billing and track testing begin after registration.
+The signed-in Google identity inspected in Play Console does not yet have an active developer account. The newly raised US$25 budget exactly covers Google's one-time US$25 registration fee. It does not cover any exchange-rate or card costs. Because neither prospective owner has a registered company, **Personal is the accurate account type today**. A new personal account also requires a closed test with at least 12 testers opted in continuously for 14 days before production access. The owner has now explicitly chosen the personal account route and wants recruitment handled when the Android build is ready. Continue the build and account preparation without making recruitment an advance gate. Aim for roughly 15–20 willing testers when recruiting, to protect the 12-person continuous minimum if a few drop out. The owner cannot recruit from a personal circle, so this remains an unresolved acquisition problem, not an assumed source of free testers. Actual Play Billing and track testing begin after registration.
 
 The recommended first implementation slice is bounded and remains useful even if Play onboarding takes longer:
 
@@ -41,7 +41,7 @@ For the wrapper:
 - Publish `/.well-known/assetlinks.json` with both the local upload certificate and the Play App Signing certificate as applicable. Verify that the TWA opens without a browser toolbar on a Play-installed build.
 - Keep the requested Android permissions minimal. The current app needs network access; file sharing can use browser/TWA capabilities and should not require broad storage access.
 
-## Current repo readiness
+## Initial repo readiness (before foundation implementation)
 
 | Area | Evidence in the repo | Readiness |
 | --- | --- | --- |
@@ -102,13 +102,13 @@ Console configuration then needed:
 
 A native Kotlin or Compose rewrite would more realistically take several weeks and would still need the same backend billing, AI-reporting, privacy, account deletion, store, and tester work. It is not justified by the current acquisition evidence. The Play release should be treated as a distribution experiment; the product's viral loop still comes from a successful creation followed by a compelling native share. Track generation success, share-sheet opens/completions, install source, first-generation completion, and purchase conversion. A store listing alone does not create growth.
 
-## What can and cannot be done now
+## Remaining Android release work
 
 **Can build now without further Play spending:** all PWA and policy work, the provider-neutral billing data model and endpoints behind feature flags, listing assets/copy, Android project source, unit/integration tests, and a locally signed debug build after installing the free Android toolchain.
 
 **Requires the Play account or Console state:** reserving/confirming the package, Play App Signing certificate, one-time product/catalog, merchant and API credentials, license-test purchases, Play-generated app bundle testing, Data safety submission, pre-launch report, closed test, and production release.
 
-**Cannot honestly publish yet:** the account is not registered, Play Billing is absent, AI reporting is absent, the external deletion resource is weak, the Android/PWA artifacts do not exist, and no physical-device or Play purchase test has run.
+**Cannot honestly publish on Play yet:** the account is not registered, Play Billing and AI reporting are absent, an Android bundle has not been built, and no physical-device or Play purchase test has run. The PWA and public account-deletion foundation are now implemented in the worktree; combined unit checks, lint and production build pass. Responsive browser checks and deployment are being completed separately.
 
 ## Official sources
 

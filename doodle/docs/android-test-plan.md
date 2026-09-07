@@ -2,9 +2,9 @@
 
 ## Decision and budget
 
-The owner raised the total budget from US$20 to US$25 for Google Play's one-time registration fee. No payment has been made. The currently signed-in Google account opens Play registration rather than an active developer account. Account setup, actual identity verification and legal acceptance remain unfinished.
+The owner raised the total budget from US$20 to US$25 for Google Play's one-time registration fee. No payment has been made. The currently signed-in Google account opens Play registration rather than an active developer account. Account setup, actual identity verification and legal acceptance remain unfinished. Personal signup has advanced to payments-profile selection using the available public developer name Sami Software Solutions. No profile has been linked and no fee paid; the owner must select the profile matching current legal details.
 
-Do not pay merely to start a testing clock: the closed test requires an actual uploaded app, configured test track and opted-in testers. The current recommendation is to establish a viable build and recruit volunteers before paying the fee. No tester has been recruited or contacted by the agent.
+Do not pay merely to start a testing clock: the closed test requires an actual uploaded app, configured test track and opted-in testers. The owner has chosen the personal Play account route and wants tester recruitment handled when the Android build is ready. Recruitment is not a prerequisite for continuing the build or preparing account setup. Keep the total budget at US$25; actual identity verification and legal acceptance still require the owner. No tester has been recruited or contacted by the agent.
 
 ## Recruitment approach
 
