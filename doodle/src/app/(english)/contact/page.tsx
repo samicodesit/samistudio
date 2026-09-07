@@ -1,4 +1,4 @@
-import { CONTACT_EMAIL, LegalPage, legalMetadata } from "@/components/legal-page";
+import { CONTACT_EMAIL, OPERATOR_NAME, LegalPage, legalMetadata } from "@/components/legal-page";
 
 export const metadata = legalMetadata(
   "contact",
@@ -22,7 +22,7 @@ export default function ContactPage() {
 
       <section>
         <h2>Operator</h2>
-        <p>Sami Studio<br />Slovakia</p>
+        <p>{OPERATOR_NAME}<br />Publishing as Sami Studio (samistudio.nl)<br />Netherlands</p>
       </section>
     </LegalPage>
   );

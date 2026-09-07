@@ -32,3 +32,7 @@ The APK must still be exercised on a real Android device. Never test account del
 `assembleDebug` and the debug runtime dependency report passed. The graph resolves `com.android.billingclient:billing:8.3.0`. APK metadata confirms package `nl.samistudio.doodle`, minimum API 23, target/compile API 36 and a debuggable launcher. Requested permissions are billing, network state, Internet and the AndroidX signature-level internal receiver permission; no camera, microphone, location or notification permission is present.
 
 Artifact: `app/build/outputs/apk/debug/app-debug.apk` (9,935,582 bytes), SHA-256 `9fdafce6d47b93c6d0ffe958346ab535f8ca395cfe67a15c26ae6a57ecc84d64`. It is signed with the local Android debug certificate. No device installation or Play upload was performed.
+
+## Unsigned release bundle
+
+The release build also passes R8 minification and duplicate-class checks. Artifact: app/build/outputs/bundle/release/app-release.aab, 1,756,845 bytes, SHA-256 2a7817fbc0dd8d9a9939ba5accdd6dabfe815efe42f98c0214401c4c2b040c24. jarsigner verification confirms it is unsigned. It is not upload-ready; configure an upload key and Play App Signing before submission. No release key was created or bundle uploaded. Native binding tests (2) and the web caller contract (5) pass.

@@ -26,7 +26,7 @@ export default function RefundPage() {
 
       <section>
         <h2>How refunds are paid</h2>
-        <p>Approved refunds are returned through Stripe to the original payment method. Your bank or card provider controls how long the refund takes to appear.</p>
+        <p>Approved refunds return through the provider that handled the purchase: Stripe for web purchases or Google Play for Play purchases. For a Play purchase, you can also use <a href="https://support.google.com/googleplay/answer/2479637?hl=en">Google Play&apos;s refund request process</a>. Refunded packs may have their unused credits removed. Your payment provider controls how long the refund takes to appear.</p>
       </section>
 
       <section>

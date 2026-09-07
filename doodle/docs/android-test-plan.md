@@ -1,5 +1,11 @@
 # Android tester recruitment — draft, not launched
 
+## Current implementation update — 7 September 2026
+
+This update supersedes the initial assessment below. The owner submitted identity documents; Google last showed identity review in progress, not an unfinished upload. Android-device and subsequent phone verification remain. Do not reopen or disturb the owner's verification flow.
+
+PWA/offline fallback, account deletion and in-app reporting are live. Commit `9e4bdef` implements guarded Play catalog/purchase UI, server verification and atomic credit fulfillment, and a local Android billing adapter that preserves account binding. The debug APK builds. Play purchases are disabled; real device/purchase testing, refund reconciliation, signing/domain association, store setup and closed testing still gate publication. No additional budget remains.
+
 ## Decision and budget
 
 The owner raised the total budget from US$20 to US$25 for Google Play's one-time registration fee. The authorized US$25 payment succeeded on 7 September and personal developer account `5843530199260119810` was created; US$0 remains. The accepted public developer name is **Sami Studio (samistudio.nl)**, with website `samistudio.nl` and verified public support email `hello@samistudio.nl`. The free Zoho mailbox was restored without a subscription. Three account checks remain: government-issued photo ID plus a valid address document, verification on a real Android device through the Play Console mobile app, and contact-phone verification after identity approval. The Console currently presents a QR handoff for owner submission on their phone. The agent has not submitted or handled identity files. Creating the Play app is disabled until these checks are complete.
@@ -43,3 +49,7 @@ Keep an honest feedback log: date, version, device, steps, expected/actual resul
 - Personal-account testing requirements and recruiting guidance: https://support.google.com/googleplay/android-developer/answer/14151465
 - Test-track setup: https://support.google.com/googleplay/android-developer/answer/9845334
 - Registration fee: https://support.google.com/googleplay/android-developer/answer/6112435
+
+## Verified recruitment destination — 7 September 2026
+
+The r/GooglePlayDeveloper Weekly Tester Discovery Thread explicitly permits genuine tester requests and asks for app purpose, device requirements, track type, desired feedback and participation method. It prohibits paid engagement and review/rating/vote/referral exchanges. Current thread: https://www.reddit.com/r/GooglePlayDeveloper/comments/1w3dx60/weekly_tester_discovery_thread_find_testers_help/ . Recheck the current weekly thread and rules at posting time. Use the invitation above only after the actual closed track and Play opt-in link exist. Ask the owner to authorize this exact post and destination before publication; no tester has been contacted.

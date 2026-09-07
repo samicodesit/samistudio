@@ -1,4 +1,4 @@
-import { ContactEmail, LegalPage, legalMetadata } from "@/components/legal-page";
+import { ContactEmail, OPERATOR_NAME, LegalPage, legalMetadata } from "@/components/legal-page";
 
 export const metadata = legalMetadata(
   "terms",
@@ -21,7 +21,7 @@ export default function TermsPage() {
 
       <section>
         <h2>Purchases</h2>
-        <p>Doodle sells a one-time pack of 10 doodle credits for €4.99. There is no subscription. The final total, including any applicable tax, is shown by Stripe before payment. One credit is used only when a generation completes successfully. Credits have no cash value and cannot be transferred between accounts.</p>
+        <p>Doodle sells one-time packs of 10 doodle credits. There is no subscription. The price and final total, including any applicable tax, are shown before payment by Stripe on the web or Google Play where purchasing is available in the Android app. One credit is used only when a generation completes successfully. Credits have no cash value and cannot be transferred between accounts.</p>
       </section>
 
       <section>
@@ -35,13 +35,13 @@ export default function TermsPage() {
       </section>
 
       <section>
-        <h2>Ending use and governing law</h2>
-        <p>You may stop using Doodle or delete your account at any time. Deleting an account removes unused credits and cannot be undone. These terms are governed by Slovak law, without depriving consumers of mandatory protections available where they live.</p>
+        <h2>Ending use and consumer rights</h2>
+        <p>You may stop using Doodle or delete your account at any time. Deleting an account removes unused credits and cannot be undone. Nothing in these terms deprives you of mandatory consumer protections available where you live.</p>
       </section>
 
       <section>
         <h2>Contact</h2>
-        <p>Doodle is operated by Sami Studio in Slovakia. Questions can be sent to <ContactEmail />.</p>
+        <p>Doodle is operated by {OPERATOR_NAME}, publishing as Sami Studio (samistudio.nl) in the Netherlands. Questions can be sent to <ContactEmail />.</p>
       </section>
     </LegalPage>
   );

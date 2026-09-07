@@ -11,8 +11,8 @@ describe("legal pages", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Privacy policy" })).toBeInTheDocument();
     expect(screen.getAllByText(/OpenAI/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/Stripe/).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: "samicodesit@gmail.com" })[0]).toHaveAttribute(
-      "href", "mailto:samicodesit@gmail.com",
+    expect(screen.getAllByRole("link", { name: "hello@samistudio.nl" })[0]).toHaveAttribute(
+      "href", "mailto:hello@samistudio.nl",
     );
     expect(privacyMetadata.alternates).toEqual({ canonical: "https://doodle.samistudio.nl/privacy" });
     expect(privacyMetadata.twitter).toMatchObject({
@@ -29,7 +29,7 @@ describe("legal pages", () => {
     rerender(<ContactPage />);
     expect(screen.getByRole("link", { name: "Email Sami Studio" })).toHaveAttribute(
       "href",
-      "mailto:samicodesit@gmail.com",
+      "mailto:hello@samistudio.nl",
     );
   });
 });

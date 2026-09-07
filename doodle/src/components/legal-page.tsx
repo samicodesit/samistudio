@@ -3,7 +3,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { SITE_URL } from "@/lib/i18n";
 
-export const CONTACT_EMAIL = "samicodesit@gmail.com";
+export const CONTACT_EMAIL = "hello@samistudio.nl";
+export const OPERATOR_NAME = "Ahmed Sami Ibrahim Mohamed Shata";
 
 export function legalMetadata(path: string, title: string, description: string): Metadata {
   const canonical = `${SITE_URL}/${path}`;
@@ -29,10 +30,10 @@ export function LegalPage({ title, intro, children }: { title: string; intro: st
       </header>
       <main className="legal-main">
         <article className="legal-document">
-          <p className="eyebrow">Sami Studio · Slovakia</p>
+          <p className="eyebrow">Sami Studio · Netherlands</p>
           <h1>{title}</h1>
           <p className="legal-intro">{intro}</p>
-          <p className="legal-updated">Last updated August 22, 2026</p>
+          <p className="legal-updated">Last updated September 7, 2026</p>
           {children}
         </article>
         <nav className="legal-nav" aria-label="Legal pages">
