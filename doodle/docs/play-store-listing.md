@@ -59,7 +59,7 @@ Character limits are 30 for name, 80 for short description and 4,000 for full de
 | Monetization | Free download with in-app purchases; no subscription |
 | Audience | People making simple personal notes/cards/journal drawings. Do not select children's age groups or claim Families compliance without completing that assessment. Content rating is not yet assigned. |
 
-Local source now uses the confirmed operator/contact details, and the privacy page includes Play purchase processing and Vercel Analytics. Those legal/privacy changes are deployed and all four public policy/contact pages returned HTTP 200 with the verified email on September 7. At the last Console check, identity documents were submitted and Google's review was pending; device and phone verification were still pending. Confirm the live legal pages and Console status before submission.
+Local source now uses the confirmed operator/contact details, and the privacy page includes Play purchase processing and Vercel Analytics. Those legal/privacy changes are deployed and all four public policy/contact pages returned HTTP 200 with the verified email on September 7. At the September 7 10:45 UTC Console check, Google was still reviewing the submitted identity documents and phone verification remained dependent on approval. The Android-device task was no longer listed on Home; Create app remained disabled. Confirm the live legal pages and Console status before submission.
 
 ## Assets: available versus missing
 
@@ -67,10 +67,10 @@ Google requires a 512×512 PNG icon (up to 1,024 KB), a 1024×500 JPEG or non-al
 
 | Asset | Actual status |
 | --- | --- |
-| Store icon | `android/store_icon.png`: verified 512×512 RGBA PNG, 13,030 bytes. Available; visual store-icon review still needed. |
+| Store icon | `store-assets/play-icon-512.png`: unchanged live 512 x 512 PNG, copied and visually reviewed. |
 | App launcher icons | Generated regular and maskable sizes under `android/app/src/main/res/mipmap-*`; available. |
 | Example drawings | `public/ideas/*.webp` and `public/references/doodle-reference-kiss.png`; available as product illustration references, not screenshots. |
-| Feature graphic | No finished 1024×500 store graphic found. Missing. |
+| Feature graphic | `store-assets/feature-graphic.png`: 1024 x 500 opaque RGB, visually reviewed; editable HTML alongside. |
 | Real Android screenshots | Missing. Existing `test-results/` captures are responsive browser QA with mocked generation/account/purchase state, not evidence of the Play-installed experience. Some 320×740 captures also exceed the allowed 2:1 ratio. Do not upload them as final Android purchase screenshots. |
 | Preview video | None found; optional, not needed for this first listing. |
 
@@ -101,4 +101,4 @@ This is an evidence map, not a completed Console declaration. Include the hosted
 
 Deletion removes the account and remaining credits, not the user's Google account. Play purchase tombstones/transaction records and independently submitted reports have different retention behavior. Do not promise that all data disappears immediately. Public privacy wording, actual retention rules and Console answers must agree.
 
-Exact remaining unknowns: outcome of Google's pending identity review and completion of device/phone verification; deployment of the latest legal/privacy changes; final reviewer-access method; production Play catalog/credentials and license-test purchases; final screenshots/feature graphic; final age targeting/content rating; deployed provider retention and Data safety classifications. The support mailbox and email verification are already complete. No Console changes, uploads, messages or purchases were made for this draft.
+Exact remaining unknowns: outcome of Google's pending identity review and completion of phone verification; final reviewer-access method; production Play catalog/credentials and license-test purchases; final installed-app screenshots; final age targeting/content rating; deployed provider retention and Data safety classifications. The support mailbox and email verification are already complete. No Console changes, uploads, messages or purchases were made for this draft.

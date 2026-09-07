@@ -2,7 +2,7 @@
 
 ## Current implementation update — 7 September 2026
 
-This update supersedes the initial assessment below. The owner submitted identity documents; Google last showed identity review in progress, not an unfinished upload. Android-device and subsequent phone verification remain. Do not reopen or disturb the owner's verification flow.
+This update supersedes the initial assessment below. The owner submitted identity documents; Google last showed identity review in progress, not an unfinished upload. On a fresh read of Console Home at 10:45 UTC, Google still showed identity review and subsequent phone verification; the Android-device task was no longer listed. Create app was disabled. Do not reopen or disturb the owner's verification flow.
 
 PWA/offline fallback, account deletion and in-app reporting are live. Commit `9e4bdef` implements guarded Play catalog/purchase UI, server verification and atomic credit fulfillment, and a local Android billing adapter that preserves account binding. The debug APK builds. Play purchases are disabled; real device/purchase testing, refund reconciliation, signing/domain association, store setup and closed testing still gate publication. No additional budget remains.
 

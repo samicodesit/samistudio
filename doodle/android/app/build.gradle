@@ -50,6 +50,18 @@ def twaManifest = [
     orientation: 'default',
 ]
 
+def releaseSigningEnvironment = [
+    storeFile: System.getenv('DOODLE_UPLOAD_STORE_FILE'),
+    storePassword: System.getenv('DOODLE_UPLOAD_STORE_PASSWORD'),
+    keyAlias: System.getenv('DOODLE_UPLOAD_KEY_ALIAS'),
+    keyPassword: System.getenv('DOODLE_UPLOAD_KEY_PASSWORD'),
+]
+def releaseSigningValueCount = releaseSigningEnvironment.values().count { it != null && !it.isEmpty() }
+if (releaseSigningValueCount > 0 && releaseSigningValueCount < releaseSigningEnvironment.size()) {
+    throw new GradleException('Release signing is only enabled when all DOODLE_UPLOAD_* environment variables are set.')
+}
+def releaseSigningConfigured = releaseSigningValueCount == releaseSigningEnvironment.size()
+
 android {
     compileSdkVersion 36
     namespace "nl.samistudio.doodle"
@@ -150,9 +162,22 @@ android {
 
 
     }
+    signingConfigs {
+        if (releaseSigningConfigured) {
+            release {
+                storeFile file(releaseSigningEnvironment.storeFile)
+                storePassword releaseSigningEnvironment.storePassword
+                keyAlias releaseSigningEnvironment.keyAlias
+                keyPassword releaseSigningEnvironment.keyPassword
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled true
+            if (releaseSigningConfigured) {
+                signingConfig signingConfigs.release
+            }
         }
     }
     compileOptions {
