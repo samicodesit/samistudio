@@ -21,3 +21,7 @@ Before executing any step, briefly check that it makes sense for the user's actu
 Keep this check lightweight. Explain material decisions and risks to the user, but do not turn routine checks into repeated permission requests.
 
 Use sub-agents when independent work can progress in parallel, such as responsive QA, Android readiness research, and launch execution. Give each agent a bounded scope and clear file or browser ownership so one visible workflow does not stall while unrelated work proceeds.
+
+## Browser handoff
+
+When the user is completing verification, authentication, payment approval, or another manual browser step, leave their browser tabs untouched until they explicitly say they are finished. Do not navigate, close dialogs, retry buttons, or inspect the active flow while they are working. Continue independent local work instead. Tell every delegated agent about the handoff.
