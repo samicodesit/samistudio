@@ -127,8 +127,8 @@ describe("DoodleClient", () => {
     expect(screen.getByRole("link", { name: /Download/ })).toHaveAttribute("download", "doodle.png");
     expect(screen.getByRole("button", { name: /View larger/ })).toBeVisible();
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Try again/ })).toBeVisible();
-    expect(screen.getByRole("button", { name: /New scene/ })).toBeVisible();
+    expect(screen.getByRole("button", { name: /Redraw this idea/ })).toBeVisible();
+    expect(screen.getByRole("button", { name: /Draw something else/ })).toBeVisible();
   });
 
   it("tracks one anonymous event after a doodle is created", async () => {
@@ -178,8 +178,10 @@ describe("DoodleClient", () => {
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "A finished scene" } });
     fireEvent.click(screen.getByRole("button", { name: /Create doodle/ }));
     await screen.findByAltText("Generated sticky-note doodle");
-    fireEvent.click(screen.getByRole("button", { name: /New scene/ }));
+    fireEvent.click(screen.getByRole("button", { name: /Draw something else/ }));
     expect(screen.getByRole("textbox")).toHaveValue("");
+    expect(screen.getByRole("textbox")).toHaveFocus();
+    expect(vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/generate")).toHaveLength(1);
     expect(screen.getByAltText(/two cats kissing upside down/)).toBeInTheDocument();
   });
 
@@ -304,7 +306,7 @@ describe("DoodleClient", () => {
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
     await waitFor(() => expect(accountRequests).toBe(2));
-    fireEvent.click(await screen.findByRole("button", { name: "Try again" }));
+    fireEvent.click(await screen.findByRole("button", { name: "Redraw this idea" }));
     await waitFor(() => expect(accountRequests).toBe(3));
     expect(screen.getByAltText("Generated sticky-note doodle")).toHaveAttribute("src", "blob:second");
 

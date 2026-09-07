@@ -21,7 +21,7 @@ The new result button shares the generated PNG and a localized app link through 
 
 ## Ready-to-publish launch copy
 
-These are drafts. Publishing needs an explicitly authorized destination/account. Do not post as an unaffiliated customer, invent testimonials, send unsolicited DMs, or duplicate posts across unrelated communities.
+The owner explicitly authorized publishing the two Pinterest posts to the available account on 7 September. Other channel copy remains draft only. Do not post as an unaffiliated customer, invent testimonials, send unsolicited DMs, or duplicate posts across unrelated communities.
 
 ### Optional short-video caption (Instagram or TikTok)
 
@@ -65,7 +65,11 @@ Description: A happy dog with a birthday balloon, ready to inspire a tiny card s
 
 Image: `public/ideas/birthday-dog.webp`
 
-Destination: https://doodle.samistudio.nl/?scene=A%20cheerful%20dog%20holding%20one%20birthday%20balloon&utm_source=pinterest&utm_medium=organic_social&utm_campaign=birthday_note
+Destination: https://doodle.samistudio.nl/doodle-ideas?utm_source=pinterest&utm_medium=organic_social&utm_campaign=birthday_note
+
+Published and verified on the public board: https://www.pinterest.com/pin/703476404341485239/
+
+Pinterest's website-import composer locks the source URL, so the tracked gallery URL is used. The gallery includes this exact dog example and a “Try this idea” route into the generator.
 
 ### Pinterest: lunchbox idea
 
@@ -76,6 +80,8 @@ Description: An easy high-five drawing for a lunchbox note. This example is AI-g
 Image: `public/ideas/lunch-high-five.webp`
 
 Destination: https://doodle.samistudio.nl/doodle-ideas?utm_source=pinterest&utm_medium=organic_social&utm_campaign=lunchbox_note
+
+Published and verified on the public board: https://www.pinterest.com/pin/703476404341485279/
 
 Pinterest is a testable audience hypothesis, not a proven channel for this app. Official guidance favors vertical 2:3 creative; existing square examples can be used for an initial organic post, then formatted if there is a signal. References: https://business.pinterest.com/creative-best-practices/ and https://business.pinterest.com/en-gb/how-to-make-pins/.
 
@@ -92,3 +98,13 @@ Pinterest is a testable audience hypothesis, not a proven channel for this app. 
 ## Shipping checks
 
 Unit/integration tests, typecheck, lint, production build, existing browser workflows, and the new narrow-screen sharing fallback test. External native share destinations need real-device verification; automated tests cover API payloads, cancellation, clipboard fallback and accessible manual copying.
+
+## Release record
+
+- Code commit: `9f36e74`; QA rule and content correction: `a68b56a`.
+- Deployed to https://doodle.samistudio.nl/ via the existing Vercel project; deployment https://doodle-ko2s1mdp4-ahmed-samis-projects-e6ef0336.vercel.app completed successfully.
+- Production smoke test: one real birthday-dog generation succeeded, new share control rendered, link-copy feedback succeeded. One existing paid credit consumed (10 to 9); no new pack purchase or card charge.
+- Test traffic includes one `Doodle Created` and one `Doodle Share Link Copied` from this smoke test. Exclude these from any claim of growth.
+- Public Pinterest board: https://www.pinterest.com/samicodesit/easy-doodle-ideas-for-cards-notes/.
+- Both approved pins are verified on that public board (2 Pins), with matching alt text and AI-modified disclosure selected in the composer. No paid promotion was purchased.
+- `AGENTS.md` now requires a quick pre-action QA check for every step, including audience fit, evidence, authorization, budget, factual correctness, and outcome verification.

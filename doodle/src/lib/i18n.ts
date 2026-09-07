@@ -44,7 +44,7 @@ export interface DoodleCopy {
     referenceAria: string;
     referenceAlt: string;
   };
-  actions: { download: string; tryAgain: string; newScene: string };
+  actions: { download: string; tryAgain: string; redraw: string; newScene: string };
   dialog: {
     label: string;
     close: string;
@@ -142,7 +142,7 @@ const COPY = {
       referenceAria: "View example doodle larger",
       referenceAlt: "Simple sticky-note doodle of two cats kissing upside down",
     },
-    actions: { download: "Download", tryAgain: "Try again", newScene: "New scene" },
+    actions: { download: "Download", tryAgain: "Try again", redraw: "Redraw this idea", newScene: "Draw something else" },
     dialog: {
       label: "Doodle image viewer",
       close: "Close image",
@@ -232,7 +232,7 @@ const COPY = {
       referenceAria: "Voorbeelddoodle groter bekijken",
       referenceAlt: "Eenvoudige doodle van twee ondersteboven kussende katten op een geel briefje",
     },
-    actions: { download: "Downloaden", tryAgain: "Opnieuw", newScene: "Nieuwe scène" },
+    actions: { download: "Downloaden", tryAgain: "Opnieuw", redraw: "Teken dit idee opnieuw", newScene: "Teken iets anders" },
     dialog: { label: "Doodle-afbeelding", close: "Afbeelding sluiten", imageAlt: "Doodle op een notitieblaadje", native: "Openen in nieuw tabblad", download: "Downloaden" },
     usage: { firstTwoFree: "De eerste 2 doodles zijn gratis", freeLeft: { one: "Nog # gratis doodle", other: "Nog # gratis doodles" }, paidLeft: { one: "Nog # doodle", other: "Nog # doodles" } },
     purchase: { label: "Doodles aanvullen", title: "Blijf tekenen", quantity: "10 extra doodles", price: "€4.99", reassurance: "Eenmalige betaling. Geen abonnement.", failedDontCount: "Mislukte tekeningen tellen niet mee.", buy: "Koop 10 doodles", cancel: "Niet nu", restore: "Al gekocht? Log in", added: "10 doodles toegevoegd", startDrawing: "Begin met tekenen", checkoutError: "Betalen kon niet worden gestart. Probeer het opnieuw." },
@@ -258,7 +258,7 @@ const COPY = {
     errors: { refused: "Diese Szene konnte nicht gezeichnet werden. Beschreibe sie anders.", timeout: "Das Doodle hat zu lange gebraucht. Versuch es noch einmal.", general: "Doodle konnte das Bild nicht fertigstellen. Versuch es noch einmal.", unavailable: "Das Erstellen von Doodles ist vorübergehend nicht verfügbar. Versuch es später erneut.", rateLimited: "Du hast heute schon viele Doodles erstellt. Versuch es morgen wieder." },
     suggestions: { title: "Oder probiere das", items: ["Jemand schenkt einer Person einen warmen Schal", "Ein Paar tanzt in der Küche", "Ein Hund mit Partyhut"] },
     stage: { loadingPrimary: "Dein Doodle wird gezeichnet...", loadingMessages: ["Ein frischer Notizzettel liegt bereit…", "Die wichtigsten Formen entstehen…", "Die Linien bleiben schön einfach…", "Die letzten kleinen Details kommen dazu…", "Noch einen Moment — dieses Bild braucht etwas Zeit."], loadingSr: "Das kann bis zu zwei Minuten dauern.", generatedAlt: "Erstelltes Doodle auf einem Notizzettel", viewLarger: "Größer ansehen", referenceAria: "Beispiel-Doodle größer ansehen", referenceAlt: "Einfaches Doodle von zwei kopfüber küssenden Katzen auf einem gelben Notizzettel" },
-    actions: { download: "Herunterladen", tryAgain: "Noch einmal", newScene: "Neue Szene" },
+    actions: { download: "Herunterladen", tryAgain: "Noch einmal", redraw: "Diese Idee neu zeichnen", newScene: "Etwas anderes zeichnen" },
     dialog: { label: "Doodle-Bildansicht", close: "Bild schließen", imageAlt: "Doodle auf einem Notizzettel", native: "In neuem Tab öffnen", download: "Herunterladen" },
     usage: { firstTwoFree: "Die ersten 2 Doodles sind kostenlos", freeLeft: { one: "Noch # kostenloses Doodle", other: "Noch # kostenlose Doodles" }, paidLeft: { one: "Noch # Doodle", other: "Noch # Doodles" } },
     purchase: { label: "Doodles auffüllen", title: "Weiterzeichnen", quantity: "10 weitere Doodles", price: "€4.99", reassurance: "Einmal zahlen. Kein Abo.", failedDontCount: "Fehlgeschlagene Bilder werden nicht abgezogen.", buy: "10 Doodles kaufen", cancel: "Nicht jetzt", restore: "Schon gekauft? Anmelden", added: "10 Doodles hinzugefügt", startDrawing: "Jetzt zeichnen", checkoutError: "Die Zahlung konnte nicht gestartet werden. Versuch es noch einmal." },
@@ -275,7 +275,7 @@ const COPY = {
     errors: { refused: "Cette scène n’a pas pu être dessinée. Essayez de la décrire autrement.", timeout: "Le dessin a pris trop de temps. Veuillez réessayer.", general: "Doodle n’a pas pu terminer l’image. Veuillez réessayer.", unavailable: "La création de dessins est momentanément indisponible. Réessayez plus tard.", rateLimited: "Vous avez créé beaucoup de dessins aujourd’hui. Réessayez demain." },
     suggestions: { title: "Ou essayez ceci", items: ["Une personne offre une écharpe bien chaude", "Un couple danse dans la cuisine", "Un chien avec un chapeau de fête"] },
     stage: { loadingPrimary: "Votre dessin prend vie...", loadingMessages: ["Une nouvelle note se prépare…", "Les formes principales apparaissent…", "Les lignes restent toutes simples…", "Les derniers petits détails arrivent…", "Encore un instant — ce dessin demande un peu de temps."], loadingSr: "Cela peut prendre jusqu’à deux minutes.", generatedAlt: "Doodle généré sur une note adhésive", viewLarger: "Agrandir", referenceAria: "Agrandir l’exemple de doodle", referenceAlt: "Doodle simple de deux chats qui s’embrassent la tête en bas sur une note jaune" },
-    actions: { download: "Télécharger", tryAgain: "Réessayer", newScene: "Nouvelle scène" },
+    actions: { download: "Télécharger", tryAgain: "Réessayer", redraw: "Redessiner cette idée", newScene: "Dessiner autre chose" },
     dialog: { label: "Visionneuse du doodle", close: "Fermer l’image", imageAlt: "Doodle sur une note adhésive", native: "Ouvrir dans un nouvel onglet", download: "Télécharger" },
     usage: { firstTwoFree: "Vos 2 premiers dessins sont gratuits", freeLeft: { one: "Il vous reste # dessin gratuit", other: "Il vous reste # dessins gratuits" }, paidLeft: { one: "Il vous reste # dessin", other: "Il vous reste # dessins" } },
     purchase: { label: "Recharge de dessins", title: "Continuez à dessiner", quantity: "10 dessins de plus", price: "€4.99", reassurance: "Un seul paiement. Aucun abonnement.", failedDontCount: "Les créations qui échouent ne sont pas décomptées.", buy: "Obtenir 10 dessins", cancel: "Pas maintenant", restore: "Déjà acheté ? Se connecter", added: "10 dessins ajoutés", startDrawing: "Commencer à dessiner", checkoutError: "Impossible d’ouvrir le paiement. Veuillez réessayer." },
@@ -292,7 +292,7 @@ const COPY = {
     errors: { refused: "No pudimos dibujar esa escena. Prueba a describirla de otra manera.", timeout: "El dibujo tardó demasiado. Inténtalo de nuevo.", general: "Doodle no pudo terminar la imagen. Inténtalo de nuevo.", unavailable: "La creación de dibujos no está disponible temporalmente. Vuelve a intentarlo más tarde.", rateLimited: "Has creado muchos dibujos hoy. Vuelve a intentarlo mañana." },
     suggestions: { title: "O prueba una idea", items: ["Una persona regalándole una bufanda a alguien", "Una pareja bailando en la cocina", "Un perro con gorro de fiesta"] },
     stage: { loadingPrimary: "Estamos dibujando tu idea...", loadingMessages: ["Preparando una nota nueva…", "Trazando las formas principales…", "Manteniendo las líneas sencillas…", "Añadiendo los últimos detalles…", "Seguimos dibujando — esta escena necesita un momento."], loadingSr: "Puede tardar hasta dos minutos.", generatedAlt: "Doodle generado sobre una nota adhesiva", viewLarger: "Ver más grande", referenceAria: "Ver el doodle de ejemplo más grande", referenceAlt: "Doodle sencillo de dos gatos besándose boca abajo sobre una nota amarilla" },
-    actions: { download: "Descargar", tryAgain: "Intentar de nuevo", newScene: "Nueva escena" },
+    actions: { download: "Descargar", tryAgain: "Intentar de nuevo", redraw: "Volver a dibujar esta idea", newScene: "Dibujar otra cosa" },
     dialog: { label: "Visor del dibujo", close: "Cerrar imagen", imageAlt: "Doodle sobre una nota adhesiva", native: "Abrir en una pestaña nueva", download: "Descargar" },
     usage: { firstTwoFree: "Tus primeros 2 dibujos son gratis", freeLeft: { one: "Te queda # dibujo gratis", other: "Te quedan # dibujos gratis" }, paidLeft: { one: "Te queda # dibujo", other: "Te quedan # dibujos" } },
     purchase: { label: "Recarga de dibujos", title: "Sigue dibujando", quantity: "10 dibujos más", price: "€4.99", reassurance: "Un solo pago. Sin suscripción.", failedDontCount: "Los intentos fallidos no se descuentan.", buy: "Conseguir 10 dibujos", cancel: "Ahora no", restore: "¿Ya compraste? Inicia sesión", added: "Se añadieron 10 dibujos", startDrawing: "Empezar a dibujar", checkoutError: "No se pudo abrir el pago. Inténtalo de nuevo." },
@@ -309,7 +309,7 @@ const COPY = {
     errors: { refused: "Não foi possível desenhar essa cena. Tente descrevê-la de outro jeito.", timeout: "O desenho demorou demais. Tente novamente.", general: "O Doodle não conseguiu terminar a imagem. Tente novamente.", unavailable: "A criação de desenhos está temporariamente indisponível. Tente mais tarde.", rateLimited: "Você já criou muitos desenhos hoje. Tente de novo amanhã." },
     suggestions: { title: "Ou experimente uma ideia", items: ["Uma pessoa dando um cachecol quentinho para alguém", "Um casal dançando na cozinha", "Um cachorro usando chapéu de festa"] },
     stage: { loadingPrimary: "Estamos fazendo seu desenho...", loadingMessages: ["Preparando um novo bloquinho…", "Rascunhando as formas principais…", "Mantendo os traços simples…", "Acrescentando os últimos detalhes…", "Ainda desenhando — esta cena precisa de mais um momento."], loadingSr: "Isso pode levar até dois minutos.", generatedAlt: "Desenho gerado em um bloquinho adesivo", viewLarger: "Ver maior", referenceAria: "Ver o desenho de exemplo em tamanho maior", referenceAlt: "Desenho simples de dois gatos se beijando de cabeça para baixo em um bloquinho amarelo" },
-    actions: { download: "Baixar", tryAgain: "Tentar novamente", newScene: "Nova cena" },
+    actions: { download: "Baixar", tryAgain: "Tentar novamente", redraw: "Desenhar esta ideia de novo", newScene: "Desenhar outra coisa" },
     dialog: { label: "Visualizador do desenho", close: "Fechar imagem", imageAlt: "Desenho em um bloquinho adesivo", native: "Abrir em nova aba", download: "Baixar" },
     usage: { firstTwoFree: "Os primeiros 2 desenhos são grátis", freeLeft: { one: "Resta # desenho grátis", other: "Restam # desenhos grátis" }, paidLeft: { one: "Resta # desenho", other: "Restam # desenhos" } },
     purchase: { label: "Recarga de desenhos", title: "Continue desenhando", quantity: "Mais 10 desenhos", price: "€4.99", reassurance: "Pagamento único. Sem assinatura.", failedDontCount: "Tentativas que falharem não serão descontadas.", buy: "Comprar 10 desenhos", cancel: "Agora não", restore: "Já comprou? Entre na conta", added: "10 desenhos adicionados", startDrawing: "Começar a desenhar", checkoutError: "Não foi possível abrir o pagamento. Tente novamente." },
@@ -326,7 +326,7 @@ const COPY = {
     errors: { refused: "Non è stato possibile disegnare questa scena. Prova a descriverla in un altro modo.", timeout: "Il disegno ha impiegato troppo tempo. Riprova.", general: "Doodle non è riuscito a completare l’immagine. Riprova.", unavailable: "La creazione dei disegni non è momentaneamente disponibile. Riprova più tardi.", rateLimited: "Hai già creato molti doodle oggi. Riprova domani." },
     suggestions: { title: "Oppure prova un’idea", items: ["Una persona regala a qualcuno una sciarpa calda", "Una coppia balla in cucina", "Un cane con un cappellino da festa"] },
     stage: { loadingPrimary: "Sto creando il tuo disegno...", loadingMessages: ["Preparo un nuovo foglietto…", "Disegno le forme principali…", "Mantengo le linee semplici…", "Aggiungo gli ultimi dettagli…", "Sto ancora disegnando — serve ancora un momento."], loadingSr: "Potrebbero volerci fino a due minuti.", generatedAlt: "Doodle generato su un foglietto adesivo", viewLarger: "Ingrandisci", referenceAria: "Ingrandisci il doodle di esempio", referenceAlt: "Doodle semplice di due gatti che si baciano a testa in giù su un foglietto giallo" },
-    actions: { download: "Scarica", tryAgain: "Riprova", newScene: "Nuova scena" },
+    actions: { download: "Scarica", tryAgain: "Riprova", redraw: "Ridisegna questa idea", newScene: "Disegna qualcos’altro" },
     dialog: { label: "Visualizzatore del doodle", close: "Chiudi immagine", imageAlt: "Doodle su un foglietto adesivo", native: "Apri in una nuova scheda", download: "Scarica" },
     usage: { firstTwoFree: "I primi 2 disegni sono gratis", freeLeft: { one: "Ti resta # disegno gratis", other: "Ti restano # disegni gratis" }, paidLeft: { one: "Ti resta # disegno", other: "Ti restano # disegni" } },
     purchase: { label: "Ricarica disegni", title: "Continua a disegnare", quantity: "Altri 10 disegni", price: "€4.99", reassurance: "Un solo pagamento. Nessun abbonamento.", failedDontCount: "I tentativi non riusciti non vengono scalati.", buy: "Ottieni 10 disegni", cancel: "Non ora", restore: "Hai già acquistato? Accedi", added: "Aggiunti 10 disegni", startDrawing: "Inizia a disegnare", checkoutError: "Non è stato possibile aprire il pagamento. Riprova." },
@@ -343,7 +343,7 @@ const COPY = {
     errors: { refused: "この場面は描けませんでした。別の言い方で説明してみてください。", timeout: "時間がかかりすぎました。もう一度お試しください。", general: "イラストを完成できませんでした。もう一度お試しください。", unavailable: "現在イラストを作成できません。時間をおいてお試しください。", rateLimited: "今日はたくさん作りました。また明日お試しください。" },
     suggestions: { title: "こんな場面もおすすめ", items: ["誰かに暖かいマフラーを贈る人", "キッチンで踊る二人", "パーティーハットをかぶった犬"] },
     stage: { loadingPrimary: "イラストを描いています...", loadingMessages: ["新しい付箋を用意しています…", "大まかな形を描いています…", "線をシンプルに整えています…", "最後の小さなディテールを加えています…", "もう少しだけお待ちください。"], loadingSr: "完成まで最大2分ほどかかることがあります。", generatedAlt: "付箋に描かれた生成イラスト", viewLarger: "大きく見る", referenceAria: "サンプルのイラストを大きく見る", referenceAlt: "黄色い付箋に描かれた、逆さまでキスをする2匹の猫のシンプルなイラスト" },
-    actions: { download: "ダウンロード", tryAgain: "もう一度", newScene: "新しい場面" },
+    actions: { download: "ダウンロード", tryAgain: "もう一度", redraw: "同じアイデアで描き直す", newScene: "別のものを描く" },
     dialog: { label: "イラスト画像ビューア", close: "画像を閉じる", imageAlt: "付箋に描かれたイラスト", native: "新しいタブで開く", download: "ダウンロード" },
     usage: { firstTwoFree: "最初の2枚は無料です", freeLeft: { other: "無料分はあと#枚" }, paidLeft: { other: "あと#枚描けます" } },
     purchase: { label: "イラストの追加", title: "もっと描こう", quantity: "あと10枚のイラスト", price: "€4.99", reassurance: "お支払いは1回だけ。定期購入ではありません。", failedDontCount: "作成に失敗した分は減りません。", buy: "10枚追加する", cancel: "今はしない", restore: "購入済みですか？ログイン", added: "10枚追加しました", startDrawing: "描き始める", checkoutError: "お支払い画面を開けませんでした。もう一度お試しください。" },
@@ -360,7 +360,7 @@ const COPY = {
     errors: { refused: "이 장면은 그릴 수 없었어요. 다른 말로 설명해 보세요.", timeout: "그림을 만드는 데 너무 오래 걸렸어요. 다시 시도해 주세요.", general: "그림을 완성하지 못했어요. 다시 시도해 주세요.", unavailable: "지금은 그림을 만들 수 없어요. 잠시 후 다시 시도해 주세요.", rateLimited: "오늘은 그림을 많이 만들었어요. 내일 다시 시도해 주세요." },
     suggestions: { title: "이런 장면도 좋아요", items: ["누군가에게 따뜻한 목도리를 선물하는 사람", "주방에서 춤추는 연인", "파티 모자를 쓴 강아지"] },
     stage: { loadingPrimary: "그림을 만들고 있어요...", loadingMessages: ["새 메모지를 준비하고 있어요…", "큰 모양부터 그리고 있어요…", "선을 단순하게 다듬고 있어요…", "마지막 작은 디테일을 더하고 있어요…", "조금만 더 기다려 주세요."], loadingSr: "완성까지 최대 2분 정도 걸릴 수 있어요.", generatedAlt: "메모지에 생성된 낙서 그림", viewLarger: "크게 보기", referenceAria: "예시 그림 크게 보기", referenceAlt: "노란 메모지에 거꾸로 키스하는 고양이 두 마리를 그린 단순한 그림" },
-    actions: { download: "다운로드", tryAgain: "다시 만들기", newScene: "새 장면" },
+    actions: { download: "다운로드", tryAgain: "다시 만들기", redraw: "같은 아이디어로 다시 그리기", newScene: "다른 그림 그리기" },
     dialog: { label: "그림 이미지 뷰어", close: "이미지 닫기", imageAlt: "메모지 낙서 그림", native: "새 탭에서 열기", download: "다운로드" },
     usage: { firstTwoFree: "처음 2장은 무료예요", freeLeft: { other: "무료 그림 #장 남음" }, paidLeft: { other: "그림 #장 남음" } },
     purchase: { label: "그림 채우기", title: "계속 그려 보세요", quantity: "그림 10장 더", price: "€4.99", reassurance: "한 번만 결제해요. 구독이 아니에요.", failedDontCount: "만들기에 실패한 그림은 차감되지 않아요.", buy: "그림 10장 받기", cancel: "나중에", restore: "이미 구매했나요? 로그인", added: "그림 10장을 추가했어요", startDrawing: "그리기 시작", checkoutError: "결제 화면을 열 수 없어요. 다시 시도해 주세요." },
@@ -377,7 +377,7 @@ const COPY = {
     errors: { refused: "تعذّر رسم هذا المشهد. جرّب وصفه بطريقة مختلفة.", timeout: "استغرق الرسم وقتًا أطول من اللازم. حاول مرة أخرى.", general: "تعذّر على Doodle إكمال الرسمة. حاول مرة أخرى.", unavailable: "إنشاء الرسومات غير متاح مؤقتًا. حاول لاحقًا.", rateLimited: "أنشأت رسومات كثيرة اليوم. جرّب مرة أخرى غدًا." },
     suggestions: { title: "أو جرّب فكرة", items: ["شخص يهدي آخر وشاحًا دافئًا", "شخصان يرقصان في المطبخ", "كلب يرتدي قبعة احتفالية"] },
     stage: { loadingPrimary: "نرسم فكرتك...", loadingMessages: ["نحضّر ورقة ملاحظات جديدة…", "نرسم الأشكال الأساسية…", "نبقي الخطوط بسيطة…", "نضيف اللمسات الصغيرة الأخيرة…", "ما زلنا نرسم — يحتاج هذا المشهد إلى لحظة أخرى."], loadingSr: "قد يستغرق ذلك ما يصل إلى دقيقتين.", generatedAlt: "رسمة مولّدة على ورقة ملاحظات لاصقة", viewLarger: "عرض بحجم أكبر", referenceAria: "عرض الرسمة النموذجية بحجم أكبر", referenceAlt: "رسمة بسيطة لشخصية معلّقة رأسًا على عقب تقبّل قطة على ورقة ملاحظات صفراء" },
-    actions: { download: "تنزيل", tryAgain: "جرّب مرة أخرى", newScene: "مشهد جديد" },
+    actions: { download: "تنزيل", tryAgain: "جرّب مرة أخرى", redraw: "أعد رسم هذه الفكرة", newScene: "ارسم شيئًا آخر" },
     dialog: { label: "عارض الرسمة", close: "إغلاق الصورة", imageAlt: "رسمة على ورقة ملاحظات لاصقة", native: "فتح في علامة تبويب جديدة", download: "تنزيل" },
     usage: {
       firstTwoFree: "أول رسمتين مجانًا",

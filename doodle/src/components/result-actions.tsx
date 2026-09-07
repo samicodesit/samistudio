@@ -69,13 +69,13 @@ export function ResultActions({ imageUrl, imageFile, locale, onTryAgain, onNewSc
       {feedback ? <p className="share-feedback" role="status">{shareCopy[feedback]}</p> : null}
       {feedback === "manual" ? <input className="share-link" aria-label={shareCopy.link} value={shareUrl} readOnly onFocus={(event) => event.currentTarget.select()} /> : null}
       <div className="secondary-actions">
-        <button type="button" onClick={onTryAgain}>
-          <RotateCcw size={15} aria-hidden="true" />
-          {copy.tryAgain}
-        </button>
-        <button type="button" onClick={onNewScene}>
+        <button className="new-scene-action" type="button" onClick={onNewScene}>
           <Plus size={16} aria-hidden="true" />
           {copy.newScene}
+        </button>
+        <button type="button" onClick={onTryAgain}>
+          <RotateCcw size={15} aria-hidden="true" />
+          {copy.redraw}
         </button>
       </div>
     </div>

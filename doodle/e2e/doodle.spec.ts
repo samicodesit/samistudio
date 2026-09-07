@@ -40,6 +40,25 @@ async function expectSuggestionsFit(page: Page) {
   expect(fits).toBe(true);
 }
 
+async function expectResultActionHierarchy(page: Page, newSceneLabel: string, redrawLabel: string) {
+  const actions = page.locator(".secondary-actions");
+  const newScene = page.getByRole("button", { name: newSceneLabel, exact: true });
+  const redraw = page.getByRole("button", { name: redrawLabel, exact: true });
+  const [actionsBox, newSceneBox, redrawBox] = await Promise.all([
+    actions.boundingBox(),
+    newScene.boundingBox(),
+    redraw.boundingBox(),
+  ]);
+
+  expect(actionsBox).not.toBeNull();
+  expect(newSceneBox).not.toBeNull();
+  expect(redrawBox).not.toBeNull();
+  expect(Math.abs(newSceneBox!.width - actionsBox!.width)).toBeLessThanOrEqual(1);
+  expect(redrawBox!.y).toBeGreaterThanOrEqual(newSceneBox!.y + newSceneBox!.height);
+  await expect(newScene).toHaveCSS("font-weight", "600");
+  await expect(redraw).toHaveCSS("font-weight", "400");
+}
+
 test.beforeEach(async ({ page }) => {
   await page.route("**/api/account", (route) => route.fulfill({
     status: 200,
@@ -121,13 +140,14 @@ test.describe("Doodle mobile workflow", () => {
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toBe("doodle.png");
 
-    await page.getByRole("button", { name: /Try again/ }).click();
+    await page.getByRole("button", { name: /Redraw this idea/ }).click();
     await expect(page.getByAltText("Generated sticky-note doodle")).toBeVisible();
     expect(generationCount).toBe(2);
     await expectNoOverflow(page);
 
-    await page.getByRole("button", { name: /New scene/ }).click();
+    await page.getByRole("button", { name: /Draw something else/ }).click();
     await expect(page.getByRole("textbox")).toHaveValue("");
+    await expect(page.getByRole("textbox")).toBeFocused();
     await expect(page.getByAltText(/two cats kissing upside down/)).toBeVisible();
     await expectNoOverflow(page);
   });
@@ -327,14 +347,14 @@ test.describe("Task 8 monetized workflow", () => {
     await page.getByRole("button", { name: "Create doodle" }).click();
     await expect(page.getByText("1 free doodle left")).toBeVisible();
 
-    await page.getByRole("button", { name: "Try again" }).click();
+    await page.getByRole("button", { name: "Redraw this idea" }).click();
     await expect(page.locator(".doodle-stage-error")).toContainText("could not finish");
     await expect(page.getByRole("textbox")).toHaveValue("A cat under an umbrella");
     await expect(page.getByText("1 free doodle left")).toBeVisible();
 
     await page.getByRole("button", { name: "Create doodle" }).click();
     await expect(page.getByText("0 free doodles left")).toBeVisible();
-    await page.getByRole("button", { name: "Try again" }).click();
+    await page.getByRole("button", { name: "Redraw this idea" }).click();
     await expect(page.getByRole("dialog", { name: "Keep doodling" })).toBeVisible();
     await expect(page.getByRole("textbox")).toHaveValue("A cat under an umbrella");
     await expectNoOverflow(page);
@@ -452,6 +472,29 @@ test.describe("Task 8 monetized workflow", () => {
 
 test.describe("Doodle desktop and accessibility", () => {
   test.use({ viewport: { width: 1440, height: 1000 } });
+
+  test("keeps the corrected result actions clear across desktop, narrow mobile, German, and Arabic", async ({ page }) => {
+    await page.route("**/api/generate", fulfillImage);
+    const screenshotDirectory = path.join(process.cwd(), "test-results");
+    fs.mkdirSync(screenshotDirectory, { recursive: true });
+    const cases = [
+      { path: "/", width: 1440, height: 1000, newScene: "Draw something else", redraw: "Redraw this idea", screenshot: "result-actions-en-desktop-1440x1000.png" },
+      { path: "/", width: 320, height: 740, newScene: "Draw something else", redraw: "Redraw this idea", screenshot: "result-actions-en-mobile-320x740.png" },
+      { path: "/de", width: 390, height: 844, newScene: "Etwas anderes zeichnen", redraw: "Diese Idee neu zeichnen", screenshot: "result-actions-de-mobile-390x844.png" },
+      { path: "/ar", width: 390, height: 844, newScene: "ارسم شيئًا آخر", redraw: "أعد رسم هذه الفكرة", screenshot: "result-actions-ar-mobile-390x844.png" },
+    ];
+
+    for (const item of cases) {
+      await page.setViewportSize({ width: item.width, height: item.height });
+      await page.goto(item.path);
+      await page.getByRole("textbox").fill("A small cat holding a heart");
+      await page.locator(".composer-footer button").click();
+      await expect(page.locator(".doodle-workspace-ready")).toBeVisible();
+      await expectResultActionHierarchy(page, item.newScene, item.redraw);
+      await expectNoOverflow(page);
+      await page.screenshot({ path: path.join(screenshotDirectory, item.screenshot), fullPage: true });
+    }
+  });
 
   test("stays centered, one-column, keyboard reachable, and works with reduced motion", async ({ page }, testInfo) => {
     await page.emulateMedia({ reducedMotion: "reduce" });

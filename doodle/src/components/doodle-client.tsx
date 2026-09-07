@@ -57,6 +57,13 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
   const usageRevision = useRef(0);
   const uncertaintyRevision = useRef(0);
   const createButtonRef = useRef<HTMLButtonElement>(null);
+  const focusNextScene = useRef(false);
+  const sceneInputRef = useCallback((node: HTMLTextAreaElement | null) => {
+    if (node && focusNextScene.current) {
+      node.focus();
+      focusNextScene.current = false;
+    }
+  }, []);
 
   const revokeCurrentUrl = useCallback(() => {
     if (currentObjectUrl.current) {
@@ -250,6 +257,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
   }
 
   function handleNewScene() {
+    focusNextScene.current = true;
     setScene("");
     setIsResultOpen(false);
     clearGeneration();
@@ -316,6 +324,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
             usageLoadingLabel={copy.account.label}
             accountMenu={accountMenu}
             createButtonRef={createButtonRef}
+            sceneInputRef={sceneInputRef}
           />
         )}
         {generation.status !== "generating" && generation.status !== "ready" ? (

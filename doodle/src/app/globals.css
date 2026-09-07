@@ -653,11 +653,16 @@ dialog:focus-visible {
   box-shadow: 0 3px 0 #0f3c2f;
 }
 
-.result-save-actions,
-.secondary-actions {
+.result-save-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
+}
+
+.secondary-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
 }
 
 .share-action,
@@ -694,6 +699,9 @@ dialog:focus-visible {
 }
 
 .share-action { padding: 8px; line-height: 1.3; }
+.secondary-actions button { padding: 8px 12px; line-height: 1.3; }
+.secondary-actions .new-scene-action { border-color: var(--moss); color: var(--moss); background: rgba(25, 92, 71, 0.06); }
+.secondary-actions button:not(.new-scene-action) { min-height: 36px; border-color: transparent; font-weight: 400; }
 .share-action:disabled { opacity: 0.6; cursor: wait; }
 .share-feedback { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .share-link { width: 100%; min-width: 0; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--graphite); font-size: 12px; }

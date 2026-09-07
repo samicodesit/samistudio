@@ -14,6 +14,7 @@ interface SceneComposerProps {
   usageLoadingLabel: string;
   accountMenu?: ReactNode;
   createButtonRef?: Ref<HTMLButtonElement>;
+  sceneInputRef?: Ref<HTMLTextAreaElement>;
 }
 
 export function SceneComposer({
@@ -26,6 +27,7 @@ export function SceneComposer({
   usageLoadingLabel,
   accountMenu,
   createButtonRef,
+  sceneInputRef,
 }: SceneComposerProps) {
   const showCounter = scene.length >= 150;
 
@@ -38,6 +40,7 @@ export function SceneComposer({
           {copy.label}
         </label>
         <textarea
+          ref={sceneInputRef}
           id="scene"
           name="scene"
           value={scene}
