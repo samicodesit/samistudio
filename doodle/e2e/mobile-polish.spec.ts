@@ -1,4 +1,4 @@
-﻿import { expect, test } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import fs from 'node:fs';
 
 test('mobile compose and result actions stay in reach after generation', async ({ page }) => {
