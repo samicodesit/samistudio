@@ -23,7 +23,7 @@ plugins {
 def twaManifest = [
     applicationId: 'nl.samistudio.doodle',
     hostName: 'doodle.samistudio.nl', // The domain being opened in the TWA.
-    launchUrl: '/', // The start path for the TWA. Must be relative to the domain.
+    launchUrl: '/?runtime=play', // Persist Play checkout intent on the hosted app.
     name: 'Doodle', // The application name.
     launcherName: 'Doodle', // The name shown on the Android Launcher.
     themeColor: '#195C47', // The color used for the status bar.
@@ -208,7 +208,7 @@ repositories {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-        implementation 'com.google.androidbrowserhelper:billing:1.2.0'
+        implementation project(':billing')
 
         implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.6.2'
 

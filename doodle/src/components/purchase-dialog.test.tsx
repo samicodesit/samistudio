@@ -4,6 +4,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountSummary } from "@/app/api/account/route";
 import { getCopy } from "@/lib/i18n";
 import { PurchaseDialog } from "./purchase-dialog";
+const play = vi.hoisted(() => ({ isPlayRuntime: vi.fn(() => false), preparePlayPurchase: vi.fn(), purchasePlayPack: vi.fn(), recoverPlayPurchases: vi.fn() }));
+vi.mock("@/lib/billing/play-client", () => play);
 
 vi.mock("./google-sign-in-button", () => ({ GoogleSignInButton: ({ onCredential }: { onCredential(token: string): void }) => <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button> }));
 
@@ -25,7 +27,7 @@ function renderDialog(account = anonymous) {
 }
 
 describe("PurchaseDialog", () => {
-  beforeEach(() => { sessionStorage.clear(); vi.stubGlobal("location", { assign: vi.fn() }); });
+  beforeEach(() => { sessionStorage.clear(); vi.stubGlobal("location", { assign: vi.fn() }); play.isPlayRuntime.mockReturnValue(false); });
 
   it("shows one honest fixed offer", () => {
     renderDialog();
@@ -87,5 +89,34 @@ describe("PurchaseDialog", () => {
     const { onClose } = renderDialog(); const dialog = screen.getByRole("dialog");
     fireEvent(dialog, new Event("cancel", { bubbles: false, cancelable: true })); fireEvent.click(dialog);
     expect(onClose).toHaveBeenCalledTimes(2);
+  });
+});
+
+describe("Play PurchaseDialog", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    play.isPlayRuntime.mockReturnValue(true);
+    play.preparePlayPurchase.mockResolvedValue({ product: { price: { currency: "USD", value: "5.49" } }, service: {}, obfuscatedAccountId: "a".repeat(64) });
+    play.recoverPlayPurchases.mockResolvedValue({ recovered: 0, failed: 0 });
+    play.purchasePlayPack.mockResolvedValue(undefined);
+  });
+  it("uses store pricing and does not use Stripe when Play is unavailable", async () => {
+    play.preparePlayPurchase.mockRejectedValue(new Error("unavailable"));
+    const fetchMock = vi.spyOn(globalThis, "fetch");
+    renderDialog(signedIn);
+    expect(screen.queryByText("€4.99")).not.toBeInTheDocument();
+    await screen.findByRole("alert");
+    expect(screen.getByRole("button", { name: "Get 10 doodles" })).toBeDisabled();
+    expect(fetchMock).not.toHaveBeenCalledWith("/api/checkout", expect.anything());
+  });
+  it("requires a fresh buy tap after Google sign-in", async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response(null, { status: 204 })).mockResolvedValueOnce(json(signedIn));
+    renderDialog();
+    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+    await user.click(screen.getByRole("button", { name: "Continue with Google" }));
+    await screen.findByText("$5.49");
+    expect(play.purchasePlayPack).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });

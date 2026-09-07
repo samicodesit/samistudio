@@ -10,6 +10,7 @@ import { DoodleStage } from "./doodle-stage";
 import { PurchaseDialog } from "./purchase-dialog";
 import { ResultActions } from "./result-actions";
 import { ResultDialog } from "./result-dialog";
+import { isPlayRuntime } from "@/lib/billing/play-client";
 
 type GenerationState =
   | { status: "idle"; imageUrl: null; error: null }
@@ -129,6 +130,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
   }, [copy.purchase.checkoutError, removeQuery]);
 
   useEffect(() => revokeCurrentUrl, [revokeCurrentUrl]);
+  useEffect(() => { isPlayRuntime(); }, []);
 
   useEffect(() => {
     let active = true;

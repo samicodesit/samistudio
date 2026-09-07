@@ -1,0 +1,22 @@
+plugins { id 'com.android.library' }
+
+android {
+    namespace 'com.google.androidbrowserhelper.playbilling'
+    compileSdkVersion 36
+    defaultConfig { minSdkVersion 23; targetSdkVersion 31 }
+    buildFeatures { aidl = true }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    testOptions { unitTests.includeAndroidResources = true }
+}
+
+dependencies {
+    api 'androidx.browser:browser:1.10.0'
+    implementation 'com.android.billingclient:billing:8.3.0'
+    implementation 'com.google.androidbrowserhelper:androidbrowserhelper:2.2.2'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:5.15.2'
+    testImplementation 'org.robolectric:robolectric:4.12.2'
+}

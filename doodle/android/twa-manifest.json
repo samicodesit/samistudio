@@ -12,7 +12,7 @@
   "navigationDividerColorDark": "#000000",
   "backgroundColor": "#EEF1EA",
   "enableNotifications": false,
-  "startUrl": "/",
+  "startUrl": "/?runtime=play",
   "iconUrl": "https://doodle.samistudio.nl/pwa/icon/512",
   "maskableIconUrl": "https://doodle.samistudio.nl/pwa/icon/maskable",
   "splashScreenFadeOutDuration": 300,
