@@ -7,3 +7,15 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Quick QA before every step
+
+Before executing any step, briefly check that it makes sense for the user's actual goal. This applies to research, code changes, tests, deployments, marketing, publishing, and spending.
+
+- State the intended outcome internally and check the evidence, audience fit, and prerequisites. Do not act just because a tool or channel is available.
+- Check the user's latest corrections, existing authorization, and remaining budget. Never mistake a proposed action for an approved one.
+- Check the content and destination before any external action; verify factual claims against the actual app or asset. Do not repeat a channel the user has rejected.
+- Choose a proportionate step and define how its outcome will be verified. If the step fails this check, revise or skip it before execution.
+- Verify the result afterward and distinguish attempted, prepared, published, and measured outcomes. Do not claim growth from implementation alone.
+
+Keep this check lightweight. Explain material decisions and risks to the user, but do not turn routine checks into repeated permission requests.

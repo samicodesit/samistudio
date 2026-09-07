@@ -61,11 +61,11 @@ Check the community’s current sidebar/rules and any AI-content restrictions be
 
 Title: An easy birthday doodle to copy onto a card
 
-Description: A dog, a party hat, a tiny birthday surprise. Use this AI-generated drawing as inspiration for a card you draw by hand. Try your own small scene with Doodle; the first two doodles are free.
+Description: A happy dog with a birthday balloon, ready to inspire a tiny card surprise. Use this AI-generated drawing as inspiration for a card you draw by hand. Try your own small scene with Doodle; the first two doodles are free.
 
 Image: `public/ideas/birthday-dog.webp`
 
-Destination: https://doodle.samistudio.nl/?scene=A%20dog%20wearing%20a%20party%20hat&utm_source=pinterest&utm_medium=organic_social&utm_campaign=birthday_note
+Destination: https://doodle.samistudio.nl/?scene=A%20cheerful%20dog%20holding%20one%20birthday%20balloon&utm_source=pinterest&utm_medium=organic_social&utm_campaign=birthday_note
 
 ### Pinterest: lunchbox idea
 
