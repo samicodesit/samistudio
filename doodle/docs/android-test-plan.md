@@ -2,9 +2,9 @@
 
 ## Decision and budget
 
-The owner raised the total budget from US$20 to US$25 for Google Play's one-time registration fee. No payment has been made. The currently signed-in Google account opens Play registration rather than an active developer account. Account setup, actual identity verification and legal acceptance remain unfinished. Personal signup has advanced to payments-profile selection using the available public developer name Sami Software Solutions. No profile has been linked and no fee paid; the owner must select the profile matching current legal details.
+The owner raised the total budget from US$20 to US$25 for Google Play's one-time registration fee. The authorized US$25 payment succeeded on 7 September and personal developer account `5843530199260119810` was created; US$0 remains. The public developer identity is **Sami Studio**, with website `samistudio.nl` and verified public support email `hello@samistudio.nl`. The free Zoho mailbox was restored without a subscription. Three account checks remain: government-issued photo ID plus a valid address document, verification on a real Android device through the Play Console mobile app, and contact-phone verification after identity approval. The Console currently presents a QR handoff for owner submission on their phone. The agent has not submitted or handled identity files. Creating the Play app is disabled until these checks are complete.
 
-Do not pay merely to start a testing clock: the closed test requires an actual uploaded app, configured test track and opted-in testers. The owner has chosen the personal Play account route and wants tester recruitment handled when the Android build is ready. Recruitment is not a prerequisite for continuing the build or preparing account setup. Keep the total budget at US$25; actual identity verification and legal acceptance still require the owner. No tester has been recruited or contacted by the agent.
+The closed-test clock requires an actual uploaded app, configured test track and opted-in testers; account registration alone does not start it. The owner chose the personal Play account route and wants tester recruitment handled when the Android build is ready. Recruitment is not a prerequisite for continuing the build or Console setup. No tester has been recruited or contacted by the agent.
 
 ## Recruitment approach
 
