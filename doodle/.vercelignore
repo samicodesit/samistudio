@@ -1,0 +1,8 @@
+android/
+docs/
+e2e/
+scripts/
+test-results/
+playwright-report/
+report-review/
+.env*

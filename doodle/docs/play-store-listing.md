@@ -59,7 +59,7 @@ Character limits are 30 for name, 80 for short description and 4,000 for full de
 | Monetization | Free download with in-app purchases; no subscription |
 | Audience | People making simple personal notes/cards/journal drawings. Do not select children's age groups or claim Families compliance without completing that assessment. Content rating is not yet assigned. |
 
-Local source now uses the confirmed operator/contact details, and the privacy page includes Play purchase processing and Vercel Analytics. Those latest legal/privacy changes have not yet been deployed. At the last Console check, identity documents were submitted and Google's review was pending; device and phone verification were still pending. Confirm the live legal pages and Console status before submission.
+Local source now uses the confirmed operator/contact details, and the privacy page includes Play purchase processing and Vercel Analytics. Those legal/privacy changes are deployed and all four public policy/contact pages returned HTTP 200 with the verified email on September 7. At the last Console check, identity documents were submitted and Google's review was pending; device and phone verification were still pending. Confirm the live legal pages and Console status before submission.
 
 ## Assets: available versus missing
 
