@@ -7,7 +7,7 @@ const track = vi.hoisted(() => vi.fn());
 vi.mock("@vercel/analytics", () => ({ track }));
 
 function setup() {
-  render(<ResultActions imageUrl="blob:one" imageFile={new File(["image"], "doodle.png", { type: "image/png" })} locale="en" onTryAgain={vi.fn()} onNewScene={vi.fn()} copy={getCopy("en").actions} />);
+  render(<ResultActions imageUrl="blob:one" imageFile={new File(["image"], "doodle.png", { type: "image/png" })} scene="A happy dog" locale="en" onTryAgain={vi.fn()} onNewScene={vi.fn()} copy={getCopy("en").actions} />);
 }
 
 afterEach(() => { vi.unstubAllGlobals(); vi.clearAllMocks(); });
@@ -58,4 +58,18 @@ describe("sharing a finished doodle", () => {
     fireEvent.click(screen.getByRole("button", { name: "Share doodle" }));
     expect(await screen.findByRole("textbox", { name: "Link to Doodle" })).toHaveValue("https://doodle.samistudio.nl/?utm_source=doodle&utm_medium=share&utm_campaign=made_with_doodle");
   });
+});
+
+it("opens reporting without sending a request and resets it after cancellation", () => {
+  const request = vi.fn();
+  vi.stubGlobal("fetch", request);
+  setup();
+  fireEvent.click(screen.getByRole("button", { name: "Report this doodle" }));
+  expect(screen.getByRole("dialog", { name: "Report this doodle" })).toBeVisible();
+  expect(request).not.toHaveBeenCalled();
+  fireEvent.change(screen.getByLabelText("Why are you reporting this doodle?"), { target: { value: "other" } });
+  fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+  fireEvent.click(screen.getByRole("button", { name: "Report this doodle" }));
+  expect(screen.getByLabelText("Why are you reporting this doodle?")).toHaveValue("");
+  expect(request).not.toHaveBeenCalled();
 });

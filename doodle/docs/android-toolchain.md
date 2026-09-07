@@ -1,6 +1,6 @@
 # Local Android toolchain
 
-Verified September 7, 2026 in Ubuntu WSL. The free tooling is isolated at `/home/mests/.local/share/doodle-android-tools`; app dependencies and system Java/PATH were not changed. This prepares Android builds; it does not create a package, signing key, APK, AAB, or Play release.
+Verified September 7, 2026 in Ubuntu WSL. The free tooling is isolated at `/home/mests/.local/share/doodle-android-tools`; web-app dependencies and system Java/PATH were not changed. The debug wrapper is documented in `../android/README.md`. No release signing key or Play release is configured.
 
 | Tool | Verified version |
 | --- | --- |
@@ -56,4 +56,4 @@ The required free Android SDK terms were reviewed and accepted for the authorize
   --install 'platform-tools' 'platforms;android-36' 'build-tools;36.1.0'
 ```
 
-The next project step is to settle the package identifier and Android-specific billing experience, then generate the wrapper in a dedicated directory using the deployed manifest. Bubblewrap `init` asks signing questions; release-key creation and domain association need their own deliberate setup. No physical-device/emulator test has run, and no emulator image was installed.
+The local wrapper uses `nl.samistudio.doodle` and was generated through Bubblewrap's core API to avoid release-signing prompts. Its Gradle plugin also installed default build tools 35.0.0. Release-key creation, domain association and the Android-specific billing experience remain separate release work. No physical-device/emulator test has run, and no emulator image was installed.

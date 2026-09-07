@@ -21,6 +21,7 @@ export default function PrivacyPage() {
           <li><strong>Account information.</strong> If you sign in with Google, we receive your verified Google account identifier and email address. We store a protected identifier, an internal account ID and your doodle balance. Your email is kept in a signed session cookie so the app can show your account.</li>
           <li><strong>Payments.</strong> Stripe processes payment details. Doodle receives payment status, transaction references and the email used at checkout, but not your complete card number.</li>
           <li><strong>Usage and security data.</strong> Necessary cookies remember your free allowance and signed-in session. A protected hash derived from your IP address is used briefly for abuse limits. Hosting and anti-bot providers may process ordinary request, device and network data.</li>
+          <li><strong>Reports.</strong> If you report a generated doodle, we store the reason and any details you enter. We upload the doodle and its description only when you select the option that clearly asks us to include them for review.</li>
           <li><strong>Messages.</strong> If you contact us, we process your email address and message to reply.</li>
         </ul>
       </section>
@@ -37,7 +38,7 @@ export default function PrivacyPage() {
 
       <section>
         <h2>Retention</h2>
-        <p>Signed-in sessions last up to 30 days. The anonymous free-allowance cookie and associated count can remain for up to one year. Rate-limit counters expire after about two days. Account and balance records remain until the account is deleted, while transaction or support records may be kept as required for tax, fraud prevention and legal claims.</p>
+        <p>Signed-in sessions last up to 30 days. The anonymous free-allowance cookie and associated count can remain for up to one year. Rate-limit counters expire after about two days. Submitted reports and any included doodle or description are kept for up to 30 days. Account and balance records remain until the account is deleted, while transaction or support records may be kept as required for tax, fraud prevention and legal claims.</p>
       </section>
 
       <section>

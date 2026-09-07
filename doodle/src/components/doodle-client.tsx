@@ -305,7 +305,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
             <p className="eyebrow">{copy.status.readyEyebrow}</p>
             <h1 id="ready-title">{copy.status.readyTitle}</h1>
             <p className="scene-summary">“{scene}”</p>
-            <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} locale={locale} onTryAgain={createDoodle} onNewScene={handleNewScene} copy={copy.actions} />
+            <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} scene={scene} locale={locale} onTryAgain={createDoodle} onNewScene={handleNewScene} copy={copy.actions} />
             <div className="workspace-usage">
               {usage === null
                 ? <span className="usage-loading" role="status" aria-label={copy.account.label} />

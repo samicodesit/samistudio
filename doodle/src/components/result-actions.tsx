@@ -5,17 +5,21 @@ import { useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import type { DoodleCopy, Locale } from "@/lib/i18n";
 import { doodleShareUrl, SHARE_COPY } from "@/lib/sharing";
+import { ReportDialog } from "./report-dialog";
+import { REPORT_COPY } from "@/lib/reports/report-copy";
 
 interface ResultActionsProps {
   imageUrl: string;
   imageFile: File;
+  scene: string;
   locale: Locale;
   onTryAgain: () => void;
   onNewScene: () => void;
   copy: DoodleCopy["actions"];
 }
 
-export function ResultActions({ imageUrl, imageFile, locale, onTryAgain, onNewScene, copy }: ResultActionsProps) {
+export function ResultActions({ imageUrl, imageFile, scene, locale, onTryAgain, onNewScene, copy }: ResultActionsProps) {
+  const [reportOpen, setReportOpen] = useState(false);
   const [feedback, setFeedback] = useState<"copied" | "manual" | null>(null);
   const [sharing, setSharing] = useState(false);
   const inFlight = useRef(false);
@@ -78,6 +82,8 @@ export function ResultActions({ imageUrl, imageFile, locale, onTryAgain, onNewSc
           {copy.redraw}
         </button>
       </div>
+      <button className="report-action" type="button" onClick={() => setReportOpen(true)}>{REPORT_COPY[locale].trigger}</button>
+      {reportOpen ? <ReportDialog key={imageUrl} open imageFile={imageFile} scene={scene} locale={locale} onClose={() => setReportOpen(false)} /> : null}
     </div>
   );
 }
