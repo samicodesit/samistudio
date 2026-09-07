@@ -14,7 +14,7 @@ const context = await browser.newContext({ viewport: { width: 360, height: 640 }
 const page = await context.newPage();
 let image = 'birthday-dog.webp';
 await page.route('**/api/account', route => route.fulfill({ json: { authenticated: false, email: null, balance: 0, freeRemaining: 2 } }));
-await page.route('**/api/generate', async route => route.fulfill({ status: 200, contentType: 'image/webp', body: await fs.readFile(path.join(root, 'public/ideas', image)) }));
+await page.route('**/api/generate', async route => route.fulfill({ status: 200, contentType: 'image/webp', headers: { 'X-Doodle-Free-Remaining': '1' }, body: await fs.readFile(path.join(root, 'public/ideas', image)) }));
 const captures = [];
 async function capture(file, title, detail) {
   // Next's development indicator is tooling, not shipped app UI.

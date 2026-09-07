@@ -314,9 +314,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
           </section>
         ) : generation.status === "ready" ? (
           <section className="state-copy" aria-labelledby="ready-title">
-            <p className="eyebrow">{copy.status.readyEyebrow}</p>
             <h1 id="ready-title">{copy.status.readyTitle}</h1>
-            <p className="scene-summary">“{scene}”</p>
             <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} scene={scene} locale={locale} onTryAgain={createDoodle} onNewScene={handleNewScene} copy={copy.actions} />
             <div className="workspace-usage">
               {usage === null

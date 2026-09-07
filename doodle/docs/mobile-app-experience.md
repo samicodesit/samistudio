@@ -15,6 +15,8 @@ Implemented September 7, 2026. The Android launch URL (`/?runtime=play`) and ins
 
 ## Screenshot provenance
 
+Result simplification: removed the decorative ready eyebrow and repeated scene text. Installed mode keeps its ready heading accessible to screen readers without displaying another announcement above the actions, and gives the drawing more space. Download/Share and Draw something else stay prominent; Redraw/Report share a quiet utility row. The website retains a smaller visible ready heading. Verified 20 browser checks covering mobile/desktop/locales/reporting and 30 relevant component tests, plus lint.
+
 `store-assets/phone-drafts/` contains 1080 x 1920 opaque RGB captures of the actual installed-mode interface, rendered in Chromium at 360 x 640 CSS pixels. Existing Doodle example drawings are replayed through local generation fixtures; no paid generation or real purchase is performed. The optional Settings capture is included in the preview gallery.
 
 These are store screenshot drafts, not captures from a Play-installed Android app. Android toolbar/domain association, real keyboard/Back, file download/share and real Play transactions still require Android verification. The native emulator setup and its current download limitation are documented in `android-toolchain.md`.

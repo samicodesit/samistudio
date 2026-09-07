@@ -77,12 +77,14 @@ export function ResultActions({ imageUrl, imageFile, scene, locale, onTryAgain, 
           <Plus size={16} aria-hidden="true" />
           {copy.newScene}
         </button>
-        <button type="button" onClick={onTryAgain}>
-          <RotateCcw size={15} aria-hidden="true" />
-          {copy.redraw}
-        </button>
+        <div className="result-utility-actions">
+          <button type="button" onClick={onTryAgain}>
+            <RotateCcw size={15} aria-hidden="true" />
+            {copy.redraw}
+          </button>
+          <button className="report-action" type="button" onClick={() => setReportOpen(true)}>{REPORT_COPY[locale].trigger}</button>
+        </div>
       </div>
-      <button className="report-action" type="button" onClick={() => setReportOpen(true)}>{REPORT_COPY[locale].trigger}</button>
       {reportOpen ? <ReportDialog key={imageUrl} open imageFile={imageFile} scene={scene} locale={locale} onClose={() => setReportOpen(false)} /> : null}
     </div>
   );
