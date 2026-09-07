@@ -63,6 +63,8 @@ Local source now uses the confirmed operator/contact details, and the privacy pa
 
 ## Assets: available versus missing
 
+September 7 mobile pass: a dedicated installed-mode Create / Ideas / Settings UI now has four 1080 x 1920 opaque RGB screenshot drafts plus an optional Settings preview in `store-assets/phone-drafts/`. They were visually reviewed in the browser using existing example drawings and local response fixtures. See `store-assets/README.md` for provenance and reproduction. These replace the absence of prepared phone assets below, but actual Android verification is still outstanding; no screenshots have been uploaded to Play.
+
 Google requires a 512×512 PNG icon (up to 1,024 KB), a 1024×500 JPEG or non-alpha PNG feature graphic, and screenshots. Screenshots must be JPEG/non-alpha PNG, 320–3840 pixels, with the longer dimension no more than twice the shorter. Prefer four real 1080×1920 phone captures. [Official asset requirements](https://support.google.com/googleplay/android-developer/answer/9866151?hl=en).
 
 | Asset | Actual status |

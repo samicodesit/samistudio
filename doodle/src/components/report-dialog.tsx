@@ -27,12 +27,14 @@ export function ReportDialog({ open, imageFile, scene, locale, onClose }: Report
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog || !open) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     if (typeof dialog.showModal === "function") dialog.showModal();
     else dialog.setAttribute("open", "");
     const frame = requestAnimationFrame(() => dialog.querySelector<HTMLElement>("[data-report-focus]")?.focus());
     return () => {
       cancelAnimationFrame(frame);
       if (dialog.open && typeof dialog.close === "function") dialog.close();
+      previousFocus?.focus();
     };
   }, [open]);
 

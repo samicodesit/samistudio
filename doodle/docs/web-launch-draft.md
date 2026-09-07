@@ -20,7 +20,7 @@ Doodle - Simple AI doodles to copy onto cards and lunchbox notes
 
 I built Doodle over a weekend. You describe a little scene and it makes a simple AI doodle you can copy by hand onto a card or lunchbox note, or download and share.
 
-The first two doodles are free. After that, a pack of 10 costs €4.99, with no subscription.
+You can try your first two doodles free.
 
 [Try Doodle](https://doodle.samistudio.nl/?utm_source=reddit&utm_medium=social&utm_campaign=doodle_launch)
 
@@ -31,5 +31,7 @@ I'd appreciate feedback on the result screen: does “Draw something else” cle
 Check the actual owner's account can post and follow any newly displayed rules. Submit once; do not duplicate across unrelated communities. The weekend build is an owner-provided fact; pricing and the button label are based on the current app. This is a prepared draft, not published acquisition or measured growth.
 
 ## Published result
+
+Updated 7 September 2026 following the owner's feedback: shortened the trial paragraph to the sentence above and rendered the existing tracked destination as the clickable label "Try Doodle". Verified the rich-text preview before saving, then inspected the published post screenshot for paragraph spacing, readable copy and the clean link label. The published accessibility tree confirmed the original Reddit UTM destination remained intact. This was a desktop rendering check; no mobile rendering was checked for this edit. The record below describes the original publication.
 
 Owner-approved post: https://www.reddit.com/r/SideProject/comments/1w9owc4/doodle_simple_ai_doodles_to_copy_onto_cards_and/ . Published once from u/mests. Verified the post in the subreddit feed and on its permalink, with approved copy, €4.99 price, AI disclosure and correct Reddit UTM link. No additional comment, crosspost or message was sent. The initial score of 1 is Reddit's author vote, and the initial owner view is not acquisition evidence. No response was visible at verification.

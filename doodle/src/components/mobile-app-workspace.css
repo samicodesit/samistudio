@@ -1,0 +1,51 @@
+body:has(.mobile-app-workspace[data-installed="true"]) .doodle-header,
+body:has(.mobile-app-workspace[data-installed="true"]) .seo-content,
+body:has(.mobile-app-workspace[data-installed="true"]) .site-footer { display: none; }
+body:has(.mobile-app-workspace[data-installed="true"]) .doodle-main {
+  width: min(640px, calc(100% - 40px));
+  min-height: 100dvh;
+  align-items: flex-start;
+  padding: max(28px, env(safe-area-inset-top)) 0 calc(92px + env(safe-area-inset-bottom));
+}
+.mobile-app-workspace { width: 100%; }
+.mobile-app-workspace [hidden] { display: none; }
+.mobile-app-workspace[data-installed="true"] .doodle-workspace { display: flex; flex-direction: column; gap: 18px; }
+.mobile-app-workspace[data-installed="true"] .doodle-workspace-ready .workspace-visual,
+.mobile-app-workspace[data-installed="true"] .doodle-workspace-generating .workspace-visual { order: -1; }
+.mobile-app-workspace[data-installed="true"] .doodle-workspace-ready .doodle-stage { width: min(100%, 29svh, 280px); margin: 0 auto; }
+.mobile-app-workspace[data-installed="true"] .composer-section h1 { font-size: clamp(32px, 8vw, 42px); }
+.mobile-app-workspace[data-installed="true"] .state-copy h1 { font-size: clamp(28px, 7.5vw, 36px); }
+.mobile-app-workspace[data-installed="true"] .doodle-stage-reference { display: none; }
+.mobile-app-workspace[data-installed="true"] .workspace-usage { margin-top: 8px; }
+.mobile-app-workspace[data-installed="true"] .dialog-secondary-action { display: none; }
+.mobile-app-workspace[data-installed="true"] .result-dialog-actions { grid-template-columns: 1fr; }
+.mobile-app-workspace[data-installed="true"] .dialog-download-action { width: 100%; }
+.app-bottom-nav {
+  position: fixed; z-index: 30; inset: auto 0 0;
+  display: flex; justify-content: center; gap: 8px;
+  padding: 8px max(16px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  border-top: 1px solid var(--line); background: var(--paper);
+}
+.app-bottom-nav button {
+  display: flex; flex: 1; max-width: 200px; min-height: 56px;
+  flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  padding: 6px; border: 0; border-radius: 14px; background: transparent;
+  color: var(--muted); font-size: 12px; font-weight: 500;
+}
+.app-bottom-nav button[aria-current="page"] { color: var(--moss); background: #e5eee6; font-weight: 600; }
+.app-bottom-nav button:focus-visible { outline: 3px solid var(--moss); outline-offset: 1px; }
+@media (max-height: 500px) {
+  body:has(.mobile-app-workspace[data-installed="true"] textarea:focus) .app-bottom-nav { display: none; }
+}
+.app-panel h1 { margin: 0 0 12px; font-family: var(--font-display); font-size: 36px; line-height: 1.1; letter-spacing: -.04em; }
+.app-panel > p { margin: 0 0 24px; color: var(--muted); font-size: 16px; line-height: 1.5; }
+.app-ideas-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.app-ideas-grid button { display: flex; flex-direction: column; gap: 10px; padding: 0 0 14px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--paper); text-align: start; }
+.app-ideas-grid img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
+.app-ideas-grid button > span { padding: 0 12px; font-size: 14px; line-height: 1.4; }
+.app-ideas-grid strong { margin-top: auto; padding: 0 12px; color: var(--moss); font-size: 13px; }
+.app-settings h2 { margin: 28px 0 12px; font-size: 16px; font-weight: 600; }
+.app-language-list, .app-support-links { display: grid; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); }
+.app-language-list a, .app-support-links a { display: flex; justify-content: space-between; align-items: center; min-height: 50px; padding: 12px 16px; color: var(--graphite); text-decoration: none; border-bottom: 1px solid var(--line); }
+.app-language-list a:last-child, .app-support-links a:last-child { border-bottom: 0; }
+.app-language-list a[aria-current] { color: var(--moss); background: #e5eee6; font-weight: 600; }

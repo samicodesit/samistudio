@@ -1402,11 +1402,14 @@ dialog:focus-visible {
 
 @media (max-width: 899px) {
   .doodle-header {
-    height: 58px;
-    padding: 0 18px;
+    height: calc(64px + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left));
   }
 
   .language-switcher summary {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
     min-width: 0;
     max-width: 180px;
     overflow: hidden;
@@ -1416,9 +1419,9 @@ dialog:focus-visible {
 
   .doodle-main {
     width: calc(100vw - 36px);
-    min-height: calc(100svh - 58px);
+    min-height: calc(100svh - 64px - env(safe-area-inset-top));
     align-items: flex-start;
-    padding: 16px 0 8px;
+    padding: 24px 0 max(24px, env(safe-area-inset-bottom));
   }
 
   .doodle-workspace {
@@ -1432,6 +1435,11 @@ dialog:focus-visible {
     order: -1;
   }
 
+  .doodle-workspace-idle .workspace-visual {
+    order: 1;
+    padding: 8px 0;
+  }
+
   .doodle-stage {
     width: clamp(140px, 40vw, 180px);
     margin: 0 auto;
@@ -1442,13 +1450,22 @@ dialog:focus-visible {
   }
 
   .doodle-workspace-ready .doodle-stage {
-    width: min(100%, 340px);
+    width: min(100%, clamp(220px, 34svh, 300px));
   }
 
   .composer-section h1,
   .state-copy h1 {
     max-width: 360px;
-    font-size: clamp(42px, 11vw, 58px);
+    font-size: clamp(36px, 10vw, 44px);
+    line-height: 0.98;
+  }
+
+  .doodle-workspace-ready .state-copy h1 {
+    font-size: clamp(30px, 8vw, 36px);
+  }
+
+  .doodle-workspace-ready .eyebrow {
+    margin-bottom: 8px;
   }
 
   .scene-hint,
@@ -1475,7 +1492,7 @@ dialog:focus-visible {
   }
 
   .suggestions-list button {
-    min-height: 46px;
+    min-height: 48px;
     padding: 8px 0;
     border: 0;
     border-bottom: 1px solid var(--line);
@@ -1496,8 +1513,10 @@ dialog:focus-visible {
   }
 
   .scene-summary {
-    margin-top: 18px;
-    font-size: 19px;
+    margin-top: 12px;
+    font-size: 17px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
   }
 
   .doodle-workspace-error .doodle-stage {
@@ -1519,22 +1538,45 @@ dialog:focus-visible {
 
   .result-actions {
     max-width: none;
-    margin-top: 24px;
+    margin-top: 18px;
+    gap: 8px;
+  }
+
+  .composer-footer > button,
+  .result-actions button,
+  .dialog-download-action,
+  .dialog-secondary-action,
+  .icon-button,
+  .account-menu summary,
+  .language-switcher nav a {
+    min-height: 48px;
+  }
+
+  .icon-button,
+  .account-menu summary {
+    width: 48px;
+  }
+
+  .language-switcher nav a {
+    display: flex;
+    align-items: center;
   }
 
   .result-dialog {
     width: 100vw;
-    height: 100svh;
+    height: 100dvh;
+    overflow-y: auto;
   }
 
   .result-dialog-card {
     min-height: 100%;
     border-radius: 0;
+    padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   }
 
   .result-dialog-viewport,
   .result-dialog-image {
-    max-height: calc(100svh - 220px);
+    max-height: calc(100dvh - 220px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   }
 
   .seo-content {
@@ -1576,7 +1618,7 @@ dialog:focus-visible {
   }
 
   .doodle-workspace-ready .doodle-stage {
-    width: min(100%, 280px);
+    width: min(100%, 32svh);
   }
 
   .doodle-workspace-ready .scene-summary {
@@ -1588,12 +1630,14 @@ dialog:focus-visible {
     margin-top: 16px;
   }
 
-  .doodle-workspace-ready .result-actions button {
-    min-height: 42px;
-  }
-
   .doodle-workspace-ready .secondary-actions {
     gap: 8px;
+  }
+}
+
+@media (display-mode: standalone), (display-mode: fullscreen) {
+  .seo-content {
+    display: none;
   }
 }
 

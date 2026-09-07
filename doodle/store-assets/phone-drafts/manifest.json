@@ -1,0 +1,33 @@
+{
+  "capturedAt": "2026-09-07T11:49:40.479Z",
+  "origin": "https://doodle.samistudio.nl/?runtime=play",
+  "provenance": "Chromium mobile browser rendering of local app. Account and generation API responses intercepted. No Android OS frame or Play installation. Drawings are existing repository examples, not new generations. Final Android verification still required.",
+  "size": "1080x1920",
+  "captures": [
+    {
+      "file": "01-describe.png",
+      "title": "Describe a little moment",
+      "detail": "Actual composer, prefilled scene; anonymous two-doodle allowance fixture."
+    },
+    {
+      "file": "02-birthday.png",
+      "title": "A doodle for a birthday card",
+      "detail": "Actual result screen displaying the existing birthday-dog.webp example via intercepted generation response."
+    },
+    {
+      "file": "03-ideas.png",
+      "title": "Find a small scene to draw",
+      "detail": "Actual installed-mode Ideas screen with the existing app example gallery."
+    },
+    {
+      "file": "04-detail.png",
+      "title": "Take a closer look",
+      "detail": "Actual enlarged result dialog; same birthday example."
+    },
+    {
+      "file": "05-settings-preview.png",
+      "title": "Settings · additional QA preview",
+      "detail": "Actual installed-mode Settings tab. Optional review asset beyond the four primary listing screenshots."
+    }
+  ]
+}

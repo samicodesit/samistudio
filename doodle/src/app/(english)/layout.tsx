@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { RootDocument } from "../root-document";
 import { buildPageMetadata } from "@/lib/i18n";
+export { doodleViewport as viewport } from "../viewport";
 
 export const metadata: Metadata = buildPageMetadata("en");
 

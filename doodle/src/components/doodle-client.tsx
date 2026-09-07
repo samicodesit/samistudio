@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import type { AccountSummary } from "@/app/api/account/route";
 import { formatCount, type DoodleCopy, type Locale } from "@/lib/i18n";
@@ -58,6 +58,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
   const usageRevision = useRef(0);
   const uncertaintyRevision = useRef(0);
   const createButtonRef = useRef<HTMLButtonElement>(null);
+  const workspaceRef = useRef<HTMLDivElement>(null);
   const focusNextScene = useRef(false);
   const sceneInputRef = useCallback((node: HTMLTextAreaElement | null) => {
     if (node && focusNextScene.current) {
@@ -132,6 +133,12 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
   useEffect(() => revokeCurrentUrl, [revokeCurrentUrl]);
   useEffect(() => { isPlayRuntime(); }, []);
 
+  useLayoutEffect(() => {
+    if (generation.status !== "idle" && window.innerWidth < 900 && !workspaceRef.current?.closest("[hidden]")) {
+      window.scrollTo({ top: 0, behavior: "instant" });
+    }
+  }, [generation.status]);
+
   useEffect(() => {
     let active = true;
     const params = new URLSearchParams(location.search);
@@ -200,6 +207,9 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
   async function createDoodle() {
     if (!scene.trim() || generation.status === "generating") return;
 
+    if (document.activeElement instanceof HTMLTextAreaElement) {
+      document.activeElement.blur();
+    }
     revokeCurrentUrl();
     setGeneration({ status: "generating", imageUrl: null, error: null });
     try {
@@ -293,7 +303,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
   }
 
   return (
-    <div className={`doodle-workspace doodle-workspace-${generation.status}`}>
+    <div ref={workspaceRef} className={`doodle-workspace doodle-workspace-${generation.status}`}>
       <div className="workspace-copy">
         {generation.status === "generating" ? (
           <section className="state-copy" aria-labelledby="generating-title">

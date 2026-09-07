@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RootDocument } from "../root-document";
 import { SUPPORTED_LOCALES, buildPageMetadata, hasLocale } from "@/lib/i18n";
+export { doodleViewport as viewport } from "../viewport";
 
 export function generateStaticParams() {
   return SUPPORTED_LOCALES.filter((locale) => locale !== "en").map((locale) => ({ locale }));

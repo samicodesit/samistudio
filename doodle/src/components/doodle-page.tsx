@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DoodleClient } from "./doodle-client";
+import { MobileAppWorkspace } from "./mobile-app-workspace";
 import {
   SITE_URL,
   SUPPORTED_LOCALES,
@@ -57,7 +57,7 @@ export function DoodlePage({ locale, initialScene = "" }: { locale: Locale; init
       </header>
       <main>
         <section className="doodle-main" aria-label={copy.seo.title}>
-          <DoodleClient locale={locale} copy={copy} initialScene={initialScene} />
+          <MobileAppWorkspace locale={locale} copy={copy} initialScene={initialScene} />
         </section>
         <section className="seo-content">
           <div className="seo-intro">
