@@ -6,8 +6,8 @@ import { ResultActions } from "./result-actions";
 const track = vi.hoisted(() => vi.fn());
 vi.mock("@vercel/analytics", () => ({ track }));
 
-function setup() {
-  render(<ResultActions imageUrl="blob:one" imageFile={new File(["image"], "doodle.png", { type: "image/png" })} scene="A happy dog" locale="en" onTryAgain={vi.fn()} onNewScene={vi.fn()} copy={getCopy("en").actions} />);
+function setup(onTryAgain = vi.fn()) {
+  render(<ResultActions imageUrl="blob:one" imageFile={new File(["image"], "doodle.png", { type: "image/png" })} scene="A happy dog" locale="en" onTryAgain={onTryAgain} onNewScene={vi.fn()} copy={getCopy("en").actions} />);
 }
 
 afterEach(() => { vi.unstubAllGlobals(); vi.clearAllMocks(); });
@@ -64,12 +64,32 @@ it("opens reporting without sending a request and resets it after cancellation",
   const request = vi.fn();
   vi.stubGlobal("fetch", request);
   setup();
+  fireEvent.click(screen.getByRole("button", { name: "More options" }));
   fireEvent.click(screen.getByRole("button", { name: "Report this doodle" }));
   expect(screen.getByRole("dialog", { name: "Report this doodle" })).toBeVisible();
   expect(request).not.toHaveBeenCalled();
   fireEvent.change(screen.getByLabelText("Why are you reporting this doodle?"), { target: { value: "other" } });
   fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+  fireEvent.click(screen.getByRole("button", { name: "More options" }));
   fireEvent.click(screen.getByRole("button", { name: "Report this doodle" }));
   expect(screen.getByLabelText("Why are you reporting this doodle?")).toHaveValue("");
   expect(request).not.toHaveBeenCalled();
+});
+
+
+it("keeps utility actions inside More options and closes it before redrawing", () => {
+  const redraw = vi.fn();
+  setup(redraw);
+  expect(screen.queryByRole("button", { name: "Redraw this idea" })).not.toBeInTheDocument();
+  expect(screen.queryByRole("button", { name: "Report this doodle" })).not.toBeInTheDocument();
+  const more = screen.getByRole("button", { name: "More options" });
+  fireEvent.click(more);
+  expect(screen.getByRole("dialog", { name: "More options" })).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Close" }));
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  expect(more).toHaveFocus();
+  fireEvent.click(more);
+  fireEvent.click(screen.getByRole("button", { name: "Redraw this idea" }));
+  expect(redraw).toHaveBeenCalledOnce();
+  expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 });

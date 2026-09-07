@@ -18,7 +18,7 @@ test('mobile compose and result actions stay in reach after generation', async (
     await page.screenshot({path:`test-results/polish-ready-${viewport.width}.png`});
     const stage = await page.locator('.doodle-stage').boundingBox();
     expect(stage!.y).toBeGreaterThanOrEqual(0);
-    for (const selector of ['.result-save-actions', '.new-scene-action']) {
+    for (const selector of ['.result-save-actions', '.new-scene-action', '.result-more-button']) {
       const box = await page.locator(selector).boundingBox();
       expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
       expect(box!.height).toBeGreaterThanOrEqual(48);
@@ -40,6 +40,7 @@ test('mobile dialogs remain scrollable in a keyboard-sized viewport and restore 
   await page.screenshot({path:'test-results/polish-image-dialog.png'});
   await page.keyboard.press('Escape');
   await expect(page.locator('.doodle-stage-result')).toBeFocused();
+  await page.getByRole('button', { name: 'More options' }).click();
   await page.locator('.report-action').click();
   await page.setViewportSize({ width: 390, height: 420 });
   await page.locator('.report-dialog textarea').fill('An issue with the drawing');
@@ -48,7 +49,7 @@ test('mobile dialogs remain scrollable in a keyboard-sized viewport and restore 
   await page.screenshot({path:'test-results/polish-report-keyboard-height.png'});
   expect(await page.locator('.report-dialog').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
   await page.keyboard.press('Escape');
-  await expect(page.locator('.report-action')).toBeFocused();
+  await expect(page.getByRole('button', { name: 'More options' })).toBeFocused();
 });
 
 test('installed tabs retain a result and background generation does not move Ideas', async ({ page }) => {

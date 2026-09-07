@@ -29,6 +29,10 @@ await capture('01-describe.png', 'Describe a little moment', 'Actual composer, p
 await page.getByRole('button', { name: 'Create doodle', exact: true }).click();
 await page.getByAltText('Generated sticky-note doodle').waitFor();
 await capture('02-birthday.png', 'A doodle for a birthday card', 'Actual result screen displaying the existing birthday-dog.webp example via intercepted generation response.');
+await page.screenshot({ path: path.join(output, '..', 'result-preview.png'), scale: 'css' });
+await page.locator('.result-more-button').click();
+await page.screenshot({ path: path.join(output, '..', 'result-options-preview.png'), scale: 'css' });
+await page.keyboard.press('Escape');
 await page.getByRole('navigation', { name: 'Doodle app' }).getByRole('button', { name: 'Ideas', exact: true }).click();
 await capture('03-ideas.png', 'Find a small scene to draw', 'Actual installed-mode Ideas screen with the existing app example gallery.');
 await page.getByRole('navigation', { name: 'Doodle app' }).getByRole('button', { name: 'Create', exact: true }).click();

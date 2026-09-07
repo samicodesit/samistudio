@@ -42,6 +42,7 @@ Use sub-agents when independent work can progress in parallel, such as responsiv
 - For app UI changes, check both desktop and mobile. For external posts, inspect the published rendering and any available mobile preview; state any unverified surface accurately.
 - Fix obvious presentation defects within the authorized scope before declaring completion. Do not make the owner identify each defect or request another routine correction.
 - Record the specific verification performed in the relevant delivery record. If verification is unavailable, describe the limitation instead of claiming completion.
+- For UI typography, inspect at actual CSS/phone size as well as export resolution. Check inherited fonts, letter spacing, transforms and rasterization; never rotate or scale readable controls with decorative artwork. Use a consistent type scale and familiar component patterns, with secondary actions disclosed when needed rather than displaying every action at equal emphasis.
 
 ## Browser handoff
 

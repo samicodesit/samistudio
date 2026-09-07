@@ -2,6 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element -- generated images are browser-owned object URLs. */
 import Image from "next/image";
+import { Maximize2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { DoodleCopy } from "@/lib/i18n";
 
@@ -61,7 +62,7 @@ export function DoodleStage({ status, imageUrl, error, onInspect, copy }: Doodle
     return (
       <button className="doodle-stage doodle-stage-result" type="button" onClick={onInspect} aria-label={copy.viewLarger}>
         <img src={imageUrl} alt={copy.generatedAlt} />
-        <span className="stage-inspect-label">{copy.viewLarger}</span>
+        <span className="stage-inspect-label" aria-hidden="true"><Maximize2 size={20} /></span>
       </button>
     );
   }
@@ -88,7 +89,7 @@ export function DoodleStage({ status, imageUrl, error, onInspect, copy }: Doodle
         height={1024}
         priority
       />
-      <span className="stage-inspect-label">{copy.viewLarger}</span>
+      <span className="stage-inspect-label" aria-hidden="true"><Maximize2 size={20} /></span>
     </button>
   );
 }

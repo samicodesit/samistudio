@@ -16,6 +16,7 @@ for (const width of [320, 1440]) {
     await page.getByLabel("Describe a scene", { exact: true }).fill("A happy dog");
     await page.getByRole("button", { name: "Create doodle", exact: true }).click();
     const trigger = page.getByRole("button", { name: "Report this doodle", exact: true });
+    await page.getByRole("button", { name: "More options" }).click();
     await trigger.click();
     const dialog = page.getByRole("dialog", { name: "Report this doodle", exact: true });
     await expect(dialog).toBeVisible();
@@ -33,6 +34,8 @@ for (const width of [320, 1440]) {
     expect(submissions[0]).not.toHaveProperty("imageBase64");
     expect(submissions[0]).not.toHaveProperty("scene");
     await dialog.getByRole("button", { name: "Close", exact: true }).click();
+    await expect(page.getByRole("button", { name: "More options" })).toBeFocused();
+    await page.getByRole("button", { name: "More options" }).click();
     await trigger.click();
     await dialog.getByRole("combobox").selectOption("violence");
     await dialog.getByRole("checkbox").check();

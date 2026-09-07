@@ -1,7 +1,7 @@
 "use client";
 
-import { Download, Plus, RotateCcw, Share2 } from "lucide-react";
-import { useRef, useState } from "react";
+import { Download, Ellipsis, Flag, Plus, RotateCcw, Share2, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import type { DoodleCopy, Locale } from "@/lib/i18n";
 import { doodleShareUrl, SHARE_COPY } from "@/lib/sharing";
@@ -18,13 +18,36 @@ interface ResultActionsProps {
   copy: DoodleCopy["actions"];
 }
 
+const MORE_LABEL: Record<Locale, string> = {
+  en: "More options", nl: "Meer opties", de: "Weitere Optionen", fr: "Plus d’options",
+  es: "Más opciones", "pt-br": "Mais opções", it: "Altre opzioni", ja: "その他の操作", ko: "추가 옵션", ar: "المزيد من الخيارات",
+};
+
 export function ResultActions({ imageUrl, imageFile, scene, locale, onTryAgain, onNewScene, copy }: ResultActionsProps) {
   const [reportOpen, setReportOpen] = useState(false);
+  const [optionsOpen, setOptionsOpen] = useState(false);
+  const optionsRef = useRef<HTMLDialogElement>(null);
+  const moreRef = useRef<HTMLButtonElement>(null);
   const [feedback, setFeedback] = useState<"copied" | "manual" | null>(null);
   const [sharing, setSharing] = useState(false);
   const inFlight = useRef(false);
   const shareCopy = SHARE_COPY[locale];
   const shareUrl = doodleShareUrl(locale);
+
+  useEffect(() => {
+    if (!optionsOpen) return;
+    const dialog = optionsRef.current;
+    const trigger = moreRef.current;
+    if (!dialog) return;
+    if (typeof dialog.showModal === "function") dialog.showModal(); else dialog.setAttribute("open", "");
+    return () => { if (dialog.open && typeof dialog.close === "function") dialog.close(); trigger?.focus(); };
+  }, [optionsOpen]);
+
+  function closeOptions() {
+    if (typeof optionsRef.current?.close === "function") optionsRef.current.close();
+    moreRef.current?.focus();
+    setOptionsOpen(false);
+  }
 
   async function shareDoodle() {
     if (inFlight.current) return;
@@ -77,14 +100,13 @@ export function ResultActions({ imageUrl, imageFile, scene, locale, onTryAgain, 
           <Plus size={16} aria-hidden="true" />
           {copy.newScene}
         </button>
-        <div className="result-utility-actions">
-          <button type="button" onClick={onTryAgain}>
-            <RotateCcw size={15} aria-hidden="true" />
-            {copy.redraw}
-          </button>
-          <button className="report-action" type="button" onClick={() => setReportOpen(true)}>{REPORT_COPY[locale].trigger}</button>
-        </div>
+        <button ref={moreRef} className="result-more-button" type="button" aria-label={MORE_LABEL[locale]} aria-haspopup="dialog" aria-expanded={optionsOpen} onClick={() => setOptionsOpen(true)}><Ellipsis size={22} aria-hidden="true" /></button>
       </div>
+      {optionsOpen ? <dialog ref={optionsRef} className="result-options-dialog" aria-label={MORE_LABEL[locale]} onCancel={event => { event.preventDefault(); closeOptions(); }} onClick={event => { if (event.target === event.currentTarget) closeOptions(); }}>
+        <div className="result-options-header"><h2>{MORE_LABEL[locale]}</h2><button type="button" aria-label={REPORT_COPY[locale].close} onClick={closeOptions}><X size={20} aria-hidden="true" /></button></div>
+        <button type="button" onClick={() => { closeOptions(); onTryAgain(); }}><RotateCcw size={20} aria-hidden="true" />{copy.redraw}</button>
+        <button className="report-action" type="button" onClick={() => { closeOptions(); setReportOpen(true); }}><Flag size={20} aria-hidden="true" />{REPORT_COPY[locale].trigger}</button>
+      </dialog> : null}
       {reportOpen ? <ReportDialog key={imageUrl} open imageFile={imageFile} scene={scene} locale={locale} onClose={() => setReportOpen(false)} /> : null}
     </div>
   );

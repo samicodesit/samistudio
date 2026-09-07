@@ -127,7 +127,8 @@ describe("DoodleClient", () => {
     expect(screen.getByRole("link", { name: /Download/ })).toHaveAttribute("download", "doodle.png");
     expect(screen.getByRole("button", { name: /View larger/ })).toBeVisible();
     expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Redraw this idea/ })).toBeVisible();
+    expect(screen.queryByRole("button", { name: /Redraw this idea/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "More options" })).toBeVisible();
     expect(screen.getByRole("button", { name: /Draw something else/ })).toBeVisible();
   });
 
@@ -306,7 +307,8 @@ describe("DoodleClient", () => {
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
     await waitFor(() => expect(accountRequests).toBe(2));
-    fireEvent.click(await screen.findByRole("button", { name: "Redraw this idea" }));
+    fireEvent.click(await screen.findByRole("button", { name: "More options" }));
+    fireEvent.click(screen.getByRole("button", { name: "Redraw this idea" }));
     await waitFor(() => expect(accountRequests).toBe(3));
     expect(screen.getByAltText("Generated sticky-note doodle")).toHaveAttribute("src", "blob:second");
 

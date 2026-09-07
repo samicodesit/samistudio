@@ -44,19 +44,30 @@ async function expectResultActionHierarchy(page: Page, newSceneLabel: string, re
   const actions = page.locator(".secondary-actions");
   const newScene = page.getByRole("button", { name: newSceneLabel, exact: true });
   const redraw = page.getByRole("button", { name: redrawLabel, exact: true });
-  const [actionsBox, newSceneBox, redrawBox] = await Promise.all([
-    actions.boundingBox(),
-    newScene.boundingBox(),
-    redraw.boundingBox(),
+  const more = page.locator(".result-more-button");
+  await expect(redraw).toBeHidden();
+  await expect(page.locator(".report-action")).toBeHidden();
+  const [actionsBox, newSceneBox, moreBox] = await Promise.all([
+    actions.boundingBox(), newScene.boundingBox(), more.boundingBox(),
   ]);
-
   expect(actionsBox).not.toBeNull();
   expect(newSceneBox).not.toBeNull();
-  expect(redrawBox).not.toBeNull();
-  expect(Math.abs(newSceneBox!.width - actionsBox!.width)).toBeLessThanOrEqual(1);
-  expect(redrawBox!.y).toBeGreaterThanOrEqual(newSceneBox!.y + newSceneBox!.height);
-  await expect(newScene).toHaveCSS("font-weight", "600");
-  await expect(redraw).toHaveCSS("font-weight", "400");
+  expect(moreBox).not.toBeNull();
+  expect(newSceneBox!.width).toBeGreaterThan(moreBox!.width);
+  expect(Math.abs(newSceneBox!.y - moreBox!.y)).toBeLessThanOrEqual(1);
+  expect(moreBox!.width).toBeGreaterThanOrEqual(48);
+  expect(moreBox!.height).toBeGreaterThanOrEqual(48);
+  await expect(newScene).toHaveCSS("font-weight", "500");
+  await expect(page.locator(".doodle-stage-result")).toHaveCSS("transform", "none");
+  await expect(page.locator(".stage-inspect-label svg")).toBeVisible();
+  await expect(page.locator(".stage-inspect-label")).toHaveText("");
+  await more.click();
+  await expect(page.locator(".result-options-dialog")).toBeVisible();
+  await expect(redraw).toBeVisible();
+  await expect(page.locator(".report-action")).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(page.locator(".result-options-dialog")).toBeHidden();
+  await expect(more).toBeFocused();
 }
 
 test.beforeEach(async ({ page }) => {
@@ -140,6 +151,7 @@ test.describe("Doodle mobile workflow", () => {
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toBe("doodle.png");
 
+    await page.getByRole("button", { name: "More options" }).click();
     await page.getByRole("button", { name: /Redraw this idea/ }).click();
     await expect(page.getByAltText("Generated sticky-note doodle")).toBeVisible();
     expect(generationCount).toBe(2);
@@ -347,6 +359,7 @@ test.describe("Task 8 monetized workflow", () => {
     await page.getByRole("button", { name: "Create doodle" }).click();
     await expect(page.getByText("1 free doodle left")).toBeVisible();
 
+    await page.getByRole("button", { name: "More options" }).click();
     await page.getByRole("button", { name: "Redraw this idea" }).click();
     await expect(page.locator(".doodle-stage-error")).toContainText("could not finish");
     await expect(page.getByRole("textbox")).toHaveValue("A cat under an umbrella");
@@ -354,6 +367,7 @@ test.describe("Task 8 monetized workflow", () => {
 
     await page.getByRole("button", { name: "Create doodle" }).click();
     await expect(page.getByText("0 free doodles left")).toBeVisible();
+    await page.getByRole("button", { name: "More options" }).click();
     await page.getByRole("button", { name: "Redraw this idea" }).click();
     await expect(page.getByRole("dialog", { name: "Keep doodling" })).toBeVisible();
     await expect(page.getByRole("textbox")).toHaveValue("A cat under an umbrella");

@@ -15,6 +15,10 @@ Implemented September 7, 2026. The Android launch URL (`/?runtime=play`) and ins
 
 ## Screenshot provenance
 
+Subsequent visual correction: replaced the text overlay with an accessible expand icon, removed the stage rotation (which also transformed its label), and normalized installed UI typography to system fonts with normal tracking. Result controls use consistent 48px sizing and 12px corners, one filled action, and a More dialog for redraw/report. Native dialog dismissal and focus restoration are tested. This follows the familiar overflow pattern described in [Material menu guidance](https://developer.android.com/guide/practices/ui_guidelines/menu_design.html); no claim of using the Material component library is made.
+
+This correction passed 31 relevant component tests and 22 relevant browser tests, ESLint, and the production build. Deployed as `E6n1X9hkS2KUKcXwUXsFn9uY24GL`. Final screenshot drafts were recaptured from the live interface with response fixtures, then inspected at 360 x 640 CSS pixels. `store-assets/result-preview.png` and `result-options-preview.png` retain that actual-size QA view.
+
 Result simplification: removed the decorative ready eyebrow and repeated scene text. Installed mode keeps its ready heading accessible to screen readers without displaying another announcement above the actions, and gives the drawing more space. Download/Share and Draw something else stay prominent; Redraw/Report share a quiet utility row. The website retains a smaller visible ready heading. Verified 20 browser checks covering mobile/desktop/locales/reporting and 30 relevant component tests, plus lint.
 
 `store-assets/phone-drafts/` contains 1080 x 1920 opaque RGB captures of the actual installed-mode interface, rendered in Chromium at 360 x 640 CSS pixels. Existing Doodle example drawings are replayed through local generation fixtures; no paid generation or real purchase is performed. The optional Settings capture is included in the preview gallery.
