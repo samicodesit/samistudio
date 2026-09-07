@@ -19,3 +19,5 @@ Before executing any step, briefly check that it makes sense for the user's actu
 - Verify the result afterward and distinguish attempted, prepared, published, and measured outcomes. Do not claim growth from implementation alone.
 
 Keep this check lightweight. Explain material decisions and risks to the user, but do not turn routine checks into repeated permission requests.
+
+Use sub-agents when independent work can progress in parallel, such as responsive QA, Android readiness research, and launch execution. Give each agent a bounded scope and clear file or browser ownership so one visible workflow does not stall while unrelated work proceeds.

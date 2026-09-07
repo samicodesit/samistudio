@@ -15,7 +15,7 @@ This is a small sample and may include the owner and testing. Three creating vis
 
 Positioning: **A tiny drawing for someone you love.**
 
-Keep two free doodles, then €4.99 for ten; no subscription. First improve sharing, then seek the first 100 attributable visitors. Do not buy traffic merely to exhaust the budget. Budget ceiling: US$20 total, including fees. No advertising spend or card charge has been made as of preparation.
+Keep two free doodles, then €4.99 for ten; no subscription. First improve sharing, then seek the first 100 attributable visitors. Do not buy traffic merely to exhaust the budget. Original budget ceiling was US$20 total; the owner later raised it to US$25 for the one-time Google Play registration fee. No advertising spend or card charge has been made. If that fee is paid, the entire current budget is used.
 
 The new result button shares the generated PNG and a localized app link through supported native share sheets. Other browsers copy the app link, with a selectable link if clipboard access is denied. The link deliberately contains no scene, generated image URL, checkout ID or account data. Some destinations may omit parts of a native share payload; downloads remain available separately.
 
@@ -93,7 +93,7 @@ Pinterest is a testable audience hypothesis, not a proven channel for this app. 
 - A native share completion is browser-reported, not proof of delivery or a new visitor. A copied link is intent, not a completed referral. Use inbound `utm_source=doodle`, `utm_medium=share`, `utm_campaign=made_with_doodle` to look for resulting visits.
 - Record visits, visitors who created, and share/referral activity after the first 100 attributable visitors or seven days following publication. This is a review point, not a guarantee of statistical significance.
 - If people visit but do not create, inspect the first-run experience. If they create and share but referrals do not arrive, improve the shared artifact and message. If a channel produces creating visitors, make a second specific example for that audience.
-- Paid promotion remains optional. Prepare a named merchant, fixed campaign end, and an enforced lifetime cap at or below the remaining US$20 before purchase; do not substitute a recurring daily budget. Ask for any required merchant authorization only once the campaign is reviewable.
+- Paid promotion remains optional and currently unfunded if the US$25 Play fee is paid. Prepare a named merchant, fixed campaign end, and an enforced lifetime cap at or below the authorized remaining budget before purchase; do not substitute a recurring daily budget. Ask for any required merchant authorization only once the campaign is reviewable.
 
 ## Shipping checks
 
@@ -108,3 +108,4 @@ Unit/integration tests, typecheck, lint, production build, existing browser work
 - Public Pinterest board: https://www.pinterest.com/samicodesit/easy-doodle-ideas-for-cards-notes/.
 - Both approved pins are verified on that public board (2 Pins), with matching alt text and AI-modified disclosure selected in the composer. No paid promotion was purchased.
 - `AGENTS.md` now requires a quick pre-action QA check for every step, including audience fit, evidence, authorization, budget, factual correctness, and outcome verification.
+- Follow-up commit `69abdd5` clarified the result controls: full-width “Draw something else,” quieter “Redraw this idea,” and automatic prompt focus without a generation request. Existing checkout retry wording is preserved. Verified 212 unit/integration tests, lint, production build, and 14 browser tests, including desktop, 320/390 mobile, German and Arabic screenshots. Deployed successfully at https://doodle-6rnycr0hv-ahmed-samis-projects-e6ef0336.vercel.app and aliased to the production domain.
