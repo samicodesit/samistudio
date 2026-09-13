@@ -40,7 +40,9 @@ import { KeySpring } from './key-spring.mjs';
     const dpr = Math.min(devicePixelRatio || 1, 2);
     backdrop.width = Math.round(width*dpr); backdrop.height = Math.round(height*dpr);
     const ctx = backdrop.getContext('2d'); ctx.scale(dpr,dpr);
-    const w=1260*scale, h=933*scale, x=(width-w)/2, y=(height-h)/2;
+    const w=1260*scale, h=933*scale, x=(width-w)*.12, y=(height-h)/2;
+    // Quiet room texture supplies only the area beyond the photographic plate.
+    ctx.drawImage(widePhoto,widePhoto.width*.76,0,widePhoto.width*.24,widePhoto.height,0,0,width,height);
     ctx.drawImage(widePhoto,x-w/2,y,w*2,h);
     ctx.drawImage(fittedPhoto,x,y,w,h);
     backdrop.parentElement.classList.add('is-ready');
@@ -76,11 +78,12 @@ import { KeySpring } from './key-spring.mjs';
   function layout() {
     const width = experience.clientWidth;
     const mobile = matchMedia('(max-width: 700px)').matches;
-    const scale = mobile ? width / 417 : Math.min(width / 1260, experience.clientHeight / 933);
+    const scale = mobile ? Math.min(width / 417, experience.clientHeight / 933) : Math.min(width / 1260, experience.clientHeight / 933);
     paintBackdrop(width, experience.clientHeight, scale);
     root.style.setProperty('--scene-scale', scale);
-    root.style.setProperty('--scene-left', mobile ? '0px' : `${(width - 1260 * scale) / 2}px`);
-    root.style.setProperty('--scene-top', mobile ? '0px' : `${(experience.clientHeight - 933 * scale) / 2}px`);
+    root.style.setProperty('--scene-left', mobile ? `${(width - 417 * scale) / 2}px` : `${(width - 1260 * scale) * .12}px`);
+    root.style.setProperty('--headline-left', `${674 + Math.max(0,width-1260*scale)*.63/scale}px`);
+    root.style.setProperty('--scene-top', `${(experience.clientHeight - 933 * scale) / 2}px`);
     display.style.transform = mobile
       ? quadMatrix(273,170,[[73,419],[346,419],[346,588],[73,588]])
       : quadMatrix(360,214,[[169,335],[526,306],[568,508],[209,549]]);
@@ -91,7 +94,7 @@ import { KeySpring } from './key-spring.mjs';
     ];
     keys.forEach((key, i) => {
       key.querySelector('.key-label').style.transform = mobile
-        ? 'translate(7px, 13px)'
+        ? 'translate(7px, 7px)'
         : quadMatrix(106,78,faces[i].map(([x, y]) => [x, y + 4]));
     });
   }
