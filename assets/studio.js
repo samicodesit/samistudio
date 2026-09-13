@@ -10,6 +10,41 @@ import { KeySpring } from './key-spring.mjs';
   const number = document.querySelector('#display-number');
   const copy = document.querySelector('#display-copy');
   const keys = [...document.querySelectorAll('.key')];
+  const backdrop = document.createElement('canvas');
+  backdrop.className = 'scene-extension';
+  document.querySelector('.scene').append(backdrop);
+  const backdropImage = new Image();
+  const widePhoto = new Image();
+  const fittedPhoto = document.createElement('canvas');
+  fittedPhoto.width = 1260; fittedPhoto.height = 933;
+  backdropImage.onload = () => {
+    const c = fittedPhoto.getContext('2d');
+    c.drawImage(backdropImage,0,0,1260,933,0,0,1260,933);
+    const mask = document.createElement('canvas'); mask.width=1260; mask.height=933;
+    const m = mask.getContext('2d');
+    for (let y=0; y<933; y++) {
+      const feather = y < 220 ? 45 + 175 * (1-y/220) : 40;
+      const edge = m.createLinearGradient(0,0,1260,0);
+      edge.addColorStop(0,'transparent'); edge.addColorStop(feather/1260,'black');
+      edge.addColorStop(.82,'black'); edge.addColorStop(1,'transparent');
+      m.fillStyle = edge; m.fillRect(0,y,1260,1);
+    }
+    c.globalCompositeOperation = 'destination-in'; c.drawImage(mask,0,0);
+    layout();
+  };
+  widePhoto.onload = () => layout();
+  backdropImage.src = new URL('./terminal-housing.webp', import.meta.url).href;
+  widePhoto.src = new URL('./terminal-wide.webp', import.meta.url).href;
+  function paintBackdrop(width, height, scale) {
+    if (!backdropImage.naturalWidth || !widePhoto.naturalWidth || matchMedia('(max-width: 700px)').matches) return;
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    backdrop.width = Math.round(width*dpr); backdrop.height = Math.round(height*dpr);
+    const ctx = backdrop.getContext('2d'); ctx.scale(dpr,dpr);
+    const w=1260*scale, h=933*scale, x=(width-w)/2, y=(height-h)/2;
+    ctx.drawImage(widePhoto,x-w/2,y,w*2,h);
+    ctx.drawImage(fittedPhoto,x,y,w,h);
+    backdrop.parentElement.classList.add('is-ready');
+  }
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const pages = {
     about: { title: 'About', number: '1/3', lines: ['Hello.', 'I design digital', 'products and build', 'them.'] },
@@ -40,9 +75,11 @@ import { KeySpring } from './key-spring.mjs';
   }
   function layout() {
     const width = experience.clientWidth;
-    const mobile = width <= 700;
-    const scale = width / (mobile ? 417 : 1260);
+    const mobile = matchMedia('(max-width: 700px)').matches;
+    const scale = mobile ? width / 417 : Math.min(width / 1260, experience.clientHeight / 933);
+    paintBackdrop(width, experience.clientHeight, scale);
     root.style.setProperty('--scene-scale', scale);
+    root.style.setProperty('--scene-left', mobile ? '0px' : `${(width - 1260 * scale) / 2}px`);
     root.style.setProperty('--scene-top', mobile ? '0px' : `${(experience.clientHeight - 933 * scale) / 2}px`);
     display.style.transform = mobile
       ? quadMatrix(273,170,[[73,419],[346,419],[346,588],[73,588]])
