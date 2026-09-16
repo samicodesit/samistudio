@@ -1,0 +1,79 @@
+name: Audit published studio
+on:
+  push:
+    branches: [chore/sync-live-studio-20260916]
+    paths: [.github/workflows/audit-live-studio.yml]
+permissions:
+  contents: read
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: Inspect published HTML and asset references without modifying source
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, re, urllib.request
+          from html.parser import HTMLParser
+          from urllib.parse import urljoin, urlsplit
+          BASE='https://samistudio.vercel.app/'
+          class Assets(HTMLParser):
+              def __init__(self):
+                  super().__init__(); self.paths=set()
+              def handle_starttag(self, tag, attrs):
+                  d=dict(attrs)
+                  if tag in ('script','img','source','audio','video','track','iframe') and d.get('src'): self.paths.add(d['src'])
+                  if tag=='link' and d.get('href') and any(x in d.get('rel','') for x in ('stylesheet','icon','preload','manifest')): self.paths.add(d['href'])
+                  if d.get('srcset'):
+                      self.paths.update(x.strip().split()[0] for x in d['srcset'].split(',') if x.strip())
+          def fetch(url):
+              req=urllib.request.Request(url,headers={'User-Agent':'SamiStudio-Repository-Sync/1.0'})
+              with urllib.request.urlopen(req, timeout=30) as response:
+                  data=response.read(25000001)
+                  assert len(data)<=25000000, 'Oversize response'
+                  assert response.status==200
+                  return data,response.headers.get('Content-Type','')
+          html,ctype=fetch(BASE)
+          assert b'From idea to everyday' in html and b'Bespoke Presence' not in html
+          print('LIVE HTML START\n'+html.decode()+'\nLIVE HTML END')
+          parser=Assets(); parser.feed(html.decode())
+          pending={urljoin(BASE,p) for p in parser.paths}
+          seen={BASE}; manifest={'index.html':{'bytes':len(html),'sha256':hashlib.sha256(html).hexdigest()}}
+          while pending:
+              url=pending.pop()
+              if url in seen: continue
+              seen.add(url)
+              if urlsplit(url).netloc!=urlsplit(BASE).netloc:
+                  print('EXTERNAL REFERENCE',url); continue
+              assert len(seen)<100
+              data,ctype=fetch(url)
+              path=urlsplit(url).path.lstrip('/')
+              assert 'text/html' not in ctype, 'Missing asset returned HTML: '+path
+              manifest[path]={'bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'content_type':ctype}
+              if path.endswith(('.css','.js','.mjs','.svg','.json','.webmanifest')):
+                  text=data.decode()
+                  refs=set(re.findall(r'(?:\.?\.?/)?assets/[\w./-]+\.(?:js|css|webp|woff2?|png|jpe?g|svg|mp3|wav|ogg)',text))
+                  refs.update(re.findall(r'url\(\s*[\"\']?([^\s\)\"\']+)',text))
+                  refs.update(re.findall(r'[\"\']((?:\./|\.\./)[^\"\'\s]+\.(?:js|mjs|css|woff2?|webp|png|svg|mp3|wav|ogg))[\"\']',text))
+                  for ref in refs:
+                      if not ref.startswith(('data:','#')): pending.add(urljoin(BASE if 'assets/' in ref and not ref.startswith('../') else url,ref))
+                  print('ASSET REFS',path,sorted(refs))
+                  if path.endswith('.js'):
+                      print('JS PREFIX',text[:1200])
+                      print('JS SOURCE MAP',re.findall(r'sourceMappingURL=(\S+)',text))
+          print('LIVE FILE MANIFEST\n'+json.dumps(manifest,indent=2,sort_keys=True))
+          other,_=fetch('https://samistudio.netlify.app/')
+          print('NETLIFY HTML SHA256',hashlib.sha256(other).hexdigest())
+          PY
+      - name: Audit legacy page dependencies and repository instructions
+        run: |
+          git ls-files '*AGENTS.md' '*CLAUDE.md' '.github/*' 'scripts/*'
+          cat .gitignore
+          cat 11112024.html
+          cat site.webmanifest
+          git grep -il -E 'Bespoke Presence|11112024|song\.mp3' -- ':!doodle/package-lock.json' || true
+          git grep -n -E '/(assets|public|song\.mp3|favicon)' -- doodle/src doodle/next.config.ts || true
