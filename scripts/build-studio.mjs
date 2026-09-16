@@ -28,10 +28,6 @@ export async function buildStudio(root = fileURLToPath(new URL('../', import.met
   return output;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(new URL('../', import.meta.url)) === false) {
-  // noop
-}
-
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
     const output = await buildStudio();
