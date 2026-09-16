@@ -5,9 +5,11 @@ on:
     paths:
       - index.html
       - favicon.svg
+      - og-image.jpg
       - assets/**
       - scripts/build-studio.mjs
       - tests/studio.test.mjs
+      - tests/og-image.test.mjs
       - site.webmanifest
       - vercel.json
       - .gitignore
@@ -17,9 +19,11 @@ on:
     paths:
       - index.html
       - favicon.svg
+      - og-image.jpg
       - assets/**
       - scripts/build-studio.mjs
       - tests/studio.test.mjs
+      - tests/og-image.test.mjs
       - site.webmanifest
       - vercel.json
       - .gitignore

@@ -1,3 +1,4 @@
+import './og-image.test.mjs';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFile, stat, mkdtemp, mkdir, cp, rm, readdir, writeFile } from 'node:fs/promises';
