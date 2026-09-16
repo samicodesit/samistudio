@@ -7,7 +7,7 @@ import { tmpdir } from 'node:os';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const runtimeFiles = [
-  'index.html', 'favicon.svg', 'assets/studio.css', 'assets/studio.js',
+  'index.html', 'favicon.svg', 'og-image.jpg', 'assets/studio.css', 'assets/studio.js',
   'assets/key-spring.mjs', 'assets/terminal-housing.webp',
   'assets/terminal-housing-mobile.webp', 'assets/terminal-keycaps.webp',
   'assets/terminal-keycaps-mobile.webp', 'assets/terminal-wide.webp',
@@ -47,13 +47,15 @@ test('homepage and manifest describe the current studio', async () => {
   assert.equal(manifest.theme_color, '#ad9ba2');
 });
 
-test('all runtime files exist and images are real WebP files', async () => {
+test('all runtime files exist and image formats are valid', async () => {
   for (const path of runtimeFiles) {
     assert.ok((await stat(join(root, path))).size > 0, `${path} is empty`);
     const bytes = await readFile(join(root, path));
     if (path.endsWith('.webp')) {
       assert.equal(bytes.subarray(0, 4).toString(), 'RIFF', path);
       assert.equal(bytes.subarray(8, 12).toString(), 'WEBP', path);
+    } else if (path.endsWith('.jpg')) {
+      assert.deepEqual([...bytes.subarray(0, 3)], [0xff, 0xd8, 0xff], path);
     } else if (path !== 'index.html') {
       assert.doesNotMatch(bytes.toString(), /^\s*<!doctype html/i, path);
     }
