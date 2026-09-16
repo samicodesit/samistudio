@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 // Explicitly publish the current homepage only, never repository or Doodle sources.
 export const studioFiles = [
-  'index.html', 'favicon.svg', 'assets/studio.css', 'assets/studio.js',
+  'index.html', 'favicon.svg', 'og-image.jpg', 'assets/studio.css', 'assets/studio.js',
   'assets/key-spring.mjs', 'assets/terminal-housing.webp',
   'assets/terminal-housing-mobile.webp', 'assets/terminal-keycaps.webp',
   'assets/terminal-keycaps-mobile.webp', 'assets/terminal-wide.webp',
@@ -26,6 +26,10 @@ export async function buildStudio(root = fileURLToPath(new URL('../', import.met
     await cp(join(root, path), target);
   }
   return output;
+}
+
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(new URL('../', import.meta.url)) === false) {
+  // noop
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
