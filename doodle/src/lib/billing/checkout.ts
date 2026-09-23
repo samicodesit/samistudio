@@ -6,7 +6,6 @@ import { localePath } from "@/lib/i18n";
 import { required } from "@/lib/env";
 import { fulfillCreditPack } from "./credits";
 import { getStripe } from "./stripe";
-import { getStripeCheckoutConfig } from "./checkout-config";
 
 export const PACK_CREDITS = 10;
 export const PACK_PRICE = "€4.99";
@@ -21,14 +20,12 @@ function stripeLocale(locale: Locale): Stripe.Checkout.SessionCreateParams.Local
   return locale;
 }
 
-export async function createPackCheckout({ userId, email, locale, origin }: CheckoutInput) {
-  const checkoutConfig = getStripeCheckoutConfig();
-  if (!checkoutConfig) throw new Error("Paid checkout is unavailable");
-
+export function createPackCheckout({ userId, email, locale, origin }: CheckoutInput) {
   const path = localePath(locale);
-  const params: Stripe.Checkout.SessionCreateParams = {
+  return getStripe().checkout.sessions.create({
     mode: "payment",
     line_items: [{ price: required("STRIPE_DOODLE_PRICE_ID"), quantity: 1 }],
+    automatic_tax: { enabled: true },
     adaptive_pricing: { enabled: false },
     allow_promotion_codes: true,
     branding_settings: {
@@ -45,9 +42,7 @@ export async function createPackCheckout({ userId, email, locale, origin }: Chec
     locale: stripeLocale(locale),
     success_url: `${origin}${path}?checkout={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}${path}?checkout=cancelled`,
-  };
-  if (checkoutConfig.automaticTaxEnabled) params.automatic_tax = { enabled: true };
-  return getStripe().checkout.sessions.create(params);
+  });
 }
 
 export async function fulfillCheckout(sessionId: string, expectedUserId?: string): Promise<number> {

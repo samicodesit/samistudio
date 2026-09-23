@@ -30,12 +30,6 @@ function sessionWithPrice(price: string) {
   };
 }
 
-function enableCheckout(taxMode: "automatic" | "disabled", registrationConfirmed = false) {
-  vi.stubEnv("STRIPE_CHECKOUT_ENABLED", "true");
-  vi.stubEnv("STRIPE_CHECKOUT_TAX_MODE", taxMode);
-  vi.stubEnv("STRIPE_TAX_REGISTRATION_CONFIRMED", registrationConfirmed ? "true" : "false");
-}
-
 describe("fixed credit pack checkout", () => {
   beforeEach(() => {
     vi.unstubAllEnvs();
@@ -44,43 +38,7 @@ describe("fixed credit pack checkout", () => {
     mocks.fulfillCreditPack.mockResolvedValue(10);
   });
 
-  it("fails closed when paid checkout is not explicitly enabled", async () => {
-    await expect(createPackCheckout({
-      userId: "user",
-      email: "buyer@example.com",
-      locale: "de",
-      origin: "https://doodle.test",
-    })).rejects.toThrow("Paid checkout is unavailable");
-    expect(mocks.create).not.toHaveBeenCalled();
-  });
-
-  it("requires an explicit tax mode before enabling paid checkout", async () => {
-    vi.stubEnv("STRIPE_CHECKOUT_ENABLED", "true");
-
-    await expect(createPackCheckout({
-      userId: "user",
-      email: "buyer@example.com",
-      locale: "de",
-      origin: "https://doodle.test",
-    })).rejects.toThrow("Paid checkout is unavailable");
-    expect(mocks.create).not.toHaveBeenCalled();
-  });
-
-  it("fails closed for an invalid tax mode", async () => {
-    vi.stubEnv("STRIPE_CHECKOUT_ENABLED", "true");
-    vi.stubEnv("STRIPE_CHECKOUT_TAX_MODE", "manual");
-
-    await expect(createPackCheckout({
-      userId: "user",
-      email: "buyer@example.com",
-      locale: "de",
-      origin: "https://doodle.test",
-    })).rejects.toThrow("Paid checkout is unavailable");
-    expect(mocks.create).not.toHaveBeenCalled();
-  });
-
-  it("creates one fixed EUR pack with tax disabled only when explicitly selected", async () => {
-    enableCheckout("disabled");
+  it("creates one fixed EUR pack and accepts promotion codes", async () => {
     await createPackCheckout({
       userId: "user",
       email: "buyer@example.com",
@@ -91,6 +49,7 @@ describe("fixed credit pack checkout", () => {
     expect(mocks.create).toHaveBeenCalledWith({
       mode: "payment",
       line_items: [{ price: "price_doodle", quantity: 1 }],
+      automatic_tax: { enabled: true },
       adaptive_pricing: { enabled: false },
       allow_promotion_codes: true,
       branding_settings: {
@@ -113,27 +72,7 @@ describe("fixed credit pack checkout", () => {
     });
   });
 
-  it("enables automatic tax only with explicit registration confirmation", async () => {
-    enableCheckout("automatic", true);
-    await createPackCheckout({ userId: "user", email: null, locale: "de", origin: "https://doodle.test" });
-
-    expect(mocks.create).toHaveBeenCalledWith(expect.objectContaining({ automatic_tax: { enabled: true } }));
-  });
-
-  it("fails closed when automatic tax lacks registration confirmation", async () => {
-    enableCheckout("automatic");
-
-    await expect(createPackCheckout({
-      userId: "user",
-      email: null,
-      locale: "de",
-      origin: "https://doodle.test",
-    })).rejects.toThrow("Paid checkout is unavailable");
-    expect(mocks.create).not.toHaveBeenCalled();
-  });
-
   it("uses Stripe's direct Brazilian locale and auto for unsupported Arabic", async () => {
-    enableCheckout("disabled");
     await createPackCheckout({ userId: "user", email: null, locale: "pt-br", origin: "https://doodle.test" });
     await createPackCheckout({ userId: "user", email: null, locale: "ar", origin: "https://doodle.test" });
 
