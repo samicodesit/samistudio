@@ -1,12 +1,14 @@
 "use client";
 
-import { Download, Ellipsis, Flag, Plus, RotateCcw, Share2, X } from "lucide-react";
+import { CreditCard, Download, Ellipsis, Flag, Plus, RotateCcw, Share2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
+import { getCopy } from "@/lib/i18n";
 import type { DoodleCopy, Locale } from "@/lib/i18n";
 import { doodleShareUrl, SHARE_COPY } from "@/lib/sharing";
 import { ReportDialog } from "./report-dialog";
 import { REPORT_COPY } from "@/lib/reports/report-copy";
+import { CardComposer } from "./card-composer";
 
 interface ResultActionsProps {
   imageUrl: string;
@@ -26,6 +28,7 @@ const MORE_LABEL: Record<Locale, string> = {
 export function ResultActions({ imageUrl, imageFile, scene, locale, onTryAgain, onNewScene, copy }: ResultActionsProps) {
   const [reportOpen, setReportOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [cardOpen, setCardOpen] = useState(false);
   const optionsRef = useRef<HTMLDialogElement>(null);
   const moreRef = useRef<HTMLButtonElement>(null);
   const [feedback, setFeedback] = useState<"copied" | "manual" | null>(null);
@@ -33,6 +36,7 @@ export function ResultActions({ imageUrl, imageFile, scene, locale, onTryAgain, 
   const inFlight = useRef(false);
   const shareCopy = SHARE_COPY[locale];
   const shareUrl = doodleShareUrl(locale);
+  const cardCopy = getCopy(locale).card;
 
   useEffect(() => {
     if (!optionsOpen) return;
@@ -105,9 +109,11 @@ export function ResultActions({ imageUrl, imageFile, scene, locale, onTryAgain, 
       {optionsOpen ? <dialog ref={optionsRef} className="result-options-dialog" aria-label={MORE_LABEL[locale]} onCancel={event => { event.preventDefault(); closeOptions(); }} onClick={event => { if (event.target === event.currentTarget) closeOptions(); }}>
         <div className="result-options-header"><h2>{MORE_LABEL[locale]}</h2><button type="button" aria-label={REPORT_COPY[locale].close} onClick={closeOptions}><X size={20} aria-hidden="true" /></button></div>
         <button type="button" onClick={() => { closeOptions(); onTryAgain(); }}><RotateCcw size={20} aria-hidden="true" />{copy.redraw}</button>
+        <button type="button" onClick={() => { closeOptions(); setCardOpen(true); }}><CreditCard size={20} aria-hidden="true" />{copy.makeCard}</button>
         <button className="report-action" type="button" onClick={() => { closeOptions(); setReportOpen(true); }}><Flag size={20} aria-hidden="true" />{REPORT_COPY[locale].trigger}</button>
       </dialog> : null}
       {reportOpen ? <ReportDialog key={imageUrl} open imageFile={imageFile} scene={scene} locale={locale} onClose={() => setReportOpen(false)} /> : null}
+      {cardOpen ? <CardComposer key={imageUrl} imageUrl={imageUrl} imageFile={imageFile} locale={locale} copy={cardCopy} onClose={() => setCardOpen(false)} /> : null}
     </div>
   );
 }

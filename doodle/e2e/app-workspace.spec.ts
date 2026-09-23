@@ -7,8 +7,8 @@ test("installed workspace has focused tabs and preserves a draft while browsing"
   await page.goto("/?runtime=play");
   const nav = page.getByRole("navigation", { name: "Doodle app" });
   await expect(nav).toBeVisible();
-  await expect(page.locator("#scene-title")).toHaveCSS("letter-spacing", "normal");
-  await expect(page.locator("#scene-title")).toHaveCSS("font-family", /system-ui/);
+  await expect(page.locator("#scene-title")).toHaveCSS("letter-spacing", "-0.8px");
+  await expect(page.locator("#scene-title")).toHaveCSS("font-family", /Bricolage Grotesque/i);
   await expect(page.locator(".doodle-header")).toBeHidden();
   await page.getByRole("textbox").fill("A little cat holding a flower");
   await nav.getByRole("button", { name: "Ideas" }).click();

@@ -20,9 +20,9 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-function renderDialog(account = anonymous) {
+function renderDialog(account = anonymous, signInOnly = false) {
   const onClose = vi.fn(); const onAccountChange = vi.fn();
-  render(<PurchaseDialog open account={account} scene="A cat" locale="en" copy={copy} success={false} onClose={onClose} onAccountChange={onAccountChange} />);
+  render(<PurchaseDialog open account={account} scene="A cat" locale="en" copy={copy} success={false} onClose={onClose} onAccountChange={onAccountChange} signInOnly={signInOnly} />);
   return { onClose, onAccountChange };
 }
 
@@ -78,11 +78,55 @@ describe("PurchaseDialog", () => {
     await waitFor(() => expect(onClose).toHaveBeenCalled());
   });
 
+  it("does not overwrite the return state during sign-in-only auth", async () => {
+    const user = userEvent.setup();
+    const savedReturn = JSON.stringify({ scene: "A saved checkout", intent: "checkout" });
+    sessionStorage.setItem("doodle:return", savedReturn);
+    const fetchMock = vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce(json(signedIn));
+    const { onClose } = renderDialog(anonymous, true);
+
+    await user.click(screen.getByRole("button", { name: "Continue with Google" }));
+
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
+    expect(sessionStorage.getItem("doodle:return")).toBe(savedReturn);
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).not.toHaveBeenCalledWith("/api/checkout", expect.anything());
+  });
+
+  it("keeps sign-in-only auth open when the refreshed account is still anonymous", async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.spyOn(globalThis, "fetch")
+      .mockResolvedValueOnce(new Response(null, { status: 204 }))
+      .mockResolvedValueOnce(json(anonymous));
+    const { onClose } = renderDialog(anonymous, true);
+
+    await user.click(screen.getByRole("button", { name: "Continue with Google" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(copy.auth.authError);
+    expect(screen.getByRole("dialog", { name: "Sign in" })).toBeVisible();
+    expect(onClose).not.toHaveBeenCalled();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(fetchMock).not.toHaveBeenCalledWith("/api/checkout", expect.anything());
+  });
+
   it("moves keyboard focus into the sign-in sheet", async () => {
     const user = userEvent.setup();
     renderDialog();
     await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Not now" })).toHaveFocus());
+    const cancel = screen.getByRole("button", { name: "Not now" });
+    expect(cancel).toHaveClass("purchase-auth-cancel");
+    await waitFor(() => expect(cancel).toHaveFocus());
+  });
+
+  it("opens sign-in-only sheets on the neutral heading", async () => {
+    renderDialog(anonymous, true);
+    const heading = screen.getByRole("heading", { name: copy.auth.signIn });
+    const cancel = screen.getByRole("button", { name: copy.purchase.cancel });
+    expect(heading).toHaveAttribute("tabindex", "-1");
+    await waitFor(() => expect(heading).toHaveFocus());
+    expect(cancel).not.toHaveFocus();
   });
 
   it("closes through native cancel and backdrop", () => {

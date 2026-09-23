@@ -51,6 +51,23 @@ describe("Play purchase processing", () => {
     await expect(processPlayPurchase({ accountId: "account", expectedObfuscatedAccountId: "bound-account", purchaseToken: "token", productId: "doodle_credits_10", publisher })).resolves.toEqual({ status: "granted_consume_pending", balance: 10 });
   });
 
+  it("retries consumption after a partial fulfillment without claiming twice", async () => {
+    const publisher = client();
+    vi.mocked(ledger.claimPlayCredits)
+      .mockResolvedValueOnce({ granted: true, balance: 10 })
+      .mockResolvedValueOnce({ granted: false, balance: 10 });
+    vi.mocked(publisher.consumeProductPurchase)
+      .mockRejectedValueOnce(new Error("offline"))
+      .mockResolvedValueOnce(undefined);
+
+    await expect(processPlayPurchase({ accountId: "account", expectedObfuscatedAccountId: "bound-account", purchaseToken: "token", productId: "doodle_credits_10", publisher })).resolves.toEqual({ status: "granted_consume_pending", balance: 10 });
+    await expect(processPlayPurchase({ accountId: "account", expectedObfuscatedAccountId: "bound-account", purchaseToken: "token", productId: "doodle_credits_10", publisher })).resolves.toEqual({ status: "already_granted", balance: 10 });
+
+    expect(ledger.claimPlayCredits).toHaveBeenCalledTimes(2);
+    expect(publisher.consumeProductPurchase).toHaveBeenCalledTimes(2);
+    expect(ledger.markPlayPurchaseConsumed).toHaveBeenCalledTimes(1);
+  });
+
   it("accepts an already consumed token only when its local claim exists", async () => {
     ledger.getPlayCreditClaim.mockResolvedValue({ balance: 19, state: "granted" });
     const purchase: ProductPurchaseV2 = { ...basePurchase, productLineItem: [{ ...basePurchase.productLineItem![0], productOfferDetails: { quantity: 1, refundableQuantity: 1, consumptionState: "CONSUMPTION_STATE_CONSUMED" } }] };

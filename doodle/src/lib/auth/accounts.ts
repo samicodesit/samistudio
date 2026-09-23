@@ -8,13 +8,29 @@ import { required } from "@/lib/env";
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const CREATE_ACCOUNT_SCRIPT = `
 local current = redis.call('GET', KEYS[1])
-if current then redis.call('SET', ARGV[2] .. current .. ':active', '1'); return current end
+if current and redis.call('EXISTS', ARGV[2] .. current .. ':deleted') == 0 then
+  redis.call('SET', ARGV[2] .. current .. ':active', '1')
+  return current
+end
+if current then
+  redis.call('SET', KEYS[1], ARGV[1])
+  redis.call('SET', ARGV[2] .. ARGV[1] .. ':active', '1')
+  return ARGV[1]
+end
 if redis.call('SET', KEYS[1], ARGV[1], 'NX') then
   redis.call('SET', ARGV[2] .. ARGV[1] .. ':active', '1')
   return ARGV[1]
 end
 current = redis.call('GET', KEYS[1])
-if current then redis.call('SET', ARGV[2] .. current .. ':active', '1'); return current end
+if current and redis.call('EXISTS', ARGV[2] .. current .. ':deleted') == 0 then
+  redis.call('SET', ARGV[2] .. current .. ':active', '1')
+  return current
+end
+if current then
+  redis.call('SET', KEYS[1], ARGV[1])
+  redis.call('SET', ARGV[2] .. ARGV[1] .. ':active', '1')
+  return ARGV[1]
+end
 return ''
 `;
 

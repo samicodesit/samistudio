@@ -8,6 +8,7 @@ import { DoodleClient } from "./doodle-client";
 import { isPlayRuntime } from "@/lib/billing/play-client";
 import { getCopy, localePath, SUPPORTED_LOCALES, type DoodleCopy, type Locale } from "@/lib/i18n";
 import { getDoodleIdeas, IDEA_IMAGES } from "@/lib/doodle-ideas";
+import type { SceneIdeaId } from "@/lib/scenes/suggestions";
 import "./mobile-app-workspace.css";
 
 type Tab = "create" | "ideas" | "settings";
@@ -30,7 +31,7 @@ const IDEAS_HINT: Record<Locale, string> = {
   ko: "아이디어를 골라 나만의 그림을 만들어 보세요.", ar: "اختر فكرة وأضف إليها لمستك.",
 };
 
-export function MobileAppWorkspace({ locale, copy, initialScene = "" }: { locale: Locale; copy: DoodleCopy; initialScene?: string }) {
+export function MobileAppWorkspace({ locale, copy, initialScene = "", initialSuggestionIds }: { locale: Locale; copy: DoodleCopy; initialScene?: string; initialSuggestionIds?: readonly SceneIdeaId[] }) {
   const [installed, setInstalled] = useState(false);
   const [tab, setTab] = useState<Tab>("create");
   const [draft, setDraft] = useState({ scene: initialScene, revision: 0 });
@@ -55,9 +56,10 @@ export function MobileAppWorkspace({ locale, copy, initialScene = "" }: { locale
   }
 
   return <div className="mobile-app-workspace" data-installed={installed}>
+    <div className="app-account-slot" data-account-host="app" aria-label={copy.account.label} />
     {/* Keep Create mounted across tabs so browsing never discards a drawing. */}
     <div hidden={installed && tab !== "create"}>
-      <DoodleClient key={draft.revision} locale={locale} copy={copy} initialScene={draft.scene} />
+      <DoodleClient key={draft.revision} locale={locale} copy={copy} initialScene={draft.scene} initialSuggestionIds={initialSuggestionIds} accountHost={installed ? "app" : "web"} />
     </div>
     {installed && tab === "ideas" ? <section className="app-panel" aria-labelledby="app-ideas-title">
       <h1 id="app-ideas-title">{labels[1]}</h1>

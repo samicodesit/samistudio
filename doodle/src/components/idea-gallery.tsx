@@ -2,15 +2,48 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore, type ComponentProps } from "react";
 import { IDEA_IMAGES, type IdeasCopy } from "@/lib/doodle-ideas";
 import { type Locale, localePath } from "@/lib/i18n";
+import { readSafeAttribution, serializeSafeAttribution, type SafeAttribution } from "./doodle-analytics";
 
-function ideaUrl(locale: Locale, prompt: string) {
-  return `${localePath(locale)}?scene=${encodeURIComponent(prompt)}#composer`;
+function subscribeToLocation() {
+  return () => {};
+}
+
+function getLocationSearch() {
+  return window.location.search;
+}
+
+function getServerLocationSearch() {
+  return "";
+}
+
+function withSafeAttribution(href: string, attribution: SafeAttribution) {
+  const safeSearch = serializeSafeAttribution(attribution);
+  if (!safeSearch) return href;
+  const hashIndex = href.indexOf("#");
+  const path = hashIndex === -1 ? href : href.slice(0, hashIndex);
+  const hash = hashIndex === -1 ? "" : href.slice(hashIndex);
+  return `${path}${path.includes("?") ? "&" : "?"}${safeSearch}${hash}`;
+}
+
+type AttributionLinkProps = Omit<ComponentProps<typeof Link>, "href"> & { href: string };
+
+export function AttributionLink({ href, ...props }: AttributionLinkProps) {
+  const locationSearch = useSyncExternalStore(subscribeToLocation, getLocationSearch, getServerLocationSearch);
+  const attribution = readSafeAttribution(locationSearch);
+  return <Link {...props} href={withSafeAttribution(href, attribution)} />;
+}
+
+function ideaUrl(locale: Locale, prompt: string, attribution: SafeAttribution) {
+  const safeSearch = serializeSafeAttribution(attribution);
+  return `${localePath(locale)}?scene=${encodeURIComponent(prompt)}${safeSearch ? `&${safeSearch}` : ""}#composer`;
 }
 
 export function IdeaGallery({ locale, copy }: { locale: Locale; copy: IdeasCopy }) {
+  const locationSearch = useSyncExternalStore(subscribeToLocation, getLocationSearch, getServerLocationSearch);
+  const attribution = readSafeAttribution(locationSearch);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
   const selected = selectedIndex === null ? null : { prompt: copy.featured[selectedIndex], image: IDEA_IMAGES[selectedIndex] };
@@ -30,7 +63,7 @@ export function IdeaGallery({ locale, copy }: { locale: Locale; copy: IdeasCopy 
             </button>
             <div className="idea-card-copy">
               <p>{prompt}</p>
-              <Link href={ideaUrl(locale, prompt)}>{copy.tryIdea}</Link>
+              <Link href={ideaUrl(locale, prompt, attribution)}>{copy.tryIdea}</Link>
             </div>
           </article>
         ))}
@@ -42,7 +75,7 @@ export function IdeaGallery({ locale, copy }: { locale: Locale; copy: IdeasCopy 
             <Image src={selected.image} alt={selected.prompt} width={900} height={900} />
             <div>
               <p>{selected.prompt}</p>
-              <Link href={ideaUrl(locale, selected.prompt)}>{copy.tryIdea}</Link>
+              <Link href={ideaUrl(locale, selected.prompt, attribution)}>{copy.tryIdea}</Link>
               <a href={selected.image} target="_blank" rel="noreferrer">{copy.openTab}</a>
             </div>
           </div>

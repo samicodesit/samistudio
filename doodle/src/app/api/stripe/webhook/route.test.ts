@@ -74,7 +74,7 @@ describe("Stripe webhook route", () => {
   it.each(["checkout.session.completed", "checkout.session.async_payment_succeeded"])(
     "fulfills %s",
     async (type) => {
-      mocks.constructEvent.mockReturnValue({ type, data: { object: { id: "cs_paid" } } });
+      mocks.constructEvent.mockReturnValue({ type, data: { object: { id: "cs_paid", metadata: { pack: "doodle_10" } } } });
 
       const response = await POST(webhookRequest("payload", "valid"));
 
@@ -92,10 +92,39 @@ describe("Stripe webhook route", () => {
     expect(mocks.fulfillCheckout).not.toHaveBeenCalled();
   });
 
+  it.each(["checkout.session.completed", "checkout.session.async_payment_succeeded"])(
+    "acknowledges another product's %s without attempting Doodle fulfillment",
+    async (type) => {
+      mocks.constructEvent.mockReturnValue({
+        type,
+        data: { object: { id: "cs_subscription", mode: "subscription", metadata: { source: "website", tier: "pro" } } },
+      });
+      mocks.fulfillCheckout.mockRejectedValue(new Error("Checkout session does not match the fixed credit pack"));
+
+      const response = await POST(webhookRequest("payload", "valid"));
+
+      expect(response.status).toBe(200);
+      expect(mocks.fulfillCheckout).not.toHaveBeenCalled();
+    },
+  );
+
+  it.each([null, {}, { pack: "another_product" }])("acknowledges checkout metadata %j without fulfillment", async (metadata) => {
+    mocks.constructEvent.mockReturnValue({
+      type: "checkout.session.completed",
+      data: { object: { id: "cs_other", metadata } },
+    });
+    mocks.fulfillCheckout.mockRejectedValue(new Error("Checkout session does not match the fixed credit pack"));
+
+    const response = await POST(webhookRequest("payload", "valid"));
+
+    expect(response.status).toBe(200);
+    expect(mocks.fulfillCheckout).not.toHaveBeenCalled();
+  });
+
   it("returns 500 for valid fulfillment failures so Stripe retries", async () => {
     mocks.constructEvent.mockReturnValue({
       type: "checkout.session.completed",
-      data: { object: { id: "cs_paid" } },
+      data: { object: { id: "cs_paid", metadata: { pack: "doodle_10" } } },
     });
     mocks.fulfillCheckout.mockRejectedValue(new Error("database unavailable"));
 

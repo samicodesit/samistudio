@@ -67,7 +67,7 @@ export async function POST(request: Request) {
   let user;
   let config;
   try {
-    user = await getCurrentUser();
+    user = await getCurrentUser(request);
     if (!user) return json({ error: "unauthorized" }, 401);
     config = getPlayBillingConfig();
     if (!config) return json({ error: "play_unavailable" }, 503);

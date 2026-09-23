@@ -5,9 +5,18 @@ import { clearSessionCookie, getCurrentUser, setSessionCookie } from "./session"
 
 vi.mock("server-only", () => ({}));
 
-const mocks = vi.hoisted(() => ({ cookies: vi.fn(), isPaidAccountActive: vi.fn() }));
+const mocks = vi.hoisted(() => ({
+  cookies: vi.fn(),
+  isPaidAccountActive: vi.fn(),
+  getNativeBearer: vi.fn(),
+  getNativeSessionUser: vi.fn(),
+}));
 vi.mock("next/headers", () => ({ cookies: mocks.cookies }));
 vi.mock("@/lib/billing/credits", () => ({ isPaidAccountActive: mocks.isPaidAccountActive }));
+vi.mock("@/lib/native-session", () => ({
+  getNativeBearer: mocks.getNativeBearer,
+  getNativeSessionUser: mocks.getNativeSessionUser,
+}));
 
 const USER = {
   id: "a6c1f149-6239-4b77-8d3f-7a0574bb5f40",
@@ -27,6 +36,8 @@ describe("Doodle session", () => {
     vi.stubEnv("SESSION_SECRET", "session-secret");
     mocks.cookies.mockReset();
     mocks.isPaidAccountActive.mockReset();
+    mocks.getNativeBearer.mockReset();
+    mocks.getNativeSessionUser.mockReset();
     mocks.cookies.mockResolvedValue({ get: () => undefined });
   });
 
@@ -60,6 +71,30 @@ describe("Doodle session", () => {
 
     await expect(getCurrentUser()).resolves.toBeNull();
     await expect(getCurrentUser()).rejects.toThrow("Redis unavailable");
+  });
+
+  it("invalidates every native session after the account tombstone is observed", async () => {
+    const firstToken = "a".repeat(43);
+    const concurrentToken = "b".repeat(43);
+    mocks.getNativeBearer.mockImplementation((request: Request) => request.headers.get("authorization")?.slice(7) ?? undefined);
+    mocks.getNativeSessionUser.mockResolvedValue(USER);
+    mocks.isPaidAccountActive.mockResolvedValueOnce(true).mockResolvedValueOnce(false).mockResolvedValueOnce(false);
+
+    await expect(getCurrentUser(new Request("https://doodle.test", {
+      headers: { authorization: `Bearer ${firstToken}` },
+    }))).resolves.toEqual(USER);
+    await expect(getCurrentUser(new Request("https://doodle.test", {
+      headers: { authorization: `Bearer ${firstToken}` },
+    }))).resolves.toBeNull();
+    await expect(getCurrentUser(new Request("https://doodle.test", {
+      headers: { authorization: `Bearer ${concurrentToken}` },
+    }))).resolves.toBeNull();
+
+    expect(mocks.getNativeSessionUser).toHaveBeenCalledTimes(3);
+    expect(mocks.isPaidAccountActive).toHaveBeenCalledTimes(3);
+    expect(mocks.isPaidAccountActive).toHaveBeenNthCalledWith(1, USER.id);
+    expect(mocks.isPaidAccountActive).toHaveBeenNthCalledWith(2, USER.id);
+    expect(mocks.isPaidAccountActive).toHaveBeenNthCalledWith(3, USER.id);
   });
 
   it("expires the cookie on sign-out", () => {

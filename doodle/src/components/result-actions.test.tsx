@@ -93,3 +93,17 @@ it("keeps utility actions inside More options and closes it before redrawing", (
   expect(redraw).toHaveBeenCalledOnce();
   expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 });
+
+it("opens the local card composer from More options and keeps the source prompt out of the UI", async () => {
+  const request = vi.fn();
+  vi.stubGlobal("fetch", request);
+  setup();
+  fireEvent.click(screen.getByRole("button", { name: "More options" }));
+  fireEvent.click(screen.getByRole("button", { name: "Make a card" }));
+  expect(screen.getByRole("dialog", { name: "Add a little message" })).toBeVisible();
+  expect(screen.getByLabelText("Your message (optional)")).toHaveValue("");
+  expect(screen.queryByText("A happy dog")).not.toBeInTheDocument();
+  fireEvent.click(screen.getByRole("button", { name: "Close card" }));
+  await waitFor(() => expect(screen.queryByRole("dialog", { name: "Add a little message" })).not.toBeInTheDocument());
+  expect(request).not.toHaveBeenCalled();
+});

@@ -1,5 +1,5 @@
 import { Alexandria, Bricolage_Grotesque, IBM_Plex_Sans } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
+import { DoodleAnalytics } from "@/components/doodle-analytics";
 import type { Locale } from "@/lib/i18n";
 import { htmlLang, textDirection } from "@/lib/i18n";
 import { ServiceWorkerRegistration } from "@/components/service-worker-registration";
@@ -32,7 +32,7 @@ export function RootDocument({ locale, children }: { locale: Locale; children: R
       <body className={`${displayFont.variable} ${bodyFont.variable}${locale === "ar" ? ` ${arabicFont.variable}` : ""}`}>
         {children}
         <ServiceWorkerRegistration />
-        <Analytics />
+        <DoodleAnalytics />
       </body>
     </html>
   );

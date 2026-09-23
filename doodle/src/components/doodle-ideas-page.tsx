@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { IdeaGallery } from "./idea-gallery";
+import { AttributionLink, IdeaGallery } from "./idea-gallery";
 import { IDEA_IMAGES, getDoodleIdeas, ideasPath } from "@/lib/doodle-ideas";
 import { SITE_URL, SUPPORTED_LOCALES, type Locale, getCopy, htmlLang, localePath } from "@/lib/i18n";
+import { getEditorialCopy, getEditorialPath } from "@/lib/editorial";
 
 export function DoodleIdeasPage({ locale }: { locale: Locale }) {
   const copy = getDoodleIdeas(locale);
   const siteCopy = getCopy(locale);
+  const editorialCopy = getEditorialCopy(locale);
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -39,7 +41,7 @@ export function DoodleIdeasPage({ locale }: { locale: Locale }) {
           <p className="eyebrow">{copy.eyebrow}</p>
           <h1>{copy.title}</h1>
           <p>{copy.description}</p>
-          <Link className="ideas-hero-link" href={`${localePath(locale)}#composer`}>{copy.start}</Link>
+          <AttributionLink className="ideas-hero-link" href={`${localePath(locale)}#composer`}>{copy.start}</AttributionLink>
         </section>
         <IdeaGallery locale={locale} copy={copy} />
         <section className="quick-ideas" aria-labelledby="quick-ideas-title">
@@ -49,18 +51,18 @@ export function DoodleIdeasPage({ locale }: { locale: Locale }) {
             <p>{copy.moreBody}</p>
           </div>
           <ul>
-            {copy.quickIdeas.map((idea) => <li key={idea}><span>{idea}</span><Link href={`${localePath(locale)}?scene=${encodeURIComponent(idea)}#composer`} aria-label={`${copy.tryIdea}: ${idea}`}>{copy.tryIdea}</Link></li>)}
+            {copy.quickIdeas.map((idea) => <li key={idea}><span>{idea}</span><AttributionLink href={`${localePath(locale)}?scene=${encodeURIComponent(idea)}#composer`} aria-label={`${copy.tryIdea}: ${idea}`}>{copy.tryIdea}</AttributionLink></li>)}
           </ul>
         </section>
         <section className="ideas-guide">
           <h2>{copy.guideTitle}</h2>
           <p>{copy.guideBody}</p>
-          <Link href={`${localePath(locale)}#composer`}>{copy.guideCta}</Link>
+          <AttributionLink href={`${localePath(locale)}#composer`}>{copy.guideCta}</AttributionLink>
         </section>
       </main>
       <footer className="site-footer ideas-footer">
         <nav aria-label={siteCopy.footer.contact}>
-          <Link href={localePath(locale)}>{copy.generator}</Link><Link href="/privacy">{siteCopy.footer.privacy}</Link><Link href="/terms">{siteCopy.footer.terms}</Link><Link href="/contact">{siteCopy.footer.contact}</Link>
+          <Link href={localePath(locale)}>{copy.generator}</Link><Link href={getEditorialPath(locale, "blog")}>{editorialCopy.nav.blog}</Link><Link href={getEditorialPath(locale, "for-ai")}>{editorialCopy.nav.forAi}</Link><Link href="/privacy">{siteCopy.footer.privacy}</Link><Link href="/terms">{siteCopy.footer.terms}</Link><Link href="/contact">{siteCopy.footer.contact}</Link>
         </nav>
         <span>© {new Date().getUTCFullYear()} Doodle</span>
       </footer>

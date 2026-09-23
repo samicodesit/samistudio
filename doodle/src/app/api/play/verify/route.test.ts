@@ -106,7 +106,8 @@ describe("Play purchase verification route", () => {
   });
 
   it("returns a verified balance using only server-derived account binding", async () => {
-    const response = await POST(request({ purchaseToken: "valid-purchase-token", productId: "doodle_credits_10" }));
+    const incoming = request({ purchaseToken: "valid-purchase-token", productId: "doodle_credits_10" });
+    const response = await POST(incoming);
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ status: "granted", balance: 10 });
     expect(mocks.processPlayPurchase).toHaveBeenCalledWith({
@@ -116,6 +117,7 @@ describe("Play purchase verification route", () => {
       productId: "doodle_credits_10",
       publisher,
     });
+    expect(mocks.getCurrentUser).toHaveBeenCalledWith(incoming);
     expect(response.headers.get("cache-control")).toBe("no-store");
   });
 

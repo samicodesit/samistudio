@@ -1,7 +1,10 @@
+import { createHash } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GenerationError } from "@/lib/generation/generate-doodle";
 import { POST } from "./route";
+
+vi.mock("server-only", () => ({}));
 
 const trialIdentity = { id: "trial" };
 const png = { bytes: Buffer.from("png"), mimeType: "image/png" as const };
@@ -9,11 +12,15 @@ const png = { bytes: Buffer.from("png"), mimeType: "image/png" as const };
 const mocks = vi.hoisted(() => ({
   checkBotId: vi.fn(),
   checkGenerationLimit: vi.fn(),
+  consumeNativeAttestation: vi.fn(),
   finalizeFreeDoodle: vi.fn(),
   finalizePaidCredit: vi.fn(),
   generateDoodle: vi.fn(),
   getCurrentUser: vi.fn(),
+  getNativeBearer: vi.fn(),
   getTrialIdentity: vi.fn(),
+  isValidTrialToken: vi.fn(),
+  nativePrincipal: vi.fn(),
   releaseFreeDoodle: vi.fn(),
   releasePaidCredit: vi.fn(),
   reserveFreeDoodle: vi.fn(),
@@ -34,17 +41,27 @@ vi.mock("@/lib/billing/credits", () => ({
 vi.mock("@/lib/generation/free-allowance", () => ({
   finalizeFreeDoodle: mocks.finalizeFreeDoodle,
   getTrialIdentity: mocks.getTrialIdentity,
+  isValidTrialToken: mocks.isValidTrialToken,
   releaseFreeDoodle: mocks.releaseFreeDoodle,
   reserveFreeDoodle: mocks.reserveFreeDoodle,
   setTrialCookie: mocks.setTrialCookie,
 }));
 vi.mock("@/lib/generation/generation-limit", () => ({ checkGenerationLimit: mocks.checkGenerationLimit }));
 vi.mock("botid/server", () => ({ checkBotId: mocks.checkBotId }));
+vi.mock("@/lib/native-session", () => ({ getNativeBearer: mocks.getNativeBearer }));
+vi.mock("@/lib/native-attestation", () => ({
+  consumeNativeAttestation: mocks.consumeNativeAttestation,
+  nativePrincipal: mocks.nativePrincipal,
+}));
 
-function request(scene: unknown, origin = "http://localhost:3000") {
+function request(
+  scene: unknown,
+  origin = "http://localhost:3000",
+  extraHeaders: Record<string, string> = {},
+) {
   return new NextRequest("http://localhost:3000/api/generate", {
     method: "POST",
-    headers: { host: "localhost:3000", origin, "content-type": "application/json" },
+    headers: { host: "localhost:3000", origin, "content-type": "application/json", ...extraHeaders },
     body: JSON.stringify({ scene }),
   });
 }
@@ -69,11 +86,15 @@ describe("generate route", () => {
     Object.values(mocks).forEach((mock) => mock.mockReset());
     mocks.checkBotId.mockResolvedValue({ isBot: false });
     mocks.checkGenerationLimit.mockResolvedValue("allowed");
+    mocks.consumeNativeAttestation.mockResolvedValue("verified");
     mocks.finalizeFreeDoodle.mockResolvedValue({ finalized: true, remaining: 1 });
     mocks.finalizePaidCredit.mockResolvedValue({ finalized: true, remaining: 9 });
     mocks.generateDoodle.mockResolvedValue(png);
     mocks.getCurrentUser.mockResolvedValue(null);
+    mocks.getNativeBearer.mockReturnValue(undefined);
     mocks.getTrialIdentity.mockReturnValue(trialIdentity);
+    mocks.isValidTrialToken.mockReturnValue(true);
+    mocks.nativePrincipal.mockImplementation((kind: string, id: string) => `${kind}:${id}`);
     mocks.releaseFreeDoodle.mockResolvedValue(1);
     mocks.releasePaidCredit.mockResolvedValue(1);
     mocks.reserveFreeDoodle.mockResolvedValue({ reserved: true, remaining: 1 });
@@ -111,6 +132,126 @@ describe("generate route", () => {
     expect(response.status).toBe(503);
     expectNoReservation();
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
+  });
+
+  it("requires native proof before making a reservation", async () => {
+    const response = await POST(request("Two cats hug", "http://localhost:3000", {
+      "x-doodle-client": "native-android",
+      "x-doodle-trial-token": "signed-trial-token",
+    }));
+
+    expect(response.status).toBe(403);
+    expect(await response.json()).toEqual({ error: "native_attestation_required" });
+    expect(mocks.checkBotId).not.toHaveBeenCalled();
+    expectNoReservation();
+  });
+
+  it("rejects a malformed native bearer without falling back to a browser cookie", async () => {
+    mocks.getNativeBearer.mockReturnValue(null);
+    const response = await POST(request("Two cats hug", "http://localhost:3000", {
+      "x-doodle-client": "native-android",
+      authorization: "Bearer malformed",
+      cookie: "doodle_session=browser-cookie",
+    }));
+
+    expect(response.status).toBe(401);
+    expect(mocks.getCurrentUser).not.toHaveBeenCalled();
+    expectNoReservation();
+  });
+
+  it("verifies a native guest proof before entering the existing free ledger", async () => {
+    const response = await POST(request("Two cats hug", "http://localhost:3000", {
+      "x-doodle-client": "native-android",
+      "x-doodle-trial-token": "signed-trial-token",
+      "x-doodle-install-id": "11111111-1111-4111-8111-111111111111",
+      "x-doodle-attestation-challenge": "c".repeat(43),
+      "x-doodle-attestation-token": "i".repeat(16),
+    }));
+
+    expect(response.status).toBe(200);
+    expect(mocks.consumeNativeAttestation).toHaveBeenCalledWith({
+      operation: "generate",
+      installId: "11111111-1111-4111-8111-111111111111",
+      sceneHash: createHash("sha256").update("Two cats hug").digest("hex"),
+      principal: "trial:trial",
+      challenge: "c".repeat(43),
+      integrityToken: "i".repeat(16),
+    });
+    expect(mocks.reserveFreeDoodle).toHaveBeenCalledWith(trialIdentity, expect.any(String));
+    expect(mocks.checkGenerationLimit).toHaveBeenCalledOnce();
+    expect(response.headers.get("set-cookie")).toBeNull();
+    expect(mocks.checkBotId).not.toHaveBeenCalled();
+  });
+
+  it("verifies a native bearer proof and preserves paid account binding", async () => {
+    const accessToken = "t".repeat(43);
+    mocks.getNativeBearer.mockReturnValue(accessToken);
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
+    mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
+
+    const response = await POST(request("Two cats hug", "http://localhost:3000", {
+      "x-doodle-client": "native-android",
+      authorization: `Bearer ${accessToken}`,
+      "x-doodle-install-id": "11111111-1111-4111-8111-111111111111",
+      "x-doodle-attestation-challenge": "c".repeat(43),
+      "x-doodle-attestation-token": "i".repeat(16),
+    }));
+
+    expect(response.status).toBe(200);
+    expect(mocks.getCurrentUser).toHaveBeenCalledWith(expect.any(NextRequest));
+    expect(mocks.consumeNativeAttestation).toHaveBeenCalledWith(expect.objectContaining({
+      operation: "generate",
+      principal: "account:user",
+    }));
+    expect(mocks.reservePaidCredit).toHaveBeenCalledWith("user", expect.any(String));
+    expect(mocks.reserveFreeDoodle).not.toHaveBeenCalled();
+    expect(mocks.checkBotId).not.toHaveBeenCalled();
+  });
+
+  it("fails closed on unavailable native attestation before reservation", async () => {
+    mocks.consumeNativeAttestation.mockResolvedValue("unavailable");
+    const response = await POST(request("Two cats hug", "http://localhost:3000", {
+      "x-doodle-client": "native-android",
+      "x-doodle-trial-token": "signed-trial-token",
+      "x-doodle-install-id": "11111111-1111-4111-8111-111111111111",
+      "x-doodle-attestation-challenge": "c".repeat(43),
+      "x-doodle-attestation-token": "i".repeat(16),
+    }));
+
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ error: "native_generation_unavailable" });
+    expectNoReservation();
+  });
+
+  it("fails closed when native trial-token verification cannot load its signing secret", async () => {
+    mocks.isValidTrialToken.mockImplementation(() => {
+      throw new Error("SESSION_SECRET is required");
+    });
+    const response = await POST(request("Two cats hug", "http://localhost:3000", {
+      "x-doodle-client": "native-android",
+      "x-doodle-trial-token": "signed-trial-token",
+    }));
+
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ error: "native_generation_unavailable" });
+    expectNoReservation();
+  });
+
+  it("does not turn an authenticated zero balance into a new anonymous trial", async () => {
+    mocks.getNativeBearer.mockReturnValue("t".repeat(43));
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
+    mocks.reservePaidCredit.mockResolvedValue({ reserved: false, remaining: 0 });
+
+    const response = await POST(request("Two cats hug", "http://localhost:3000", {
+      "x-doodle-client": "native-android",
+      authorization: `Bearer ${"t".repeat(43)}`,
+      "x-doodle-install-id": "11111111-1111-4111-8111-111111111111",
+      "x-doodle-attestation-challenge": "c".repeat(43),
+      "x-doodle-attestation-token": "i".repeat(16),
+    }));
+
+    expect(response.status).toBe(402);
+    expect(mocks.reserveFreeDoodle).not.toHaveBeenCalled();
   });
 
   it("rejects malformed JSON before reservation", async () => {

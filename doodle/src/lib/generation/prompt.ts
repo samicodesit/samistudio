@@ -18,7 +18,11 @@ Visual language:
 - stick-figure and simple-cartoon hybrid
 - circles or ovals for heads
 - dot eyes and tiny-line expressions
-- props reduced to basic shapes
+- keep the main object recognizable from its silhouette and familiar proportions
+- use only a few clean, well-placed shapes for essential parts; omit ambiguous
+  extra marks
+- keep hands and overlapping objects visually distinct so their outlines do not
+  merge into a confusing shape
 - only one to three small decorative symbols when useful, such as a heart,
   sparkle, steam line, or motion line
 

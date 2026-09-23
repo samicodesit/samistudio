@@ -91,6 +91,13 @@ describe("paid credits", () => {
     mocks.command.mockResolvedValueOnce("1").mockResolvedValueOnce(1);
 
     await expect(isPaidAccountActive(ACCOUNT_ID)).resolves.toBe(true);
+    expect(mocks.command.mock.calls[0][0]).toEqual([
+      "EVAL",
+      expect.stringContaining("EXISTS"),
+      "2",
+      `doodle:account:${ACCOUNT_ID}:active`,
+      `doodle:account:${ACCOUNT_ID}:deleted`,
+    ]);
     await deletePaidAccount(ACCOUNT_ID, IDENTITY_KEY);
     expect(mocks.command).toHaveBeenLastCalledWith(expect.arrayContaining([
       "EVAL",
@@ -102,6 +109,33 @@ describe("paid credits", () => {
       `doodle:account:${ACCOUNT_ID}:deleted`,
       ACCOUNT_ID,
     ]));
+    expect(String(mocks.command.mock.calls.at(-1)?.[0]?.[1])).toContain("local mapped");
+    expect(String(mocks.command.mock.calls.at(-1)?.[0]?.[1])).toContain("EXISTS");
+  });
+
+  it("tombstones the stale account if Google sign-in rotated its mapping concurrently", async () => {
+    mocks.command.mockResolvedValue(1);
+
+    await expect(deletePaidAccount(ACCOUNT_ID, IDENTITY_KEY)).resolves.toBeUndefined();
+
+    const command = mocks.command.mock.calls[0][0];
+    const script = String(command[1]);
+    expect(script).toContain("local mapped");
+    expect(script).toContain("if mapped == ARGV[1]");
+    expect(script).toContain("redis.call('DEL', KEYS[2], KEYS[3], KEYS[4], KEYS[5])");
+  });
+
+  it("rejects a resurrected active marker when the deletion tombstone remains", async () => {
+    mocks.command.mockResolvedValue(0);
+
+    await expect(isPaidAccountActive(ACCOUNT_ID)).resolves.toBe(false);
+    expect(mocks.command).toHaveBeenCalledWith([
+      "EVAL",
+      expect.stringContaining("EXISTS"),
+      "2",
+      `doodle:account:${ACCOUNT_ID}:active`,
+      `doodle:account:${ACCOUNT_ID}:deleted`,
+    ]);
   });
 
   it("rejects malformed account ids and impossible Redis responses", async () => {

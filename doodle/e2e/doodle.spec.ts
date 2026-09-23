@@ -301,6 +301,8 @@ test.describe("Task 7 purchase and account QA", () => {
     await expect(accountTrigger).toBeFocused();
     await page.keyboard.press("Enter");
     await page.keyboard.press("Tab");
+    await expect(page.getByRole("button", { name: "Get 10 doodles" })).toBeFocused();
+    await page.keyboard.press("Tab");
     await expect(page.getByRole("button", { name: "Sign out" })).toBeFocused();
     await page.keyboard.press("Tab");
     const deleteTrigger = page.getByRole("button", { name: "Delete account" });
@@ -521,7 +523,7 @@ test.describe("Doodle desktop and accessibility", () => {
     await page.getByRole("textbox").fill("Two cats hug");
 
     await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
-    const focusableSelector = ".doodle-wordmark, .language-switcher summary, textarea, .composer-footer button, .suggestions-list button";
+    const focusableSelector = ".doodle-wordmark, .language-switcher summary, .account-sign-in-action, textarea, .composer-footer button, .suggestions-list button";
     const controls = page.locator(focusableSelector);
     for (let index = 0; index < await controls.count(); index += 1) {
       await page.keyboard.press("Tab");

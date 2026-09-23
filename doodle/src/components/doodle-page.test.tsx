@@ -4,7 +4,7 @@ import { DoodlePage } from "./doodle-page";
 
 describe("DoodlePage", () => {
   it("renders localized tool and crawlable supporting content", () => {
-    render(<DoodlePage locale="de" />);
+    const { container } = render(<DoodlePage locale="de" />);
 
     expect(screen.getByRole("heading", { level: 1, name: "Was sollen wir zeichnen?" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 2, name: "So funktioniert es" })).toBeInTheDocument();
@@ -13,6 +13,7 @@ describe("DoodlePage", () => {
     expect(screen.getByRole("link", { name: "Datenschutz" })).toHaveAttribute("href", "/privacy");
     expect(screen.getByRole("link", { name: "Rückerstattungen" })).toHaveAttribute("href", "/refund");
     expect(screen.getByRole("link", { name: "Doodle-Ideen ansehen" })).toHaveAttribute("href", "/de/doodle-ideas");
+    expect(container.querySelector('[data-account-host="web"]')).toHaveAttribute("aria-label", "Konto");
   });
 
   it("adds visible-content-matching WebApplication structured data", () => {

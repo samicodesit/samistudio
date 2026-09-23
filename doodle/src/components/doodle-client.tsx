@@ -1,9 +1,11 @@
 "use client";
 
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { track } from "@vercel/analytics";
 import type { AccountSummary } from "@/app/api/account/route";
 import { formatCount, type DoodleCopy, type Locale } from "@/lib/i18n";
+import { DEFAULT_SUGGESTION_IDS, localizeSceneIdeas, pickSceneIdeas, type SceneIdeaId } from "@/lib/scenes/suggestions";
 import { AccountMenu } from "./account-menu";
 import { SceneComposer } from "./scene-composer";
 import { DoodleStage } from "./doodle-stage";
@@ -17,11 +19,16 @@ type GenerationState =
   | { status: "generating"; imageUrl: null; error: null }
   | { status: "ready"; imageUrl: string; imageFile: File; error: null }
   | { status: "error"; imageUrl: null; error: string };
+type PurchaseReturnFocus =
+  | { kind: "element"; element: HTMLElement }
+  | { kind: "create" };
 
 interface DoodleClientProps {
   locale: Locale;
   copy: DoodleCopy;
   initialScene?: string;
+  initialSuggestionIds?: readonly SceneIdeaId[];
+  accountHost?: "web" | "app";
 }
 
 const IDLE_STATE: GenerationState = { status: "idle", imageUrl: null, error: null };
@@ -40,12 +47,15 @@ function messageForStatus(status: number, copy: DoodleCopy["errors"]): string {
   return copy.general;
 }
 
-export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientProps) {
+export function DoodleClient({ locale, copy, initialScene = "", initialSuggestionIds, accountHost = "web" }: DoodleClientProps) {
   const [scene, setScene] = useState(initialScene);
+  const initialIds = initialSuggestionIds ?? DEFAULT_SUGGESTION_IDS;
+  const [suggestionIds, setSuggestionIds] = useState<readonly SceneIdeaId[]>(initialIds);
   const [generation, setGeneration] = useState<GenerationState>(IDLE_STATE);
   const [account, setAccount] = useState<AccountSummary>(INITIAL_ACCOUNT);
   const [accountReady, setAccountReady] = useState(false);
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
+  const [signInOnly, setSignInOnly] = useState(false);
   const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
   const [checkoutRetry, setCheckoutRetry] = useState<string | null>(null);
@@ -57,8 +67,13 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
   const identityRevision = useRef(0);
   const usageRevision = useRef(0);
   const uncertaintyRevision = useRef(0);
+  const recentSuggestionIds = useRef<readonly SceneIdeaId[]>(initialIds);
   const createButtonRef = useRef<HTMLButtonElement>(null);
+  const purchaseReturnFocus = useRef<PurchaseReturnFocus | null>(null);
   const workspaceRef = useRef<HTMLDivElement>(null);
+  const accountPortalTarget = typeof document === "undefined"
+    ? null
+    : document.querySelector<HTMLElement>(`[data-account-host="${accountHost}"]`);
   const focusNextScene = useRef(false);
   const sceneInputRef = useCallback((node: HTMLTextAreaElement | null) => {
     if (node && focusNextScene.current) {
@@ -79,7 +94,25 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
     setGeneration(IDLE_STATE);
   }, [revokeCurrentUrl]);
 
-  const restoreCreateFocus = useCallback(() => createButtonRef.current?.focus(), []);
+  const refreshSuggestions = useCallback(() => {
+    const next = pickSceneIdeas({ prompts: copy.suggestions.items, recentIds: recentSuggestionIds.current });
+    const nextIds = next.map((idea) => idea.id);
+    recentSuggestionIds.current = nextIds;
+    setSuggestionIds(nextIds);
+  }, [copy.suggestions.items]);
+
+  const restoreCreateFocus = useCallback(() => {
+    const target = purchaseReturnFocus.current;
+    purchaseReturnFocus.current = null;
+    const focusTarget = target?.kind === "create"
+      ? createButtonRef.current
+        ?? document.querySelector<HTMLElement>("#composer .composer-footer > button")
+        ?? document.querySelector<HTMLElement>(`[data-account-host="${accountHost}"] .account-menu > summary`)
+      : target?.kind === "element" && target.element.isConnected
+        ? target.element
+        : document.querySelector<HTMLElement>(`[data-account-host="${accountHost}"] .account-menu > summary`) ?? createButtonRef.current;
+    focusTarget?.focus({ preventScroll: true });
+  }, [accountHost]);
 
   const replaceAccount = useCallback((nextAccount: AccountSummary) => {
     identityRevision.current += 1;
@@ -222,6 +255,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
       updateRemaining(response);
 
       if (response.status === 402) {
+        purchaseReturnFocus.current = { kind: "create" };
         setGeneration(IDLE_STATE);
         setPurchaseError(null);
         setPurchaseSuccess(false);
@@ -273,6 +307,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
     setScene("");
     setIsResultOpen(false);
     clearGeneration();
+    refreshSuggestions();
   }
 
   function handleSuggestion(sceneSuggestion: string) {
@@ -280,6 +315,8 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
     setIsResultOpen(false);
     clearGeneration();
   }
+
+  const suggestions = localizeSceneIdeas(suggestionIds, copy.suggestions.items);
 
   const inspectedImageUrl =
     generation.status === "ready" && generation.imageUrl
@@ -292,12 +329,36 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
         ? formatCount(locale, copy.usage.freeLeft, account.freeRemaining)
         : copy.usage.firstTwoFree
     : null;
-  const accountMenu = accountReady && account.authenticated ? (
-    <AccountMenu account={account} locale={locale} copy={copy.account} onAccountChange={replaceAccount} />
+  const accountMenu = accountReady ? account.authenticated ? (
+    <AccountMenu account={account} locale={locale} copy={copy.account} onAccountChange={replaceAccount} purchaseLabel={copy.purchase.buy} onPurchase={(returnFocus) => {
+      purchaseReturnFocus.current = returnFocus ? { kind: "element", element: returnFocus } : null;
+      setSignInOnly(false);
+      setPurchaseSuccess(false);
+      setPurchaseError(null);
+      setCheckoutRetry(null);
+      setIsPurchaseOpen(true);
+    }} />
+  ) : (
+    <button
+      className="account-sign-in-action"
+      type="button"
+      onClick={(event) => {
+        purchaseReturnFocus.current = { kind: "element", element: event.currentTarget };
+        setSignInOnly(true);
+        setPurchaseSuccess(false);
+        setPurchaseError(null);
+        setCheckoutRetry(null);
+        setIsPurchaseOpen(true);
+      }}
+    >
+      {copy.auth.signIn}
+    </button>
   ) : undefined;
+  const accountPortal = accountPortalTarget && accountMenu ? createPortal(accountMenu, accountPortalTarget) : null;
 
   function closePurchase() {
     setIsPurchaseOpen(false);
+    setSignInOnly(false);
     setPurchaseSuccess(false);
     setPurchaseError(null);
   }
@@ -305,14 +366,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
   return (
     <div ref={workspaceRef} className={`doodle-workspace doodle-workspace-${generation.status}`}>
       <div className="workspace-copy">
-        {generation.status === "generating" ? (
-          <section className="state-copy" aria-labelledby="generating-title">
-            <p className="eyebrow">{copy.status.generatingEyebrow}</p>
-            <h1 id="generating-title">{copy.status.generatingTitle}</h1>
-            <p className="scene-summary">“{scene}”</p>
-            <p className="wait-hint">{copy.status.waitHint}</p>
-          </section>
-        ) : generation.status === "ready" ? (
+        {generation.status === "generating" ? null : generation.status === "ready" ? (
           <section className="state-copy" aria-labelledby="ready-title">
             <h1 id="ready-title">{copy.status.readyTitle}</h1>
             <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} scene={scene} locale={locale} onTryAgain={createDoodle} onNewScene={handleNewScene} copy={copy.actions} />
@@ -320,7 +374,6 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
               {usage === null
                 ? <span className="usage-loading" role="status" aria-label={copy.account.label} />
                 : <span>{usage}</span>}
-              {accountMenu}
             </div>
           </section>
         ) : (
@@ -332,7 +385,6 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
             copy={copy.composer}
             usage={usage}
             usageLoadingLabel={copy.account.label}
-            accountMenu={accountMenu}
             createButtonRef={createButtonRef}
             sceneInputRef={sceneInputRef}
           />
@@ -343,9 +395,9 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
             <h2 id="suggestions-title">{copy.suggestions.title}</h2>
           </div>
           <div className="suggestions-list">
-            {copy.suggestions.items.map((suggestion) => (
-              <button key={suggestion} type="button" onClick={() => handleSuggestion(suggestion)}>
-                <span>{suggestion}</span>
+            {suggestions.map((suggestion) => (
+              <button key={suggestion.id} type="button" onClick={() => handleSuggestion(suggestion.prompt)}>
+                <span>{suggestion.prompt}</span>
                 <span className="suggestion-plus" aria-hidden="true">
                   +
                 </span>
@@ -355,6 +407,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
         </section>
         ) : null}
       </div>
+      {accountPortal}
       <div className="workspace-visual">
         <DoodleStage
           key={generation.status}
@@ -388,6 +441,7 @@ export function DoodleClient({ locale, copy, initialScene = "" }: DoodleClientPr
           onRestoreFocus={restoreCreateFocus}
           onClose={closePurchase}
           onAccountChange={replaceAccount}
+          signInOnly={signInOnly}
         />
       ) : null}
     </div>

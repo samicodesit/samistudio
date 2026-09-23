@@ -10,6 +10,7 @@ import {
   localePath,
   textDirection,
 } from "./i18n";
+import { SCENE_IDEAS } from "./scenes/suggestions";
 
 function stringValues(value: unknown): string[] {
   if (typeof value === "string") return [value];
@@ -36,8 +37,8 @@ describe("internationalization", () => {
       const copy = getCopy(locale);
       expect(stringValues(copy).every((value) => value.trim() !== "")).toBe(true);
       expect(JSON.parse(JSON.stringify(copy))).toEqual(copy);
-      expect(copy.suggestions.items).toHaveLength(3);
-      expect(new Set(copy.suggestions.items).size).toBe(3);
+      expect(copy.suggestions.items).toHaveLength(SCENE_IDEAS.length);
+      expect(new Set(copy.suggestions.items).size).toBe(SCENE_IDEAS.length);
       expect(formatCount(locale, copy.usage.freeLeft, 1)).not.toBe("");
       expect(formatCount(locale, copy.usage.freeLeft, 2)).not.toBe("");
       expect(formatCount(locale, copy.usage.paidLeft, 1)).not.toBe("");

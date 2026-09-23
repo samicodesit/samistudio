@@ -1,8 +1,41 @@
 # Google Play purchase integration
 
+## Controlled internal-test state — September 7, 2026
+
+Production alias `https://doodle.samistudio.nl` now runs deployment `C6wvJWTtzHVZaEPNp419ADGVhfDu` with `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`, `PLAY_ACCOUNT_LINK_SECRET` and `PLAY_BILLING_ENABLED=true`, deployed by the coordinating agent for the owner-only internal license test. The owner is configured as a Play license tester; public Play distribution is not enabled. This supersedes historical disabled-configuration notes below; successful purchase delivery remains unverified.
+
+Direct Publisher lookup at `2026-09-07T18:09:49.301Z` confirmed `doodle_credits_10` / `ten-doodles` ACTIVE, Netherlands EUR 4.99 and United States USD 5.99, both AVAILABLE. The local private environment parses successfully through the actual `getPlayBillingConfig()` implementation, including credential JSON and account-link-secret validation. This local check does not independently prove the deployed secret values; an authenticated configuration response is still required.
+
+Unauthenticated production probes at `2026-09-07T18:11:58.389574Z` (`GET /api/play/config`) and `18:11:58.735493Z` (`POST /api/play/verify`, valid same-origin header, synthetic token) both returned HTTP 401 `unauthorized` with `Cache-Control: no-store`. No purchase or credit grant occurred.
+
+### Minimal real license-test sequence
+
+1. Install through the owner-only Play internal-test link using the configured license-tester Google account. Open the installed app, sign into Doodle, record the actual starting credit balance, and confirm the authenticated configuration/catalog load.
+2. Tap the pack purchase button from a fresh user gesture. Check the actual catalog price and that the Google sheet offers a test payment instrument. Cancel if it instead proposes a real card charge. Complete one license-test purchase using Google's approving test instrument.
+3. Verify the server-confirmed result increases the recorded balance by exactly ten and that the UI refreshes. Preserve the real purchase token only in private diagnostic storage if needed; never place it in logs, docs, screenshots or chat.
+4. Replay that same actual token once through the authenticated verify endpoint: expect `already_granted` and the unchanged balance, not another ten credits. Restart the app and confirm the balance persists; opening purchase recovery must not duplicate the grant.
+5. For genuine unfinished-purchase recovery, a separate controlled test must interrupt connectivity before server verification, then reopen the app online and verify that recovery adds ten exactly once. Do not represent a normal restart after a consumed purchase as proof of interrupted-purchase recovery.
+6. Cancel a purchase sheet and check the balance is unchanged. Perform a test refund with revocation and exercise the reconciliation tool before public rollout. Daily reconciliation and failure monitoring also remain required.
+
+No fake credit allocation or real-card payment is part of this test plan.
+
+## Current API access evidence — September 7, 2026
+
+The prior HTTP 401 permission blocker has cleared without broadening the service account's app-scoped permissions. At `2026-09-07T18:05:53.113Z`, product lookup returned HTTP 200; at `18:05:53.620Z`, voided-purchases lookup returned HTTP 200. Purchase V2 and legacy lookups with an explicitly synthetic token returned HTTP 400 `invalid` at `18:05:53.790Z` and `18:05:53.939Z`, respectively. The cause of the earlier failure remains unproven. These read-only checks do not constitute a real payment, consumption, credit-delivery or refund test. See `docs/play-api-support-draft.md` for the historical support report.
+
+The current backend has a global `PLAY_BILLING_ENABLED` switch, credential validation and authenticated account binding; it has no tester-account allowlist. Internal-only distribution and Google Play license-tester configuration must therefore be verified before enabling the switch for an internal purchase test. Select only Google's license-test payment instrument, with no real charge. Server credentials require `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` and the stable `PLAY_ACCOUNT_LINK_SECRET`, alongside existing session and KV configuration. Enabling the switch is not evidence that public payments are ready.
+
 Implement the existing Android release plan using the existing ten-credit product model. The owner authorized building/publishing the Android app and prefers a small, fast implementation. Do not enable purchases or claim release readiness without real Play test transactions.
 
 ## Contract
+
+Permission grant completed September 7 after owner explicitly said “I permit the access.” Invited the dedicated billing service account with Doodle-only View financial data, Manage orders and subscriptions, and the automatically required app/quality read permissions. Console shows the account Active, verified through accessibility state and rendered screenshot. No admin, publishing or other-app permissions granted. API connectivity verification follows separately.
+
+Latest Console state, September 7: internal release v1 published at 18:45 local time; owner-only email list saved and track now Active. Opt-in URL: https://play.google.com/apps/internaltest/4701262981282017852 . This is not the closed test or public release. Product remains draft; all 33 displayed EUR region prices corrected to EUR 4.99 and Console confirmed changes saved. Non-EUR prices retain Google's conversion. Android Publisher API enabled in project doodle-506308; dedicated service account `doodle-play-billing@doodle-506308.iam.gserviceaccount.com` created with no project-wide roles. Its private local credentials are outside the repository. Play app-only permission form is prepared for financial/order access plus required read-only app permissions, awaiting explicit user approval. No grant or purchase test claimed yet.
+
+Product draft created and visually verified in Console: `doodle_credits_10`, name **10 doodles**, description **Create 10 more AI doodles. A one-time credit pack, with no subscription.** Purchase option `ten-doodles`, Buy, backwards compatible, draft across 173 regions. Google's bulk EUR 4.99 conversion yielded Netherlands EUR 5.99; explicitly corrected Netherlands to EUR 4.99 and visually checked before saving. Other regions retain Google's generated prices (for example US USD 5.99); review euro-region consistency before activation. No product activation or real/test payment is claimed.
+
+Console upload prerequisite completed September 7: uploaded the verified signed version-1 AAB (SHA-256 `f7addf03b0e51394312e7c30a9b4d586a55205ea37a080c929d7f563f09314f5`) to internal track `4701262981282017852`, release draft 1. Console accepted version 1 (0.1.0), API 23+, target 36; saved draft confirmed. No rollout yet. This unlocked the one-time product creation form.
 
 - Fixed package `nl.samistudio.doodle`, consumable SKU `doodle_credits_10`, ten credits, quantity one.
 - Web keeps Stripe. Android launches with an explicit Play runtime marker; Digital Goods and Payment Request provide catalog price and purchase UI. API/config failure in this runtime must not reveal Stripe checkout.
@@ -20,6 +53,10 @@ Implement the existing Android release plan using the existing ten-credit produc
 - Root: integration review, existing web regression checks, mobile/desktop purchase-state checks, and release evidence. No live charges during development.
 
 ## Before enabling real purchases
+
+### Console progress — September 7, 2026
+
+Identity gate cleared and app draft `4973301025063263916` was created for `nl.samistudio.doodle`. Console currently blocks monetization until a merchant account is set up. Prepared the existing Netherlands Individual payments profile with public name Sami Studio, website https://samistudio.nl, Computer Software category, support hello@samistudio.nl and statement descriptor SAMI STUDIO. Visually checked all populated fields. The owner explicitly approved the merchant agreements. Submitted successfully and verified the rendered Payments dashboard showing Google Play Apps, zero transactions and no primary payout method. Merchant setup is created; the product is not yet created. The 15% service-fee enrollment is offered but not completed. The ten-credit purchase is a required launch feature, not an optional follow-up.
 
 Google must approve account identity; owner device/phone checks, app creation, Play catalog and merchant/API access must be complete. Configure stable account-link secret, signing and Digital Asset Links, then perform actual license-test purchase/recovery/cancellation on Android. The refund reconciliation tool below must be configured, exercised against real test refunds and run regularly before public release. The personal-account closed test also remains.
 

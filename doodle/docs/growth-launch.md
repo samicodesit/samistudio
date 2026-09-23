@@ -13,6 +13,18 @@ This is a small sample and may include the owner and testing. Three creating vis
 
 ## First experiment
 
+### Evening measurement — 7 September 2026
+
+Read the authenticated Reddit post insights and Vercel Production analytics (last seven days, ending September 7 at 19:59 in the dashboard). Reddit showed 317 views, one upvote, one counted comment, zero shares and zero reposts. The comment body was not visible in the loaded comment tree, so no feedback content is inferred. The author's initial vote and inspection views are not acquisition evidence.
+
+Vercel showed 32 visitors, 53 page views and Doodle Created from 7 visitors / 10 events. Share Link Copied and Doodle Shared each had 1 visitor / 1 event; these may include our QA. Filtering by reddit.com showed 2 visitors, 2 page views and Doodle Created from 2 visitors / 3 events, with no share event shown. This is a small, encouraging activation signal, not an established conversion rate or proof of virality. Reddit impressions and referrer visitors are different measurements and cannot establish an exact click-through rate.
+
+UTM breakdown requires a paid Web Analytics Plus upgrade in the current dashboard; no upgrade purchased. Use available referrer filtering within the exhausted budget. Pinterest's birthday pin remains live with the correct image and AI disclosure; its visible page did not expose impressions or outbound-click analytics. Do not infer zero Pinterest reach from that absence.
+
+Decision: retain the working creation flow; the immediate growth bottleneck is reaching more relevant people and giving them a compelling visual reason to visit. Prepare a short visual demonstration from actual app results for a subsequent approved post, rather than repeat the same text post or rewrite the product based on two visitors. No new post, reply, message or advertising purchase was made in this measurement pass.
+
+Demo capture QA, 17:27–17:28 UTC: one real drawing succeeded in the owner's existing interactive Chrome session using the prompt “A happy dog holding a birthday balloon.” Existing balance changed 9 → 8; no credit purchase. Saved actual prompt, drawing, result and enlarged-image frames at 360 × 640 for the edit. This is owner QA and must not be counted as acquired activation. The prior isolated-browser attempt returned HTTP 403 before generation; production protection was not disabled. The observed ~55-second interval between click and captured result includes tool/capture delay, so it is not an exact generation-duration measurement.
+
 Positioning: **A tiny drawing for someone you love.**
 
 Keep two free doodles, then €4.99 for ten; no subscription. First improve sharing, then seek the first 100 attributable visitors. Do not buy traffic merely to exhaust the budget. Original budget ceiling was US$20 total; the owner later raised it to US$25 for the one-time Google Play registration fee. The authorized US$25 registration payment succeeded on 7 September, using the entire current budget. Remaining budget is US$0, and no advertising spend was purchased.

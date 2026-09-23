@@ -38,6 +38,17 @@ describe("Google account registry", () => {
     await expect(createOrGetGoogleAccount("google-sub")).rejects.toThrow("Redis unavailable");
   });
 
+  it("checks the deletion tombstone before reactivating an identity mapping", async () => {
+    mocks.command.mockResolvedValue(ACCOUNT_ID);
+
+    await expect(createOrGetGoogleAccount("google-sub")).resolves.toEqual({
+      id: ACCOUNT_ID,
+      identityKey: createHmac("sha256", "account-secret").update("google-sub").digest("hex"),
+    });
+    expect(String(mocks.command.mock.calls[0][0][1])).toContain(":deleted");
+    expect(String(mocks.command.mock.calls[0][0][1])).toContain("EXISTS");
+  });
+
   it("deletes the exact account matching its signed identity map", async () => {
     mocks.deletePaidAccount.mockResolvedValue(undefined);
     const identityKey = createHmac("sha256", "account-secret").update("google-sub").digest("hex");

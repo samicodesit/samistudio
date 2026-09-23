@@ -36,6 +36,7 @@ return redis.call('ZREM', KEYS[1], ARGV[2])
 `;
 
 export type TrialIdentity = { id: string };
+export const TRIAL_TTL_SECONDS = TTL_SECONDS;
 
 function sessionSecret() {
   const secret = process.env.SESSION_SECRET;
@@ -59,6 +60,11 @@ function verifiedId(value: string | undefined) {
   const expected = Buffer.from(expectedSignature);
   const provided = Buffer.from(providedSignature);
   return expected.length === provided.length && timingSafeEqual(expected, provided) ? id : undefined;
+}
+
+export function isValidTrialToken(value: string) {
+  sessionSecret();
+  return verifiedId(value) !== undefined;
 }
 
 function usedKey(identity: TrialIdentity) {
@@ -133,7 +139,13 @@ function finalizationResult(value: unknown) {
 
 export function getTrialIdentity(request: NextRequest): TrialIdentity {
   sessionSecret();
-  return { id: verifiedId(request.cookies.get(COOKIE_NAME)?.value) ?? randomUUID() };
+  const nativeToken = request.headers.get("x-doodle-trial-token");
+  const cookieToken = request.cookies.get(COOKIE_NAME)?.value;
+  return { id: verifiedId(nativeToken ?? cookieToken) ?? randomUUID() };
+}
+
+export function signedTrialToken(identity: TrialIdentity) {
+  return signedCookie(identity.id);
 }
 
 export function setTrialCookie(response: NextResponse, identity: TrialIdentity) {

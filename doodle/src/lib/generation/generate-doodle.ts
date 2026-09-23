@@ -69,6 +69,14 @@ function productionClient(): ImageClient {
 export async function generateDoodle(scene: string, client: ImageClient = productionClient()): Promise<GeneratedDoodle> {
   const normalizedScene = normalizeScene(scene);
 
+  if (process.env.NODE_ENV === "production") {
+    console.info("[doodle-generation-profile]", {
+      model: SIMPLE_PROFILE.model,
+      quality: SIMPLE_PROFILE.quality,
+      size: SIMPLE_PROFILE.size,
+    });
+  }
+
   let response: { data: Array<{ b64_json?: string | null }> };
   try {
     response = await client.generate({

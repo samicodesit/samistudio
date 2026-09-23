@@ -9,10 +9,21 @@ import {
   localePath,
 } from "@/lib/i18n";
 import { getDoodleIdeas, ideasPath } from "@/lib/doodle-ideas";
+import { getEditorialCopy, getEditorialPath } from "@/lib/editorial";
+import { DEFAULT_SUGGESTION_IDS, type SceneIdeaId } from "@/lib/scenes/suggestions";
 
-export function DoodlePage({ locale, initialScene = "" }: { locale: Locale; initialScene?: string }) {
+export function DoodlePage({
+  locale,
+  initialScene = "",
+  initialSuggestionIds = DEFAULT_SUGGESTION_IDS,
+}: {
+  locale: Locale;
+  initialScene?: string;
+  initialSuggestionIds?: readonly SceneIdeaId[];
+}) {
   const copy = getCopy(locale);
   const ideasCopy = getDoodleIdeas(locale);
+  const editorialCopy = getEditorialCopy(locale);
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
@@ -54,10 +65,11 @@ export function DoodlePage({ locale, initialScene = "" }: { locale: Locale; init
             ))}
           </nav>
         </details>
+        <div className="web-account-slot" data-account-host="web" aria-label={copy.account.label} />
       </header>
       <main>
         <section className="doodle-main" aria-label={copy.seo.title}>
-          <MobileAppWorkspace locale={locale} copy={copy} initialScene={initialScene} />
+          <MobileAppWorkspace locale={locale} copy={copy} initialScene={initialScene} initialSuggestionIds={initialSuggestionIds} />
         </section>
         <section className="seo-content">
           <div className="seo-intro">
@@ -83,10 +95,15 @@ export function DoodlePage({ locale, initialScene = "" }: { locale: Locale; init
       </main>
       <footer className="site-footer">
         <nav aria-label="Legal">
+          <Link href={getEditorialPath(locale, "blog")}>{editorialCopy.nav.blog}</Link>
+          <Link href={getEditorialPath(locale, "for-ai")}>{editorialCopy.nav.forAi}</Link>
           <Link href="/privacy">{copy.footer.privacy}</Link>
           <Link href="/terms">{copy.footer.terms}</Link>
           <Link href="/refund">{copy.footer.refunds}</Link>
           <Link href="/contact">{copy.footer.contact}</Link>
+        </nav>
+        <nav aria-label={copy.footer.social}>
+          <a href="https://x.com/TheXSami" target="_blank" rel="noreferrer">{copy.footer.followX}</a>
         </nav>
         <span>© {new Date().getUTCFullYear()} Doodle</span>
       </footer>

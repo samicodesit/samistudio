@@ -3,16 +3,20 @@ import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DELETE, GET } from "./route";
 
+vi.mock("server-only", () => ({}));
+
 const mocks = vi.hoisted(() => ({
   clearSessionCookie: vi.fn(),
   deletePaidAccount: vi.fn(),
   getCurrentUser: vi.fn(),
   getFreeRemaining: vi.fn(),
   getPaidBalance: vi.fn(),
+  revokeNativeSession: vi.fn(),
 }));
 
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.getCurrentUser, clearSessionCookie: mocks.clearSessionCookie }));
 vi.mock("@/lib/billing/credits", () => ({ getPaidBalance: mocks.getPaidBalance, deletePaidAccount: mocks.deletePaidAccount }));
+vi.mock("@/lib/native-session", () => ({ revokeNativeSession: mocks.revokeNativeSession }));
 vi.mock("@/lib/generation/free-allowance", async () => {
   const actual = await vi.importActual<typeof import("@/lib/generation/free-allowance")>(
     "@/lib/generation/free-allowance",
@@ -20,10 +24,15 @@ vi.mock("@/lib/generation/free-allowance", async () => {
   return { ...actual, getFreeRemaining: mocks.getFreeRemaining };
 });
 
-function request(method: "GET" | "DELETE" = "GET", body?: unknown, origin = "https://doodle.test") {
+function request(
+  method: "GET" | "DELETE" = "GET",
+  body?: unknown,
+  origin = "https://doodle.test",
+  extraHeaders: Record<string, string> = {},
+) {
   return new NextRequest("https://doodle.test/api/account", {
     method,
-    headers: { host: "doodle.test", origin, "content-type": "application/json" },
+    headers: { host: "doodle.test", origin, "content-type": "application/json", ...extraHeaders },
     body: method === "DELETE" && body !== undefined ? JSON.stringify(body) : undefined,
   });
 }
@@ -34,6 +43,7 @@ describe("account route", () => {
     vi.stubEnv("SESSION_SECRET", "account-route-test-secret");
     Object.values(mocks).forEach((mock) => mock.mockReset());
     mocks.deletePaidAccount.mockResolvedValue(undefined);
+    mocks.revokeNativeSession.mockResolvedValue(undefined);
   });
 
   it("reports anonymous free usage with a signed trial cookie and no caching", async () => {
@@ -110,6 +120,19 @@ describe("account route", () => {
     expect(response.status).toBe(204);
     expect(mocks.deletePaidAccount).toHaveBeenCalledWith("user", "a".repeat(64));
     expect(mocks.clearSessionCookie).toHaveBeenCalledWith(response);
+    expect(mocks.revokeNativeSession).toHaveBeenCalledWith(expect.any(NextRequest));
+  });
+
+  it("revokes the native bearer as part of account deletion", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", identityKey: "a".repeat(64), email: "buyer@example.com" });
+    const requestWithBearer = request("DELETE", { confirm: true }, "https://doodle.test", {
+      authorization: `Bearer ${"t".repeat(43)}`,
+    });
+
+    const response = await DELETE(requestWithBearer);
+
+    expect(response.status).toBe(204);
+    expect(mocks.revokeNativeSession).toHaveBeenCalledWith(requestWithBearer);
   });
 
   it("does not report success when Redis rejects deletion", async () => {

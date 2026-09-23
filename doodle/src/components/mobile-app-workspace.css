@@ -1,11 +1,6 @@
 body:has(.mobile-app-workspace[data-installed="true"]) .doodle-header,
 body:has(.mobile-app-workspace[data-installed="true"]) .seo-content,
 body:has(.mobile-app-workspace[data-installed="true"]) .site-footer { display: none; }
-body:has(.mobile-app-workspace[data-installed="true"]) {
-  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  font-family: var(--font-body);
-}
 body:has(.mobile-app-workspace[data-installed="true"]) .doodle-main {
   width: min(640px, calc(100% - 40px));
   min-height: 100dvh;
@@ -14,6 +9,17 @@ body:has(.mobile-app-workspace[data-installed="true"]) .doodle-main {
 }
 .mobile-app-workspace { width: 100%; }
 .mobile-app-workspace [hidden] { display: none; }
+.mobile-app-workspace[data-installed="true"] .app-account-slot {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  min-height: 44px;
+  align-items: flex-start;
+  justify-content: flex-end;
+  margin-bottom: 12px;
+}
+.mobile-app-workspace[data-installed="false"] .app-account-slot { display: none; }
+.app-account-slot:empty { visibility: hidden; }
 .mobile-app-workspace[data-installed="true"] .doodle-workspace { display: flex; flex-direction: column; gap: 18px; }
 .mobile-app-workspace[data-installed="true"] .doodle-workspace-ready .workspace-visual,
 .mobile-app-workspace[data-installed="true"] .doodle-workspace-generating .workspace-visual { order: -1; }
@@ -27,7 +33,9 @@ body:has(.mobile-app-workspace[data-installed="true"]) .doodle-main {
 .mobile-app-workspace[data-installed="true"] .workspace-usage { font-size: 12px; font-weight: 400; color: var(--muted); }
 .mobile-app-workspace[data-installed="true"] .app-bottom-nav button { font-family: var(--font-body); letter-spacing: normal; }
 .mobile-app-workspace[data-installed="true"] .composer-section h1,
-.mobile-app-workspace[data-installed="true"] .app-panel h1 { letter-spacing: normal; font-weight: 600; }
+.mobile-app-workspace[data-installed="true"] .app-panel h1 { letter-spacing: -0.025em; font-weight: 600; }
+html[dir="rtl"] .mobile-app-workspace[data-installed="true"] .composer-section h1,
+html[dir="rtl"] .mobile-app-workspace[data-installed="true"] .app-panel h1 { letter-spacing: normal; }
 .mobile-app-workspace[data-installed="true"] .dialog-secondary-action { display: none; }
 .mobile-app-workspace[data-installed="true"] .result-dialog-actions { grid-template-columns: 1fr; }
 .mobile-app-workspace[data-installed="true"] .dialog-download-action { width: 100%; }
@@ -47,6 +55,21 @@ body:has(.mobile-app-workspace[data-installed="true"]) .doodle-main {
 .app-bottom-nav button:focus-visible { outline: 3px solid var(--moss); outline-offset: 1px; }
 @media (max-height: 500px) {
   body:has(.mobile-app-workspace[data-installed="true"] textarea:focus) .app-bottom-nav { display: none; }
+}
+
+@media (orientation: landscape) and (max-height: 500px) {
+  .mobile-app-workspace[data-installed="true"] { position: relative; }
+  .mobile-app-workspace[data-installed="true"] .app-account-slot {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    width: max-content;
+    min-width: 64px;
+    margin: 0;
+  }
+  .mobile-app-workspace[data-installed="true"] .doodle-workspace-generating .doodle-stage {
+    width: min(100%, 300px, calc(100svh - 112px));
+  }
 }
 .app-panel h1 { margin: 0 0 12px; font-family: var(--font-display); font-size: 36px; line-height: 1.1; letter-spacing: -.04em; }
 .app-panel > p { margin: 0 0 24px; color: var(--muted); font-size: 16px; line-height: 1.5; }

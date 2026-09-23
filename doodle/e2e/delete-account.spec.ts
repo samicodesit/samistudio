@@ -27,6 +27,7 @@ async function installGoogleStub(page: Page) {
             renderButton(element: HTMLElement, options: { width: number }) {
               const button = document.createElement("button");
               button.type = "button";
+              button.setAttribute("role", "button");
               button.textContent = "Continue with Google";
               button.style.width = `${options.width}px`;
               button.addEventListener("click", () => callback?.({ credential: "mock-google-token" }));

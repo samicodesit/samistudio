@@ -2,7 +2,7 @@
 
 ## Current implementation update — 7 September 2026
 
-This update supersedes the initial assessment below. The owner submitted identity documents; Google last showed identity review in progress, not an unfinished upload. On a fresh read of Console Home at 10:45 UTC, Google still showed identity review and subsequent phone verification; the Android-device task was no longer listed. Create app was disabled. Do not reopen or disturb the owner's verification flow.
+This update supersedes the initial assessment below. Identity verification cleared and Doodle's draft app was created. Signed internal release v1 is published with an owner-only tester list. Store text, icon and feature graphic are saved as a draft; remaining declarations, real installed-app purchase tests and closed testing still gate public release. A support ticket was submitted for the purchase API permission discrepancy: product reads succeed, financial endpoints return HTTP 401 despite active app-scoped grants.
 
 PWA/offline fallback, account deletion and in-app reporting are live. Commit `9e4bdef` implements guarded Play catalog/purchase UI, server verification and atomic credit fulfillment, and a local Android billing adapter that preserves account binding. The debug APK builds. Play purchases are disabled; real device/purchase testing, refund reconciliation, signing/domain association, store setup and closed testing still gate publication. No additional budget remains.
 
@@ -44,7 +44,7 @@ For the wrapper:
 - Proposed package name: `nl.samistudio.doodle`, subject to final owner approval and Play availability. Package names are durable, so create the app only after confirming it.
 - Target Android 16 / API 36. Since 31 August 2026, new apps and updates must target API 36 or higher.
 - Use a currently supported Play Billing Library. Version 7's normal submission deadline ended on 31 August 2026, so the generated project must resolve version 8 or newer.
-- Publish `/.well-known/assetlinks.json` with both the local upload certificate and the Play App Signing certificate as applicable. Verify that the TWA opens without a browser toolbar on a Play-installed build.
+- Publish `/.well-known/assetlinks.json` with the Play App Signing certificate from Console. Do not add the local upload or debug certificate to the production association. See `android-domain-association.md` for the prepared statement and verification evidence. Verify that the TWA opens without a browser toolbar on a Play-installed build.
 - Keep the requested Android permissions minimal. The current app needs network access; file sharing can use browser/TWA capabilities and should not require broad storage access.
 
 ## Initial repo readiness (before foundation implementation)
@@ -132,3 +132,8 @@ A native Kotlin or Compose rewrite would more realistically take several weeks a
 - [Target API requirements — API 36 from 31 August 2026](https://support.google.com/googleplay/android-developer/answer/11926878?hl=en)
 - [Functionality, content, and user-experience requirements](https://support.google.com/googleplay/android-developer/answer/9898783?hl=en)
 - [Create and set up a Play app and store listing](https://support.google.com/googleplay/android-developer/answer/9859152?hl=en)
+# September 7 typography and spacing update
+
+Restored the existing brand fonts in installed mode and result dialogs: Bricolage Grotesque headings and IBM Plex Sans body/controls; Arabic retains Alexandria. Removed the system-font overrides instead of changing the brand. Controls retain normal spacing and no decorative transforms. Added 12px desktop / 14px mobile spacing below the prompt box (final suggestions margin 40px / 36px).
+
+Verified actual rendered custom font glyphs in local Chrome and visually checked 320/360 phone, 1440 desktop, Arabic, image viewer, result options and purchase sheet. QA captures: `test-results/fonts-*.png`. Production deployment **41kyuJkXLvYxoXxtZNyur5RobcVn** built successfully and was aliased to doodle.samistudio.nl. The live 360px composer was visually checked after deployment, with the Bricolage family and -0.8px heading tracking confirmed. No native package rebuild was needed for these hosted UI styles. Final marketing demo captures are being refreshed to match.

@@ -5,6 +5,7 @@ import { cookies } from "next/headers";
 import type { NextResponse } from "next/server";
 import { isPaidAccountActive } from "@/lib/billing/credits";
 import { required } from "@/lib/env";
+import { getNativeBearer, getNativeSessionUser } from "@/lib/native-session";
 
 const COOKIE_NAME = "doodle_session";
 const TTL_SECONDS = 2_592_000;
@@ -60,7 +61,16 @@ export function clearSessionCookie(response: NextResponse) {
   response.cookies.set(COOKIE_NAME, "", cookieOptions(0));
 }
 
-export async function getCurrentUser(): Promise<SessionUser | null> {
+export async function getCurrentUser(request?: Request): Promise<SessionUser | null> {
+  if (request) {
+    const accessToken = getNativeBearer(request);
+    if (accessToken !== undefined) {
+      if (!accessToken) return null;
+      const nativeUser = await getNativeSessionUser(accessToken);
+      if (!nativeUser || !(await isPaidAccountActive(nativeUser.id))) return null;
+      return nativeUser;
+    }
+  }
   const payload = verifiedPayload((await cookies()).get(COOKIE_NAME)?.value);
   if (!payload || !(await isPaidAccountActive(payload.id))) return null;
   return { id: payload.id, identityKey: payload.identityKey, email: payload.email };

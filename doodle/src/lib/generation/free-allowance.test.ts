@@ -6,6 +6,7 @@ import {
   getTrialIdentity,
   releaseFreeDoodle,
   reserveFreeDoodle,
+  signedTrialToken,
   setTrialCookie,
 } from "./free-allowance";
 
@@ -47,6 +48,35 @@ describe("free allowance", () => {
     const [id, signature] = response.cookies.get("doodle_trial")!.value.split(".");
 
     expect(getTrialIdentity(requestWithCookie(`${id}.${signature}x`)).id).not.toBe(identity.id);
+  });
+
+  it("uses a valid native trial header and never falls back to a conflicting cookie", () => {
+    const nativeIdentity = { id: "11111111-1111-4111-8111-111111111111" };
+    const browserIdentity = { id: "22222222-2222-4222-8222-222222222222" };
+    const response = NextResponse.json({ ok: true });
+    setTrialCookie(response, browserIdentity);
+    const request = new NextRequest("https://doodle.test", {
+      headers: {
+        cookie: response.cookies.get("doodle_trial")!.value,
+        "x-doodle-trial-token": signedTrialToken(nativeIdentity),
+      },
+    });
+
+    expect(getTrialIdentity(request)).toEqual(nativeIdentity);
+  });
+
+  it("does not fall back to a browser cookie after an invalid native trial header", () => {
+    const browserIdentity = { id: "22222222-2222-4222-8222-222222222222" };
+    const response = NextResponse.json({ ok: true });
+    setTrialCookie(response, browserIdentity);
+    const request = new NextRequest("https://doodle.test", {
+      headers: {
+        cookie: response.cookies.get("doodle_trial")!.value,
+        "x-doodle-trial-token": "invalid-trial-token",
+      },
+    });
+
+    expect(getTrialIdentity(request).id).not.toBe(browserIdentity.id);
   });
 
   it("requires the signing secret even when no trial cookie exists", () => {

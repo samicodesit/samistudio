@@ -6,6 +6,7 @@ import {
   getTrialIdentity,
   setTrialCookie,
 } from "@/lib/generation/free-allowance";
+import { revokeNativeSession } from "@/lib/native-session";
 import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
@@ -17,9 +18,16 @@ export type AccountSummary = {
   freeRemaining: number | null;
 };
 
+function errorResponse(error: string, status: number) {
+  return NextResponse.json(
+    { error },
+    { status, headers: { "Cache-Control": "no-store" } },
+  );
+}
+
 export async function GET(request: NextRequest) {
   const identity = getTrialIdentity(request);
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(request);
   const summary: AccountSummary = user
     ? {
         authenticated: true,
@@ -42,14 +50,14 @@ export async function GET(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   if (!hasSameOrigin(request)) {
-    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+    return errorResponse("forbidden", 403);
   }
 
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "confirmation_required" }, { status: 400 });
+    return errorResponse("confirmation_required", 400);
   }
   if (
     typeof body !== "object" ||
@@ -57,20 +65,24 @@ export async function DELETE(request: NextRequest) {
     !("confirm" in body) ||
     body.confirm !== true
   ) {
-    return NextResponse.json({ error: "confirmation_required" }, { status: 400 });
+    return errorResponse("confirmation_required", 400);
   }
 
-  const user = await getCurrentUser();
+  const user = await getCurrentUser(request);
   if (!user) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    return errorResponse("unauthorized", 401);
   }
 
   try {
     await deletePaidAccount(user.id, user.identityKey);
-    const response = new NextResponse(null, { status: 204 });
+    await revokeNativeSession(request);
+    const response = new NextResponse(null, {
+      status: 204,
+      headers: { "Cache-Control": "no-store" },
+    });
     clearSessionCookie(response);
     return response;
   } catch {
-    return NextResponse.json({ error: "delete_failed" }, { status: 500 });
+    return errorResponse("delete_failed", 500);
   }
 }

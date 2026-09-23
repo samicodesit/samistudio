@@ -34,10 +34,14 @@ describe("Play config route", () => {
   });
   it("returns only fixed product and account binding without credentials", async () => {
     mocks.getPlayBillingConfig.mockReturnValue({ productId: "doodle_credits_10", packageName: "nl.samistudio.doodle", credentials: { private_key: "secret" } });
-    const response = await GET();
+    const incoming = new Request("https://doodle.samistudio.nl/api/play/config", {
+      headers: { authorization: `Bearer ${"t".repeat(43)}` },
+    });
+    const response = await GET(incoming);
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({ enabled: true, productId: "doodle_credits_10", obfuscatedAccountId: "a".repeat(64) });
     expect(mocks.playAccountId).toHaveBeenCalledWith("account-id");
+    expect(mocks.getCurrentUser).toHaveBeenCalledWith(incoming);
     expect(response.headers.get("cache-control")).toBe("no-store");
   });
 });

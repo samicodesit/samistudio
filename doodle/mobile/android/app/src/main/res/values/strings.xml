@@ -1,0 +1,4 @@
+<resources>
+  <string name="app_name">Doodle</string>
+  <string name="expo_runtime_version">0.1.1</string>
+</resources>

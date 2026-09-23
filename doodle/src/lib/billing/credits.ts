@@ -44,10 +44,17 @@ redis.call('SET', KEYS[4], ARGV[1])
 return {1, redis.call('INCRBY', KEYS[3], 10)}
 `;
 
+const ACTIVE_ACCOUNT_SCRIPT = `
+if redis.call('GET', KEYS[1]) == '1' and redis.call('EXISTS', KEYS[2]) == 0 then return 1 end
+return 0
+`;
+
 const DELETE_SCRIPT = `
-if redis.call('GET', KEYS[1]) ~= ARGV[1] then return 0 end
+local mapped = redis.call('GET', KEYS[1])
+if mapped ~= ARGV[1] and redis.call('EXISTS', KEYS[2]) == 0 then return 0 end
 redis.call('SET', KEYS[6], 'deleted')
-redis.call('DEL', KEYS[1], KEYS[2], KEYS[3], KEYS[4], KEYS[5])
+if mapped == ARGV[1] then redis.call('DEL', KEYS[1]) end
+redis.call('DEL', KEYS[2], KEYS[3], KEYS[4], KEYS[5])
 return 1
 `;
 
@@ -93,7 +100,13 @@ export async function getPaidBalance(accountId: string): Promise<number> {
 }
 
 export async function isPaidAccountActive(accountId: string): Promise<boolean> {
-  return (await redisCommand(["GET", accountKey(accountId, "active")])) === "1";
+  return redisInteger(await redisCommand([
+    "EVAL",
+    ACTIVE_ACCOUNT_SCRIPT,
+    "2",
+    accountKey(accountId, "active"),
+    accountKey(accountId, "deleted"),
+  ])) === 1;
 }
 
 export async function reservePaidCredit(accountId: string, reservationId: string): Promise<CreditReservation> {

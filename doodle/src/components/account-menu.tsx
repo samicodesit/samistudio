@@ -9,9 +9,11 @@ interface AccountMenuProps {
   locale: Locale;
   copy: DoodleCopy["account"];
   onAccountChange: (account: AccountSummary) => void;
+  purchaseLabel?: string;
+  onPurchase?: (returnFocus: HTMLElement | null) => void;
 }
 
-export function AccountMenu({ account, locale, copy, onAccountChange }: AccountMenuProps) {
+export function AccountMenu({ account, locale, copy, onAccountChange, purchaseLabel, onPurchase }: AccountMenuProps) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const deleteTriggerRef = useRef<HTMLButtonElement>(null);
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -22,7 +24,7 @@ export function AccountMenu({ account, locale, copy, onAccountChange }: AccountM
     const closeOutside = (event: PointerEvent) => {
       const target = event.target as Node;
       if (detailsRef.current?.contains(target) || dialogRef.current?.contains(target)) return;
-      detailsRef.current?.removeAttribute("open");
+      if (detailsRef.current?.open) detailsRef.current.removeAttribute("open");
     };
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !confirmingDelete) detailsRef.current?.removeAttribute("open");
@@ -90,6 +92,10 @@ export function AccountMenu({ account, locale, copy, onAccountChange }: AccountM
         <div className="account-popover">
           <p className="account-email" dir="ltr">{account.email}</p>
           <p className="account-balance">{formatCount(locale, copy.balance, account.balance)}</p>
+          {onPurchase ? <button type="button" disabled={busy !== null} onClick={() => {
+            detailsRef.current?.removeAttribute("open");
+            onPurchase(detailsRef.current?.querySelector("summary") ?? null);
+          }}>{purchaseLabel}</button> : null}
           <button className={busy === "signOut" ? "is-loading" : undefined} type="button" onClick={signOut} disabled={busy !== null} aria-busy={busy === "signOut"}>{copy.signOut}</button>
           <button ref={deleteTriggerRef} className="account-delete" type="button" onClick={() => setConfirmingDelete(true)} disabled={busy !== null}>
             {copy.delete}

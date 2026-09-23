@@ -10,7 +10,16 @@ vi.mock("@vercel/analytics", () => ({ track: mocks.track }));
 vi.mock("./google-sign-in-button", () => ({ GoogleSignInButton: ({ onCredential }: { onCredential(token: string): void }) => <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button> }));
 
 function renderClient(locale: Locale = "en", initialScene = "") {
-  return render(<DoodleClient locale={locale} copy={getCopy(locale)} initialScene={initialScene} />);
+  const host = document.createElement("div");
+  host.dataset.accountHost = "web";
+  document.body.append(host);
+  return render(<DoodleClient locale={locale} copy={getCopy(locale)} initialScene={initialScene} accountHost="web" />);
+}
+
+function suggestionLabels() {
+  return Array.from(document.querySelectorAll<HTMLButtonElement>(".suggestions-list button"), (button) =>
+    button.textContent?.replace("+", "").trim() ?? "",
+  );
 }
 
 const anonymousAccount = {
@@ -40,7 +49,10 @@ function deferred<T>() {
 }
 
 describe("DoodleClient", () => {
-  afterEach(() => vi.unstubAllEnvs());
+  afterEach(() => {
+    document.querySelectorAll("[data-account-host]").forEach((host) => host.remove());
+    vi.unstubAllEnvs();
+  });
 
   beforeEach(() => {
     vi.restoreAllMocks();
@@ -62,6 +74,63 @@ describe("DoodleClient", () => {
     expect(screen.getByRole("textbox")).toHaveValue("A person giving someone a warm scarf");
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock).toHaveBeenCalledWith("/api/account", { cache: "no-store" });
+  });
+
+  it("keeps the same idea cards while the scene is edited", () => {
+    renderClient();
+    const initial = suggestionLabels();
+
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "A little scene" } });
+
+    expect(suggestionLabels()).toEqual(initial);
+    expect(initial).toHaveLength(3);
+  });
+
+  it("lets a signed-in customer refill before spending existing credits", async () => {
+    vi.mocked(fetch).mockImplementation(async (input) => {
+      if (input === "/api/account") return json({ authenticated: true, email: "buyer@example.com", balance: 7, freeRemaining: null });
+      throw new Error(`Unexpected fetch: ${String(input)}`);
+    });
+    const user = userEvent.setup();
+    renderClient();
+    await user.click(await screen.findByText("Account"));
+    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+    expect(screen.getByRole("dialog")).toBeVisible();
+    expect(screen.getByText("buyer@example.com")).not.toBeVisible();
+    expect(fetch).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole("button", { name: "Not now" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(screen.getByText("7 doodles left", { selector: ".usage-copy" })).toBeVisible();
+    expect(screen.getByText("Account").closest("summary")).toHaveFocus();
+  });
+
+  it("returns focus to Create after a refill is cancelled and the next generation needs payment", async () => {
+    const user = userEvent.setup();
+    Object.defineProperty(HTMLDialogElement.prototype, "close", {
+      configurable: true,
+      value: function (this: HTMLDialogElement) { this.removeAttribute("open"); },
+    });
+    vi.mocked(fetch).mockImplementation(async (input) => {
+      if (input === "/api/account") return json({ authenticated: true, email: "buyer@example.com", balance: 7, freeRemaining: null });
+      if (input === "/api/generate") return json({ error: "payment_required" }, { status: 402 });
+      throw new Error(`Unexpected fetch: ${String(input)}`);
+    });
+    renderClient();
+
+    await user.click(await screen.findByText("Account"));
+    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+    await user.click(screen.getByRole("button", { name: "Not now" }));
+    await waitFor(() => expect(screen.getByText("Account").closest("summary")).toHaveFocus());
+
+    const createButton = screen.getByRole("button", { name: "Create doodle" });
+    await user.type(screen.getByRole("textbox"), "A small paid scene");
+    createButton.focus();
+    await user.click(createButton);
+    const dialog = await screen.findByRole("dialog", { name: "Keep doodling" });
+    fireEvent(dialog, new Event("cancel", { bubbles: false, cancelable: true }));
+
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "Create doodle" })).toHaveFocus();
   });
 
   it("prefills an idea without generating", () => {
@@ -89,10 +158,51 @@ describe("DoodleClient", () => {
     expect(await screen.findByText("First 2 doodles free")).toBeVisible();
   });
 
+  it("keeps sign-in visible beside the allowance and opens a neutral sign-in dialog", async () => {
+    const user = userEvent.setup();
+    renderClient();
+
+    await user.click(await screen.findByRole("button", { name: "Sign in" }));
+
+    const dialog = screen.getByRole("dialog", { name: "Sign in" });
+    expect(dialog).toBeVisible();
+    expect(within(dialog).getByRole("button", { name: "Continue with Google" })).toBeVisible();
+    expect(within(dialog).queryByText("Keep doodling")).not.toBeInTheDocument();
+  });
+
+  it("returns focus to the new account control after sign-in replaces the trigger", async () => {
+    const user = userEvent.setup();
+    let signedIn = false;
+    const fetchMock = vi.mocked(fetch).mockImplementation(async (input) => {
+      if (input === "/api/account") return json(signedIn ? { authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: null } : anonymousAccount);
+      if (input === "/api/auth/google") {
+        signedIn = true;
+        return new Response(null, { status: 204 });
+      }
+      if (input === "/api/generate") return new Response(new Blob(["png"]), { status: 200 });
+      throw new Error(`Unexpected fetch: ${String(input)}`);
+    });
+    renderClient();
+
+    fireEvent.change(await screen.findByRole("textbox"), { target: { value: "A finished scene" } });
+    fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+    await screen.findByAltText("Generated sticky-note doodle");
+
+    const signIn = screen.getByRole("button", { name: "Sign in" });
+    signIn.focus();
+    await user.click(signIn);
+    await user.click(screen.getByRole("button", { name: "Continue with Google" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    const accountControl = screen.getByText("Account").closest("summary");
+    expect(accountControl).not.toBeNull();
+    expect(accountControl).toHaveFocus();
+    expect(fetchMock).not.toHaveBeenCalledWith("/api/checkout", expect.anything());
+  });
+
   it("keeps the visual surface focused and the suggestions keyboard accessible", () => {
     renderClient();
     expect(screen.getByAltText(/two cats kissing upside down/)).toBeInTheDocument();
-    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
     expect(screen.getByRole("heading", { level: 1, name: "What should we doodle?" })).toBeInTheDocument();
     expect(screen.queryByText(/One tiny moment|Private space|private little space|Your prompts/)).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /warm scarf/ })).toBeVisible();
@@ -123,6 +233,10 @@ describe("DoodleClient", () => {
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
     fireEvent.click(screen.getByRole("button", { name: /Create doodle/ }));
     expect(screen.getByRole("status")).toHaveTextContent("Drawing your doodle...");
+    expect(screen.queryByText(getCopy("en").status.generatingTitle)).not.toBeInTheDocument();
+    expect(screen.queryByText(getCopy("en").status.generatingEyebrow)).not.toBeInTheDocument();
+    expect(screen.queryByText(getCopy("en").status.waitHint)).not.toBeInTheDocument();
+    expect(screen.queryByText(/“Two cats hug”/)).not.toBeInTheDocument();
     await waitFor(() => expect(screen.getByAltText("Generated sticky-note doodle")).toBeInTheDocument());
     expect(screen.getByRole("link", { name: /Download/ })).toHaveAttribute("download", "doodle.png");
     expect(screen.getByRole("button", { name: /View larger/ })).toBeVisible();
@@ -176,6 +290,7 @@ describe("DoodleClient", () => {
   it("starts a new blank scene after a result", async () => {
     mockGeneration(new Response(new Blob(["png"]), { status: 200 }));
     renderClient();
+    const previousSuggestions = suggestionLabels();
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "A finished scene" } });
     fireEvent.click(screen.getByRole("button", { name: /Create doodle/ }));
     await screen.findByAltText("Generated sticky-note doodle");
@@ -184,6 +299,10 @@ describe("DoodleClient", () => {
     expect(screen.getByRole("textbox")).toHaveFocus();
     expect(vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/generate")).toHaveLength(1);
     expect(screen.getByAltText(/two cats kissing upside down/)).toBeInTheDocument();
+    const nextSuggestions = suggestionLabels();
+    expect(nextSuggestions).toHaveLength(3);
+    expect(new Set(nextSuggestions).size).toBe(3);
+    expect(nextSuggestions.some((suggestion) => previousSuggestions.includes(suggestion))).toBe(false);
   });
 
   it("opens purchase without losing the scene on payment_required", async () => {

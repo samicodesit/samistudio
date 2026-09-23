@@ -56,9 +56,9 @@ The required free Android SDK terms were reviewed and accepted for the authorize
   --install 'platform-tools' 'platforms;android-36' 'build-tools;36.1.0'
 ```
 
-The local wrapper uses `nl.samistudio.doodle` and was generated through Bubblewrap's core API to avoid release-signing prompts. Its Gradle plugin also installed default build tools 35.0.0. The local upload signing key and signed bundle are documented in `../android/README.md`. Production domain association, Play catalog setup and real billing transactions remain release work. No physical-device/emulator UI test has passed; the native Windows emulator download below is in progress.
+The local wrapper uses `nl.samistudio.doodle` and was generated through Bubblewrap's core API to avoid release-signing prompts. Its Gradle plugin also installed default build tools 35.0.0. The local upload signing key and signed bundle are documented in `../android/README.md`. Production domain association, Play catalog setup and real billing transactions remain release work. Native Windows emulator UI QA passed on September 7, 2026; see the verified run below. Physical-device and Play billing tests remain outstanding.
 
-## Windows Android preview (setup in progress)
+## Windows Android preview (original setup record)
 
 On September 7, 2026, Ubuntu WSL had no `/dev/kvm`, so its Linux emulator could not use KVM. A read-only native Windows `WHvGetCapability(WHvCapabilityCodeHypervisorPresent)` call returned success and `1`. This is a promising prerequisite, **not a successful Android Emulator acceleration check or boot**. No Windows virtualization feature, driver or firmware setting was changed, and no reboot was requested.
 
@@ -89,3 +89,23 @@ $previewAdb = "$env:USERPROFILE/.codex/doodle-android-preview/sdk/platform-tools
 Opening the local URL exercises the website in Android Chrome, not production TWA association or billing. Actual toolbar, Android Back, keyboard, and screenshot verification must be recorded after the emulator runs. No Android screen has been captured during this setup attempt.
 
 Official references: [hardware acceleration](https://developer.android.com/studio/run/emulator-acceleration), [command-line emulator](https://developer.android.com/studio/run/emulator-commandline). The current command-line documentation marks `emulator` as deprecated in favor of `android emulator`; the launcher uses the still-documented executable shipped in the isolated SDK.
+
+
+## Verified Android run � September 7, 2026
+
+Native SDK installation completed. Emulator 37.1.11.0 acceleration passed with `WHPX(10.0.26200) is installed and usable`; first Android API 36 cold boot completed in 75 seconds. No Windows settings, drivers or firmware changed and no reboot was needed.
+
+The initial launcher could not see the booted device because port 5037 was owned by WSL's relay to Linux adb, confirmed by `adb server-status`. Isolated native Windows adb on **5038** found `emulator-5554`. The launcher now uses `adb -P 5038` and disables optional emulator metrics. Both APK install and activity launch passed. A subsequent visible launch using `start-preview.ps1 -ShowWindow` also booted, installed and launched successfully. This supersedes the original setup-only limitations above.
+
+The debug APK loaded production `https://doodle.samistudio.nl/?runtime=play` in Android Chrome without an account. Actual 1080 x 2400 / 420 dpi screenshots were pulled and visually inspected:
+
+- Create: readable prompt, first-two-free label, create button and fixed Create / Ideas / Settings navigation, without visible horizontal clipping.
+- Keyboard: focusing the prompt displayed the software keyboard and hid bottom navigation while keeping the composer visible.
+- Android Back: closed the keyboard preserving the typed draft `A small cat`; Back from Ideas returned to Create with the draft intact.
+- Ideas: example images loaded with readable text and actions in two columns.
+- Settings: language choices and support section rendered correctly above fixed navigation.
+- Toolbar share: Android's native link share sheet opened with `https://doodle.samistudio.nl/?runtime=play#composer`. No recipient was selected and nothing was transmitted.
+
+Evidence: `C:\Users\Sami\.codex\doodle-android-preview\doodle-keyboard.png`, `doodle-back.png`, `doodle-tab-back.png`, `doodle-ideas.png`, `doodle-settings.png`, `doodle-share.png`. Use `adb -P 5038 -s emulator-5554` for subsequent native device commands. The visible emulator was left available for owner preview.
+
+Limits: the Chrome Custom Tab toolbar remains visible as expected without domain association. This is a debug wrapper on a Google APIs emulator, not a Play-installed release. Toolbar-free TWA, authenticated generation, generated-image file sharing, physical-device behavior and real Play billing remain unverified. No generation request was submitted; no production association, auth or billing flags changed.
