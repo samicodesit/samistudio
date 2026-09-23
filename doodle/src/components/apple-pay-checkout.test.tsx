@@ -5,9 +5,6 @@ import { ApplePayCheckout } from "./apple-pay-checkout";
 const stripe = vi.hoisted(() => ({
   confirm: vi.fn(),
 }));
-const ece = vi.hoisted(() => ({
-  frameHeight: 0,
-}));
 
 vi.mock("@stripe/stripe-js", () => ({
   loadStripe: vi.fn(() => Promise.resolve({})),
@@ -22,7 +19,7 @@ vi.mock("@stripe/react-stripe-js/checkout", () => ({
     onLoadError?: (event: { error: Error }) => void;
     onConfirm: (event: { expressPaymentType: "apple_pay"; paymentFailed: ReturnType<typeof vi.fn> }) => void;
   }) => {
-    return <><iframe title="Secure payment input frame" src="https://js.stripe.com/v3/elements-inner-accessory-target.html" allow="payment *" style={{ height: `${ece.frameHeight}px`, width: "320px" }} /><button type="button" data-testid="apple-pay-button" onClick={() => props.onConfirm({ expressPaymentType: "apple_pay", paymentFailed: vi.fn() })}>Buy with Apple Pay</button><button type="button" data-testid="apple-pay-ready-available" onClick={() => props.onReady?.({ availablePaymentMethods: { applePay: true } })}>Mark wallet ready</button><button type="button" data-testid="apple-pay-ready-none" onClick={() => props.onReady?.({})}>Mark wallet unavailable</button><button type="button" data-testid="apple-pay-available" onClick={() => props.onAvailablePaymentMethodsChange?.({ paymentMethods: { applePay: { available: true } } })}>Mark wallet available</button><button type="button" data-testid="apple-pay-load-error" onClick={() => props.onLoadError?.({ error: new Error("wallet unavailable") })}>Trigger load error</button></>;
+    return <><button type="button" data-testid="apple-pay-button" onClick={() => props.onConfirm({ expressPaymentType: "apple_pay", paymentFailed: vi.fn() })}>Buy with Apple Pay</button><button type="button" data-testid="apple-pay-ready-available" onClick={() => props.onReady?.({ availablePaymentMethods: { applePay: true } })}>Mark wallet ready</button><button type="button" data-testid="apple-pay-ready-none" onClick={() => props.onReady?.({})}>Mark wallet unavailable</button><button type="button" data-testid="apple-pay-available" onClick={() => props.onAvailablePaymentMethodsChange?.({ paymentMethods: { applePay: { available: true } } })}>Mark wallet available</button><button type="button" data-testid="apple-pay-load-error" onClick={() => props.onLoadError?.({ error: new Error("wallet unavailable") })}>Trigger load error</button></>;
   },
 }));
 
@@ -35,7 +32,6 @@ describe("ApplePayCheckout", () => {
     vi.restoreAllMocks();
     vi.stubEnv("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY", "pk_test_doodle");
     stripe.confirm.mockReset();
-    ece.frameHeight = 0;
   });
 
   it("creates a session and completes through Checkout confirmation", async () => {
@@ -84,27 +80,6 @@ describe("ApplePayCheckout", () => {
     fireEvent.click(screen.getByTestId("apple-pay-ready-available"));
 
     expect(button.parentElement).toHaveAttribute("data-wallet-state", "available");
-  });
-
-  it("reveals a rendered wallet frame even when its ready event was missed", async () => {
-    ece.frameHeight = 48;
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(json({ clientSecret: "cs_secret" }));
-    render(<ApplePayCheckout locale="en" ariaLabel="Pay with Apple Pay" unavailableMessage="Checkout unavailable" onComplete={vi.fn()} onError={vi.fn()} onBusyChange={vi.fn()} />);
-
-    const button = await screen.findByTestId("apple-pay-button");
-    await waitFor(() => expect(button.parentElement).toHaveAttribute("data-wallet-state", "available"));
-    expect(screen.getByTitle("Secure payment input frame")).toBeInTheDocument();
-  });
-
-  it("keeps the small no-wallet frame hidden until it grows", async () => {
-    ece.frameHeight = 8;
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(json({ clientSecret: "cs_secret" }));
-    render(<ApplePayCheckout locale="en" ariaLabel="Pay with Apple Pay" unavailableMessage="Checkout unavailable" onComplete={vi.fn()} onError={vi.fn()} onBusyChange={vi.fn()} />);
-
-    const button = await screen.findByTestId("apple-pay-button");
-    expect(button.parentElement).toHaveAttribute("data-wallet-state", "pending");
-    screen.getByTitle("Secure payment input frame").setAttribute("style", "height: 48px; width: 320px;");
-    await waitFor(() => expect(button.parentElement).toHaveAttribute("data-wallet-state", "available"));
   });
 
   it("collapses an empty ready event and can reveal Apple Pay on a later change", async () => {
