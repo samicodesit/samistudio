@@ -7,7 +7,11 @@ import { PurchaseDialog } from "./purchase-dialog";
 const play = vi.hoisted(() => ({ isPlayRuntime: vi.fn(() => false), preparePlayPurchase: vi.fn(), purchasePlayPack: vi.fn(), recoverPlayPurchases: vi.fn() }));
 vi.mock("@/lib/billing/play-client", () => play);
 
-vi.mock("./google-sign-in-button", () => ({ GoogleSignInButton: ({ onCredential }: { onCredential(token: string): void }) => <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button> }));
+const google = vi.hoisted(() => ({ redirectModes: [] as boolean[] }));
+vi.mock("./google-sign-in-button", () => ({ GoogleSignInButton: ({ onCredential, redirect }: { onCredential(token: string): void; redirect?: boolean }) => {
+  google.redirectModes.push(Boolean(redirect));
+  return <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button>;
+} }));
 const applePay = vi.hoisted(() => ({ mountDialogOpen: [] as boolean[] }));
 vi.mock("./apple-pay-checkout", () => ({ ApplePayCheckout: ({ ariaLabel, onComplete }: { ariaLabel: string; onComplete(sessionId: string): void }) => {
   applePay.mountDialogOpen.push(document.querySelector("dialog")?.open ?? false);
@@ -32,7 +36,7 @@ function renderDialog(account = anonymous, signInOnly = false, onExpressCheckout
 }
 
 describe("PurchaseDialog", () => {
-  beforeEach(() => { sessionStorage.clear(); vi.stubGlobal("location", { assign: vi.fn() }); play.isPlayRuntime.mockReturnValue(false); applePay.mountDialogOpen.length = 0; });
+  beforeEach(() => { sessionStorage.clear(); vi.stubGlobal("location", { assign: vi.fn() }); play.isPlayRuntime.mockReturnValue(false); applePay.mountDialogOpen.length = 0; google.redirectModes.length = 0; });
 
   it("shows one honest fixed offer", () => {
     renderDialog();
@@ -40,6 +44,14 @@ describe("PurchaseDialog", () => {
     expect(screen.getByText("€4.99")).toBeVisible();
     expect(screen.getByText("One payment. No subscription.")).toBeVisible();
     expect(screen.queryByText(/discount|per month/i)).not.toBeInTheDocument();
+  });
+
+  it("uses Google redirect UX for browser sign-in", async () => {
+    const user = userEvent.setup();
+    renderDialog();
+
+    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+    expect(google.redirectModes).toEqual([true]);
   });
 
   it("keeps the hosted Checkout action alongside Apple Pay", () => {

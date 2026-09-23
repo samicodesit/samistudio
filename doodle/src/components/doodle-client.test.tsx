@@ -541,6 +541,31 @@ describe("DoodleClient", () => {
     expect(screen.getByRole("textbox")).toHaveValue("A cat & a moon");
   });
 
+  it("does not reopen the purchase sheet after account sign-in returns", async () => {
+    history.replaceState({}, "", "/?auth=success");
+    sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "A cat", intent: "account", path: "/" }));
+    vi.mocked(fetch).mockResolvedValueOnce(
+      json({ authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: null }),
+    );
+
+    renderClient();
+
+    expect(await screen.findByText("Account")).toBeVisible();
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(sessionStorage.getItem("doodle:return")).toBeNull();
+    expect(location.search).toBe("");
+  });
+
+  it("reopens the account sign-in sheet when redirect auth fails", async () => {
+    history.replaceState({}, "", "/?auth=error");
+    sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "A cat", intent: "account", path: "/" }));
+
+    renderClient();
+
+    expect(await screen.findByRole("dialog", { name: "Sign in" })).toBeVisible();
+    expect(screen.getByRole("alert")).toHaveTextContent(getCopy("en").auth.authError);
+  });
+
   it("restores the exact scene after Checkout is cancelled", async () => {
     history.replaceState({}, "", "/?checkout=cancelled");
     sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "A cat + a kite", intent: "checkout" }));

@@ -16,6 +16,7 @@ interface GoogleSignInButtonProps {
   loadingLabel?: string;
   onCredential: (credential: string) => void;
   onError: () => void;
+  redirect?: boolean;
 }
 
 function isVisible(element: Element) {
@@ -34,7 +35,7 @@ function hasUsableGoogleControl(element: HTMLElement) {
   return fallback ? isVisible(fallback) : false;
 }
 
-export function GoogleSignInButton({ locale, busy, loadingLabel = "Loading sign-in…", onCredential, onError }: GoogleSignInButtonProps) {
+export function GoogleSignInButton({ locale, busy, loadingLabel = "Loading sign-in…", onCredential, onError, redirect = false }: GoogleSignInButtonProps) {
   const container = useRef<HTMLDivElement>(null);
   const initialized = useRef(false);
   const rendered = useRef("");
@@ -120,7 +121,11 @@ export function GoogleSignInButton({ locale, busy, loadingLabel = "Loading sign-
     const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
     if (!api || !element || !clientId) return;
     if (!initialized.current) {
-      api.initialize({
+      api.initialize(redirect ? {
+        client_id: clientId,
+        ux_mode: "redirect",
+        login_uri: "https://doodle.samistudio.nl/api/auth/google/redirect",
+      } : {
         client_id: clientId,
         callback: ({ credential: token }) => token ? credential.current(token) : error.current(),
         use_fedcm_for_prompt: true,
@@ -141,7 +146,7 @@ export function GoogleSignInButton({ locale, busy, loadingLabel = "Loading sign-
     });
     rendered.current = renderKey;
     checkReady();
-  }, [armFailureTimer, checkReady, locale, setStatus]);
+  }, [armFailureTimer, checkReady, locale, redirect, setStatus]);
 
   useEffect(() => {
     renderButton();

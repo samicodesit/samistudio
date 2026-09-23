@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { AccountSummary } from "@/app/api/account/route";
 import type { DoodleCopy, Locale } from "@/lib/i18n";
 import { GoogleSignInButton } from "./google-sign-in-button";
@@ -8,6 +8,7 @@ import { ApplePayCheckout } from "./apple-pay-checkout";
 import { isPlayRuntime, preparePlayPurchase, purchasePlayPack, recoverPlayPurchases, type PreparedPlayPurchase } from "@/lib/billing/play-client";
 
 type PurchaseStep = "offer" | "signIn" | "checkout";
+type ReturnIntent = "auth" | "account" | "checkout";
 
 interface PurchaseDialogProps {
   open: boolean; account: AccountSummary; scene: string; locale: Locale; copy: DoodleCopy; success: boolean;
@@ -31,6 +32,12 @@ export function PurchaseDialog({ open, account, scene, locale, copy, success, er
   const [prepareAttempt, setPrepareAttempt] = useState(0);
   const [dialogReady, setDialogReady] = useState(false);
   const authenticated = account.authenticated || signedInHere;
+  const saveReturn = useCallback((intent: ReturnIntent, preserveExisting = false) => {
+    try {
+      if (preserveExisting && sessionStorage.getItem("doodle:return")) return;
+      sessionStorage.setItem("doodle:return", JSON.stringify({ scene, intent, path: location.pathname }));
+    } catch {}
+  }, [scene]);
   useEffect(() => { closeRef.current = onClose; }, [onClose]);
 
   useEffect(() => {
@@ -83,8 +90,12 @@ export function PurchaseDialog({ open, account, scene, locale, copy, success, er
     return () => cancelAnimationFrame(frame);
   }, [open, signInOnly, step, success, playSuccess]);
 
+  useEffect(() => {
+    if (!open || playRuntime || step !== "signIn") return;
+    saveReturn(signInOnly ? "account" : "auth", signInOnly);
+  }, [open, playRuntime, saveReturn, signInOnly, step]);
+
   if (!open) return null;
-  const saveReturn = (intent: "auth" | "checkout") => sessionStorage.setItem("doodle:return", JSON.stringify({ scene, intent }));
   const refreshAccount = async () => {
     const response = await fetch("/api/account", { cache: "no-store" });
     if (!response.ok) throw new Error("account unavailable");
@@ -143,7 +154,7 @@ export function PurchaseDialog({ open, account, scene, locale, copy, success, er
     <div className="purchase-slip">
       {success || playSuccess ? <div className="purchase-success"><p className="purchase-label">{copy.purchase.label}</p><h2 id="purchase-title">{copy.purchase.added}</h2><button className="purchase-primary" type="button" data-purchase-focus onClick={onClose}>{copy.purchase.startDrawing}</button></div> : <>
         <header className="purchase-heading"><p className="purchase-label">{signInOnly ? copy.account.label : copy.purchase.label}</p><h2 id="purchase-title" tabIndex={signInOnly ? -1 : undefined} data-purchase-initial-focus={signInOnly ? "" : undefined}>{signInOnly ? copy.auth.signIn : copy.purchase.title}</h2></header>
-        {offer ? <div className="purchase-offer"><div className="purchase-lockup"><strong>{copy.purchase.quantity}</strong><strong dir="ltr">{price}</strong></div><p>{copy.purchase.reassurance}</p><p className="purchase-fine-print">{copy.purchase.failedDontCount}</p>{error || errorMessage ? <p role="alert" className="purchase-error">{error ?? errorMessage}</p> : null}{!playRuntime && authenticated && !onRetryConfirmation && onExpressCheckoutComplete && dialogReady ? <ApplePayCheckout locale={locale} ariaLabel={copy.purchase.applePay} unavailableMessage={copy.purchase.checkoutError} onComplete={onExpressCheckoutComplete} onError={setError} onBusyChange={handleApplePayBusyChange} /> : null}<div className="purchase-actions"><button className={`purchase-primary${busy || applePayBusy || confirmationBusy ? " is-loading" : ""}`} type="button" data-purchase-focus onClick={playRuntime ? startCheckout : (onRetryConfirmation ?? startCheckout)} disabled={purchaseDisabled} aria-busy={busy || applePayBusy || confirmationBusy}>{!playRuntime && onRetryConfirmation ? copy.actions.tryAgain : copy.purchase.buy}</button><button className="purchase-secondary" type="button" onClick={onClose}>{copy.purchase.cancel}</button>{playRuntime && authenticated && error ? <button className="purchase-text-action" type="button" disabled={busy} onClick={() => setPrepareAttempt((attempt) => attempt + 1)}>{copy.actions.tryAgain}</button> : null}{!authenticated ? <button className="purchase-text-action" type="button" onClick={() => setStep("signIn")}>{copy.purchase.restore}</button> : null}</div></div> : <div className="purchase-auth">{error ? <p role="alert" className="purchase-error">{error}</p> : null}<GoogleSignInButton locale={locale} busy={busy} loadingLabel={copy.auth.loading} onCredential={signIn} onError={() => setError(copy.auth.authError)} /><button className="purchase-text-action purchase-auth-cancel" type="button" data-purchase-focus onClick={onClose}>{copy.purchase.cancel}</button></div>}
+        {offer ? <div className="purchase-offer"><div className="purchase-lockup"><strong>{copy.purchase.quantity}</strong><strong dir="ltr">{price}</strong></div><p>{copy.purchase.reassurance}</p><p className="purchase-fine-print">{copy.purchase.failedDontCount}</p>{error || errorMessage ? <p role="alert" className="purchase-error">{error ?? errorMessage}</p> : null}{!playRuntime && authenticated && !onRetryConfirmation && onExpressCheckoutComplete && dialogReady ? <ApplePayCheckout locale={locale} ariaLabel={copy.purchase.applePay} unavailableMessage={copy.purchase.checkoutError} onComplete={onExpressCheckoutComplete} onError={setError} onBusyChange={handleApplePayBusyChange} /> : null}<div className="purchase-actions"><button className={`purchase-primary${busy || applePayBusy || confirmationBusy ? " is-loading" : ""}`} type="button" data-purchase-focus onClick={playRuntime ? startCheckout : (onRetryConfirmation ?? startCheckout)} disabled={purchaseDisabled} aria-busy={busy || applePayBusy || confirmationBusy}>{!playRuntime && onRetryConfirmation ? copy.actions.tryAgain : copy.purchase.buy}</button><button className="purchase-secondary" type="button" onClick={onClose}>{copy.purchase.cancel}</button>{playRuntime && authenticated && error ? <button className="purchase-text-action" type="button" disabled={busy} onClick={() => setPrepareAttempt((attempt) => attempt + 1)}>{copy.actions.tryAgain}</button> : null}{!authenticated ? <button className="purchase-text-action" type="button" onClick={() => setStep("signIn")}>{copy.purchase.restore}</button> : null}</div></div> : <div className="purchase-auth">{error || errorMessage ? <p role="alert" className="purchase-error">{error ?? errorMessage}</p> : null}<GoogleSignInButton locale={locale} busy={busy} loadingLabel={copy.auth.loading} redirect={!playRuntime} onCredential={signIn} onError={() => setError(copy.auth.authError)} /><button className="purchase-text-action purchase-auth-cancel" type="button" data-purchase-focus onClick={onClose}>{copy.purchase.cancel}</button></div>}
       </>}
     </div>
   </dialog>;

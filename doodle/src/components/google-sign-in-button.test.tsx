@@ -136,7 +136,16 @@ describe("Google sign-in button", () => {
 
     await waitFor(() => expect(document.querySelector(".google-sign-in-loading")).toBeInTheDocument());
   });
+  it("configures Google's redirect UX when requested", async () => {
+    render(<GoogleSignInButton locale="en" busy={false} redirect onCredential={vi.fn()} onError={vi.fn()} />);
 
+    await waitFor(() => expect(renderButton).toHaveBeenCalled());
+    expect(initialize).toHaveBeenCalledWith({
+      client_id: "google-client-id",
+      ux_mode: "redirect",
+      login_uri: "https://doodle.samistudio.nl/api/auth/google/redirect",
+    });
+  });
   it("stops reporting loading when the widget never becomes usable", async () => {
     vi.useFakeTimers();
     try {

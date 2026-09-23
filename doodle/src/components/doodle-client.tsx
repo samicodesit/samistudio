@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { createPortal } from "react-dom";
 import { track } from "@vercel/analytics";
 import type { AccountSummary } from "@/app/api/account/route";
-import { formatCount, type DoodleCopy, type Locale } from "@/lib/i18n";
+import { formatCount, localePath, SUPPORTED_LOCALES, type DoodleCopy, type Locale } from "@/lib/i18n";
 import { DEFAULT_SUGGESTION_IDS, localizeSceneIdeas, pickSceneIdeas, type SceneIdeaId } from "@/lib/scenes/suggestions";
 import { AccountMenu } from "./account-menu";
 import { SceneComposer } from "./scene-composer";
@@ -38,6 +38,31 @@ const INITIAL_ACCOUNT: AccountSummary = {
   balance: 0,
   freeRemaining: 2,
 };
+
+type ReturnIntent = "auth" | "account" | "checkout";
+type SavedReturn = { scene?: string; intent?: ReturnIntent; path?: string };
+const DOODLE_HOME_PATHS = new Set(SUPPORTED_LOCALES.map(localePath));
+
+function readSavedReturn(): SavedReturn | null {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem("doodle:return") ?? "null") as unknown;
+    if (!saved || typeof saved !== "object") return null;
+    const value = saved as Record<string, unknown>;
+    return {
+      scene: typeof value.scene === "string" ? value.scene : undefined,
+      intent: value.intent === "auth" || value.intent === "account" || value.intent === "checkout" ? value.intent : undefined,
+      path: typeof value.path === "string" ? value.path : undefined,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function safeDoodleHomePath(path: string | undefined): string | null {
+  if (!path) return null;
+  const normalized = path.length > 1 ? path.replace(/\/+$/, "") || "/" : path;
+  return DOODLE_HOME_PATHS.has(normalized) ? normalized : null;
+}
 
 function messageForStatus(status: number, copy: DoodleCopy["errors"]): string {
   if (status === 429) return copy.rateLimited;
@@ -177,21 +202,28 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
     const params = new URLSearchParams(location.search);
     const authReturn = params.get("auth");
     const checkoutReturn = params.get("checkout");
-    let restoredScene: string | null = null;
-    try {
-      const saved = JSON.parse(sessionStorage.getItem("doodle:return") ?? "null") as unknown;
-      if (saved && typeof saved === "object" && "scene" in saved && typeof saved.scene === "string") {
-        restoredScene = saved.scene;
-      }
-    } catch {}
+    const savedReturn = readSavedReturn();
+    const restoredScene = savedReturn?.scene ?? null;
+    const returnPath = safeDoodleHomePath(savedReturn?.path);
+
+    if (authReturn && returnPath && returnPath !== location.pathname) {
+      const target = new URL(location.href);
+      target.pathname = returnPath;
+      target.search = `?auth=${authReturn === "success" ? "success" : "error"}`;
+      target.hash = "";
+      location.replace(target.toString());
+      return () => { active = false; };
+    }
 
     void (async () => {
       const identity = identityRevision.current;
       const usage = usageRevision.current;
+      let returnedAccount: AccountSummary | null = null;
       try {
         const response = await fetch("/api/account", { cache: "no-store" });
         if (response.ok && active) {
           const nextAccount = (await response.json()) as AccountSummary;
+          returnedAccount = nextAccount;
           setAccount((current) => ({
             authenticated: identityRevision.current === identity ? nextAccount.authenticated : current.authenticated,
             email: identityRevision.current === identity ? nextAccount.email : current.email,
@@ -205,9 +237,18 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
       if (restoredScene !== null) setScene(restoredScene);
 
       if (authReturn) {
+        sessionStorage.removeItem("doodle:return");
+        removeQuery("auth");
+        if (savedReturn?.intent === "account") {
+          const signedIn = authReturn === "success" && returnedAccount?.authenticated;
+          setSignInOnly(!signedIn);
+          setPurchaseError(signedIn ? null : copy.auth.authError);
+          setIsPurchaseOpen(!signedIn);
+          return;
+        }
+        setSignInOnly(false);
         setPurchaseError(authReturn === "success" ? null : copy.auth.authError);
         setIsPurchaseOpen(true);
-        removeQuery("auth");
         return;
       }
 
