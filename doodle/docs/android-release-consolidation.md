@@ -20,10 +20,10 @@ native projects, native build directories, package installations, and local
 APK, AAB, and TGZ artifacts. Public web assets and Next.js routes remain
 outside those exclusions.
 
-The current `mobile/android/app/src/main/res/values/strings.xml` contains an
-older `expo_runtime_version` value of `0.1.0`. This file is generated native
-output, not the app-version source: `mobile/app.config.ts` declares version
-`0.1.1` and uses the `appVersion` runtime policy. Do not hand-edit this
+The current `mobile/android/app/src/main/res/values/strings.xml` contains
+`expo_runtime_version` value `0.1.1`, matching the app-version source:
+`mobile/app.config.ts` declares version `0.1.1` and uses the `appVersion`
+runtime policy. This file is generated native output. Do not hand-edit this
 generated value. Before the next native build, run
 `npx expo prebuild --clean --no-install --platform android` from `mobile/`
 after reviewing the generated diff. This regenerates the Android project from
