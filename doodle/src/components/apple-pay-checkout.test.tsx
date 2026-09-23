@@ -1,0 +1,69 @@
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { useEffect } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { ApplePayCheckout } from "./apple-pay-checkout";
+
+const stripe = vi.hoisted(() => ({
+  confirm: vi.fn(),
+}));
+
+vi.mock("@stripe/stripe-js", () => ({
+  loadStripe: vi.fn(() => Promise.resolve({})),
+}));
+
+vi.mock("@stripe/react-stripe-js/checkout", () => ({
+  CheckoutElementsProvider: ({ children }: { children: React.ReactNode }) => <div data-testid="checkout-provider">{children}</div>,
+  useCheckoutElements: () => ({ type: "success", checkout: { confirm: stripe.confirm } }),
+  ExpressCheckoutElement: (props: {
+    onAvailablePaymentMethodsChange?: (event: { paymentMethods: { applePay: { available: boolean } } }) => void;
+    onConfirm: (event: { expressPaymentType: "apple_pay"; paymentFailed: ReturnType<typeof vi.fn> }) => void;
+  }) => {
+    useEffect(() => {
+      props.onAvailablePaymentMethodsChange?.({ paymentMethods: { applePay: { available: true } } });
+    }, [props]);
+    return <button type="button" data-testid="apple-pay-button" onClick={() => props.onConfirm({ expressPaymentType: "apple_pay", paymentFailed: vi.fn() })}>Buy with Apple Pay</button>;
+  },
+}));
+
+const json = (body: unknown, init?: ResponseInit) => new Response(JSON.stringify(body), { headers: { "Content-Type": "application/json" }, ...init });
+
+describe("ApplePayCheckout", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.stubEnv("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY", "pk_test_doodle");
+    stripe.confirm.mockReset();
+  });
+
+  it("creates a session and completes through Checkout confirmation", async () => {
+    stripe.confirm.mockResolvedValue({ type: "success", session: { id: "cs_direct" } });
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(json({ clientSecret: "cs_secret" }));
+    const onComplete = vi.fn();
+    const onBusyChange = vi.fn();
+    render(<ApplePayCheckout locale="en" ariaLabel="Pay with Apple Pay" unavailableMessage="Checkout unavailable" onComplete={onComplete} onError={vi.fn()} onBusyChange={onBusyChange} />);
+
+    const button = await screen.findByTestId("apple-pay-button");
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith("/api/checkout/elements", expect.objectContaining({ method: "POST" })));
+    fireEvent.click(button);
+
+    await waitFor(() => expect(stripe.confirm).toHaveBeenCalledWith(expect.objectContaining({
+      redirect: "if_required",
+      expressCheckoutConfirmEvent: expect.objectContaining({ expressPaymentType: "apple_pay" }),
+    })));
+    expect(onComplete).toHaveBeenCalledWith("cs_direct");
+    expect(onBusyChange).toHaveBeenCalledWith(true);
+    expect(onBusyChange).toHaveBeenLastCalledWith(false);
+  });
+
+  it("reports an immediate Stripe confirmation error to the wallet and caller", async () => {
+    stripe.confirm.mockResolvedValue({ type: "error", error: { message: "Payment failed" } });
+    const onError = vi.fn();
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(json({ clientSecret: "cs_secret" }));
+    render(<ApplePayCheckout locale="en" ariaLabel="Pay with Apple Pay" unavailableMessage="Checkout unavailable" onComplete={vi.fn()} onError={onError} onBusyChange={vi.fn()} />);
+
+    const button = await screen.findByTestId("apple-pay-button");
+    fireEvent.click(button);
+
+    await waitFor(() => expect(onError).toHaveBeenCalledWith("Payment failed"));
+    expect(stripe.confirm).toHaveBeenCalled();
+  });
+});

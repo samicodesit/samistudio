@@ -20,14 +20,30 @@ function stripeLocale(locale: Locale): Stripe.Checkout.SessionCreateParams.Local
   return locale;
 }
 
-export function createPackCheckout({ userId, email, locale, origin }: CheckoutInput) {
+function createPackSession({ userId, email, locale, origin }: CheckoutInput, presentation: "hosted" | "elements") {
   const path = localePath(locale);
-  return getStripe().checkout.sessions.create({
+  const common = {
     mode: "payment",
     line_items: [{ price: required("STRIPE_DOODLE_PRICE_ID"), quantity: 1 }],
     automatic_tax: { enabled: true },
     adaptive_pricing: { enabled: false },
     allow_promotion_codes: true,
+    client_reference_id: userId,
+    customer_email: email ?? undefined,
+    metadata: { userId, pack: PACK },
+    locale: stripeLocale(locale),
+  } satisfies Pick<Stripe.Checkout.SessionCreateParams, "mode" | "line_items" | "automatic_tax" | "adaptive_pricing" | "allow_promotion_codes" | "client_reference_id" | "customer_email" | "metadata" | "locale">;
+
+  if (presentation === "elements") {
+    return getStripe().checkout.sessions.create({
+      ...common,
+      ui_mode: "elements",
+      return_url: `${origin}${path}?checkout={CHECKOUT_SESSION_ID}`,
+    });
+  }
+
+  return getStripe().checkout.sessions.create({
+    ...common,
     branding_settings: {
       display_name: "Doodle",
       background_color: "#fcfcf8",
@@ -36,13 +52,17 @@ export function createPackCheckout({ userId, email, locale, origin }: CheckoutIn
       font_family: "inter",
       icon: { type: "url", url: `${origin}/references/doodle-reference-kiss.png` },
     },
-    client_reference_id: userId,
-    customer_email: email ?? undefined,
-    metadata: { userId, pack: PACK },
-    locale: stripeLocale(locale),
     success_url: `${origin}${path}?checkout={CHECKOUT_SESSION_ID}`,
     cancel_url: `${origin}${path}?checkout=cancelled`,
   });
+}
+
+export function createPackCheckout(input: CheckoutInput) {
+  return createPackSession(input, "hosted");
+}
+
+export function createPackElementsCheckout(input: CheckoutInput) {
+  return createPackSession(input, "elements");
 }
 
 export async function fulfillCheckout(sessionId: string, expectedUserId?: string): Promise<number> {

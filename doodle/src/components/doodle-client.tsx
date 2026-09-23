@@ -438,6 +438,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
           errorMessage={purchaseError}
           confirmationBusy={checkoutConfirming}
           onRetryConfirmation={checkoutRetry ? () => void confirmCheckout(checkoutRetry) : undefined}
+          onExpressCheckoutComplete={confirmCheckout}
           onRestoreFocus={restoreCreateFocus}
           onClose={closePurchase}
           onAccountChange={replaceAccount}

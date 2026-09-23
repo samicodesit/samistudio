@@ -63,7 +63,12 @@ describe("internationalization", () => {
     expect(formatCount("ar", templates, 3)).toBe("تبقّت لك 3 رسومات مجانية");
     expect(formatCount("ar", templates, 11)).toBe("تبقّت لك 11 رسمة مجانية");
     expect(formatCount("ar", templates, 100)).toBe("تبقّت لك 100 رسمة مجانية");
-    expect(stringValues(getCopy("ar")).join(" ").replaceAll("Doodle", "")).not.toMatch(/[A-Za-z]/);
+    expect(
+      stringValues(getCopy("ar"))
+        .join(" ")
+        .replaceAll("Doodle", "")
+        .replaceAll("Apple Pay", ""),
+    ).not.toMatch(/[A-Za-z]/);
   });
 
   it("builds self-canonical localized metadata with reciprocal alternatives", () => {

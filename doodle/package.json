@@ -18,6 +18,8 @@
     "eval:prompt": "node --env-file=.env.local --import tsx scripts/evaluate-prompt.mts"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^6.11.0",
+    "@stripe/stripe-js": "^9.17.0",
     "@vercel/analytics": "^2.0.1",
     "botid": "^1.5.11",
     "google-auth-library": "^11.0.2",

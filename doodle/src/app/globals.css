@@ -1131,6 +1131,18 @@ dialog:focus-visible {
   font-size: 12px;
 }
 
+.purchase-apple-pay {
+  margin-top: 20px;
+}
+
+.purchase-apple-pay[hidden] {
+  display: none;
+}
+
+.purchase-apple-pay + .purchase-actions {
+  margin-top: 12px;
+}
+
 .purchase-error {
   margin: 12px 0 0;
   color: var(--coral);

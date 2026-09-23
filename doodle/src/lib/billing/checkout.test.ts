@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createPackCheckout, fulfillCheckout } from "./checkout";
+import { createPackCheckout, createPackElementsCheckout, fulfillCheckout } from "./checkout";
 
 vi.mock("server-only", () => ({}));
 
@@ -78,6 +78,29 @@ describe("fixed credit pack checkout", () => {
 
     expect(mocks.create).toHaveBeenNthCalledWith(1, expect.objectContaining({ locale: "pt-BR" }));
     expect(mocks.create).toHaveBeenNthCalledWith(2, expect.objectContaining({ locale: "auto" }));
+  });
+
+  it("creates an Elements session with the same pack, tax, and promotion settings", async () => {
+    await createPackElementsCheckout({
+      userId: "user",
+      email: "buyer@example.com",
+      locale: "de",
+      origin: "https://doodle.test",
+    });
+
+    expect(mocks.create).toHaveBeenCalledWith({
+      mode: "payment",
+      line_items: [{ price: "price_doodle", quantity: 1 }],
+      automatic_tax: { enabled: true },
+      adaptive_pricing: { enabled: false },
+      allow_promotion_codes: true,
+      client_reference_id: "user",
+      customer_email: "buyer@example.com",
+      metadata: { userId: "user", pack: "doodle_10" },
+      locale: "de",
+      ui_mode: "elements",
+      return_url: "https://doodle.test/de?checkout={CHECKOUT_SESSION_ID}",
+    });
   });
 
   it("fulfills one paid matching pack", async () => {

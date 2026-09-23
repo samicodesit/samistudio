@@ -8,6 +8,7 @@ const play = vi.hoisted(() => ({ isPlayRuntime: vi.fn(() => false), preparePlayP
 vi.mock("@/lib/billing/play-client", () => play);
 
 vi.mock("./google-sign-in-button", () => ({ GoogleSignInButton: ({ onCredential }: { onCredential(token: string): void }) => <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button> }));
+vi.mock("./apple-pay-checkout", () => ({ ApplePayCheckout: ({ ariaLabel, onComplete }: { ariaLabel: string; onComplete(sessionId: string): void }) => <button type="button" aria-label={ariaLabel} onClick={() => onComplete("cs_direct")}>Pay with Apple Pay</button> }));
 
 const anonymous: AccountSummary = { authenticated: false, email: null, balance: 0, freeRemaining: 0 };
 const signedIn: AccountSummary = { authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: null };
@@ -20,9 +21,9 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
-function renderDialog(account = anonymous, signInOnly = false) {
+function renderDialog(account = anonymous, signInOnly = false, onExpressCheckoutComplete?: (sessionId: string) => void) {
   const onClose = vi.fn(); const onAccountChange = vi.fn();
-  render(<PurchaseDialog open account={account} scene="A cat" locale="en" copy={copy} success={false} onClose={onClose} onAccountChange={onAccountChange} signInOnly={signInOnly} />);
+  render(<PurchaseDialog open account={account} scene="A cat" locale="en" copy={copy} success={false} onClose={onClose} onAccountChange={onAccountChange} onExpressCheckoutComplete={onExpressCheckoutComplete} signInOnly={signInOnly} />);
   return { onClose, onAccountChange };
 }
 
@@ -35,6 +36,16 @@ describe("PurchaseDialog", () => {
     expect(screen.getByText("€4.99")).toBeVisible();
     expect(screen.getByText("One payment. No subscription.")).toBeVisible();
     expect(screen.queryByText(/discount|per month/i)).not.toBeInTheDocument();
+  });
+
+  it("keeps the hosted Checkout action alongside Apple Pay", () => {
+    const onComplete = vi.fn();
+    renderDialog(signedIn, false, onComplete);
+
+    expect(screen.getByRole("button", { name: copy.purchase.buy })).toBeVisible();
+    expect(screen.getByRole("button", { name: copy.purchase.applePay })).toBeVisible();
+    fireEvent.click(screen.getByRole("button", { name: copy.purchase.applePay }));
+    expect(onComplete).toHaveBeenCalledWith("cs_direct");
   });
 
   it("shows that Checkout is opening while the request is pending", async () => {
