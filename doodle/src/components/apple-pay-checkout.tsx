@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
 import type { StripeExpressCheckoutElementConfirmEvent } from "@stripe/stripe-js";
 import {
@@ -39,9 +39,72 @@ function reportDiagnostic(event: ApplePayDiagnosticEvent) {
   }
 }
 
+const MIN_RENDERED_WALLET_HEIGHT = 32;
+
+function inlinePixelValue(value: string) {
+  const match = /^(\d+(?:\.\d+)?)px$/.exec(value.trim());
+  return match ? Number(match[1]) : 0;
+}
+
+function hasRenderedWalletButton(container: HTMLDivElement) {
+  const frame = container.querySelector<HTMLIFrameElement>(
+    'iframe[src*="elements-inner-"][allow*="payment"]',
+  );
+  if (!frame) return false;
+
+  const rect = frame.getBoundingClientRect();
+  const height = Math.max(rect.height, inlinePixelValue(frame.style.height));
+  const width = Math.max(rect.width, inlinePixelValue(frame.style.width));
+
+  // Stripe's no-wallet frame is 8px high in the browser. Doodle configures a
+  // 48px button, so this gap only reveals a frame that has rendered a control.
+  return height >= MIN_RENDERED_WALLET_HEIGHT && width > 0;
+}
+
 function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, onBusyChange }: Omit<ApplePayCheckoutProps, "locale">) {
   const checkoutState = useCheckoutElements();
   const [availability, setAvailability] = useState<"pending" | "available" | "unavailable">("pending");
+  const walletRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (availability !== "pending") return;
+    const container = walletRef.current;
+    if (!container) return;
+
+    let frame: HTMLIFrameElement | null = null;
+    let frameObserver: ResizeObserver | null = null;
+
+    const checkRenderedWallet = () => {
+      const nextFrame = container.querySelector<HTMLIFrameElement>(
+        'iframe[src*="elements-inner-"][allow*="payment"]',
+      );
+      if (nextFrame !== frame) {
+        frameObserver?.disconnect();
+        frame = nextFrame;
+        if (frame && typeof ResizeObserver !== "undefined") {
+          frameObserver = new ResizeObserver(checkRenderedWallet);
+          frameObserver.observe(frame);
+        }
+      }
+      if (hasRenderedWalletButton(container)) setAvailability("available");
+    };
+
+    const mutationObserver = typeof MutationObserver !== "undefined"
+      ? new MutationObserver(checkRenderedWallet)
+      : null;
+    mutationObserver?.observe(container, {
+      attributes: true,
+      attributeFilter: ["style"],
+      childList: true,
+      subtree: true,
+    });
+    checkRenderedWallet();
+
+    return () => {
+      mutationObserver?.disconnect();
+      frameObserver?.disconnect();
+    };
+  }, [availability]);
 
   useEffect(() => {
     if (checkoutState.type === "loading") return;
@@ -75,7 +138,7 @@ function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, on
   };
 
   return (
-    <div className={`purchase-apple-pay purchase-apple-pay-${availability}`} aria-label={ariaLabel} aria-hidden={availability !== "available"} data-wallet-state={availability}>
+    <div ref={walletRef} className={`purchase-apple-pay purchase-apple-pay-${availability}`} aria-label={ariaLabel} aria-hidden={availability !== "available"} data-wallet-state={availability}>
       <ExpressCheckoutElement
         options={{
           buttonHeight: 48,
