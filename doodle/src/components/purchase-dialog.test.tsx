@@ -8,7 +8,11 @@ const play = vi.hoisted(() => ({ isPlayRuntime: vi.fn(() => false), preparePlayP
 vi.mock("@/lib/billing/play-client", () => play);
 
 vi.mock("./google-sign-in-button", () => ({ GoogleSignInButton: ({ onCredential }: { onCredential(token: string): void }) => <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button> }));
-vi.mock("./apple-pay-checkout", () => ({ ApplePayCheckout: ({ ariaLabel, onComplete }: { ariaLabel: string; onComplete(sessionId: string): void }) => <button type="button" aria-label={ariaLabel} onClick={() => onComplete("cs_direct")}>Pay with Apple Pay</button> }));
+const applePay = vi.hoisted(() => ({ mountDialogOpen: [] as boolean[] }));
+vi.mock("./apple-pay-checkout", () => ({ ApplePayCheckout: ({ ariaLabel, onComplete }: { ariaLabel: string; onComplete(sessionId: string): void }) => {
+  applePay.mountDialogOpen.push(document.querySelector("dialog")?.open ?? false);
+  return <button type="button" aria-label={ariaLabel} onClick={() => onComplete("cs_direct")}>Pay with Apple Pay</button>;
+} }));
 
 const anonymous: AccountSummary = { authenticated: false, email: null, balance: 0, freeRemaining: 0 };
 const signedIn: AccountSummary = { authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: null };
@@ -28,7 +32,7 @@ function renderDialog(account = anonymous, signInOnly = false, onExpressCheckout
 }
 
 describe("PurchaseDialog", () => {
-  beforeEach(() => { sessionStorage.clear(); vi.stubGlobal("location", { assign: vi.fn() }); play.isPlayRuntime.mockReturnValue(false); });
+  beforeEach(() => { sessionStorage.clear(); vi.stubGlobal("location", { assign: vi.fn() }); play.isPlayRuntime.mockReturnValue(false); applePay.mountDialogOpen.length = 0; });
 
   it("shows one honest fixed offer", () => {
     renderDialog();
@@ -46,6 +50,25 @@ describe("PurchaseDialog", () => {
     expect(screen.getByRole("button", { name: copy.purchase.applePay })).toBeVisible();
     fireEvent.click(screen.getByRole("button", { name: copy.purchase.applePay }));
     expect(onComplete).toHaveBeenCalledWith("cs_direct");
+  });
+
+  it("mounts Apple Pay only after the native purchase dialog is open", () => {
+    renderDialog(signedIn, false, vi.fn());
+
+    expect(applePay.mountDialogOpen[0]).toBe(true);
+  });
+
+  it("remounts Apple Pay after the purchase dialog is closed and reopened", () => {
+    const onClose = vi.fn();
+    const props = { account: signedIn, scene: "A cat", locale: "en" as const, copy, success: false, onClose, onAccountChange: vi.fn(), onExpressCheckoutComplete: vi.fn() };
+    const { rerender } = render(<PurchaseDialog open {...props} />);
+
+    expect(applePay.mountDialogOpen).toEqual([true]);
+    rerender(<PurchaseDialog open={false} {...props} />);
+    expect(screen.queryByRole("button", { name: copy.purchase.applePay })).not.toBeInTheDocument();
+    rerender(<PurchaseDialog open {...props} />);
+
+    expect(applePay.mountDialogOpen).toEqual([true, true]);
   });
 
   it("shows that Checkout is opening while the request is pending", async () => {
