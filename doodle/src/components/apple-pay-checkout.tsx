@@ -92,7 +92,8 @@ export function ApplePayCheckout({ locale, ariaLabel, unavailableMessage, onComp
         if (active) setClientSecret(body.clientSecret);
       })
       .catch(() => {
-        if (active) onError(unavailableMessage);
+        // Keep the hosted Checkout action usable when the wallet session cannot initialize.
+        // Confirmation failures still surface through onError below.
       });
     return () => { active = false; };
   }, [locale, onError, stripePromise, unavailableMessage]);

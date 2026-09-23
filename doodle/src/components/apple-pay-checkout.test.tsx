@@ -66,4 +66,14 @@ describe("ApplePayCheckout", () => {
     await waitFor(() => expect(onError).toHaveBeenCalledWith("Payment failed"));
     expect(stripe.confirm).toHaveBeenCalled();
   });
+
+  it("keeps the hosted fallback clean when the wallet session cannot initialize", async () => {
+    const onError = vi.fn();
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(json({ error: "billing_unavailable" }, { status: 503 }));
+    render(<ApplePayCheckout locale="en" ariaLabel="Pay with Apple Pay" unavailableMessage="Checkout unavailable" onComplete={vi.fn()} onError={onError} onBusyChange={vi.fn()} />);
+
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalledWith("/api/checkout/elements", expect.objectContaining({ method: "POST" })));
+    expect(onError).not.toHaveBeenCalled();
+    expect(screen.queryByTestId("apple-pay-button")).not.toBeInTheDocument();
+  });
 });
