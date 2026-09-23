@@ -46,21 +46,10 @@ function inlinePixelValue(value: string) {
   return match ? Number(match[1]) : 0;
 }
 
-function findStripePaymentFrame(container: HTMLDivElement) {
-  return Array.from(container.querySelectorAll<HTMLIFrameElement>("iframe")).find((frame) => {
-    const src = frame.getAttribute("src");
-    const allow = frame.getAttribute("allow");
-    if (!src || !src.includes("elements-inner-") || !allow?.includes("payment")) return false;
-    try {
-      return new URL(src, "https://doodle.samistudio.nl").origin === "https://js.stripe.com";
-    } catch {
-      return false;
-    }
-  }) ?? null;
-}
-
 function hasRenderedWalletButton(container: HTMLDivElement) {
-  const frame = findStripePaymentFrame(container);
+  const frame = container.querySelector<HTMLIFrameElement>(
+    'iframe[src*="elements-inner-"][allow*="payment"]',
+  );
   if (!frame) return false;
 
   const rect = frame.getBoundingClientRect();
@@ -86,7 +75,9 @@ function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, on
     let frameObserver: ResizeObserver | null = null;
 
     const checkRenderedWallet = () => {
-      const nextFrame = findStripePaymentFrame(container);
+      const nextFrame = container.querySelector<HTMLIFrameElement>(
+        'iframe[src*="elements-inner-"][allow*="payment"]',
+      );
       if (nextFrame !== frame) {
         frameObserver?.disconnect();
         frame = nextFrame;
