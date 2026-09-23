@@ -229,6 +229,19 @@ test.describe("Task 7 purchase and account QA", () => {
     expect(response?.headers()["cross-origin-opener-policy"]).toBe("same-origin-allow-popups");
   });
 
+  test("delegates Payment Request to Stripe's embedded checkout", async ({ page }) => {
+    const response = await page.goto("/");
+
+    expect(response?.headers()["permissions-policy"]).toContain('payment=(self "https://js.stripe.com")');
+    const stripePaymentAllowed = await page.evaluate(() => {
+      const featurePolicy = (document as Document & {
+        featurePolicy?: { allowsFeature: (feature: string, origin?: string) => boolean };
+      }).featurePolicy;
+      return featurePolicy?.allowsFeature("payment", "https://js.stripe.com") ?? false;
+    });
+    expect(stripePaymentAllowed).toBe(true);
+  });
+
   test("keeps the reduced-motion offer and auth sheet contained at launch sizes", async ({ page }, testInfo) => {
     await page.route("**/api/account", (route) => route.fulfill({
       status: 200,
