@@ -7,6 +7,7 @@ const stripe = vi.hoisted(() => ({
 }));
 const ece = vi.hoisted(() => ({
   frameHeight: 0,
+  frameSrc: "https://js.stripe.com/v3/elements-inner-accessory-target.html",
 }));
 
 vi.mock("@stripe/stripe-js", () => ({
@@ -22,7 +23,7 @@ vi.mock("@stripe/react-stripe-js/checkout", () => ({
     onLoadError?: (event: { error: Error }) => void;
     onConfirm: (event: { expressPaymentType: "apple_pay"; paymentFailed: ReturnType<typeof vi.fn> }) => void;
   }) => {
-    return <><iframe title="Secure payment input frame" src="https://js.stripe.com/v3/elements-inner-accessory-target.html" allow="payment *" style={{ height: `${ece.frameHeight}px`, width: "320px" }} /><button type="button" data-testid="apple-pay-button" onClick={() => props.onConfirm({ expressPaymentType: "apple_pay", paymentFailed: vi.fn() })}>Buy with Apple Pay</button><button type="button" data-testid="apple-pay-ready-available" onClick={() => props.onReady?.({ availablePaymentMethods: { applePay: true } })}>Mark wallet ready</button><button type="button" data-testid="apple-pay-ready-none" onClick={() => props.onReady?.({})}>Mark wallet unavailable</button><button type="button" data-testid="apple-pay-available" onClick={() => props.onAvailablePaymentMethodsChange?.({ paymentMethods: { applePay: { available: true } } })}>Mark wallet available</button><button type="button" data-testid="apple-pay-load-error" onClick={() => props.onLoadError?.({ error: new Error("wallet unavailable") })}>Trigger load error</button></>;
+    return <><iframe title="Secure payment input frame" src={ece.frameSrc} allow="payment *" style={{ height: `${ece.frameHeight}px`, width: "320px" }} /><button type="button" data-testid="apple-pay-button" onClick={() => props.onConfirm({ expressPaymentType: "apple_pay", paymentFailed: vi.fn() })}>Buy with Apple Pay</button><button type="button" data-testid="apple-pay-ready-available" onClick={() => props.onReady?.({ availablePaymentMethods: { applePay: true } })}>Mark wallet ready</button><button type="button" data-testid="apple-pay-ready-none" onClick={() => props.onReady?.({})}>Mark wallet unavailable</button><button type="button" data-testid="apple-pay-available" onClick={() => props.onAvailablePaymentMethodsChange?.({ paymentMethods: { applePay: { available: true } } })}>Mark wallet available</button><button type="button" data-testid="apple-pay-load-error" onClick={() => props.onLoadError?.({ error: new Error("wallet unavailable") })}>Trigger load error</button></>;
   },
 }));
 
@@ -36,6 +37,7 @@ describe("ApplePayCheckout", () => {
     vi.stubEnv("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY", "pk_test_doodle");
     stripe.confirm.mockReset();
     ece.frameHeight = 0;
+    ece.frameSrc = "https://js.stripe.com/v3/elements-inner-accessory-target.html";
   });
 
   it("creates a session and completes through Checkout confirmation", async () => {
@@ -105,6 +107,16 @@ describe("ApplePayCheckout", () => {
     expect(button.parentElement).toHaveAttribute("data-wallet-state", "pending");
     screen.getByTitle("Secure payment input frame").setAttribute("style", "height: 48px; width: 320px;");
     await waitFor(() => expect(button.parentElement).toHaveAttribute("data-wallet-state", "available"));
+  });
+
+  it("does not reveal a same-sized iframe from another origin", async () => {
+    ece.frameHeight = 48;
+    ece.frameSrc = "https://example.com/v3/elements-inner-accessory-target.html";
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(json({ clientSecret: "cs_secret" }));
+    render(<ApplePayCheckout locale="en" ariaLabel="Pay with Apple Pay" unavailableMessage="Checkout unavailable" onComplete={vi.fn()} onError={vi.fn()} onBusyChange={vi.fn()} />);
+
+    const button = await screen.findByTestId("apple-pay-button");
+    await waitFor(() => expect(button.parentElement).toHaveAttribute("data-wallet-state", "pending"));
   });
 
   it("collapses an empty ready event and can reveal Apple Pay on a later change", async () => {
