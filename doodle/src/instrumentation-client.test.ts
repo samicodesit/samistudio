@@ -12,6 +12,7 @@ describe("BotID client instrumentation", () => {
       protect: [
         { path: "/api/generate", method: "POST" },
         { path: "/api/checkout", method: "POST" },
+        { path: "/api/checkout/elements", method: "POST" },
       ],
     });
   });
