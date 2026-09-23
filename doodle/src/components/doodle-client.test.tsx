@@ -97,7 +97,8 @@ describe("DoodleClient", () => {
     await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
     expect(screen.getByRole("dialog")).toBeVisible();
     expect(screen.getByText("buyer@example.com")).not.toBeVisible();
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledWith("/api/account", { cache: "no-store" });
+    expect(vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/account")).toHaveLength(1);
     await user.click(screen.getByRole("button", { name: "Not now" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(screen.getByText("7 doodles left", { selector: ".usage-copy" })).toBeVisible();

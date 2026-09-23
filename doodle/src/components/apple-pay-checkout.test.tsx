@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApplePayCheckout } from "./apple-pay-checkout";
 
 const stripe = vi.hoisted(() => ({
@@ -26,6 +26,8 @@ vi.mock("@stripe/react-stripe-js/checkout", () => ({
 const json = (body: unknown, init?: ResponseInit) => new Response(JSON.stringify(body), { headers: { "Content-Type": "application/json" }, ...init });
 
 describe("ApplePayCheckout", () => {
+  afterEach(() => vi.unstubAllEnvs());
+
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.stubEnv("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY", "pk_test_doodle");
@@ -112,5 +114,28 @@ describe("ApplePayCheckout", () => {
 
     expect(screen.getByTestId("apple-pay-load-error").parentElement).toHaveAttribute("data-wallet-state", "unavailable");
     expect(onError).not.toHaveBeenCalled();
+  });
+
+  it("reports the sanitized Stripe lifecycle and wallet availability events", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(json({ clientSecret: "cs_secret" }));
+    render(<ApplePayCheckout locale="en" ariaLabel="Pay with Apple Pay" unavailableMessage="Checkout unavailable" onComplete={vi.fn()} onError={vi.fn()} onBusyChange={vi.fn()} />);
+
+    const button = await screen.findByTestId("apple-pay-button");
+    fireEvent.click(screen.getByTestId("apple-pay-ready-none"));
+    fireEvent.click(screen.getByTestId("apple-pay-available"));
+
+    await waitFor(() => {
+      const diagnosticBodies = fetchMock.mock.calls
+        .filter(([url]) => url === "/api/checkout/diagnostic")
+        .map(([, init]) => JSON.parse(String((init as RequestInit).body)) as unknown);
+      expect(diagnosticBodies).toEqual(expect.arrayContaining([
+        { stage: "stripe_init", outcome: "success", reason: "loaded" },
+        { stage: "provider", outcome: "success", reason: "ready" },
+        { stage: "session_init", outcome: "success", status: "ok" },
+        { stage: "express_ready", applePay: "missing" },
+        { stage: "availability_change", applePay: "available" },
+      ]));
+    });
+    expect(button.parentElement).toHaveAttribute("data-wallet-state", "available");
   });
 });
