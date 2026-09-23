@@ -19,6 +19,13 @@ interface GoogleSignInButtonProps {
   redirect?: boolean;
 }
 
+export function isIosBrowser() {
+  if (typeof navigator === "undefined") return false;
+  const userAgent = navigator.userAgent;
+  return /iPad|iPhone|iPod/.test(userAgent) ||
+    (navigator.maxTouchPoints > 1 && (navigator.platform === "MacIntel" || /Macintosh/.test(userAgent)));
+}
+
 function isVisible(element: Element) {
   const box = element.getBoundingClientRect();
   return box.width > 0 && box.height > 0;

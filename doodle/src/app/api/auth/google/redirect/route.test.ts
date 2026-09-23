@@ -39,7 +39,7 @@ describe("Google redirect auth route", () => {
     const response = await POST(request({ credential: "google-token", g_csrf_token: "csrf-token" }, "g_csrf_token=csrf-token"));
 
     expect(response.status).toBe(303);
-    expect(locationOf(response)).toBe("https://doodle.test/?auth=success");
+    expect(locationOf(response)).toBe("https://doodle.samistudio.nl/?auth=success");
     expect(response.headers.get("cache-control")).toBe("no-store");
     expect(mocks.verifyGoogleCredential).toHaveBeenCalledWith("google-token");
     expect(mocks.setSessionCookie).toHaveBeenCalledWith(response, {
@@ -54,7 +54,7 @@ describe("Google redirect auth route", () => {
     const response = await POST(request({ credential: "google-token", g_csrf_token: "wrong-token" }, "g_csrf_token=csrf-token"));
 
     expect(response.status).toBe(303);
-    expect(locationOf(response)).toBe("https://doodle.test/?auth=error");
+    expect(locationOf(response)).toBe("https://doodle.samistudio.nl/?auth=error");
     expect(mocks.verifyGoogleCredential).not.toHaveBeenCalled();
     expect(mocks.setSessionCookie).not.toHaveBeenCalled();
   });
@@ -65,7 +65,7 @@ describe("Google redirect auth route", () => {
     const response = await POST(request({ credential: "google-token", g_csrf_token: "csrf-token" }, "g_csrf_token=csrf-token"));
 
     expect(response.status).toBe(303);
-    expect(locationOf(response)).toBe("https://doodle.test/?auth=error");
+    expect(locationOf(response)).toBe("https://doodle.samistudio.nl/?auth=error");
     expect(locationOf(response)).not.toContain("google-token");
     expect(mocks.setSessionCookie).not.toHaveBeenCalled();
   });
@@ -73,12 +73,12 @@ describe("Google redirect auth route", () => {
   it("redirects malformed forms and account failures as controlled auth errors", async () => {
     const malformed = await POST(request({ g_csrf_token: "csrf-token" }, "g_csrf_token=csrf-token"));
     expect(malformed.status).toBe(303);
-    expect(locationOf(malformed)).toBe("https://doodle.test/?auth=error");
+    expect(locationOf(malformed)).toBe("https://doodle.samistudio.nl/?auth=error");
 
     mocks.verifyGoogleCredential.mockResolvedValue({ sub: "google-sub", email: "buyer@example.com" });
     mocks.createOrGetGoogleAccount.mockRejectedValue(new Error("Redis unavailable"));
     const unavailable = await POST(request({ credential: "google-token", g_csrf_token: "csrf-token" }, "g_csrf_token=csrf-token"));
     expect(unavailable.status).toBe(303);
-    expect(locationOf(unavailable)).toBe("https://doodle.test/?auth=error");
+    expect(locationOf(unavailable)).toBe("https://doodle.samistudio.nl/?auth=error");
   });
 });

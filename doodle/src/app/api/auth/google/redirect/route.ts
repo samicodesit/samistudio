@@ -5,9 +5,10 @@ import { setSessionCookie } from "@/lib/auth/session";
 import { NextRequest, NextResponse } from "next/server";
 
 const CSRF_TOKEN_MAX_LENGTH = 1024;
+const CANONICAL_SITE_URL = "https://doodle.samistudio.nl";
 
-function redirectWithAuthResult(request: NextRequest, result: "success" | "error") {
-  const target = new URL("/", request.url);
+function redirectWithAuthResult(result: "success" | "error") {
+  const target = new URL("/", CANONICAL_SITE_URL);
   target.searchParams.set("auth", result);
   const response = NextResponse.redirect(target, 303);
   response.headers.set("Cache-Control", "no-store");
@@ -26,30 +27,30 @@ export async function POST(request: NextRequest) {
   try {
     form = await request.formData();
   } catch {
-    return redirectWithAuthResult(request, "error");
+    return redirectWithAuthResult("error");
   }
 
   const csrfToken = form.get("g_csrf_token");
   const credential = form.get("credential");
   const cookieToken = request.cookies.get("g_csrf_token")?.value;
   if (typeof csrfToken !== "string" || !matchesCsrfToken(csrfToken, cookieToken)) {
-    return redirectWithAuthResult(request, "error");
+    return redirectWithAuthResult("error");
   }
-  if (typeof credential !== "string") return redirectWithAuthResult(request, "error");
+  if (typeof credential !== "string") return redirectWithAuthResult("error");
 
   let google: { sub: string; email: string };
   try {
     google = await verifyGoogleCredential(credential);
   } catch {
-    return redirectWithAuthResult(request, "error");
+    return redirectWithAuthResult("error");
   }
 
   try {
     const account = await createOrGetGoogleAccount(google.sub);
-    const response = redirectWithAuthResult(request, "success");
+    const response = redirectWithAuthResult("success");
     setSessionCookie(response, { ...account, email: google.email });
     return response;
   } catch {
-    return redirectWithAuthResult(request, "error");
+    return redirectWithAuthResult("error");
   }
 }

@@ -1,8 +1,28 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { GoogleSignInButton } from "./google-sign-in-button";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { GoogleSignInButton, isIosBrowser } from "./google-sign-in-button";
 
 vi.mock("next/script", () => ({ default: () => null }));
+
+describe("iOS Google sign-in detection", () => {
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("recognizes iPhone and iPad desktop user agents", () => {
+    vi.stubGlobal("navigator", { userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X)", platform: "iPhone", maxTouchPoints: 5 });
+    expect(isIosBrowser()).toBe(true);
+
+    vi.stubGlobal("navigator", { userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)", platform: "MacIntel", maxTouchPoints: 5 });
+    expect(isIosBrowser()).toBe(true);
+  });
+
+  it("does not classify a desktop browser as iOS", () => {
+    vi.stubGlobal("navigator", { userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)", platform: "MacIntel", maxTouchPoints: 0 });
+    expect(isIosBrowser()).toBe(false);
+
+    vi.stubGlobal("navigator", { userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)", platform: "Win32", maxTouchPoints: 5 });
+    expect(isIosBrowser()).toBe(false);
+  });
+});
 
 const renderButton = vi.fn();
 const initialize = vi.fn();

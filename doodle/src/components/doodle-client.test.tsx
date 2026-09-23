@@ -7,7 +7,10 @@ import { DoodleClient } from "./doodle-client";
 const mocks = vi.hoisted(() => ({ track: vi.fn() }));
 
 vi.mock("@vercel/analytics", () => ({ track: mocks.track }));
-vi.mock("./google-sign-in-button", () => ({ GoogleSignInButton: ({ onCredential }: { onCredential(token: string): void }) => <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button> }));
+vi.mock("./google-sign-in-button", () => ({
+  GoogleSignInButton: ({ onCredential }: { onCredential(token: string): void }) => <button type="button" onClick={() => onCredential("google-token")}>Continue with Google</button>,
+  isIosBrowser: () => false,
+}));
 
 function renderClient(locale: Locale = "en", initialScene = "") {
   const host = document.createElement("div");
