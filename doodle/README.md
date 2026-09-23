@@ -31,4 +31,6 @@ Run `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`, and `npm r
 
 ## Stripe
 
-The product is a single €4.99 inclusive-tax payment for ten doodles; adaptive pricing and subscriptions stay off. Do not enable Stripe automatic tax in production until the Slovak VAT registration is active in Stripe Tax. Configure the webhook at `https://doodle.samistudio.nl/api/stripe/webhook` for `checkout.session.completed` and `checkout.session.async_payment_succeeded`.
+Web checkout keeps the existing fixed-price Stripe flow and sends `automatic_tax: { enabled: true }`. This describes the request made by the application. It does not confirm that a VAT or other Stripe Tax registration is active in the Stripe account; that status was not verified in this release check. Confirm the Stripe Tax setup and registration status before release. Configure the webhook at `https://doodle.samistudio.nl/api/stripe/webhook` for `checkout.session.completed` and `checkout.session.async_payment_succeeded`.
+
+Release verification: 13 billing unit tests and 3 mocked Playwright billing scenarios passed after restoring this behavior. No live Stripe Checkout Session was created, and Stripe Tax registration was not verified.
