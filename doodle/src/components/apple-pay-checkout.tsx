@@ -66,10 +66,10 @@ function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, on
           },
         }}
         onReady={({ availablePaymentMethods }) => {
-          if (availablePaymentMethods) setAvailability(availablePaymentMethods.applePay ? "available" : "unavailable");
+          setAvailability(availablePaymentMethods?.applePay === true ? "available" : "unavailable");
         }}
         onAvailablePaymentMethodsChange={({ paymentMethods }) => {
-          if (paymentMethods) setAvailability(paymentMethods.applePay?.available === true ? "available" : "unavailable");
+          setAvailability(paymentMethods?.applePay?.available === true ? "available" : "unavailable");
         }}
         onLoadError={() => setAvailability("unavailable")}
         onConfirm={handleConfirm}

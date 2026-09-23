@@ -14,11 +14,12 @@ vi.mock("@stripe/react-stripe-js/checkout", () => ({
   CheckoutElementsProvider: ({ children }: { children: React.ReactNode }) => <div data-testid="checkout-provider">{children}</div>,
   useCheckoutElements: () => ({ type: "success", checkout: { confirm: stripe.confirm } }),
   ExpressCheckoutElement: (props: {
+    onReady?: (event: { availablePaymentMethods?: { applePay: boolean } }) => void;
     onAvailablePaymentMethodsChange?: (event: { paymentMethods: { applePay: { available: boolean } } }) => void;
     onLoadError?: (event: { error: Error }) => void;
     onConfirm: (event: { expressPaymentType: "apple_pay"; paymentFailed: ReturnType<typeof vi.fn> }) => void;
   }) => {
-    return <><button type="button" data-testid="apple-pay-button" onClick={() => props.onConfirm({ expressPaymentType: "apple_pay", paymentFailed: vi.fn() })}>Buy with Apple Pay</button><button type="button" data-testid="apple-pay-available" onClick={() => props.onAvailablePaymentMethodsChange?.({ paymentMethods: { applePay: { available: true } } })}>Mark wallet available</button><button type="button" data-testid="apple-pay-load-error" onClick={() => props.onLoadError?.({ error: new Error("wallet unavailable") })}>Trigger load error</button></>;
+    return <><button type="button" data-testid="apple-pay-button" onClick={() => props.onConfirm({ expressPaymentType: "apple_pay", paymentFailed: vi.fn() })}>Buy with Apple Pay</button><button type="button" data-testid="apple-pay-ready-available" onClick={() => props.onReady?.({ availablePaymentMethods: { applePay: true } })}>Mark wallet ready</button><button type="button" data-testid="apple-pay-ready-none" onClick={() => props.onReady?.({})}>Mark wallet unavailable</button><button type="button" data-testid="apple-pay-available" onClick={() => props.onAvailablePaymentMethodsChange?.({ paymentMethods: { applePay: { available: true } } })}>Mark wallet available</button><button type="button" data-testid="apple-pay-load-error" onClick={() => props.onLoadError?.({ error: new Error("wallet unavailable") })}>Trigger load error</button></>;
   },
 }));
 
@@ -67,6 +68,28 @@ describe("ApplePayCheckout", () => {
 
     await waitFor(() => expect(onError).toHaveBeenCalledWith("Payment failed"));
     expect(stripe.confirm).toHaveBeenCalled();
+  });
+
+  it("shows Apple Pay when the ready event reports it", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(json({ clientSecret: "cs_secret" }));
+    render(<ApplePayCheckout locale="en" ariaLabel="Pay with Apple Pay" unavailableMessage="Checkout unavailable" onComplete={vi.fn()} onError={vi.fn()} onBusyChange={vi.fn()} />);
+
+    const button = await screen.findByTestId("apple-pay-button");
+    fireEvent.click(screen.getByTestId("apple-pay-ready-available"));
+
+    expect(button.parentElement).toHaveAttribute("data-wallet-state", "available");
+  });
+
+  it("collapses an empty ready event and can reveal Apple Pay on a later change", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(json({ clientSecret: "cs_secret" }));
+    render(<ApplePayCheckout locale="en" ariaLabel="Pay with Apple Pay" unavailableMessage="Checkout unavailable" onComplete={vi.fn()} onError={vi.fn()} onBusyChange={vi.fn()} />);
+
+    const button = await screen.findByTestId("apple-pay-button");
+    fireEvent.click(screen.getByTestId("apple-pay-ready-none"));
+    expect(button.parentElement).toHaveAttribute("data-wallet-state", "unavailable");
+
+    fireEvent.click(screen.getByTestId("apple-pay-available"));
+    await waitFor(() => expect(button.parentElement).toHaveAttribute("data-wallet-state", "available"));
   });
 
   it("keeps the hosted fallback clean when the wallet session cannot initialize", async () => {
