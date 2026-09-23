@@ -1,0 +1,48 @@
+name: Studio checks
+on:
+  push:
+    branches: [main, chore/sync-live-studio-20260916]
+    paths:
+      - index.html
+      - favicon.svg
+      - og-image.jpg
+      - assets/**
+      - scripts/build-studio.mjs
+      - tests/studio.test.mjs
+      - tests/og-image.test.mjs
+      - site.webmanifest
+      - vercel.json
+      - .gitignore
+      - .github/workflows/studio-checks.yml
+  pull_request:
+    branches: [main]
+    paths:
+      - index.html
+      - favicon.svg
+      - og-image.jpg
+      - assets/**
+      - scripts/build-studio.mjs
+      - tests/studio.test.mjs
+      - tests/og-image.test.mjs
+      - site.webmanifest
+      - vercel.json
+      - .gitignore
+      - .github/workflows/studio-checks.yml
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: Test homepage and asset packaging
+        run: node --test tests/studio.test.mjs
+      - name: Check browser module syntax
+        run: |
+          node --input-type=module --check < assets/studio.js
+          node --check assets/key-spring.mjs
+      - name: Build only the public homepage files
+        run: node scripts/build-studio.mjs

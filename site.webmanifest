@@ -1,7 +1,7 @@
 {
   "name": "Sami Studio",
   "short_name": "Sami Studio",
-  "description": "Crafting premium landing pages and websites that elevate your digital presence.",
+  "description": "Sami Studio designs and builds websites and digital products from first idea to final interaction.",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -16,7 +16,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#ad9ba2",
+  "background_color": "#ad9ba2",
   "display": "standalone"
 }

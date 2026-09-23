@@ -17,3 +17,6 @@ doodle/.env.local
 doodle/test-results/
 doodle/playwright-report/
 doodle/tmp/
+
+# Local Vercel project link and credentials
+.vercel/
