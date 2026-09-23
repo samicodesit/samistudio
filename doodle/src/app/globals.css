@@ -1135,8 +1135,16 @@ dialog:focus-visible {
   margin-top: 20px;
 }
 
-.purchase-apple-pay[hidden] {
+.purchase-apple-pay-pending {
+  visibility: hidden;
+}
+
+.purchase-apple-pay-unavailable {
   display: none;
+}
+
+.purchase-apple-pay-available {
+  visibility: visible;
 }
 
 .purchase-apple-pay + .purchase-actions {

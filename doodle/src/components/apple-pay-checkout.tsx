@@ -21,7 +21,7 @@ interface ApplePayCheckoutProps {
 
 function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, onBusyChange }: Omit<ApplePayCheckoutProps, "locale">) {
   const checkoutState = useCheckoutElements();
-  const [available, setAvailable] = useState(false);
+  const [availability, setAvailability] = useState<"pending" | "available" | "unavailable">("pending");
 
   if (checkoutState.type === "loading") return null;
   if (checkoutState.type === "error") return null;
@@ -48,7 +48,7 @@ function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, on
   };
 
   return (
-    <div className="purchase-apple-pay" hidden={!available} aria-label={ariaLabel}>
+    <div className={`purchase-apple-pay purchase-apple-pay-${availability}`} aria-label={ariaLabel} aria-hidden={availability !== "available"} data-wallet-state={availability}>
       <ExpressCheckoutElement
         options={{
           buttonHeight: 48,
@@ -65,7 +65,13 @@ function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, on
             amazonPay: "never",
           },
         }}
-        onAvailablePaymentMethodsChange={({ paymentMethods }) => setAvailable(paymentMethods?.applePay?.available === true)}
+        onReady={({ availablePaymentMethods }) => {
+          if (availablePaymentMethods) setAvailability(availablePaymentMethods.applePay ? "available" : "unavailable");
+        }}
+        onAvailablePaymentMethodsChange={({ paymentMethods }) => {
+          if (paymentMethods) setAvailability(paymentMethods.applePay?.available === true ? "available" : "unavailable");
+        }}
+        onLoadError={() => setAvailability("unavailable")}
         onConfirm={handleConfirm}
         onCancel={() => onBusyChange(false)}
       />
