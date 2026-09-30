@@ -21,9 +21,9 @@
 ## Tasks
 
 - [x] Compare the current production manifest and the retained tested release with local source. Back up changed local files before restoring meaningful differences.
-- [ ] Install the production lockfile dependencies, run web tests and production build, and save a scoped Git baseline without unrelated files or secrets.
+- [x] Install the production lockfile dependencies, run web tests and production build, and save a scoped Git baseline without unrelated files or secrets.
 - [x] Read the current campaign, Play acquisition/vitals and website reports. Record dates, measured values and unavailable metrics.
-- [ ] Assess the smallest useful measurement approach, current failure/cost visibility and trial-abuse limits. Implement only a necessary, proportionate gap within the approved scope; record external blockers accurately.
+- [x] Assess the smallest useful measurement approach, current failure/cost visibility and trial-abuse limits. Implement only a necessary, proportionate gap within the approved scope; record external blockers accurately.
 
 ## Verification
 
@@ -35,3 +35,5 @@ All runtime source files must match the deployed manifest. Existing web tests an
 - Reconciliation restored 29 meaningful differences. All 217 non-generated source/release files now match the live upload by exact SHA1; current instruction files and generated metadata are intentionally excluded from runtime equivalence.
 - Fresh validation: 474 web tests passed, one opt-in live image test skipped; the production build passed. No real payment or image generation was needed because this restores already-live source.
 - Use existing reporting before adding runtime telemetry. Native first-doodle conversion remains explicitly unmeasured, rather than claiming website analytics measures it.
+- Native first-doodle telemetry and R8 work are recorded on the isolated next-update branch. Device recall remains externally blocked by selection. No speculative runtime change or extra deployment was necessary for this source reconciliation.
+- Main is clean. The preserved next-update worktree is also clean. Existing native binaries remain ignored in the original workspace and the independent studio-terminal repository is locally excluded from parent status.

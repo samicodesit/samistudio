@@ -9,6 +9,7 @@ Read inline around 22:50 Europe/Amsterdam. Public Android version 0.1.3/code 5 l
 | Vercel Production website analytics | September 29, 11pm through September 30, 10:59pm as displayed | 22 visitors, 36 page views, 59% bounce rate; 7 t.co referrals; Doodle Created: 4 visitors, 5 events | Includes owner/agent QA. Website events are not native-app usage, paying customers or install conversions. No source-to-generation attribution is established. |
 | Play Monitor and improve | Last 28 days | No policy issues found; crash, ANR and cold-start data unavailable | Unavailable is not zero failures. |
 | Play Monetize with Play | Last 28 days | EUR 0.00 reported revenue; monthly buyer count and ARPPU unavailable | Not a live receipt count or proof that no purchase has happened today. |
+| Vercel request logs | 10:29pm through 10:59pm as displayed | No request logs in the selected window | No generation success/failure rate can be inferred from this empty window. |
 
 ## Concrete remaining work
 
@@ -25,3 +26,11 @@ Read inline around 22:50 Europe/Amsterdam. Public Android version 0.1.3/code 5 l
 - [Production request logs](https://vercel.com/ahmed-samis-projects-e6ef0336/doodle/logs)
 
 No ad settings, budget, credentials or Android release were changed in this pass. Reporting views were inspected directly; no new tracking SDK or monitoring automation was installed.
+
+## Source organization completed
+
+Main is a clean web production baseline. All 217 non-generated source/release files match the live Vercel upload by exact SHA1. Current instruction files, generated metadata, permanent regression tests and operational records are kept separately from runtime equivalence. Fresh validation passed 474 tests with one opt-in live image test skipped, the production build and lint with no errors. Existing lint warnings were retained.
+
+The native source, unpublished Android cleanup, legacy TWA source and local marketing/store assets are preserved on `codex/doodle-next-update`, in `C:/Users/Sami/.codex/worktrees/doodle-next-update/samistudio/doodle`. Both checkouts are clean. The original final Android binaries remain ignored in the original workspace. `studio-terminal` is an independent nested Git repository and is excluded locally from the parent repository's status; its files were not changed.
+
+The desktop worktree tool created the directory but failed application registration for the WSL repository. The existing checkout was retained and attached to the named branch using Git; no duplicate worktree was created. Windows download-zone metadata was omitted from the pending branch because it prevented a Windows checkout. Source and image bytes were preserved.
