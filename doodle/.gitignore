@@ -55,3 +55,7 @@ next-env.d.ts
 /android/local.properties
 *.jks
 *.keystore
+**/.cxx/
+**/.gradle/
+/marketing-assets/**/raw/
+*:Zone.Identifier
