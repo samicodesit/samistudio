@@ -1,0 +1,143 @@
+﻿{
+    "date":  "2026-09-30",
+    "status":  "web_cleanup_deployed_native_cleanup_held_for_next_update",
+    "conclusion":  "Active code is reasonably modular. Much of its size is real translated content, UI, payment accounting and attestation. A broad rewrite is not justified by the evidence.",
+    "removed":  [
+                    "Unused expo-haptics dependency; all other locked package versions and registry locations retained.",
+                    "Unused native UI barrel and duplicate nested Vitest config. Imports now point directly to the used component.",
+                    "Unused checkout price/credit constants and unused native contract declarations.",
+                    "Unused exports of API-client internal helpers; helpers remain intact.",
+                    "Obsolete pickSuggestions wrapper. Existing selection test now exercises the actual pickSceneIdeas implementation.",
+                    "Unreachable unlock-panel, scene-summary and wait-hint stylesheet rules.",
+                    "Confirmed disposable diagnostic APKs, registry package tarballs and one zero-byte shell artifact."
+                ],
+    "iconChange":  {
+                       "file":  "mobile/src/ui/NativeIcon.tsx",
+                       "implementation":  "Import the same Ionicons default component directly from @expo/vector-icons/Ionicons instead of the package barrel.",
+                       "measurement":  {
+                                           "bundleBefore":  {
+                                                                "totalBytes":  9463314,
+                                                                "bundleBytes":  2528623,
+                                                                "fontAssets":  22
+                                                            },
+                                           "bundleAfter":  {
+                                                               "totalBytes":  5436806,
+                                                               "bundleBytes":  2189231,
+                                                               "fontAssets":  4
+                                                           },
+                                           "savedBytes":  4026508,
+                                           "allRemainingAssetsRetained":  true
+                                       },
+                       "exportModulesBefore":  828,
+                       "exportModulesAfter":  774,
+                       "iconFontAssetsBefore":  19,
+                       "iconFontAssetsAfter":  1,
+                       "brandFontAssetsRetained":  3,
+                       "meaning":  "Measured uncompressed Android JavaScript plus asset export. Not a measured APK, Play download or installed size.",
+                       "reference":  "https://docs.expo.dev/guides/icons/"
+                   },
+    "verification":  {
+                         "webTests":  "441 passed, one opt-in live image test skipped.",
+                         "nativeTests":  "54 passed.",
+                         "webBuild":  "passed",
+                         "nativeStrictTypecheck":  "passed, including noUnusedLocals and noUnusedParameters",
+                         "nativeAndroidExport":  "passed",
+                         "dependencyScan":  "No unused production files or dependencies found in scoped web/native scans. Test setup correctly retained despite production-only scanner flag.",
+                         "lockfile":  "Only expo-haptics removed. No package additions or other locked version changes.",
+                         "eslint":  "No errors. Existing image-element and marketing-tool unused-variable warnings are outside this cleanup.",
+                         "remainingExportAssetHashes":  "All 13 retained assets match the preceding export by SHA256."
+                     },
+    "retained":  [
+                     "Authentication, billing, purchases, refunds, quota protections and generation logic.",
+                     "Brand fonts, images, icon map, animation, translations and layout.",
+                     "Final release AAB, current fixture APK, preview APK, signing material, permanent tests and existing release evidence.",
+                     "Existing operational scripts and security helpers, including helpers exported for focused tests."
+                 ],
+    "limitations":  [
+                        "Web cleanup deployed to production. No Android binary rebuilt or Play update uploaded for this cleanup. No new real purchase or live generation was performed because those flows were unchanged.",
+                        "This is a targeted audit and cleanup, not proof that every algorithm or UI is optimal.",
+                        "The existing checkout contains substantial earlier uncommitted work. It was preserved; no broad commit or reset was made."
+                    ],
+    "disposableArtifacts":  [
+                                {
+                                    "file":  "expo-iap-5.5.1.tgz",
+                                    "bytes":  433674,
+                                    "sha256":  "46844f6d036a3391f38dd1f649ada42c60f70a7f80ffe48aa26341f222aad8aa"
+                                },
+                                {
+                                    "file":  "expo-app-integrity-57.0.1.tgz",
+                                    "bytes":  54379,
+                                    "sha256":  "241669b9179e727ff8c2d5fa95ca1436df63d81ed370c9803702568e35b69337"
+                                },
+                                {
+                                    "file":  "react-native-google-signin-google-signin-16.1.5.tgz",
+                                    "bytes":  42519,
+                                    "sha256":  "c92873a4bfc4322e34162f98c4b7c33bec88b4ac963f8a9af3bc8d98cb598aad"
+                                },
+                                {
+                                    "file":  "mobile/artifacts/doodle-fixture-diagnostic.apk",
+                                    "bytes":  40345779,
+                                    "sha256":  "413f46d5c77014f7956a3a3fbd417d70d86eb1c2d1282b83364c865a7d4ac279"
+                                },
+                                {
+                                    "file":  "mobile/artifacts/doodle-fixture-intl-diagnostic.apk",
+                                    "bytes":  40411271,
+                                    "sha256":  "f2a9d17114b940aa3e375527000983be9bae7b2db993082946e28b7704363751"
+                                },
+                                {
+                                    "file":  "mobile/artifacts/doodle-fixture-detailed-diagnostic.apk",
+                                    "bytes":  40346143,
+                                    "sha256":  "73eb83d296113567eb083db8e68fc8919300247b4ad063cf4283a95a8087ec2d"
+                                },
+                                {
+                                    "file":  "mobile/artifacts/doodle-fixture-assetfix-diagnostic.apk",
+                                    "bytes":  40345971,
+                                    "sha256":  "ae26b139a5017974af5c6ec1ee983f7cc6a59cecd472bc8eab55f902dc6ec7d4"
+                                },
+                                {
+                                    "file":  "mobile/]ï€ª",
+                                    "bytes":  0,
+                                    "sha256":  "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                                }
+                            ],
+    "disposableArtifactBytesRemoved":  161979736,
+    "productionRelease":  {
+                              "deployedAtUtc":  "2026-09-30T20:40:43.8588088Z",
+                              "id":  "dpl_97oxygv35DEv33X5tzU8DuWKakna",
+                              "baselineId":  "dpl_2oNzhiU8HDfcVDUvEva6LjAmC9gd",
+                              "url":  "https://doodle.samistudio.nl",
+                              "readyState":  "READY",
+                              "aliasAssigned":  true,
+                              "exactSourceManifestVerified":  true,
+                              "sourceFileCount":  221,
+                              "changedFiles":  [
+                                                   "src/app/globals.css",
+                                                   "src/lib/scenes/suggestions.ts",
+                                                   "src/lib/scenes/suggestions.test.ts",
+                                                   "src/lib/billing/checkout.ts"
+                                               ],
+                              "changedSourceHashes":  [
+                                                          {
+                                                              "file":  "src/app/globals.css",
+                                                              "sha":  "469e9f04010ecae88a4585470dd6dca166e2771c"
+                                                          },
+                                                          {
+                                                              "file":  "src/lib/billing/checkout.ts",
+                                                              "sha":  "eca26b8840884f128233eec185b852c4ecac863f"
+                                                          },
+                                                          {
+                                                              "file":  "src/lib/scenes/suggestions.test.ts",
+                                                              "sha":  "39226b65ead285f10232b0c308240965c399a7fd"
+                                                          },
+                                                          {
+                                                              "file":  "src/lib/scenes/suggestions.ts",
+                                                              "sha":  "fd6ac4b42922066585c47e341f9976474d82f132"
+                                                          }
+                                                      ],
+                              "unchangedSourceFilesRetained":  217,
+                              "releaseValidation":  "Exact production-derived release: 30 suggestions and checkout tests passed; Vercel production build passed.",
+                              "preservedProductionFixes":  "Apple Pay and Google redirect/sign-in source retained from live baseline.",
+                              "androidStatus":  "Existing public version 0.1.3, code 5 retained. Native cleanup remains local for the next update.",
+                              "temporaryFiles":  "Deployment preparation directory and four preparation files retained in .vercel. Tool policy rejected their deletion without providing a reason; no alternative deletion attempted."
+                          }
+}

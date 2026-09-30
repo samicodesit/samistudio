@@ -1,0 +1,99 @@
+﻿{
+    "preparedOn":  "2026-09-30",
+    "status":  "Published, Enabled and Eligible (Learning). Start moved to today at owner request; five calendar days September 30 through October 4, 2026.",
+    "campaignName":  "Doodle - Android installs - UK test",
+    "app":  {
+                "package":  "nl.samistudio.doodle",
+                "storeUrl":  "https://play.google.com/store/apps/details?id=nl.samistudio.doodle"
+            },
+    "goal":  "App installs",
+    "bidding":  "Maximize conversions for installs, no target CPI initially",
+    "language":  "English",
+    "proposedLocation":  "United Kingdom country only; Presence: people in or regularly in included locations. Verified selected setting and rendered review.",
+    "audience":  "Adults seeking simple drawing ideas for cards, lunchbox notes and journals",
+    "headlines":  [
+                      {
+                          "text":  "Little birthday card drawings",
+                          "characters":  29
+                      },
+                      {
+                          "text":  "Drawing ideas for kind notes",
+                          "characters":  28
+                      },
+                      {
+                          "text":  "Easy doodles for your journal",
+                          "characters":  29
+                      },
+                      {
+                          "text":  "Turn a moment into a doodle",
+                          "characters":  27
+                      },
+                      {
+                          "text":  "Try two doodles free",
+                          "characters":  20
+                      }
+                  ],
+    "descriptions":  [
+                         {
+                             "text":  "Describe a small scene and get a drawing idea to copy onto a birthday card.",
+                             "characters":  75
+                         },
+                         {
+                             "text":  "Make a little drawing idea for a lunchbox note, thank-you card or journal.",
+                             "characters":  74
+                         },
+                         {
+                             "text":  "Try your first two doodles free. Download or share your drawing idea.",
+                             "characters":  69
+                         },
+                         {
+                             "text":  "Simple drawing ideas for small, kind moments. Get Doodle on Google Play.",
+                             "characters":  72
+                         },
+                         {
+                             "text":  "Start with a few words. Make a personal drawing idea for someone you care about.",
+                             "characters":  80
+                         }
+                     ],
+    "assets":  {
+                   "selectionRecord":  "docs/google-ads-asset-readiness-2026-09-30.md",
+                   "mode":  "Existing published Play assets; no custom images or old website-CTA videos"
+               },
+    "measurement":  {
+                        "intendedPrimaryConversion":  "Google Play app download",
+                        "status":  "Wizard shows Doodle: Little Drawing Ideas (Android) installs, Google Play, as the selected install conversion."
+                    },
+    "budget":  {
+                   "proposedTotalEUR":  50,
+                   "approval":  "Owner replied Approved to UK October 1-5 test, EUR 4/day average, planned EUR 20, maximum EUR 40.80 including UK fee plus applicable VAT. Published within those settings.",
+                   "configuration":  "EUR 4 average daily budget. September 30 through October 4, 2026 inclusive, account Central European Time. Expected EUR 20 ad budget over five days, daily billed limit EUR 8, maximum EUR 40 ad spend plus 2% UK fee (EUR 40.80 before applicable VAT). No target CPI. View-through optimization off. Saved review verified.",
+                   "activation":  "Published and Enabled, Eligible (Learning). September 30 start, automatic end October 4, 2026. EUR 4/day average remains unchanged.",
+                   "billingReview":  "Existing Netherlands individual payer profile and automatic payment account inspected read-only. No payment or tax settings changed. Applicable VAT not confirmed from payer panel; do not promise a tax-free total."
+               },
+    "review":  {
+                   "sourceArt":  "Existing source hashes and artwork reviewed on 30 September",
+                   "copy":  "Five standalone headlines and descriptions checked for audience purpose and Google character limits",
+                   "googleAdsPreviews":  "Actual Google Ads six phone previews inspected: Display, Search, YouTube, Discover and Google Play. Play-sourced feature art/icon and all five headlines/descriptions render. Optional additional image/video formats are absent; ad strength Poor reflects asset breadth, not a forecast.",
+                   "performance":  "No performance results yet. Publication is not evidence of installs or sales.",
+                   "proof":  [
+                                 "C:/Users/Sami/.codex/doodle-android-preview/release-diagnosis/google-ads-preview-2026-09-30.png",
+                                 "C:/Users/Sami/.codex/doodle-android-preview/release-diagnosis/google-ads-review-2026-09-30.png",
+                                 "C:/Users/Sami/.codex/doodle-android-preview/release-diagnosis/google-ads-published-2026-09-30.png",
+                                 "C:/Users/Sami/.codex/doodle-android-preview/release-diagnosis/google-ads-start-today-2026-09-30.png"
+                             ],
+                   "publishedVerification":  "Live campaign ID 24311833129, Enabled and Eligible (Learning). Doodle Android app, English, United Kingdom country only, Presence in or regularly in location, view-through off, EUR 4/day, Install volume (All users), September 30-October 4. Verified actual live settings panel and screenshot."
+               },
+    "blocker":  {
+                    "domain":  "ads.google.com",
+                    "observedResolution":  "172.217.23.238 after clearing Windows DNS cache",
+                    "nextDns":  "Active allowlist: ads.google.com and tpc.googlesyndication.com. The second host is the actual ad preview iframe and was blocked in DNS logs. Both resolve to public Google IP addresses. Other filtering remains enabled.",
+                    "changes":  "Google Ads opens successfully. No billing changes or paid activation.",
+                    "current":  "Resolved. Owner paused ad blocker; form visible. Owner completed phone confirmation 78. App install tracking linked and draft autosaved. No blocking errors. Audience signal recommendation only."
+                },
+    "campaignId":  "281499282805161",
+    "draftId":  "10216509465",
+    "previousDraft":  "English pilot, campaign 281499282206103, draft 10216345868. Obsolete incomplete draft, unpublished. Do not activate.",
+    "publishedCampaignId":  "24311833129",
+    "publishedAtUTC":  "2026-09-30T17:28:00Z (approximate, UI publication verified)",
+    "scheduleChangeAuthorization":  "Owner asked And we cant start it now already? Moved start to September 30 and end to October 4 to preserve five days and the approved spending ceiling. Actual saved dates and Eligible (Learning) verified in refreshed live campaign settings."
+}

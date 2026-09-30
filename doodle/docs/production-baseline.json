@@ -1,0 +1,1064 @@
+{
+  "date": "2026-09-30T20:56:43.812Z",
+  "deploymentId": "dpl_97oxygv35DEv33X5tzU8DuWKakna",
+  "url": "https://doodle.samistudio.nl",
+  "runtimeAndReleaseFiles": [
+    {
+      "file": ".vercelignore",
+      "sha": "18fc7f7d195187ba8a523e7731f2a4ad9ebbf38b"
+    },
+    {
+      "file": "README.md",
+      "sha": "7a8865f1e90286441ce0b737fd0d24c052dee171"
+    },
+    {
+      "file": "eslint.config.mjs",
+      "sha": "6e9f47cc6dc72c301e2051f3f39a866c85571950"
+    },
+    {
+      "file": "next.config.ts",
+      "sha": "a854407d879cdc9e2986b1f3a64b9b48943b0c29"
+    },
+    {
+      "file": "package-lock.json",
+      "sha": "05abd8b849e32dcdcc7e7169bd34a6bf936a2836"
+    },
+    {
+      "file": "package.json",
+      "sha": "80bd92fd8e830befe2314c864209db5390730bb6"
+    },
+    {
+      "file": "playwright.config.ts",
+      "sha": "847e9fb0089c220fa72be1af1d13dbbb292a65d2"
+    },
+    {
+      "file": "public/.well-known/assetlinks.json",
+      "sha": "3fc9b521592bc738b81fb07fc1374f03c13a42a8"
+    },
+    {
+      "file": "public/ideas/birthday-dog.webp",
+      "sha": "aa0ab77ad9d2105105788bf3e0abe3e46678e482"
+    },
+    {
+      "file": "public/ideas/cat-note.webp",
+      "sha": "93696058dbc5c8921cea0de6d9fdf90246f57dfd"
+    },
+    {
+      "file": "public/ideas/lunch-high-five.webp",
+      "sha": "6cf3e62be6fa1e498aaa576699eb6b91827366ba"
+    },
+    {
+      "file": "public/ideas/pencil-helps-eraser.webp",
+      "sha": "cd936d0b5ea90c773145ae5a5fba1ca76009951e"
+    },
+    {
+      "file": "public/ideas/school-snail.webp",
+      "sha": "381952c2b2d3916918d14cf6b420b6b0be1d8b0b"
+    },
+    {
+      "file": "public/ideas/super-banana.webp",
+      "sha": "e529e08e8b048e3d03abc9d8923c3e96d1f67a44"
+    },
+    {
+      "file": "public/ideas/thank-you-mug.webp",
+      "sha": "48e29e318d91262d37a401aef4ff3e98fbe9574b"
+    },
+    {
+      "file": "public/ideas/warm-hug.webp",
+      "sha": "dc9817b772dd88db59cd3cacd5e805093572570b"
+    },
+    {
+      "file": "public/offline.html",
+      "sha": "28013381a7d7a7e7e0276815f4bac05ad2d29856"
+    },
+    {
+      "file": "public/references/doodle-reference-kiss.png",
+      "sha": "2f97c0822b0b5e8dcfe614dad6ca477cf350cd83"
+    },
+    {
+      "file": "public/store-badges/google-play-ar.svg",
+      "sha": "711ccb2f786ef3255404e36ed842ecc8dc8c23a7"
+    },
+    {
+      "file": "public/store-badges/google-play-de.svg",
+      "sha": "e9e3a4fdeea45b615478d93c51b84122ff0410e5"
+    },
+    {
+      "file": "public/store-badges/google-play-en.svg",
+      "sha": "42a4d4c1d1162181bfff40a1caa96908c048bf17"
+    },
+    {
+      "file": "public/store-badges/google-play-es.svg",
+      "sha": "ed3b4ff91c3c73be23311e3704ea87726d108d59"
+    },
+    {
+      "file": "public/store-badges/google-play-fr.svg",
+      "sha": "429d4c537d58a665401fc751fce12289eb1e1562"
+    },
+    {
+      "file": "public/store-badges/google-play-it.svg",
+      "sha": "46b6768cb37451fa1390ca2e8fa6cb10e0439767"
+    },
+    {
+      "file": "public/store-badges/google-play-ja.svg",
+      "sha": "2a146bb91cc141bfbded8132a369b84d73a300a9"
+    },
+    {
+      "file": "public/store-badges/google-play-ko.svg",
+      "sha": "345f8e003dd051f29e5a6667441b1963822780c0"
+    },
+    {
+      "file": "public/store-badges/google-play-nl.svg",
+      "sha": "358fa69847a6fc141c840d64269f09d942fb668f"
+    },
+    {
+      "file": "public/store-badges/google-play-pt-br.svg",
+      "sha": "9b1152d6c258adff6d82100f5cf7cb25d4166c22"
+    },
+    {
+      "file": "public/sw.js",
+      "sha": "bf9b22fcba5c3f8ffa8458e3ef2a9a5ebe7dc723"
+    },
+    {
+      "file": "src/app/(english)/blog/[slug]/page.tsx",
+      "sha": "0334868e82be98da32141718a78a7a65207a54b1"
+    },
+    {
+      "file": "src/app/(english)/blog/page.tsx",
+      "sha": "02ec9cf87a4cab8bc08e30c31a5beafb6a5203f8"
+    },
+    {
+      "file": "src/app/(english)/contact/page.tsx",
+      "sha": "612b3a99956ab84905f8fcbbb2a7da61bd1e96e1"
+    },
+    {
+      "file": "src/app/(english)/delete-account/page.tsx",
+      "sha": "dec8ca8e628513168efda08b35a209f52618c57c"
+    },
+    {
+      "file": "src/app/(english)/doodle-ideas/page.test.tsx",
+      "sha": "f4052d045cd57a387258dcd2772dbd2a2d4ed567"
+    },
+    {
+      "file": "src/app/(english)/doodle-ideas/page.tsx",
+      "sha": "6a4209f0cb2c0bfc9c858555e2d4c9f512c03755"
+    },
+    {
+      "file": "src/app/(english)/for-ai/page.tsx",
+      "sha": "438942c242062acd41b044c5fb429b4ce91acaa3"
+    },
+    {
+      "file": "src/app/(english)/layout.tsx",
+      "sha": "6edfad1e37b169dd0ef7f34a564f650844f403e9"
+    },
+    {
+      "file": "src/app/(english)/page.tsx",
+      "sha": "962a0b60e77dd8231fdf2c3ce3d577d2c7077f2b"
+    },
+    {
+      "file": "src/app/(english)/privacy/page.tsx",
+      "sha": "8a1f8c04fb29d4d0da16128a9b8f3588f1695c89"
+    },
+    {
+      "file": "src/app/(english)/refund/page.tsx",
+      "sha": "eb999b15d312e57192dc60a6d91a4abcd68e7e65"
+    },
+    {
+      "file": "src/app/(english)/terms/page.tsx",
+      "sha": "c252e8b05e7752ac82b2fe7efa5ac9f7c8230dd6"
+    },
+    {
+      "file": "src/app/[locale]/blog/[slug]/page.tsx",
+      "sha": "27b6ab9941a82e9952a9891e1d3dcc1317a11310"
+    },
+    {
+      "file": "src/app/[locale]/blog/page.tsx",
+      "sha": "a3e91cac4ea00192793edbbd88c70ed3abbc34a1"
+    },
+    {
+      "file": "src/app/[locale]/doodle-ideas/page.tsx",
+      "sha": "1adea712af1c18a8b1199de144460ea2fbc8a192"
+    },
+    {
+      "file": "src/app/[locale]/for-ai/page.tsx",
+      "sha": "cd91c5351b3e933f6711156f0d1e4f8953c66e62"
+    },
+    {
+      "file": "src/app/[locale]/layout.tsx",
+      "sha": "c4b80e9d0ebba9a054e1a1497c524e12dae531ff"
+    },
+    {
+      "file": "src/app/[locale]/page.tsx",
+      "sha": "f4f5aaac687731a278749988cb1643e9af56ca87"
+    },
+    {
+      "file": "src/app/api/account/route.test.ts",
+      "sha": "89b3992c246729172f7b2dbec1b173643350863a"
+    },
+    {
+      "file": "src/app/api/account/route.ts",
+      "sha": "1beabd916b55666015716b934538b350645f787c"
+    },
+    {
+      "file": "src/app/api/auth/google/redirect/route.test.ts",
+      "sha": "c82ef11862c24f8527d7549a27617f9253129cbe"
+    },
+    {
+      "file": "src/app/api/auth/google/redirect/route.ts",
+      "sha": "428dd9e99c881b396ae20a030054d2ced41f23b7"
+    },
+    {
+      "file": "src/app/api/auth/google/route.test.ts",
+      "sha": "df248bf8bd75c70a8161ee6ea1251b93d4c2a85e"
+    },
+    {
+      "file": "src/app/api/auth/google/route.ts",
+      "sha": "50ea4ab8127d59bd822089b506fc3359e7edd737"
+    },
+    {
+      "file": "src/app/api/auth/sign-out/route.test.ts",
+      "sha": "142a1d464cd8cc850dcda21e8328efb1f8b036cc"
+    },
+    {
+      "file": "src/app/api/auth/sign-out/route.ts",
+      "sha": "8605b9528a958d1baf7b1262bf18abc69de43f31"
+    },
+    {
+      "file": "src/app/api/checkout/confirm/route.test.ts",
+      "sha": "3394dba0973f487e53a9404808fc775182252fcf"
+    },
+    {
+      "file": "src/app/api/checkout/confirm/route.ts",
+      "sha": "b05c7fbff788c12f4e6ce02dd58e0be163ebcf31"
+    },
+    {
+      "file": "src/app/api/checkout/diagnostic/route.test.ts",
+      "sha": "ef1b32f1b3df5f482e29b1e807dcdb0920e74646"
+    },
+    {
+      "file": "src/app/api/checkout/diagnostic/route.ts",
+      "sha": "b83897eb2688c8c9d979d19558ee0a654e76f2bc"
+    },
+    {
+      "file": "src/app/api/checkout/elements/route.test.ts",
+      "sha": "af7e60b4806af26badcbc503960b931277e7436f"
+    },
+    {
+      "file": "src/app/api/checkout/elements/route.ts",
+      "sha": "dce5e91207e1ac75f3448adc1396754a894481a1"
+    },
+    {
+      "file": "src/app/api/checkout/route.test.ts",
+      "sha": "593b140011694743a9e20f9cc9dfe0d6dd8987ae"
+    },
+    {
+      "file": "src/app/api/checkout/route.ts",
+      "sha": "a1e97ce8be149966fec84ab8e9405f82725f8d82"
+    },
+    {
+      "file": "src/app/api/generate/route.test.ts",
+      "sha": "f1ebb14985777a4f5915fec7c7b84e0d506f6114"
+    },
+    {
+      "file": "src/app/api/generate/route.ts",
+      "sha": "601361967271a9c1619254482a9948f727f0ef82"
+    },
+    {
+      "file": "src/app/api/internal/play/reconcile-voids/route.ts",
+      "sha": "81270b1372a23aecea03b79bd43870d606ce52ea"
+    },
+    {
+      "file": "src/app/api/native/attestation/challenge/route.test.ts",
+      "sha": "5aeb783e1d0141c2a18c1a2f9709c59715d526ea"
+    },
+    {
+      "file": "src/app/api/native/attestation/challenge/route.ts",
+      "sha": "1cb1dfe8e883b265a653400accae7374af67d05a"
+    },
+    {
+      "file": "src/app/api/native/auth/google/route.test.ts",
+      "sha": "33dec8ceee1123c2beb96ee493f6cfee5d829a4c"
+    },
+    {
+      "file": "src/app/api/native/auth/google/route.ts",
+      "sha": "70d7d051b431be68117fded1b3a17db091e8c75a"
+    },
+    {
+      "file": "src/app/api/native/auth/sign-out/route.test.ts",
+      "sha": "19b686c2e5b20733b5ade1eb8765f890b74fad13"
+    },
+    {
+      "file": "src/app/api/native/auth/sign-out/route.ts",
+      "sha": "f7ff94f677069ddddf7550491c00393e69b05c42"
+    },
+    {
+      "file": "src/app/api/native/config/route.test.ts",
+      "sha": "6ac227922be6fdb26d45373c0630088c5e90f92c"
+    },
+    {
+      "file": "src/app/api/native/config/route.ts",
+      "sha": "dcffaf050833277db35808fd0026717f81cc5d20"
+    },
+    {
+      "file": "src/app/api/native/session/guest/route.test.ts",
+      "sha": "9dcd0cfe497373e7ca96dfe5741b077d27ec2926"
+    },
+    {
+      "file": "src/app/api/native/session/guest/route.ts",
+      "sha": "d71baf1da7366d6f1c3ee423024925f24f56ede6"
+    },
+    {
+      "file": "src/app/api/play/config/route.test.ts",
+      "sha": "c59d46821066b4dcd8b8ebfad558747a81e94768"
+    },
+    {
+      "file": "src/app/api/play/config/route.ts",
+      "sha": "dfaea47879b24e0d6731bb1f2bc688243175450a"
+    },
+    {
+      "file": "src/app/api/play/verify/route.integration.test.ts",
+      "sha": "770ef39ea05711667f253cb07702238868176efc"
+    },
+    {
+      "file": "src/app/api/play/verify/route.test.ts",
+      "sha": "36eee339cafa49e94a85d08b7482b32fa3cbb963"
+    },
+    {
+      "file": "src/app/api/play/verify/route.ts",
+      "sha": "d5bbc3ee36c05b1f8cb191387a96b2fb4ec7e561"
+    },
+    {
+      "file": "src/app/api/reports/route.test.ts",
+      "sha": "b077d4223ace2da92a69597161365aeb76758bff"
+    },
+    {
+      "file": "src/app/api/reports/route.ts",
+      "sha": "45e5c147e7b9bdf59cb6ac434872cdcef090320d"
+    },
+    {
+      "file": "src/app/api/stripe/webhook/route.test.ts",
+      "sha": "cbb641803dc12ac90961544d229e1e6afbbe27e6"
+    },
+    {
+      "file": "src/app/api/stripe/webhook/route.ts",
+      "sha": "7da9577937aba8d975a1e628f40ceab6adbf9aa3"
+    },
+    {
+      "file": "src/app/editorial-routes.test.ts",
+      "sha": "15940cefe84bb1217337923aa8f2bc2e4e8d983c"
+    },
+    {
+      "file": "src/app/favicon.ico",
+      "sha": "d1d9277e6bf871f10875c89b68ef6d1fa82c5d57"
+    },
+    {
+      "file": "src/app/globals.css",
+      "sha": "469e9f04010ecae88a4585470dd6dca166e2771c"
+    },
+    {
+      "file": "src/app/manifest.ts",
+      "sha": "eb2478e3df482d8b3e391108729dfff5154ef226"
+    },
+    {
+      "file": "src/app/pwa-worker.test.ts",
+      "sha": "c85d6d4729faf1b229b179b8153f69346d101f25"
+    },
+    {
+      "file": "src/app/pwa/icon/[variant]/route.tsx",
+      "sha": "2ff59f3f9e675caab8a2811d1f73c0ce92979461"
+    },
+    {
+      "file": "src/app/robots.ts",
+      "sha": "f47f56e9e405abc2eca72219f6039986366db17a"
+    },
+    {
+      "file": "src/app/root-document.test.tsx",
+      "sha": "58d31d694164425be088aca4d47b63c2d78dd122"
+    },
+    {
+      "file": "src/app/root-document.tsx",
+      "sha": "3a8ad8b524283ec86d18ebfa145fcf18874c71e0"
+    },
+    {
+      "file": "src/app/seo-routes.test.ts",
+      "sha": "5a074f34342936ed2d9e567c495b410557bc5398"
+    },
+    {
+      "file": "src/app/sitemap.ts",
+      "sha": "4e1dd2e7d0105f0cf29737b362fd4353d7dfc95e"
+    },
+    {
+      "file": "src/app/viewport.ts",
+      "sha": "e3502c5a3f2723437a2cf259af5c7c74bb5ca848"
+    },
+    {
+      "file": "src/components/account-menu.test.tsx",
+      "sha": "56768306153a368bb9e3c985c5372afd9ba0679f"
+    },
+    {
+      "file": "src/components/account-menu.tsx",
+      "sha": "314a18bf4e6cf8091b90bae9da14bc57f544b2c3"
+    },
+    {
+      "file": "src/components/apple-pay-checkout.test.tsx",
+      "sha": "8b315d0563d59533c7809b07c7627fffe07fe826"
+    },
+    {
+      "file": "src/components/apple-pay-checkout.tsx",
+      "sha": "b66f97a0a05ffc86fb53e9467dbb3329cf9dfab4"
+    },
+    {
+      "file": "src/components/card-composer.test.tsx",
+      "sha": "5c69620616c15cbf104a00adfa094649fab98302"
+    },
+    {
+      "file": "src/components/card-composer.tsx",
+      "sha": "ab7f4185001f00b973dd07462628a6ee9f92731b"
+    },
+    {
+      "file": "src/components/delete-account-client.test.tsx",
+      "sha": "61694fc06251e3ed7f89332c8704508b017839a6"
+    },
+    {
+      "file": "src/components/delete-account-client.tsx",
+      "sha": "d048b63af7e02de9b8e9f48b172e04f7b65be762"
+    },
+    {
+      "file": "src/components/discovery-links.css",
+      "sha": "f6da29642cc3f5a9cf6141bdf1da2018492ce35b"
+    },
+    {
+      "file": "src/components/discovery-links.test.tsx",
+      "sha": "b6e3e802f28df4d0cac87f1494b4117722a882bd"
+    },
+    {
+      "file": "src/components/discovery-links.tsx",
+      "sha": "3754ee12d490f3fbc9b305b0b1183383cf0a1f9b"
+    },
+    {
+      "file": "src/components/doodle-analytics.test.tsx",
+      "sha": "deefb6f294edec888894155c66ad47fc2f1c8643"
+    },
+    {
+      "file": "src/components/doodle-analytics.tsx",
+      "sha": "0d2b9a8cd87ff790b1ed28c2eb24c1616fd01ff2"
+    },
+    {
+      "file": "src/components/doodle-client.test.tsx",
+      "sha": "15cfb28f156d271340596a27f03b2b48bd947bf4"
+    },
+    {
+      "file": "src/components/doodle-client.tsx",
+      "sha": "ae277f12bd5c13827979865ebf77eec4c2df5f24"
+    },
+    {
+      "file": "src/components/doodle-ideas-page.tsx",
+      "sha": "67b05a1b10e5aab78bdf16683ff3fe1a63b379a3"
+    },
+    {
+      "file": "src/components/doodle-page.test.tsx",
+      "sha": "643ad7e828df0da7d98eb7ac3ec668062ac6fad2"
+    },
+    {
+      "file": "src/components/doodle-page.tsx",
+      "sha": "5672ae07c47f7693a773d32dbdf5072a11b6dfe2"
+    },
+    {
+      "file": "src/components/doodle-stage.test.tsx",
+      "sha": "f3f9931f7c0f0e6109655413e402880acfd904f8"
+    },
+    {
+      "file": "src/components/doodle-stage.tsx",
+      "sha": "cc588839165b022e531fcca03ffa273b4cb4143a"
+    },
+    {
+      "file": "src/components/editorial-pages.tsx",
+      "sha": "627c1c7df7fc0dd977d5d338f1f7e689e0fbdf05"
+    },
+    {
+      "file": "src/components/google-sign-in-button.test.tsx",
+      "sha": "dd6c4e8d742c90db353de196b72c68740d727541"
+    },
+    {
+      "file": "src/components/google-sign-in-button.tsx",
+      "sha": "0e5d36ac2b6841ba192bd6bcc26c07c75cac17af"
+    },
+    {
+      "file": "src/components/idea-gallery.test.tsx",
+      "sha": "53300b1810fec0b289b2d5c6ab55f7ed7ff7905b"
+    },
+    {
+      "file": "src/components/idea-gallery.tsx",
+      "sha": "bf6dd8f28a435ff79c9e64b7ba10345116cfac24"
+    },
+    {
+      "file": "src/components/legal-page.test.tsx",
+      "sha": "c41cd20f5344dae18bf68057adf1eee1996c175e"
+    },
+    {
+      "file": "src/components/legal-page.tsx",
+      "sha": "a35c889593dc017b9ae5ac50cfd513e126c5c3c5"
+    },
+    {
+      "file": "src/components/mobile-app-workspace.css",
+      "sha": "e914caf2e7462e865a5d9cf0ddc8a3e0b0823452"
+    },
+    {
+      "file": "src/components/mobile-app-workspace.test.tsx",
+      "sha": "4616bdd92aa271de53eda07fdef82ad807e9df57"
+    },
+    {
+      "file": "src/components/mobile-app-workspace.tsx",
+      "sha": "acf6ec37023969defc609354b0fa1ccb381b8175"
+    },
+    {
+      "file": "src/components/purchase-dialog.test.tsx",
+      "sha": "bd963e88ab7c167579d592ed088a2e6fbc61c05b"
+    },
+    {
+      "file": "src/components/purchase-dialog.tsx",
+      "sha": "312d15bc215765f67d88fd868e16a90e70d975fd"
+    },
+    {
+      "file": "src/components/report-dialog.test.tsx",
+      "sha": "8abe83833568b39418c474b7c3eb8f747c913505"
+    },
+    {
+      "file": "src/components/report-dialog.tsx",
+      "sha": "a95a2326b0b51c8079898babef5adf7e895fb7f2"
+    },
+    {
+      "file": "src/components/result-actions.test.tsx",
+      "sha": "850f90aed6fe2bc21c6881a3f4af0ed9e7972531"
+    },
+    {
+      "file": "src/components/result-actions.tsx",
+      "sha": "6160c2d8a1dd8b6b86c4e802871054d12497df93"
+    },
+    {
+      "file": "src/components/result-dialog.test.tsx",
+      "sha": "6de0a6f91b9ab08f8bfd8af9991a08fa04fc5d3e"
+    },
+    {
+      "file": "src/components/result-dialog.tsx",
+      "sha": "35f8f36f7214af377543c5e4f2ddcf2e3ca83bea"
+    },
+    {
+      "file": "src/components/scene-composer.tsx",
+      "sha": "0ac80975d276593eacc14636d0372beebc7a5ca9"
+    },
+    {
+      "file": "src/components/service-worker-registration.tsx",
+      "sha": "9885677b249bb7bbfde179d3c003c4e4d6f9639d"
+    },
+    {
+      "file": "src/instrumentation-client.test.ts",
+      "sha": "a758a78128efa5c6977bbcc6a9ec4f9b310c0d8c"
+    },
+    {
+      "file": "src/instrumentation-client.ts",
+      "sha": "901025c6935c31e212e6e3f31c36a80b812d30dd"
+    },
+    {
+      "file": "src/lib/app-config.test.ts",
+      "sha": "0c14948081c1cc8038899686533fe5931b20fc18"
+    },
+    {
+      "file": "src/lib/app-config.ts",
+      "sha": "7df8272ee3b8a8e02d1b6140d41fa4c21968f3df"
+    },
+    {
+      "file": "src/lib/auth/account-deletion.redis.integration.test.ts",
+      "sha": "354ca99584ac49cb0a4b764b473da739d7ff7fe1"
+    },
+    {
+      "file": "src/lib/auth/accounts.test.ts",
+      "sha": "9cc83ac6f4097f790bd63597e6f78144b3765666"
+    },
+    {
+      "file": "src/lib/auth/accounts.ts",
+      "sha": "ee5b2673796d44b014ee3f4bb432eff438211c65"
+    },
+    {
+      "file": "src/lib/auth/google.test.ts",
+      "sha": "483d2930fa24eabe427d5fba20fa499679c3f6de"
+    },
+    {
+      "file": "src/lib/auth/google.ts",
+      "sha": "cd9ff1c5a2d9e83082963f756970c28f40676e60"
+    },
+    {
+      "file": "src/lib/auth/same-origin.test.ts",
+      "sha": "5ba4f085424885e8d87a67e595bd2bc66707d37a"
+    },
+    {
+      "file": "src/lib/auth/same-origin.ts",
+      "sha": "10e27428ec83557a7ec3a3a163ef2e991806a0f3"
+    },
+    {
+      "file": "src/lib/auth/session.test.ts",
+      "sha": "6777db370ea05a2c23a740d225a9ee46073e9c67"
+    },
+    {
+      "file": "src/lib/auth/session.ts",
+      "sha": "8dec41145dd491a81a0b31541699ef397ffdc8ef"
+    },
+    {
+      "file": "src/lib/billing/apple-pay-diagnostics.test.ts",
+      "sha": "861394e9f3bade4471c7946f658af2c40685e94a"
+    },
+    {
+      "file": "src/lib/billing/apple-pay-diagnostics.ts",
+      "sha": "143af014d4a53da69288599f2052a7bf9a31d3e0"
+    },
+    {
+      "file": "src/lib/billing/checkout.test.ts",
+      "sha": "d5b804af6772c0e39e5667622d2501f266422a8f"
+    },
+    {
+      "file": "src/lib/billing/checkout.ts",
+      "sha": "eca26b8840884f128233eec185b852c4ecac863f"
+    },
+    {
+      "file": "src/lib/billing/credits.test.ts",
+      "sha": "752e46f52167dd1d9a9605aa774a0bc9ae8baaa6"
+    },
+    {
+      "file": "src/lib/billing/credits.ts",
+      "sha": "dfb49103c46ac9de3cb5ff9b739cb086c9f018d5"
+    },
+    {
+      "file": "src/lib/billing/play-client.test.ts",
+      "sha": "7c42fa68b2792aa1fc0cef1b8341721b94907605"
+    },
+    {
+      "file": "src/lib/billing/play-client.ts",
+      "sha": "1a368debcccfc81b8cc1622d80c2e8d24ac42550"
+    },
+    {
+      "file": "src/lib/billing/play-config.test.ts",
+      "sha": "4b86f999d90dae08e7e0ab1454805efa31adf43c"
+    },
+    {
+      "file": "src/lib/billing/play-config.ts",
+      "sha": "48497e0f4702c8da6a77647aac130ec6b3bcc595"
+    },
+    {
+      "file": "src/lib/billing/play-credits.redis.integration.test.ts",
+      "sha": "3a13bcfb16a9dcd85a2d6a5e9830a160378993e8"
+    },
+    {
+      "file": "src/lib/billing/play-credits.test.ts",
+      "sha": "8aded8691c24df7566fc1dd5a6d742ec51716096"
+    },
+    {
+      "file": "src/lib/billing/play-credits.ts",
+      "sha": "2a42c77bc90643ebbe32a6232bf444f3d556c273"
+    },
+    {
+      "file": "src/lib/billing/play-google.test.ts",
+      "sha": "a9e300bdd30c8dd990ce6345f37b9eaabe98381a"
+    },
+    {
+      "file": "src/lib/billing/play-google.ts",
+      "sha": "f4bb0edaf48efe0e2ae3f8991ebb1ec8fda2cca9"
+    },
+    {
+      "file": "src/lib/billing/play-purchase.test.ts",
+      "sha": "eb3df31fbe8383a608ddf5306b9b62494d5895ac"
+    },
+    {
+      "file": "src/lib/billing/play-purchase.ts",
+      "sha": "bce9542a2bf6fa8a74aece60de81e93cf4aa8eab"
+    },
+    {
+      "file": "src/lib/billing/play-voids.test.ts",
+      "sha": "fc72187b3aa5bffdeda069ddf7d8f72f1be900c0"
+    },
+    {
+      "file": "src/lib/billing/play-voids.ts",
+      "sha": "092f1d5d1b5127735b6e60cf31c41f9c3decae59"
+    },
+    {
+      "file": "src/lib/billing/stripe.ts",
+      "sha": "58ca16706f9d8763340115c0230d5a710c161791"
+    },
+    {
+      "file": "src/lib/card/render-card.test.ts",
+      "sha": "b5bc7b2802220a8b9691f6a8ebae184c6a4b0723"
+    },
+    {
+      "file": "src/lib/card/render-card.ts",
+      "sha": "10a362ae35060b619055a2f356b5c2e4bfcaf6ed"
+    },
+    {
+      "file": "src/lib/doodle-ideas.test.ts",
+      "sha": "67caffce08ad90bb6065e438b5d819bffd242b66"
+    },
+    {
+      "file": "src/lib/doodle-ideas.ts",
+      "sha": "d6b5d1904724667567fc4606d6a058c4bcc75abd"
+    },
+    {
+      "file": "src/lib/editorial.ts",
+      "sha": "fac1e83e511cb994b3073e93ac06f121fdf1f40b"
+    },
+    {
+      "file": "src/lib/env.ts",
+      "sha": "27a8e3b47def8ed7fd4fcb9e1d37d6a61f212a18"
+    },
+    {
+      "file": "src/lib/generation/free-allowance.test.ts",
+      "sha": "611c600eec8192f818eb01e7cf2df1ce91bb84ab"
+    },
+    {
+      "file": "src/lib/generation/free-allowance.ts",
+      "sha": "b7b885bded87d7aeb1c4033c87f7ca279e51d89d"
+    },
+    {
+      "file": "src/lib/generation/generate-doodle.real.test.ts",
+      "sha": "b820f23df4a3550282b2a7e97932746970bdf58f"
+    },
+    {
+      "file": "src/lib/generation/generate-doodle.test.ts",
+      "sha": "e1b5459d7d7ee1a062cc5a5fe0d40f0e475f7dc0"
+    },
+    {
+      "file": "src/lib/generation/generate-doodle.ts",
+      "sha": "315595083fe1ac8f3f0f8b12d27c51ab8cb02502"
+    },
+    {
+      "file": "src/lib/generation/generation-limit.test.ts",
+      "sha": "1d48c23d50855892ca386597c012bc8f0e10dea8"
+    },
+    {
+      "file": "src/lib/generation/generation-limit.ts",
+      "sha": "5a5ecb397fc58964702586c310be3cfd581df1d2"
+    },
+    {
+      "file": "src/lib/generation/profile.ts",
+      "sha": "cc102ead2701a4bb88d3f8d89d741116c3bbe00e"
+    },
+    {
+      "file": "src/lib/generation/prompt.test.ts",
+      "sha": "32548b054fba2283dcca58af434922bcf8db0e42"
+    },
+    {
+      "file": "src/lib/generation/prompt.ts",
+      "sha": "a4499136981cb49bc22c3d6d53de097f2b64a687"
+    },
+    {
+      "file": "src/lib/i18n.test.ts",
+      "sha": "14a58e3f9e546bb9eb49d5c7accb935acbc6b72a"
+    },
+    {
+      "file": "src/lib/i18n.ts",
+      "sha": "d903afd3123630c131a35d5128de0ca6068fa8ab"
+    },
+    {
+      "file": "src/lib/native-attestation.test.ts",
+      "sha": "0d7782f901b3732a509fda031fec2c15ae7708e4"
+    },
+    {
+      "file": "src/lib/native-attestation.ts",
+      "sha": "efcb6301f827b80d6256b6ee66701e7921dabccf"
+    },
+    {
+      "file": "src/lib/native-contracts.ts",
+      "sha": "299b77b5b0764ca78f13c9ba0a102f0442ca0283"
+    },
+    {
+      "file": "src/lib/native-guest.test.ts",
+      "sha": "fda5253ccc67ade44ff344181a9cad411e93e22a"
+    },
+    {
+      "file": "src/lib/native-guest.ts",
+      "sha": "a25f297527ae46529ddb9c3aa1f450501046ddd2"
+    },
+    {
+      "file": "src/lib/native-session.test.ts",
+      "sha": "12968f37f96c2b4c0b4411585a63c90bc98a8006"
+    },
+    {
+      "file": "src/lib/native-session.ts",
+      "sha": "6d8fc39106730edb4be4c1e4127ce9cd9e83e151"
+    },
+    {
+      "file": "src/lib/redis.test.ts",
+      "sha": "32bb059570b24d57d1caf02e68583753dbab77c8"
+    },
+    {
+      "file": "src/lib/redis.ts",
+      "sha": "cd30b542b2234e93f76797ca8496824c7638465a"
+    },
+    {
+      "file": "src/lib/reports/prepare-report-image.ts",
+      "sha": "020db48e193cb85ca31422b30ca0bd1710b54544"
+    },
+    {
+      "file": "src/lib/reports/report-copy.ts",
+      "sha": "a802d281a40012765e25e6dbfacb1305be1510a7"
+    },
+    {
+      "file": "src/lib/reports/report-schema.test.ts",
+      "sha": "d37da01964a4e41457283216d3dc8723b91b3195"
+    },
+    {
+      "file": "src/lib/reports/report-schema.ts",
+      "sha": "ab4b15415d9d163d0db2b40495604497a8b0bc95"
+    },
+    {
+      "file": "src/lib/reports/report-store.test.ts",
+      "sha": "52cea8e11846fd82317d7fa1cb0eed613896c209"
+    },
+    {
+      "file": "src/lib/reports/report-store.ts",
+      "sha": "c9bbd7b94cd525c3768025f99a7c9c59c3a73b0c"
+    },
+    {
+      "file": "src/lib/reports/report-types.ts",
+      "sha": "cf58fdfbe6526ad28a5be472ba838438e8d007e3"
+    },
+    {
+      "file": "src/lib/scenes/localized-suggestions.ts",
+      "sha": "46cd2afb5d47952f7a8cdfdc73f65f645ed399b4"
+    },
+    {
+      "file": "src/lib/scenes/scene.test.ts",
+      "sha": "a21e86ef690544ab56da4d5921d7a8bd1127ecb9"
+    },
+    {
+      "file": "src/lib/scenes/scene.ts",
+      "sha": "d5173986f488b82e742c0dc84b6f76ff62fbad06"
+    },
+    {
+      "file": "src/lib/scenes/suggestions.test.ts",
+      "sha": "39226b65ead285f10232b0c308240965c399a7fd"
+    },
+    {
+      "file": "src/lib/scenes/suggestions.ts",
+      "sha": "fd6ac4b42922066585c47e341f9976474d82f132"
+    },
+    {
+      "file": "src/lib/seo/search-console.test.ts",
+      "sha": "6c96ced229a9f66add35fa6e7b258de347bff724"
+    },
+    {
+      "file": "src/lib/seo/search-console.ts",
+      "sha": "1f8fd53e60221e3bb80c57817d23043f9bed1682"
+    },
+    {
+      "file": "src/lib/sharing.ts",
+      "sha": "4ec625ee3f4b1407e7a8c4f261b1194393727e78"
+    },
+    {
+      "file": "src/test/setup.ts",
+      "sha": "7e4630620b3052fca9f5627020d51cb15426e9aa"
+    },
+    {
+      "file": "src/types/google-identity.d.ts",
+      "sha": "e9fb32721984357e55cb63ada82024a7f45604c4"
+    },
+    {
+      "file": "tsconfig.json",
+      "sha": "b40a6425fac8941c2c9c456372fe100efd6f2edb"
+    },
+    {
+      "file": "vercel.json",
+      "sha": "36b4b0b328a1384a26c8fb8c1ef4f767436ad17a"
+    },
+    {
+      "file": "vitest.config.ts",
+      "sha": "3b35977dd9b4c3753d261b699ed066c2d103b219"
+    }
+  ],
+  "excludedMetadata": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "next-env.d.ts",
+    "tsconfig.tsbuildinfo"
+  ],
+  "reconciledFiles": [
+    {
+      "file": ".vercelignore",
+      "change": "content_differs",
+      "localSha": "389e1d2cc361c2847e5563dacb8a5cb7288b9063",
+      "liveSha": "18fc7f7d195187ba8a523e7731f2a4ad9ebbf38b"
+    },
+    {
+      "file": "README.md",
+      "change": "content_differs",
+      "localSha": "83245b0a79330f3809205395bb5a4ced5db45959",
+      "liveSha": "7a8865f1e90286441ce0b737fd0d24c052dee171"
+    },
+    {
+      "file": "next.config.ts",
+      "change": "content_differs",
+      "localSha": "33af1b1242d7efb088a7a2ed4abdc7c0d2523b4d",
+      "liveSha": "a854407d879cdc9e2986b1f3a64b9b48943b0c29"
+    },
+    {
+      "file": "package-lock.json",
+      "change": "content_differs",
+      "localSha": "4c46edea670a470dc94376d67cbee7f8a80c8644",
+      "liveSha": "05abd8b849e32dcdcc7e7169bd34a6bf936a2836"
+    },
+    {
+      "file": "package.json",
+      "change": "content_differs",
+      "localSha": "1c24fa80254b34f6d34473553f285b63cbef51fb",
+      "liveSha": "80bd92fd8e830befe2314c864209db5390730bb6"
+    },
+    {
+      "file": "src/app/api/auth/google/redirect/route.test.ts",
+      "change": "missing_local",
+      "localSha": null,
+      "liveSha": "c82ef11862c24f8527d7549a27617f9253129cbe"
+    },
+    {
+      "file": "src/app/api/auth/google/redirect/route.ts",
+      "change": "missing_local",
+      "localSha": null,
+      "liveSha": "428dd9e99c881b396ae20a030054d2ced41f23b7"
+    },
+    {
+      "file": "src/app/api/checkout/diagnostic/route.test.ts",
+      "change": "missing_local",
+      "localSha": null,
+      "liveSha": "ef1b32f1b3df5f482e29b1e807dcdb0920e74646"
+    },
+    {
+      "file": "src/app/api/checkout/diagnostic/route.ts",
+      "change": "missing_local",
+      "localSha": null,
+      "liveSha": "b83897eb2688c8c9d979d19558ee0a654e76f2bc"
+    },
+    {
+      "file": "src/app/api/checkout/elements/route.test.ts",
+      "change": "missing_local",
+      "localSha": null,
+      "liveSha": "af7e60b4806af26badcbc503960b931277e7436f"
+    },
+    {
+      "file": "src/app/api/checkout/elements/route.ts",
+      "change": "missing_local",
+      "localSha": null,
+      "liveSha": "dce5e91207e1ac75f3448adc1396754a894481a1"
+    },
+    {
+      "file": "src/app/globals.css",
+      "change": "content_differs",
+      "localSha": "2cd3a620ee10ff0e68b5b3c2b2ec34165128263e",
+      "liveSha": "469e9f04010ecae88a4585470dd6dca166e2771c"
+    },
+    {
+      "file": "src/components/apple-pay-checkout.test.tsx",
+      "change": "missing_local",
+      "localSha": null,
+      "liveSha": "8b315d0563d59533c7809b07c7627fffe07fe826"
+    },
+    {
+      "file": "src/components/apple-pay-checkout.tsx",
+      "change": "missing_local",
+      "localSha": null,
+      "liveSha": "b66f97a0a05ffc86fb53e9467dbb3329cf9dfab4"
+    },
+    {
+      "file": "src/components/doodle-client.test.tsx",
+      "change": "content_differs",
+      "localSha": "ff1799cc04d0d371c9690aa3ff3e4fa9e32869dc",
+      "liveSha": "15cfb28f156d271340596a27f03b2b48bd947bf4"
+    },
+    {
+      "file": "src/components/doodle-client.tsx",
+      "change": "content_differs",
+      "localSha": "094584315f3976c480eab718faaada5ea652a59d",
+      "liveSha": "ae277f12bd5c13827979865ebf77eec4c2df5f24"
+    },
+    {
+      "file": "src/components/google-sign-in-button.test.tsx",
+      "change": "content_differs",
+      "localSha": "a9dea221b225f531b0fb5e7b86ec9889b4a49948",
+      "liveSha": "dd6c4e8d742c90db353de196b72c68740d727541"
+    },
+    {
+      "file": "src/components/google-sign-in-button.tsx",
+      "change": "content_differs",
+      "localSha": "de1cad37adbf9cc0c4c1e6b8e0ba698570321eeb",
+      "liveSha": "0e5d36ac2b6841ba192bd6bcc26c07c75cac17af"
+    },
+    {
+      "file": "src/components/purchase-dialog.test.tsx",
+      "change": "content_differs",
+      "localSha": "bd81d489e380e7edee8b7eb7198fe45c7cd6e80f",
+      "liveSha": "bd963e88ab7c167579d592ed088a2e6fbc61c05b"
+    },
+    {
+      "file": "src/components/purchase-dialog.tsx",
+      "change": "content_differs",
+      "localSha": "370f5fd7a61ad691abef8576610cd846abec5e36",
+      "liveSha": "312d15bc215765f67d88fd868e16a90e70d975fd"
+    },
+    {
+      "file": "src/instrumentation-client.test.ts",
+      "change": "content_differs",
+      "localSha": "912490a242f41ea57a3844c6742b1799236284b3",
+      "liveSha": "a758a78128efa5c6977bbcc6a9ec4f9b310c0d8c"
+    },
+    {
+      "file": "src/instrumentation-client.ts",
+      "change": "content_differs",
+      "localSha": "71e26554d559f2d94fc0d2f24cdddf11039ca14e",
+      "liveSha": "901025c6935c31e212e6e3f31c36a80b812d30dd"
+    },
+    {
+      "file": "src/lib/billing/apple-pay-diagnostics.test.ts",
+      "change": "missing_local",
+      "localSha": null,
+      "liveSha": "861394e9f3bade4471c7946f658af2c40685e94a"
+    },
+    {
+      "file": "src/lib/billing/apple-pay-diagnostics.ts",
+      "change": "missing_local",
+      "localSha": null,
+      "liveSha": "143af014d4a53da69288599f2052a7bf9a31d3e0"
+    },
+    {
+      "file": "src/lib/billing/checkout.test.ts",
+      "change": "content_differs",
+      "localSha": "836fd287ab3e7f625240ef123e080be3072d2cac",
+      "liveSha": "d5b804af6772c0e39e5667622d2501f266422a8f"
+    },
+    {
+      "file": "src/lib/billing/checkout.ts",
+      "change": "content_differs",
+      "localSha": "b9ce1bffc65821e89ddc04e6f81d7bae2561f472",
+      "liveSha": "eca26b8840884f128233eec185b852c4ecac863f"
+    },
+    {
+      "file": "src/lib/i18n.test.ts",
+      "change": "content_differs",
+      "localSha": "f0ee2ed8e2ea1fe026b1adae28ca0c777b51ba8f",
+      "liveSha": "14a58e3f9e546bb9eb49d5c7accb935acbc6b72a"
+    },
+    {
+      "file": "src/lib/i18n.ts",
+      "change": "content_differs",
+      "localSha": "dfc76a686ee25f86b0ec89c2587139b6ed32ea04",
+      "liveSha": "d903afd3123630c131a35d5128de0ca6068fa8ab"
+    },
+    {
+      "file": "src/types/google-identity.d.ts",
+      "change": "content_differs",
+      "localSha": "750a779cea685a9f6e9a0982f1e2f542c02c2c1d",
+      "liveSha": "e9fb32721984357e55cb63ada82024a7f45604c4"
+    }
+  ],
+  "verification": {
+    "tests": "474 passed, one opt-in live image test skipped",
+    "productionBuild": "passed",
+    "exactLocalSourceHashes": 217
+  },
+  "nativeStatus": "Public Android 0.1.3/code 5 remains unchanged. Native source and unreleased cleanup are preserved on codex/doodle-next-update, outside the web production checkout.",
+  "recovery": "Replaced local file versions retained in .vercel/local-before-reconciliation. No production runtime changes made."
+}

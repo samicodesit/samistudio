@@ -2,6 +2,9 @@
   "name": "doodle",
   "version": "0.1.0",
   "private": true,
+  "overrides": {
+    "js-yaml": "4.3.2"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -15,11 +18,18 @@
     "eval:prompt": "node --env-file=.env.local --import tsx scripts/evaluate-prompt.mts"
   },
   "dependencies": {
+    "@stripe/react-stripe-js": "^6.11.0",
+    "@stripe/stripe-js": "^9.17.0",
+    "@vercel/analytics": "^2.0.1",
+    "botid": "^1.5.11",
+    "google-auth-library": "^11.0.2",
     "lucide-react": "^1.33.0",
-    "next": "16.3.1",
+    "next": "16.3.6",
     "openai": "^7.5.0",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "server-only": "^0.0.1",
+    "stripe": "^22.5.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.62.1",
@@ -32,7 +42,7 @@
     "@vitejs/plugin-react": "^6.1.0",
     "dotenv": "^17.4.2",
     "eslint": "^9",
-    "eslint-config-next": "16.3.1",
+    "eslint-config-next": "16.3.6",
     "jsdom": "^27.0.1",
     "tsx": "^4.23.12",
     "typescript": "^5",

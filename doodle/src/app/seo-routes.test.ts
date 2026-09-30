@@ -1,0 +1,48 @@
+import { describe, expect, it } from "vitest";
+import robots from "./robots";
+import sitemap from "./sitemap";
+import { SITE_URL, SUPPORTED_LOCALES, getLanguageAlternates, localePath } from "@/lib/i18n";
+import { ARTICLE_SLUGS, getEditorialPath } from "@/lib/editorial";
+
+describe("search engine routes", () => {
+  it("allows public pages while keeping generation endpoints out of the index", () => {
+    expect(robots()).toEqual({
+      rules: { userAgent: "*", allow: "/", disallow: "/api/" },
+      sitemap: `${SITE_URL}/sitemap.xml`,
+      host: SITE_URL,
+    });
+  });
+
+  it("lists every localized home, localized ideas, and legal page", () => {
+    const entries = sitemap();
+
+    expect(entries).toHaveLength(SUPPORTED_LOCALES.length * (2 + ARTICLE_SLUGS.length + 2) + 4);
+    expect(entries.slice(0, SUPPORTED_LOCALES.length).map(({ url }) => url)).toEqual(
+      SUPPORTED_LOCALES.map((locale) => `${SITE_URL}${localePath(locale)}`),
+    );
+    for (const entry of entries.slice(0, SUPPORTED_LOCALES.length)) {
+      expect(entry.alternates?.languages).toEqual(getLanguageAlternates());
+    }
+    expect(entries.slice(SUPPORTED_LOCALES.length, SUPPORTED_LOCALES.length * 2).map(({ url }) => url)).toEqual(
+      SUPPORTED_LOCALES.map((locale) => `${SITE_URL}${localePath(locale) === "/" ? "" : localePath(locale)}/doodle-ideas`),
+    );
+    const editorialEntries = entries.slice(SUPPORTED_LOCALES.length * 2, SUPPORTED_LOCALES.length * (2 + ARTICLE_SLUGS.length + 2));
+    expect(editorialEntries).toHaveLength(SUPPORTED_LOCALES.length * (ARTICLE_SLUGS.length + 2));
+    for (const locale of SUPPORTED_LOCALES) {
+      expect(editorialEntries.map(({ url }) => url)).toContain(`${SITE_URL}${getEditorialPath(locale, "blog")}`);
+      expect(editorialEntries.map(({ url }) => url)).toContain(`${SITE_URL}${getEditorialPath(locale, "for-ai")}`);
+      for (const slug of ARTICLE_SLUGS) {
+        expect(editorialEntries.map(({ url }) => url)).toContain(`${SITE_URL}${getEditorialPath(locale, "blog", slug)}`);
+      }
+    }
+    expect(entries.slice(SUPPORTED_LOCALES.length * (2 + ARTICLE_SLUGS.length + 2)).map(({ url }) => url)).toEqual([
+      `${SITE_URL}/privacy`,
+      `${SITE_URL}/terms`,
+      `${SITE_URL}/refund`,
+      `${SITE_URL}/contact`,
+    ]);
+    for (const entry of entries.slice(SUPPORTED_LOCALES.length, SUPPORTED_LOCALES.length * 2)) {
+      expect(entry.images).toHaveLength(8);
+    }
+  });
+});

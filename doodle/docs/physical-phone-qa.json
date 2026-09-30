@@ -1,0 +1,39 @@
+{
+  "status": "passed_generation_after_google_play_reinstall",
+  "timestamp": 1790761582551,
+  "checkedAt": "2026-09-30T09:49:49.820855+00:00",
+  "deploymentId": "dpl_cpR2ZxNeV5GFk7ty3E45ZdwWqpo8",
+  "requestPath": "/api/generate",
+  "httpStatus": 403,
+  "testingResponse": false,
+  "checks": {
+    "requestPackage": true,
+    "requestHash": true,
+    "timestamp": true,
+    "appRecognition": true,
+    "appPackage": true,
+    "certificate": true,
+    "licensed": false,
+    "deviceIntegrity": true
+  },
+  "exactLicensingVerdict": "not_logged; not LICENSED",
+  "creditReservation": "not_reached; attestation rejected before reservation",
+  "nextInvestigation": "Clean Google Play reinstall under the confirmed owner account, then retry with a fresh integrity request",
+  "source": "production runtime log; owner reported failure on physical phone",
+  "phoneGoogleAccounts": "Owner confirms only samicodesit@gmail.com",
+  "resolvedAt": "2026-09-30T09:55:18.112521+00:00",
+  "resolution": "Owner uninstalled and reinstalled from the confirmed Google Play Internal testing link, signed in, observed 24 doodles before generation, and confirmed the next generation worked.",
+  "success": {
+    "requestId": "zrl2v-1790762010778-f1e169da4081",
+    "timestamp": 1790762010778,
+    "deploymentId": "dpl_cpR2ZxNeV5GFk7ty3E45ZdwWqpo8",
+    "httpStatus": 200,
+    "generationProfile": "gpt-image-1-mini / medium / 1024x1024",
+    "balanceBefore": 24,
+    "balanceAfter": "not independently checked",
+    "installedVersion": "Owner reports latest Play Internal release; track latest is code 5 / 0.1.3; not read directly from physical device",
+    "deviceIntegrityEvidence": "Failed real request explicitly passed device integrity with testingResponse false; successful request then passed the unchanged native attestation guard after reinstall, with owner excluded from both override lists",
+    "visualEvidence": "Owner confirmed successful output; no physical-phone screenshot captured",
+    "purchaseEvidence": "Previously passed $0 Play license-test purchase on Play-installed emulator build 5; no new physical-phone purchase attempted"
+  }
+}

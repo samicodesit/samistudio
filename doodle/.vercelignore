@@ -1,0 +1,17 @@
+android/
+mobile/
+**/build/
+**/.gradle/
+**/node_modules/
+*.apk
+*.aab
+*.tgz
+docs/
+e2e/
+scripts/
+test-results/
+playwright-report/
+report-review/
+.env*
+store-assets/
+marketing-assets/

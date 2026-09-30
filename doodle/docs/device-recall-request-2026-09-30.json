@@ -1,0 +1,24 @@
+{
+  "date": "2026-09-30",
+  "status": "interest_request_submitted_awaiting_google_selection",
+  "appPackage": "nl.samistudio.doodle",
+  "developerAccountId": "5843530199260119810",
+  "cloudProjectNumber": "368967912119",
+  "contactEmail": "samicodesit@gmail.com",
+  "organization": "Sami Studio",
+  "purpose": "Prevent repeated redemption of the two-generation trial after installation reset or account cycling. No advertising or sensitive-characteristic tracking.",
+  "authorization": "Owner approved requesting beta access after confirming the request would not change the current live app.",
+  "source": "https://developer.android.com/google/play/integrity/device-recall",
+  "form": "https://forms.gle/2d24B4gNyoVrqztG6",
+  "verification": "Google Forms submission confirmation inspected visually: Thank you for your interest. If chosen for early access, Google will contact the requester.",
+  "screenshot": "C:/Users/Sami/.codex/doodle-android-preview/release-diagnosis/device-recall-request-submitted-2026-09-30.png",
+  "liveChanges": "None. No Play response configuration changes, code deployment, app release, credential changes, or financial commitment.",
+  "considerations": [
+    "Selection and response time are not guaranteed.",
+    "Form warns pricing may apply for high-volume usage after general release. No paid use authorized by this submission.",
+    "Before future activation, account for existing Integrity test configurations: Google states changing device recall clears configured test responses.",
+    "Before implementation, handle propagation delay, cached standard-request recall values, concurrent trial claims, and unsupported or unevaluated recall. Test real Play-installed devices, reinstall and account switching; preserve paid access.",
+    "Recall bits are shared across apps in the developer account. Reserve a documented bit allocation before use.",
+    "The current Android client uses standard Integrity tokens. Backend-only implementation remains a feasibility inference, not verified end-to-end."
+  ]
+}

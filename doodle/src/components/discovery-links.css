@@ -1,0 +1,56 @@
+.android-app-link {
+  padding: 12px 20px;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.android-app-link a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 48px;
+  color: var(--moss);
+  text-underline-offset: 4px;
+}
+.android-app-link img { display: block; width: 160px; height: auto; }
+.drawing-guides {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto 72px;
+}
+.drawing-guides h2 {
+  max-width: 720px;
+  margin: 0 0 24px;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+.drawing-guides-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.drawing-guides article {
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.drawing-guides h3 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+.drawing-guides a { color: var(--moss); text-underline-offset: 4px; }
+.drawing-guides p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.6; }
+.ideas-page .drawing-guides { width: 100%; margin: 72px 0 0; }
+body:has(.mobile-app-workspace[data-installed="true"]) .android-app-link,
+body:has(.mobile-app-workspace[data-installed="true"]) .drawing-guides { display: none; }
+@media (max-width: 699px) {
+  .drawing-guides-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+@media (display-mode: standalone), (display-mode: fullscreen) {
+  .android-app-link, .drawing-guides { display: none; }
+}

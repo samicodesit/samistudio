@@ -1,0 +1,157 @@
+# Doodle growth experiment — 7 September 2026
+
+## Baseline
+
+Vercel production analytics, last seven days (31 August–7 September), read 7 September before this deployment:
+
+- 16 visitors, 26 page views, 63% bounce rate.
+- `Doodle Created`: 3 visitors, 5 events.
+- Referrers shown: LinkedIn 3 visitors, Bing 1, t.co 1.
+- 44% mobile; 44% iOS.
+
+This is a small sample and may include the owner and testing. Three creating visitors out of sixteen is a rough 19% observed activation rate, not a reliable conversion estimate. Bounce rate alone does not prove failure on a single-page tool.
+
+## First experiment
+
+### Evening measurement — 7 September 2026
+
+Read the authenticated Reddit post insights and Vercel Production analytics (last seven days, ending September 7 at 19:59 in the dashboard). Reddit showed 317 views, one upvote, one counted comment, zero shares and zero reposts. The comment body was not visible in the loaded comment tree, so no feedback content is inferred. The author's initial vote and inspection views are not acquisition evidence.
+
+Vercel showed 32 visitors, 53 page views and Doodle Created from 7 visitors / 10 events. Share Link Copied and Doodle Shared each had 1 visitor / 1 event; these may include our QA. Filtering by reddit.com showed 2 visitors, 2 page views and Doodle Created from 2 visitors / 3 events, with no share event shown. This is a small, encouraging activation signal, not an established conversion rate or proof of virality. Reddit impressions and referrer visitors are different measurements and cannot establish an exact click-through rate.
+
+UTM breakdown requires a paid Web Analytics Plus upgrade in the current dashboard; no upgrade purchased. Use available referrer filtering within the exhausted budget. Pinterest's birthday pin remains live with the correct image and AI disclosure; its visible page did not expose impressions or outbound-click analytics. Do not infer zero Pinterest reach from that absence.
+
+Decision: retain the working creation flow; the immediate growth bottleneck is reaching more relevant people and giving them a compelling visual reason to visit. Prepare a short visual demonstration from actual app results for a subsequent approved post, rather than repeat the same text post or rewrite the product based on two visitors. No new post, reply, message or advertising purchase was made in this measurement pass.
+
+Demo capture QA, 17:27–17:28 UTC: one real drawing succeeded in the owner's existing interactive Chrome session using the prompt “A happy dog holding a birthday balloon.” Existing balance changed 9 → 8; no credit purchase. Saved actual prompt, drawing, result and enlarged-image frames at 360 × 640 for the edit. This is owner QA and must not be counted as acquired activation. The prior isolated-browser attempt returned HTTP 403 before generation; production protection was not disabled. The observed ~55-second interval between click and captured result includes tool/capture delay, so it is not an exact generation-duration measurement.
+
+Positioning: **A tiny drawing for someone you love.**
+
+Keep two free doodles, then €4.99 for ten; no subscription. First improve sharing, then seek the first 100 attributable visitors. Do not buy traffic merely to exhaust the budget. Original budget ceiling was US$20 total; the owner later raised it to US$25 for the one-time Google Play registration fee. The authorized US$25 registration payment succeeded on 7 September, using the entire current budget. Remaining budget is US$0, and no advertising spend was purchased.
+
+The new result button shares the generated PNG and a localized app link through supported native share sheets. Other browsers copy the app link, with a selectable link if clipboard access is denied. The link deliberately contains no scene, generated image URL, checkout ID or account data. Some destinations may omit parts of a native share payload; downloads remain available separately.
+
+## Ready-to-publish launch copy
+
+The owner explicitly authorized publishing the two Pinterest posts to the available account on 7 September. Other channel copy remains draft only. Do not post as an unaffiliated customer, invent testimonials, send unsolicited DMs, or duplicate posts across unrelated communities.
+
+### Optional short-video caption (Instagram or TikTok)
+
+The owner already posted on LinkedIn and prefers a different audience. Do not repeat that launch. Prioritize Pinterest; use this caption with a real creation demo if an Instagram/TikTok account is authorized.
+
+I built Doodle over a weekend for a very small thing: making a drawing you can copy onto a note for someone.
+
+Describe a tiny scene — a dog in a party hat, a cat with a heart — and it turns it into a simple AI doodle. Copy it by hand onto a birthday card or lunchbox note, or download and share it.
+
+The first 2 doodles are free. After that, it’s €4.99 for 10, with no subscription.
+
+What would you draw, and who would you leave it for?
+
+https://doodle.samistudio.nl/?utm_source=instagram&utm_medium=social&utm_campaign=tiny_note_launch
+
+Demo outline: show the finished birthday dog first; show its short prompt; show the generated result and Download/Share controls. End with “Who would you leave this for?” Clearly label any time-lapse rather than implying generation is instant. If posting to TikTok, change `utm_source` to `tiktok`. Use the actual app image, not a fabricated customer result. A hand-drawn note needs to actually be drawn before showing or claiming that step.
+
+### Reddit r/SideProject: feedback post
+
+Title: I built a tiny AI tool for drawings you can copy onto lunchbox notes and birthday cards
+
+Body:
+
+I made Doodle over a weekend. You describe one small scene and get a simple sticky-note drawing to copy by hand.
+
+The intended use is a little note for someone — a birthday dog, a cat with a heart, that kind of thing. It uses AI to generate the reference; you can download it or use it as a guide for your own drawing.
+
+You can try two doodles free without signing up. After that it’s €4.99 for ten, not a subscription. Generation can take up to two minutes.
+
+I’d like feedback on whether the results are actually simple enough to copy, and what you’d use one for.
+
+https://doodle.samistudio.nl/?utm_source=reddit&utm_medium=community&utm_campaign=tiny_note_launch
+
+Check the community’s current sidebar/rules and any AI-content restrictions before posting. Publish once from the owner’s account, with appropriate disclosure and flair. Do not imply moderator endorsement.
+
+### Pinterest: birthday idea
+
+Title: An easy birthday doodle to copy onto a card
+
+Description: A happy dog with a birthday balloon, ready to inspire a tiny card surprise. Use this AI-generated drawing as inspiration for a card you draw by hand. Try your own small scene with Doodle; the first two doodles are free.
+
+Image: `public/ideas/birthday-dog.webp`
+
+Destination: https://doodle.samistudio.nl/doodle-ideas?utm_source=pinterest&utm_medium=organic_social&utm_campaign=birthday_note
+
+Published and verified on the public board: https://www.pinterest.com/pin/703476404341485239/
+
+Pinterest's website-import composer locks the source URL, so the tracked gallery URL is used. The gallery includes this exact dog example and a “Try this idea” route into the generator.
+
+### Pinterest: lunchbox idea
+
+Title: A little lunchbox doodle to brighten someone’s day
+
+Description: An easy high-five drawing for a lunchbox note. This example is AI-generated; copy the simple shapes by hand and add your own message. Doodle turns small scenes into drawing ideas. First two doodles free.
+
+Image: `public/ideas/lunch-high-five.webp`
+
+Destination: https://doodle.samistudio.nl/doodle-ideas?utm_source=pinterest&utm_medium=organic_social&utm_campaign=lunchbox_note
+
+Published and verified on the public board: https://www.pinterest.com/pin/703476404341485279/
+
+Pinterest is a testable audience hypothesis, not a proven channel for this app. Official guidance favors vertical 2:3 creative; existing square examples can be used for an initial organic post, then formatted if there is a signal. References: https://business.pinterest.com/creative-best-practices/ and https://business.pinterest.com/en-gb/how-to-make-pins/.
+
+## Measurement and next decision
+
+- Use Vercel’s production view and UTM filters to compare each launch source.
+- Existing event: `Doodle Created`.
+- Added events: `Doodle Downloaded` (result action), `Doodle Shared` (native share resolves; method file/link), `Doodle Share Link Copied` (clipboard resolves).
+- A native share completion is browser-reported, not proof of delivery or a new visitor. A copied link is intent, not a completed referral. Use inbound `utm_source=doodle`, `utm_medium=share`, `utm_campaign=made_with_doodle` to look for resulting visits.
+- Record visits, visitors who created, and share/referral activity after the first 100 attributable visitors or seven days following publication. This is a review point, not a guarantee of statistical significance.
+- If people visit but do not create, inspect the first-run experience. If they create and share but referrals do not arrive, improve the shared artifact and message. If a channel produces creating visitors, make a second specific example for that audience.
+- Paid promotion is currently unfunded because the US$25 Play registration used the full authorized budget. Prepare a named merchant, fixed campaign end, and an enforced lifetime cap at or below any separately authorized future budget before purchase; do not substitute a recurring daily budget.
+
+## Shipping checks
+
+Unit/integration tests, typecheck, lint, production build, existing browser workflows, and the new narrow-screen sharing fallback test. External native share destinations need real-device verification; automated tests cover API payloads, cancellation, clipboard fallback and accessible manual copying.
+
+## Release record
+
+- Code commit: `9f36e74`; QA rule and content correction: `a68b56a`.
+- Deployed to https://doodle.samistudio.nl/ via the existing Vercel project; deployment https://doodle-ko2s1mdp4-ahmed-samis-projects-e6ef0336.vercel.app completed successfully.
+- Production smoke test: one real birthday-dog generation succeeded, new share control rendered, link-copy feedback succeeded. One existing paid credit consumed (10 to 9); no new pack purchase or card charge.
+- Test traffic includes one `Doodle Created` and one `Doodle Share Link Copied` from this smoke test. Exclude these from any claim of growth.
+- Public Pinterest board: https://www.pinterest.com/samicodesit/easy-doodle-ideas-for-cards-notes/.
+- Both approved pins are verified on that public board (2 Pins), with matching alt text and AI-modified disclosure selected in the composer. No paid promotion was purchased.
+- `AGENTS.md` now requires a quick pre-action QA check for every step, including audience fit, evidence, authorization, budget, factual correctness, and outcome verification.
+- Follow-up commit `69abdd5` clarified the result controls: full-width “Draw something else,” quieter “Redraw this idea,” and automatic prompt focus without a generation request. Existing checkout retry wording is preserved. Verified 212 unit/integration tests, lint, production build, and 14 browser tests, including desktop, 320/390 mobile, German and Arabic screenshots. Deployed successfully at https://doodle-6rnycr0hv-ahmed-samis-projects-e6ef0336.vercel.app and aliased to the production domain.
+- Mobile web foundation commit `c5ffd1a` added the installable PWA, privacy-safe offline fallback, and public account-deletion flow. Verified 215 unit/integration tests with one intentional live test skipped, lint, production build, 17 browser tests, and a production-mode service-worker run. Deployed successfully at https://doodle-bbhh13put-ahmed-samis-projects-e6ef0336.vercel.app and aliased to the production domain.
+- Google Play personal developer account `5843530199260119810` was created on 7 September after the authorized US$25 registration payment succeeded. The accepted public developer name is **Sami Studio (samistudio.nl)**, with website `samistudio.nl` and verified public support email `hello@samistudio.nl`. The free Zoho mailbox was restored without a subscription. The payment receipt went to the owner's Google account. Government-ID/address, real-Android-device, and later contact-phone verification remain; creating the Play app is disabled until they are complete. The agent has not submitted or handled identity files.
+- Production discovery audit on 7 September checked all 24 URLs in the sitemap: each returned HTTP 200, declared itself canonical, and omitted `noindex`. `robots.txt` allows public pages and disallows `/api/`. These checks confirm technical discoverability; they do not prove Google indexing. Search Console affected-URL inspection remains pending until the user's active verification browser handoff is complete.
+
+## Search Console and Play follow-up — 7 September 2026
+
+Search Console's Page indexing report (updated 4 September) shows 12 indexed pages, 14 discovered/not indexed, two alternate URLs, and one redirect. Both alternate examples are Spanish `?scene=` URLs: their canonical points to the Spanish generator as intended. No canonical change or false fix-validation was submitted.
+
+Direct URL Inspection confirms `/doodle-ideas` is on Google. `/nl` returned not indexed/unknown; after the production checks, one indexing request was submitted and Google confirmed addition to its priority crawl queue. This does not prove indexing. The existing sitemap is successful, with 24 discovered pages and a 5 September last-read date, so it was not resubmitted.
+
+Web performance (3-month selector; actual data 21 August–5 September): 10 impressions, 0 clicks, average position 22.3. Only visible query: `doodle ideeën` (one impression). Page impressions: German ideas 3, Italian ideas 2, English home 2, Arabic ideas 1, Spanish preset 1, Dutch ideas 1. This is too little evidence to choose a winning language or claim search traction. Review new data before expanding content or repeating requests.
+
+The owner personally submitted Play identity documents. Console confirms “Google is verifying your identity”; completion will be emailed and may take a few days. Android-device and subsequent phone verification remain, and app creation is still locked. No agent handled identity files.
+## Reporting and Android debug release — 7 September 2026
+
+Commit `96a79cf` adds optional-content doodle reporting and the Android debug project. Reporting is live at https://doodle.samistudio.nl through Vercel deployment `BejAU8khi8BHUWhi1qkdTwv2a2ep`. Validation: 237 unit/integration tests passed (one live-image test skipped), 19 browser checks passed, desktop/mobile reporting screenshots reviewed, lint and production build passed. Independent real local Redis validation covered TTL, rate limits, capacity and concurrent submission. A synthetic production report was accepted, retrieved through the review CLI, deleted, and absence confirmed; no user content or generation credit was used.
+
+Review commands: `node --env-file=.env.reports.local --import tsx scripts/review-reports.mts list`, `show <id>`, `extract <id>`, and `delete <id>`. The ignored local environment file was obtained through authenticated Vercel production env pull; never commit it. Review images export to ignored `report-review/`. Reports expire after 30 days. Future review should address findings and remove reviewed records promptly; receiving a report alone does not improve filtering automatically.
+
+The debug APK is `android/app/build/outputs/apk/debug/app-debug.apk`, 5.6 MiB, package `nl.samistudio.doodle`, min API23/target36, Play Billing8.3.0, debug-signed. It has not been tested on a real Android device or uploaded to Play. It uses Custom Tab fallback until domain association is configured. Play purchase UI/backend, store setup and account/device verification remain required before publication. See `android/README.md` for artifact checksum and commands. No additional paid service was purchased.
+## Play integration and publisher alignment — 7 September 2026
+
+Commits `9e4bdef`, `c185ff2` and `0aaaa97` add disabled Play purchasing, account-bound native billing, operator refund reconciliation, verified publisher/support details and store-listing preparation. Deployed as Vercel `8Ti1a5NqY5PzgCU29cZehYbvMNvG`, aliased to https://doodle.samistudio.nl/ . Production environment listing confirms no Play enable flag or credentials are configured. Anonymous Play config returns 401; home and all four contact/policy pages return 200. Live contact email is hello@samistudio.nl and stale Slovakia text is gone.
+
+Validation: 293 unit/integration tests passed (one live-generation test intentionally skipped), lint and production build passed. Existing 22 browser checks passed for the billing client, with additional 320/1440 checks and visual inspection for the contact/policy changes. Real isolated Redis checks cover concurrent claim/refund, duplicate reversal, read-only preview, active generation holds and deleted accounts. Both debug APK and unsigned release AAB build; R8 and native binding checks pass. See android/README.md for artifact checksums. No Android device installation, signing, Play upload, real purchase, production refund or tester outreach occurred.
+
+The new refund CLI defaults to dry-run and requires an explicit apply flag. Operational scheduling/monitoring, residual review and real Play refund tests remain before enabling paid Android use. The release remains gated by Console approval/device checks, store configuration, signing/domain association, physical-device checks and closed testing. Listing draft and a rules-checked tester-recruitment destination are prepared; publication awaits a real test link and owner approval. No additional money was spent and no growth is claimed from this engineering work.
+## Reddit launch and store assets — 7 September 2026
+
+The owner explicitly approved the exact r/SideProject post. It was published once from u/mests and verified in the feed and at https://www.reddit.com/r/SideProject/comments/1w9owc4/doodle_simple_ai_doodles_to_copy_onto_cards_and/ . The approved copy includes the two-free trial, €4.99 ten-credit pack, clear AI description, usability questions and utm_source=reddit&utm_medium=social&utm_campaign=doodle_launch. No other Reddit message or crosspost is authorized. Initial author vote and inspection view are excluded from growth evidence.
+
+Store graphic and icon are ready in store-assets; both use existing app imagery and were visually reviewed. The release AAB is now signed using a local upload key stored outside Git; a durable upload copy and public fingerprints are documented in android/README.md. No signing secret was committed, no Play bundle uploaded and no domain association deployed.
+
+Fresh Console Home inspection at 10:45 UTC still showed identity review in progress, dependent phone verification and Create app disabled. The Android-device verification item was no longer listed. No verification flow was entered or closed. Physical-device app QA and genuine Play screenshots remain outstanding independently of account-device verification.

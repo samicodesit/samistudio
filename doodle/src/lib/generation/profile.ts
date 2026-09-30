@@ -7,7 +7,7 @@ export interface GenerationProfile {
   size: "1024x1024";
 }
 
-const configuredQuality = process.env.OPENAI_IMAGE_QUALITY || "low";
+const configuredQuality = process.env.OPENAI_IMAGE_QUALITY || "medium";
 if (!( ["low", "medium", "high"] as const).includes(configuredQuality as ImageQuality)) {
   throw new Error("OPENAI_IMAGE_QUALITY must be low, medium, or high");
 }
