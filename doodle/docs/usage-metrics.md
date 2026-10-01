@@ -19,3 +19,9 @@ Counts are separated by Android and web and retained for 366 days. Operation IDs
 Production Vercel requests schedule counting after the response, with a 1.5-second storage deadline. Preview and local requests do not schedule counts. Storage or scheduling failures log a fixed warning without user data and do not change image delivery or payment fulfillment. Counts can under-report during an outage. This is operational analytics, not a financial ledger.
 
 The implementation checks Google's `testPurchaseContext` rather than trusting a client test flag. Source verified 1 October 2026: [Google ProductPurchaseV2](https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.productsv2). Stripe sessions use verified `livemode` and `amount_total`: [Stripe Checkout Session](https://docs.stripe.com/api/checkout/sessions/object).
+
+## Delivery, 1 October 2026
+
+Live at `https://doodle.samistudio.nl`, deployment `dpl_4t1Ga74p6GiTYRMXrJaPLzp62bXw`. Two known QA account hashes were seeded without changing any customer balance. The production readout worked at 11:16 Amsterdam and contained zero recorded events so far; this is the start of collection, not a historical customer count.
+
+Verification: 491 tests passed with one opt-in live image test skipped. These include real isolated-Redis concurrency, replay, QA/test exclusion and failure isolation. Type checking and local/Vercel builds passed. Lint had zero errors and two pre-existing image warnings. The privacy disclosure was inspected after publication at desktop and phone sizes. All 227 uploaded source files matched the local checkout. No new Play-installed drawing or payment test was performed; public build 6 stays unchanged.
