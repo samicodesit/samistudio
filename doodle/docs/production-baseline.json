@@ -1,9 +1,9 @@
 {
-    "date":  "2026-10-01T09:16:52.510Z",
-    "deploymentId":  "dpl_4t1Ga74p6GiTYRMXrJaPLzp62bXw",
-    "previousDeploymentId":  "dpl_CHxvD4jD18zKbHYHFHRvSxm8FYrF",
+    "date":  "2026-10-01T20:41:43.509350+00:00",
+    "deploymentId":  "dpl_G6kXgdejq8wtZFhVSoyS5BF4upMm",
+    "previousDeploymentId":  "dpl_4t1Ga74p6GiTYRMXrJaPLzp62bXw",
     "url":  "https://doodle.samistudio.nl",
-    "sourceCommit":  "2ae7941",
+    "sourceCommit":  "13ea356",
     "runtimeAndReleaseFiles":  [
                                    {
                                        "file":  ".vercelignore",
@@ -307,11 +307,11 @@
                                    },
                                    {
                                        "file":  "src/app/api/native/session/guest/route.test.ts",
-                                       "sha":  "9dcd0cfe497373e7ca96dfe5741b077d27ec2926"
+                                       "sha":  "1d7392a834bacf86b8ba6a27af29074a0244a6c4"
                                    },
                                    {
                                        "file":  "src/app/api/native/session/guest/route.ts",
-                                       "sha":  "d71baf1da7366d6f1c3ee423024925f24f56ede6"
+                                       "sha":  "fa96dd95daef4fe6d7add228744fb58009774959"
                                    },
                                    {
                                        "file":  "src/app/api/play/config/route.test.ts",
@@ -451,11 +451,11 @@
                                    },
                                    {
                                        "file":  "src/components/doodle-client.test.tsx",
-                                       "sha":  "15cfb28f156d271340596a27f03b2b48bd947bf4"
+                                       "sha":  "7c5bf7c921cda041b02640cd3d5ce0a344e478c9"
                                    },
                                    {
                                        "file":  "src/components/doodle-client.tsx",
-                                       "sha":  "ae277f12bd5c13827979865ebf77eec4c2df5f24"
+                                       "sha":  "95eaa6924bac0e5fe78a3241014b34182cb47750"
                                    },
                                    {
                                        "file":  "src/components/doodle-ideas-page.tsx",
@@ -463,11 +463,11 @@
                                    },
                                    {
                                        "file":  "src/components/doodle-page.test.tsx",
-                                       "sha":  "643ad7e828df0da7d98eb7ac3ec668062ac6fad2"
+                                       "sha":  "36b825eca0bffe432ccc7e416467edade3f1543d"
                                    },
                                    {
                                        "file":  "src/components/doodle-page.tsx",
-                                       "sha":  "5672ae07c47f7693a773d32dbdf5072a11b6dfe2"
+                                       "sha":  "e5317506d6904fd3126fcf2234f286cd6f09a06f"
                                    },
                                    {
                                        "file":  "src/components/doodle-stage.test.tsx",
@@ -707,19 +707,23 @@
                                    },
                                    {
                                        "file":  "src/lib/editorial.ts",
-                                       "sha":  "fac1e83e511cb994b3073e93ac06f121fdf1f40b"
+                                       "sha":  "a42c868f054feb739d9fdad4c4ae1578058c18d2"
                                    },
                                    {
                                        "file":  "src/lib/env.ts",
                                        "sha":  "27a8e3b47def8ed7fd4fcb9e1d37d6a61f212a18"
                                    },
                                    {
+                                       "file":  "src/lib/generation/free-allowance.redis.integration.test.ts",
+                                       "sha":  "7dfd4a248cecc97038c8fa977609653d30636a95"
+                                   },
+                                   {
                                        "file":  "src/lib/generation/free-allowance.test.ts",
-                                       "sha":  "611c600eec8192f818eb01e7cf2df1ce91bb84ab"
+                                       "sha":  "2281caa453dc0ea486b6c8fe147cc406820df5f0"
                                    },
                                    {
                                        "file":  "src/lib/generation/free-allowance.ts",
-                                       "sha":  "b7b885bded87d7aeb1c4033c87f7ca279e51d89d"
+                                       "sha":  "6440ebeb0b9c7fe7efcf8b387a7cdff5553c5887"
                                    },
                                    {
                                        "file":  "src/lib/generation/generate-doodle.real.test.ts",
@@ -759,7 +763,7 @@
                                    },
                                    {
                                        "file":  "src/lib/i18n.ts",
-                                       "sha":  "d903afd3123630c131a35d5128de0ca6068fa8ab"
+                                       "sha":  "904be94dc12e436674af1581f7adc8a770c4f949"
                                    },
                                    {
                                        "file":  "src/lib/native-attestation.test.ts",
@@ -855,7 +859,7 @@
                                    },
                                    {
                                        "file":  "src/lib/sharing.ts",
-                                       "sha":  "4ec625ee3f4b1407e7a8c4f261b1194393727e78"
+                                       "sha":  "8e185ca624145737a73512f79b07ff0816babac7"
                                    },
                                    {
                                        "file":  "src/lib/usage-metrics.redis.integration.test.ts",
@@ -905,11 +909,11 @@
                              "tsconfig.tsbuildinfo"
                          ],
     "verification":  {
-                         "tests":  "491 passed; one opt-in live image test skipped",
-                         "typecheck":  "passed",
+                         "tests":  "496 passed; one opt-in live image test skipped",
+                         "typecheck":  "backend and native passed",
                          "lint":  "0 errors, 2 existing image warnings",
-                         "productionBuild":  "local and Vercel passed",
-                         "exactLocalSourceHashes":  227,
+                         "productionBuild":  "Vercel passed; signed Android bundleRelease passed",
+                         "exactLocalSourceHashes":  228,
                          "autoExposeSystemEnvs":  true,
                          "http":  [
                                       {
@@ -926,8 +930,16 @@
                                       }
                                   ],
                          "privacyRender":  "Published privacy disclosure visually inspected at desktop 1280px and phone 360px; no functional app-flow claim.",
-                         "seededQaAccounts":  2
+                         "seededQaAccounts":  2,
+                         "trialRender":  "Live production inspected at desktop 1280px and mobile 360px: four free remaining, no horizontal overflow, brand fonts loaded.",
+                         "nativeTests":  "56 passed",
+                         "trialAccountResponse":  {
+                                                      "authenticated":  false,
+                                                      "balance":  0,
+                                                      "freeRemaining":  4
+                                                  },
+                         "trialRedis":  "Four concurrent reservations, finalization idempotency, fifth rejection, failed hold release, and existing two uses retain two remaining."
                      },
-    "nativeStatus":  "Public Android 0.1.4/code 6 remains unchanged. Native build source stays on codex/doodle-next-update. No Android update is required for these backend counts.",
+    "nativeStatus":  "Public Android remains 0.1.4/code 6. Signed 0.1.5/code 7 uploaded into edit 13975943408303764340 with four-free description and production track prepared. API validate and commit return HTTP 403. Browser helper fails to initialize. Not submitted or published.",
     "measurement":  "Daily successful drawings and newly fulfilled non-test paid packs. Known QA account hashes seeded. Best-effort aggregate counts; no new live drawing or purchase test claimed."
 }
