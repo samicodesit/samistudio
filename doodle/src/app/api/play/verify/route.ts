@@ -87,6 +87,7 @@ export async function POST(request: Request) {
   try {
     const result = await processPlayPurchase({
       accountId: user.id,
+      email: user.email,
       expectedObfuscatedAccountId: playAccountId(user.id),
       purchaseToken: input.purchaseToken,
       productId: input.productId,

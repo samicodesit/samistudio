@@ -19,6 +19,7 @@ import { getNativeBearer } from "@/lib/native-session";
 import { consumeNativeAttestation, nativePrincipal } from "@/lib/native-attestation";
 import { hasExactKeys, NativeRequestError, readNativeJson } from "@/lib/native-contracts";
 import { checkBotId } from "botid/server";
+import { trackUsage } from "@/lib/usage-metrics";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -270,6 +271,14 @@ export async function POST(request: NextRequest) {
       },
     });
     if (reservation.kind === "free" && !nativeClient) setTrialCookie(response, reservation.identity);
+    const success = () => {
+      trackUsage({
+        metric: "drawings", channel: nativeClient ? "android" : "web", id: reservationId,
+        actor: reservation.kind === "paid" ? `account:${reservation.userId}` : `trial:${reservation.identity.id}`,
+        email: user?.email,
+      });
+      return response;
+    };
     const finalized = await finalizeWithReplay(
       reservation.kind === "paid"
         ? () => finalizePaidCredit(reservation.userId, reservationId)
@@ -277,7 +286,7 @@ export async function POST(request: NextRequest) {
     );
     if (!finalized) {
       response.headers.set("X-Doodle-Balance-Uncertain", "1");
-      return response;
+      return success();
     }
     if (!finalized.finalized) {
       throw new Error(`${reservation.kind} reservation finalization failed`);
@@ -287,7 +296,7 @@ export async function POST(request: NextRequest) {
       String(finalized.remaining),
     );
 
-    return response;
+    return success();
   } catch (error) {
     await release();
     if (infrastructureFailure) return unavailable(nativeClient);

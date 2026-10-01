@@ -26,6 +26,7 @@ const mocks = vi.hoisted(() => ({
   reserveFreeDoodle: vi.fn(),
   reservePaidCredit: vi.fn(),
   setTrialCookie: vi.fn(),
+  trackUsage: vi.fn(),
 }));
 
 vi.mock("@/lib/generation/generate-doodle", async () => {
@@ -49,6 +50,7 @@ vi.mock("@/lib/generation/free-allowance", () => ({
 vi.mock("@/lib/generation/generation-limit", () => ({ checkGenerationLimit: mocks.checkGenerationLimit }));
 vi.mock("botid/server", () => ({ checkBotId: mocks.checkBotId }));
 vi.mock("@/lib/native-session", () => ({ getNativeBearer: mocks.getNativeBearer }));
+vi.mock("@/lib/usage-metrics", () => ({ trackUsage: mocks.trackUsage }));
 vi.mock("@/lib/native-attestation", () => ({
   consumeNativeAttestation: mocks.consumeNativeAttestation,
   nativePrincipal: mocks.nativePrincipal,
@@ -102,6 +104,29 @@ describe("generate route", () => {
     mocks.setTrialCookie.mockImplementation((response: NextResponse) => {
       response.cookies.set("doodle_trial", "signed", { httpOnly: true, sameSite: "lax", path: "/" });
     });
+  });
+
+  it("records one successful drawing without sending its prompt or image to metrics", async () => {
+    const response = await POST(request("Two cats hug"));
+    expect(response.status).toBe(200);
+    expect(mocks.trackUsage).toHaveBeenCalledExactlyOnceWith({
+      metric: "drawings", channel: "web", id: expect.any(String), actor: "trial:trial", email: undefined,
+    });
+  });
+
+  it("counts a delivered image even when the credit balance needs refreshing", async () => {
+    mocks.finalizeFreeDoodle.mockRejectedValue(new Error("ledger offline"));
+    const response = await POST(request("Two cats hug"));
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Doodle-Balance-Uncertain")).toBe("1");
+    expect(mocks.trackUsage).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not count a refused generation as a drawing", async () => {
+    mocks.generateDoodle.mockRejectedValue(new GenerationError("refused", "Refused"));
+    const response = await POST(request("Two cats hug"));
+    expect(response.status).toBe(422);
+    expect(mocks.trackUsage).not.toHaveBeenCalled();
   });
 
   it("rejects a cross-origin request before BotID and reservation", async () => {

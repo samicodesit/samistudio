@@ -4,7 +4,7 @@ function unavailable(): never {
   throw new Error("Redis unavailable");
 }
 
-export async function redisCommand(command: unknown[]): Promise<unknown> {
+export async function redisCommand(command: unknown[], signal?: AbortSignal): Promise<unknown> {
   const url = process.env.KV_REST_API_URL;
   const token = process.env.KV_REST_API_TOKEN;
   if (!url || !token) unavailable();
@@ -16,6 +16,7 @@ export async function redisCommand(command: unknown[]): Promise<unknown> {
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
       body: JSON.stringify(command),
       cache: "no-store",
+      ...(signal ? { signal } : {}),
     });
   } catch {
     unavailable();

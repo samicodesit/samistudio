@@ -17,6 +17,9 @@ vi.mock("./credits", () => ({ fulfillCreditPack: mocks.fulfillCreditPack }));
 
 const USER_ID = "7d9ac733-9336-4c2a-93c1-5d597d0f7f8e";
 const paidMatchingSession = {
+  livemode: true,
+  amount_total: 200,
+  customer_details: { email: "buyer@example.com" },
   payment_status: "paid",
   metadata: { userId: USER_ID, pack: "doodle_10" },
   line_items: { data: [{ price: { id: "price_doodle" }, quantity: 1 }], has_more: false },
@@ -108,7 +111,7 @@ describe("fixed credit pack checkout", () => {
 
     await expect(fulfillCheckout("cs_paid", USER_ID)).resolves.toBe(10);
     expect(mocks.retrieve).toHaveBeenCalledWith("cs_paid", { expand: ["line_items"] });
-    expect(mocks.fulfillCreditPack).toHaveBeenCalledWith(USER_ID, "cs_paid", "pi_paid");
+    expect(mocks.fulfillCreditPack).toHaveBeenCalledWith(USER_ID, "cs_paid", "pi_paid", { isTest: false, email: "buyer@example.com" });
   });
 
   it("rejects one matching visible item when Stripe reports more line items", async () => {
@@ -142,6 +145,15 @@ describe("fixed credit pack checkout", () => {
     mocks.fulfillCreditPack.mockRejectedValue(new Error("Account deleted"));
 
     await expect(fulfillCheckout("cs_bad", USER_ID)).rejects.toThrow();
-    expect(mocks.fulfillCreditPack).toHaveBeenCalledWith(USER_ID, "cs_bad", "pi_paid");
+    expect(mocks.fulfillCreditPack).toHaveBeenCalledWith(USER_ID, "cs_bad", "pi_paid", { isTest: false, email: "buyer@example.com" });
+  });
+
+  it.each([
+    ["test mode", { livemode: false }],
+    ["zero-cost promotion", { amount_total: 0 }],
+  ])("delivers %s credits while excluding the checkout from paid counts", async (_name, values) => {
+    mocks.retrieve.mockResolvedValue({ ...paidMatchingSession, ...values });
+    await expect(fulfillCheckout("cs_test", USER_ID)).resolves.toBe(10);
+    expect(mocks.fulfillCreditPack).toHaveBeenCalledWith(USER_ID, "cs_test", "pi_paid", { isTest: true, email: "buyer@example.com" });
   });
 });

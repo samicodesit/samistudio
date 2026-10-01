@@ -1,6 +1,7 @@
 import "server-only";
 
 import { redisCommand, redisInteger } from "@/lib/redis";
+import { trackUsage } from "@/lib/usage-metrics";
 
 export type CreditReservation = { reserved: boolean; remaining: number };
 export type CreditFinalization = { finalized: boolean; remaining: number };
@@ -138,7 +139,7 @@ export async function releasePaidCredit(accountId: string, reservationId: string
   return result;
 }
 
-export async function fulfillCreditPack(accountId: string, checkoutSessionId: string, paymentIntentId: string): Promise<number> {
+export async function fulfillCreditPack(accountId: string, checkoutSessionId: string, paymentIntentId: string, usage?: { isTest: boolean; email?: string | null }): Promise<number> {
   const [status, remaining] = pair(await redisCommand([
     "EVAL", FULFILL_SCRIPT, "4",
     accountKey(accountId, "active"), accountKey(accountId, "deleted"), accountKey(accountId, "balance"), purchaseKey(checkoutSessionId),
@@ -146,6 +147,10 @@ export async function fulfillCreditPack(accountId: string, checkoutSessionId: st
   ]));
   if (status === -1) throw new Error("Account deleted");
   if ((status !== 0 && status !== 1) || remaining < 0) unavailable();
+  if (status === 1 && usage) trackUsage({
+    metric: "purchases", channel: "web", id: checkoutSessionId,
+    actor: `account:${accountId}`, ...usage,
+  });
   return remaining;
 }
 

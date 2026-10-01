@@ -83,5 +83,8 @@ export async function fulfillCheckout(sessionId: string, expectedUserId?: string
     throw new Error("Checkout session does not match the fixed credit pack");
   }
 
-  return fulfillCreditPack(userId, sessionId, session.payment_intent);
+  return fulfillCreditPack(userId, sessionId, session.payment_intent, {
+    isTest: session.livemode !== true || !(typeof session.amount_total === "number" && session.amount_total > 0),
+    email: session.customer_details?.email ?? session.customer_email,
+  });
 }

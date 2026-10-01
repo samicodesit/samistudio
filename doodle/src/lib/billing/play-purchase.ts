@@ -1,8 +1,10 @@
 import "server-only";
 
 import { claimPlayCredits, getPlayCreditClaim, markPlayPurchaseConsumed } from "./play-credits";
+import { trackUsage } from "../usage-metrics";
 
 export type ProductPurchaseV2 = {
+  testPurchaseContext?: { fopType?: string };
   purchaseStateContext?: { purchaseState?: string };
   obfuscatedExternalAccountId?: string;
   productLineItem?: Array<{
@@ -36,6 +38,7 @@ export class PlayPurchaseError extends Error {
 
 export async function processPlayPurchase(input: {
   accountId: string;
+  email?: string | null;
   expectedObfuscatedAccountId: string;
   purchaseToken: string;
   productId: string;
@@ -93,6 +96,12 @@ export async function processPlayPurchase(input: {
     if (error instanceof Error && error.message.includes("another account")) throw new PlayPurchaseError("foreign");
     throw new PlayPurchaseError("unavailable");
   }
+
+  if (claim.granted) trackUsage({
+    metric: "purchases", channel: "android", id: input.purchaseToken,
+    actor: `account:${input.accountId}`, email: input.email,
+    isTest: purchase.testPurchaseContext !== undefined,
+  });
 
   try {
     await input.publisher.consumeProductPurchase(input.productId, input.purchaseToken);
