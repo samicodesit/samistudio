@@ -8,7 +8,7 @@ export const metadata = legalMetadata(
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy policy" intro="This policy explains what information Doodle uses and why.">
+    <LegalPage title="Privacy policy" intro="This policy explains what information Doodle uses and why." updated="October 1, 2026">
       <section>
         <h2>Who operates Doodle</h2>
         <p>Doodle is operated by {OPERATOR_NAME}, publishing as Sami Studio (samistudio.nl) in the Netherlands. For privacy questions or requests, email <ContactEmail />.</p>
@@ -22,6 +22,7 @@ export default function PrivacyPage() {
           <li><strong>Payments.</strong> Stripe processes web payments. Where purchasing is available in the Google Play app, Google Play processes the payment. Doodle verifies purchase status with the payment provider and records transaction references and credit delivery. For Play purchases, a protected account identifier links the purchase to your Doodle account, and a hash of the purchase token prevents duplicate credit delivery. Stripe also supplies the email used at checkout. Doodle does not receive your complete card number.</li>
           <li><strong>Usage and security data.</strong> Necessary cookies remember your free allowance and signed-in session. A protected hash derived from your IP address is used briefly for abuse limits. Hosting and anti-bot providers may process ordinary request, device and network data.</li>
           <li><strong>Analytics.</strong> Vercel Web Analytics measures page visits and events such as successful generation and use of sharing controls to help us improve Doodle. It also processes browser and device information, referring pages and approximate location such as city, region or country. It does not request GPS access. Our custom events do not include your doodle description, image, email or payment token.</li>
+          <li><strong>Usage counts.</strong> We also count successful drawings and newly delivered paid credit packs by day, separately for Android and web. These counts exclude known testing accounts and test purchases. Hashed operation references prevent duplicates; the counts contain no prompt, image, email or raw purchase token.</li>
           <li><strong>Reports.</strong> If you report a generated doodle, we store the reason and any details you enter. We upload the doodle and its description only when you select the option that clearly asks us to include them for review.</li>
           <li><strong>Messages.</strong> If you contact us, we process your email address and message to reply.</li>
         </ul>
@@ -29,17 +30,18 @@ export default function PrivacyPage() {
 
       <section>
         <h2>Why we use it</h2>
-        <p>We process this information to provide doodles, maintain accounts and balances, complete purchases, prevent abuse, keep the service secure, answer support requests and meet legal obligations.</p>
+        <p>We process this information to provide doodles, maintain accounts and balances, complete purchases, understand service usage, prevent abuse, keep the service secure, answer support requests and meet legal obligations.</p>
       </section>
 
       <section>
         <h2>Service providers</h2>
-        <p>Doodle relies on Google for sign-in and Google Play purchases, OpenAI for image generation, Stripe for web payments, Vercel for hosting, analytics and bot protection, and Upstash for account, allowance, balance and report storage. These providers process information under their own terms and privacy commitments. Information may be processed outside the EEA using legally recognized safeguards.</p>
+        <p>Doodle relies on Google for sign-in and Google Play purchases, OpenAI for image generation, Stripe for web payments, Vercel for hosting, analytics and bot protection, and Upstash for account, allowance, balance, usage-count and report storage. These providers process information under their own terms and privacy commitments. Information may be processed outside the EEA using legally recognized safeguards.</p>
       </section>
 
       <section>
         <h2>Retention</h2>
         <p>Signed-in sessions last up to 30 days. The anonymous free-allowance cookie and associated count can remain for up to one year. Rate-limit counters expire after about two days. Submitted reports and any included doodle or description are kept for up to 30 days. Account and balance records remain until the account is deleted, while transaction or support records may be kept as required for tax, fraud prevention and legal claims.</p>
+        <p>Daily usage counts and hashed duplicate references expire after 366 days. Protected identifiers of known testing accounts remain excluded from these counts.</p>
         <p>Service providers have separate retention periods. OpenAI may keep generation content in abuse-monitoring logs for up to 30 days by default, with exceptions for legal requirements. Vercel discards its analytics visitor-session identifier after 24 hours; aggregate statistics may remain. See <a href="https://developers.openai.com/api/docs/guides/your-data">OpenAI data controls</a> and <a href="https://vercel.com/docs/analytics/privacy-policy">Vercel Analytics privacy information</a>.</p>
       </section>
 

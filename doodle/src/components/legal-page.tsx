@@ -19,7 +19,7 @@ export function legalMetadata(path: string, title: string, description: string):
   };
 }
 
-export function LegalPage({ title, intro, children }: { title: string; intro: string; children: ReactNode }) {
+export function LegalPage({ title, intro, children, updated = "September 7, 2026" }: { title: string; intro: string; children: ReactNode; updated?: string }) {
   return (
     <>
       <header className="doodle-header">
@@ -33,7 +33,7 @@ export function LegalPage({ title, intro, children }: { title: string; intro: st
           <p className="eyebrow">Sami Studio · Netherlands</p>
           <h1>{title}</h1>
           <p className="legal-intro">{intro}</p>
-          <p className="legal-updated">Last updated September 7, 2026</p>
+          <p className="legal-updated">Last updated {updated}</p>
           {children}
         </article>
         <nav className="legal-nav" aria-label="Legal pages">
