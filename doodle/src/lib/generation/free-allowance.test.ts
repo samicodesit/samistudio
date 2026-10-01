@@ -103,11 +103,11 @@ describe("free allowance", () => {
       `doodle:trial:holds:${identity.id}`,
       `doodle:trial:finalized:${identity.id}:one`,
     ]);
-    expect(command.at(-1)).toBe(600);
+    expect(command.at(-2)).toBe(600);
   });
 
   it("fails closed for an impossible successful reservation response", async () => {
-    redisResult.mockResolvedValueOnce([1, 2]);
+    redisResult.mockResolvedValueOnce([1, 4]);
     const identity = getTrialIdentity(new NextRequest("https://doodle.test"));
 
     await expect(reserveFreeDoodle(identity, "one")).rejects.toThrow("Redis");
@@ -129,7 +129,7 @@ describe("free allowance", () => {
       `doodle:trial:holds:${identity.id}`,
       `doodle:trial:finalized:${identity.id}:one`,
     ]);
-    expect(command.at(-1)).toBe(31_536_000);
+    expect(command.at(-2)).toBe(31_536_000);
   });
 
   it("releases only an active hold so release failure can at worst block until expiry", async () => {
@@ -155,9 +155,15 @@ describe("free allowance", () => {
     await expect(reserveFreeDoodle(identity, "one")).rejects.toThrow("Redis");
     redisResult.mockResolvedValueOnce("no");
     await expect(finalizeFreeDoodle(identity, "one")).rejects.toThrow("Redis");
-    redisResult.mockResolvedValueOnce([1, 3]);
+    redisResult.mockResolvedValueOnce([1, 5]);
     await expect(finalizeFreeDoodle(identity, "one")).rejects.toThrow("Redis");
     redisResult.mockResolvedValueOnce(" ");
     await expect(getFreeRemaining(identity)).rejects.toThrow("Redis");
   });
+  it("gives an existing two-use trial the remaining increased allowance", async () => {
+    redisResult.mockResolvedValueOnce("2");
+    const identity = getTrialIdentity(new NextRequest("https://doodle.test"));
+    await expect(getFreeRemaining(identity)).resolves.toBe(2);
+  });
+
 });

@@ -36,7 +36,7 @@ const INITIAL_ACCOUNT: AccountSummary = {
   authenticated: false,
   email: null,
   balance: 0,
-  freeRemaining: 2,
+  freeRemaining: null,
 };
 
 type ReturnIntent = "auth" | "account" | "checkout";
@@ -366,9 +366,9 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   const usage = accountReady
     ? account.authenticated
       ? formatCount(locale, copy.usage.paidLeft, account.balance)
-      : account.freeRemaining !== null && account.freeRemaining < 2
+      : account.freeRemaining !== null
         ? formatCount(locale, copy.usage.freeLeft, account.freeRemaining)
-        : copy.usage.firstTwoFree
+        : copy.usage.freeTrial
     : null;
   const accountMenu = accountReady ? account.authenticated ? (
     <AccountMenu account={account} locale={locale} copy={copy.account} onAccountChange={replaceAccount} purchaseLabel={copy.purchase.buy} onPurchase={(returnFocus) => {

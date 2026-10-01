@@ -76,4 +76,19 @@ describe("native guest session route", () => {
     mocks.getOrCreateNativeTrialIdentity.mockRejectedValueOnce(new Error("redis"));
     expect((await POST(request({ installId, challenge: "a".repeat(43), integrityToken: "t".repeat(16) }))).status).toBe(503);
   });
+  it("keeps legacy Android guest bootstrap compatible with a larger allowance", async () => {
+    mocks.getFreeRemaining.mockResolvedValueOnce(4);
+    const result = await POST(request({ installId, challenge: "challenge", integrityToken: "integrity" }));
+    expect(result.status).toBe(200);
+    expect(await result.json()).toMatchObject({ freeRemaining: 2 });
+  });
+  it("returns the actual allowance to dynamic-trial clients", async () => {
+    mocks.getFreeRemaining.mockResolvedValueOnce(4);
+    const req = request({ installId, challenge: "challenge", integrityToken: "integrity" });
+    req.headers.set("x-doodle-trial-policy", "dynamic");
+    const result = await POST(req);
+    expect(result.status).toBe(200);
+    expect(await result.json()).toMatchObject({ freeRemaining: 4 });
+  });
+
 });

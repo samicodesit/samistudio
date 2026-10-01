@@ -155,11 +155,11 @@ describe("DoodleClient", () => {
 
     renderClient();
 
-    expect(screen.queryByText("First 2 doodles free")).not.toBeInTheDocument();
+    expect(screen.queryByText("Free doodles to get started")).not.toBeInTheDocument();
     expect(screen.getByRole("status", { name: "Account" })).toBeVisible();
 
     await act(async () => initialAccount.resolve(json(anonymousAccount)));
-    expect(await screen.findByText("First 2 doodles free")).toBeVisible();
+    expect(await screen.findByText("2 free doodles left")).toBeVisible();
   });
 
   it("keeps sign-in visible beside the allowance and opens a neutral sign-in dialog", async () => {
@@ -400,7 +400,7 @@ describe("DoodleClient", () => {
 
     expect(await screen.findByAltText("Generated sticky-note doodle")).toBeVisible();
     await waitFor(() => expect(vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/account")).toHaveLength(2));
-    expect(screen.getByText("First 2 doodles free")).toBeVisible();
+    expect(screen.getByText("2 free doodles left")).toBeVisible();
   });
 
   it("only applies the latest overlapping uncertainty reconciliation", async () => {
@@ -425,7 +425,7 @@ describe("DoodleClient", () => {
       throw new Error(`Unexpected fetch: ${String(input)}`);
     });
     renderClient();
-    await screen.findByText("First 2 doodles free");
+    await screen.findByText("2 free doodles left");
 
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
@@ -436,7 +436,7 @@ describe("DoodleClient", () => {
     expect(screen.getByAltText("Generated sticky-note doodle")).toHaveAttribute("src", "blob:second");
 
     await act(async () => firstRefresh.resolve(json({ ...anonymousAccount, freeRemaining: 1 })));
-    expect(screen.getByText("First 2 doodles free")).toBeVisible();
+    expect(screen.getByText("2 free doodles left")).toBeVisible();
 
     await act(async () => secondRefresh.resolve(json({
       authenticated: true,
@@ -489,7 +489,7 @@ describe("DoodleClient", () => {
     renderClient();
 
     await waitFor(() => expect(screen.getByText("0 doodles left", { selector: ".usage-copy" })).toBeVisible());
-    expect(screen.queryByText("First 2 doodles free")).not.toBeInTheDocument();
+    expect(screen.queryByText("Free doodles to get started")).not.toBeInTheDocument();
   });
 
   it("ignores a delayed anonymous account response after Google refresh authenticates the user", async () => {
@@ -528,7 +528,7 @@ describe("DoodleClient", () => {
 
     expect(screen.getByText("0 doodles left", { selector: ".usage-copy" })).toBeVisible();
     expect(screen.getByText("Account")).toBeInTheDocument();
-    expect(screen.queryByText("First 2 doodles free")).not.toBeInTheDocument();
+    expect(screen.queryByText("Free doodles to get started")).not.toBeInTheDocument();
   });
 
   it("restores the exact scene and offer after OAuth returns", async () => {

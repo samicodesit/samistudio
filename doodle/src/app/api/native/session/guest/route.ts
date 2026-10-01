@@ -62,7 +62,10 @@ export async function POST(request: NextRequest) {
       {
         trialToken: signedTrialToken(identity),
         expiresAt: Date.now() + TRIAL_TTL_SECONDS * 1000,
-        freeRemaining,
+        // Build 6 and earlier reject a bootstrap balance above two. Account
+        // refresh and generation still use the full server-enforced allowance.
+        freeRemaining: request.headers.get("x-doodle-trial-policy") === "dynamic"
+          ? freeRemaining : Math.min(2, freeRemaining),
       },
       { headers: { "Cache-Control": "no-store" } },
     );

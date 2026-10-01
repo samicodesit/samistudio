@@ -1,6 +1,8 @@
 import { createHmac, randomUUID, timingSafeEqual } from "node:crypto";
 import type { NextRequest, NextResponse } from "next/server";
 
+export const FREE_DOODLE_LIMIT = 4;
+
 const COOKIE_NAME = "doodle_trial";
 const TTL_SECONDS = 31_536_000;
 const HOLD_TTL_SECONDS = 600;
@@ -11,23 +13,23 @@ const RESERVE_SCRIPT = `
 redis.call('ZREMRANGEBYSCORE', KEYS[2], '-inf', ARGV[1])
 local used = tonumber(redis.call('GET', KEYS[1]) or '0')
 local active = redis.call('ZCARD', KEYS[2])
-if redis.call('EXISTS', KEYS[3]) == 1 then return {0, math.max(0, 2 - used - active)} end
-if redis.call('ZSCORE', KEYS[2], ARGV[3]) then return {1, math.max(0, 2 - used - active)} end
-if used + active >= 2 then return {0, 0} end
+if redis.call('EXISTS', KEYS[3]) == 1 then return {0, math.max(0, tonumber(ARGV[5]) - used - active)} end
+if redis.call('ZSCORE', KEYS[2], ARGV[3]) then return {1, math.max(0, tonumber(ARGV[5]) - used - active)} end
+if used + active >= tonumber(ARGV[5]) then return {0, 0} end
 redis.call('ZADD', KEYS[2], ARGV[2], ARGV[3])
 redis.call('EXPIRE', KEYS[2], ARGV[4])
-return {1, 2 - used - active - 1}
+return {1, tonumber(ARGV[5]) - used - active - 1}
 `;
 
 const FINALIZE_SCRIPT = `
 redis.call('ZREMRANGEBYSCORE', KEYS[2], '-inf', ARGV[1])
 local used = tonumber(redis.call('GET', KEYS[1]) or '0')
-if redis.call('EXISTS', KEYS[3]) == 1 then return {1, math.max(0, 2 - used)} end
-if redis.call('ZREM', KEYS[2], ARGV[2]) == 0 then return {0, math.max(0, 2 - used)} end
+if redis.call('EXISTS', KEYS[3]) == 1 then return {1, math.max(0, tonumber(ARGV[4]) - used)} end
+if redis.call('ZREM', KEYS[2], ARGV[2]) == 0 then return {0, math.max(0, tonumber(ARGV[4]) - used)} end
 used = redis.call('INCR', KEYS[1])
 redis.call('EXPIRE', KEYS[1], ARGV[3])
 redis.call('SET', KEYS[3], 'finalized', 'NX', 'EX', ARGV[3])
-return {1, math.max(0, 2 - used)}
+return {1, math.max(0, tonumber(ARGV[4]) - used)}
 `;
 
 const RELEASE_SCRIPT = `
@@ -133,7 +135,7 @@ function commandResult(value: unknown) {
 function finalizationResult(value: unknown) {
   if (!Array.isArray(value) || value.length !== 2) throw redisError();
   const [finalized, remaining] = value.map(integer);
-  if ((finalized !== 0 && finalized !== 1) || remaining < 0 || remaining > 2) throw redisError();
+  if ((finalized !== 0 && finalized !== 1) || remaining < 0 || remaining > FREE_DOODLE_LIMIT) throw redisError();
   return { finalized: finalized === 1, remaining };
 }
 
@@ -160,7 +162,7 @@ export function setTrialCookie(response: NextResponse, identity: TrialIdentity) 
 
 export async function getFreeRemaining(identity: TrialIdentity) {
   const used = usedResult(await redis(["GET", usedKey(identity)]));
-  return Math.max(0, 2 - used);
+  return Math.max(0, FREE_DOODLE_LIMIT - used);
 }
 
 export async function reserveFreeDoodle(identity: TrialIdentity, reservationId: string) {
@@ -176,10 +178,11 @@ export async function reserveFreeDoodle(identity: TrialIdentity, reservationId: 
     now + HOLD_TTL_SECONDS * 1000,
     reservationId,
     HOLD_TTL_SECONDS,
+    FREE_DOODLE_LIMIT,
   ]);
   if (!Array.isArray(result) || result.length !== 2) throw redisError();
   const [reserved, remaining] = result.map(integer);
-  if ((reserved !== 0 && reserved !== 1) || remaining < 0 || remaining > 2 - reserved) throw redisError();
+  if ((reserved !== 0 && reserved !== 1) || remaining < 0 || remaining > FREE_DOODLE_LIMIT - reserved) throw redisError();
   return { reserved: reserved === 1, remaining };
 }
 
@@ -194,6 +197,7 @@ export async function finalizeFreeDoodle(identity: TrialIdentity, reservationId:
     Date.now(),
     reservationId,
     TTL_SECONDS,
+    FREE_DOODLE_LIMIT,
   ]));
 }
 

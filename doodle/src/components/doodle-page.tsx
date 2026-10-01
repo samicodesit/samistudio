@@ -39,7 +39,7 @@ export function DoodlePage({
         "@type": "Offer",
         price: "0",
         priceCurrency: "EUR",
-        description: copy.usage.firstTwoFree,
+        description: copy.usage.freeTrial,
       },
       {
         "@type": "Offer",
