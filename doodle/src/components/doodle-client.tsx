@@ -13,6 +13,7 @@ import { PurchaseDialog } from "./purchase-dialog";
 import { ResultActions } from "./result-actions";
 import { ResultDialog } from "./result-dialog";
 import { isPlayRuntime } from "@/lib/billing/play-client";
+import { LANDING_EXAMPLE, type LandingCopy } from "@/lib/landing-copy";
 
 type GenerationState =
   | { status: "idle"; imageUrl: null; error: null }
@@ -29,6 +30,7 @@ interface DoodleClientProps {
   initialScene?: string;
   initialSuggestionIds?: readonly SceneIdeaId[];
   accountHost?: "web" | "app";
+  landing?: LandingCopy;
 }
 
 const IDLE_STATE: GenerationState = { status: "idle", imageUrl: null, error: null };
@@ -72,7 +74,7 @@ function messageForStatus(status: number, copy: DoodleCopy["errors"]): string {
   return copy.general;
 }
 
-export function DoodleClient({ locale, copy, initialScene = "", initialSuggestionIds, accountHost = "web" }: DoodleClientProps) {
+export function DoodleClient({ locale, copy, initialScene = "", initialSuggestionIds, accountHost = "web", landing }: DoodleClientProps) {
   const [scene, setScene] = useState(initialScene);
   const initialIds = initialSuggestionIds ?? DEFAULT_SUGGESTION_IDS;
   const [suggestionIds, setSuggestionIds] = useState<readonly SceneIdeaId[]>(initialIds);
@@ -362,7 +364,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   const inspectedImageUrl =
     generation.status === "ready" && generation.imageUrl
       ? generation.imageUrl
-      : "/references/doodle-reference-kiss.png";
+      : landing ? LANDING_EXAMPLE : "/references/doodle-reference-kiss.png";
   const usage = accountReady
     ? account.authenticated
       ? formatCount(locale, copy.usage.paidLeft, account.balance)
@@ -405,7 +407,13 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   }
 
   return (
-    <div ref={workspaceRef} className={`doodle-workspace doodle-workspace-${generation.status}`}>
+    <div ref={workspaceRef} className={`doodle-workspace doodle-workspace-${generation.status}${landing ? " doodle-workspace-landing" : ""}`}>
+      {landing && (generation.status === "idle" || generation.status === "error") ? (
+        <div className="landing-intro">
+          <h1>{landing.title}<br />{landing.titleEnd}</h1>
+          <p>{landing.subtitle}</p>
+        </div>
+      ) : null}
       <div className="workspace-copy">
         {generation.status === "generating" ? null : generation.status === "ready" ? (
           <section className="state-copy" aria-labelledby="ready-title">
@@ -423,15 +431,19 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
             isGenerating={false}
             onSceneChange={setScene}
             onCreate={createDoodle}
-            copy={copy.composer}
+            copy={landing ? { ...copy.composer, placeholder: landing.examplePrompt } : copy.composer}
             usage={usage}
             usageLoadingLabel={copy.account.label}
             createButtonRef={createButtonRef}
             sceneInputRef={sceneInputRef}
+            compactHeading={Boolean(landing)}
           />
         )}
         {generation.status !== "generating" && generation.status !== "ready" ? (
-        <section className="suggestions-section" aria-labelledby="suggestions-title">
+        landing ? <section className="landing-suggestions" aria-label={landing.tryIdea}>
+          <span>{landing.tryIdea}</span>
+          {landing.suggestions.map(({ label, prompt }) => <button key={label} type="button" onClick={() => handleSuggestion(prompt)}>{label}</button>)}
+        </section> : <section className="suggestions-section" aria-labelledby="suggestions-title">
           <div className="suggestions-heading">
             <h2 id="suggestions-title">{copy.suggestions.title}</h2>
           </div>
@@ -450,6 +462,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
       </div>
       {accountPortal}
       <div className="workspace-visual">
+        <div className="landing-stage-wrap">
         <DoodleStage
           key={generation.status}
           status={generation.status}
@@ -457,7 +470,14 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
           error={generation.error}
           onInspect={() => setIsResultOpen(true)}
           copy={copy.stage}
+          referenceImage={landing ? LANDING_EXAMPLE : undefined}
+          referenceAlt={landing ? `${landing.exampleLabel}: ${landing.examplePrompt}` : undefined}
         />
+        {landing && generation.status === "idle" ? <div className="landing-example-caption" id="examples">
+          <span>{landing.exampleLabel}</span>
+          <p>{landing.examplePrompt}</p>
+        </div> : null}
+        </div>
       </div>
       {isResultOpen ? (
         <ResultDialog

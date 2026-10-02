@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { getCopy, type Locale } from "@/lib/i18n";
 import { DoodleClient } from "./doodle-client";
+import { getLandingCopy } from "@/lib/landing-copy";
 
 const mocks = vi.hoisted(() => ({ track: vi.fn() }));
 
@@ -12,11 +13,11 @@ vi.mock("./google-sign-in-button", () => ({
   isIosBrowser: () => false,
 }));
 
-function renderClient(locale: Locale = "en", initialScene = "") {
+function renderClient(locale: Locale = "en", initialScene = "", landing = false) {
   const host = document.createElement("div");
   host.dataset.accountHost = "web";
   document.body.append(host);
-  return render(<DoodleClient locale={locale} copy={getCopy(locale)} initialScene={initialScene} accountHost="web" />);
+  return render(<DoodleClient locale={locale} copy={getCopy(locale)} initialScene={initialScene} accountHost="web" landing={landing ? getLandingCopy(locale) : undefined} />);
 }
 
 function suggestionLabels() {
@@ -52,6 +53,38 @@ function deferred<T>() {
 }
 
 describe("DoodleClient", () => {
+  it("lets a landing-page visitor choose an editable occasion without generating", async () => {
+    renderClient("en", "", true);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Your words.A little drawing.");
+    const create = screen.getByRole("button", { name: "Create doodle" });
+    expect(create).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Birthday card" }));
+    expect(screen.getByRole("textbox")).toHaveValue("A happy dog holding a birthday balloon");
+    expect(create).toBeEnabled();
+    await screen.findByText("2 free doodles left");
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("button", { name: /Example drawing:/ })).toBeVisible();
+  });
+
+  it("replaces the labelled landing example with the real generated result", async () => {
+    mockGeneration(new Response(new Blob(["image"], { type: "image/png" }), { status: 200 }));
+    renderClient("en", "A small scene", true);
+    fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+    await screen.findByRole("button", { name: getCopy("en").stage.viewLarger });
+    expect(screen.queryByText("Example drawing")).not.toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /Your words/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: getCopy("en").stage.generatedAlt })).toHaveAttribute("src", "blob:one");
+  });
+
+  it("keeps the landing prompt editable after a generation error", async () => {
+    mockGeneration(new Response(null, { status: 503 }));
+    renderClient("en", "A small scene", true);
+    fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+    await screen.findByRole("alert");
+    expect(screen.getByRole("textbox")).toHaveValue("A small scene");
+    expect(screen.getByRole("button", { name: "Create doodle" })).toBeEnabled();
+    expect(screen.queryByText("Example drawing")).not.toBeInTheDocument();
+  });
   afterEach(() => {
     document.querySelectorAll("[data-account-host]").forEach((host) => host.remove());
     vi.unstubAllEnvs();

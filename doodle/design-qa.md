@@ -1,0 +1,46 @@
+# Option 2 landing design QA
+
+final result: passed
+
+Source visual truth: `docs/design/landing-option-2.png`, the second displayed generated concept selected by the owner.
+
+Implementation: `http://localhost:9043/`.
+
+Evidence directory: `C:/Users/Sami/.codex/doodle-live-evidence/landing-concepts-oct2/`.
+
+## Comparison
+
+- Desktop CSS viewport: 1440 x 1000. Full page screenshot `implementation-desktop-v3.png`. The browser captures 1425 content pixels because its scrollbar occupies 15 pixels.
+- Source pixels: 1024 x 1601. Both source and implementation were normalized to 1024 pixels wide without stretching. Normalized implementation is 1024 x 1688. Additional height retains existing resource and refund links beneath the main footer.
+- State: filled birthday prompt, idle, English, anonymous. Remaining quota is actual state after a successful generation, not the mock's fixed free-trial sentence.
+- Full comparison: `comparison-desktop.png`. Focused readable controls and typography: `comparison-composer.png`. These combine source and implementation in the same comparison image.
+- Mobile: 390 x 844, `implementation-mobile-final.png`. The complete composer and Create action are above the fold. No horizontal overflow. Smaller typography and tighter spacing intentionally adapt the desktop target.
+
+## Required fidelity surfaces
+
+- Fonts: existing local Next font output renders Bricolage Grotesque headings and IBM Plex Sans body and controls. Computed families verified in browser. Actual brand fonts are preserved rather than approximating image-generated letter shapes with generic fonts.
+- Spacing: centered two-line headline, wide composer, pill suggestions, centered square example, labelled caption, two-column support and restrained footer match the selected hierarchy. Initial comparison found undersized navigation/control/support text and missing footer wordmark. Both corrected and recaptured in v3.
+- Colors: cream web surface, charcoal text, dark green controls and yellow artwork. Focus is visible, disabled state legible, no decorative gradients introduced.
+- Images: dedicated 1024px WebP illustration recreated from the selected concept, sharp at the rendered size. Official localized Google Play badge retained. Artwork is a marketing illustration, not a record of a live generation. The reproduced drawing has small raster differences from the concept, recorded as P3.
+- Copy: selected English heading, purpose, composer, occasion labels and support text are retained. Localized presentation for all ten supported locales. User balances remain dynamic. Existing SEO, resource, refund and contact destinations remain available.
+
+## Functional and state evidence
+
+- Birthday, lunchbox and journal suggestions fill an editable prompt without generating. Empty input disables Create. Existing initialScene prefills remain supported.
+- One real generation completed through the unchanged local backend using the configured generation provider, with fixture mode disabled. Quota went from four to three. `implementation-loading.png` and `implementation-generated-result.png` show loading and genuine output.
+- Loading retains the generous yellow card and steady rotating in-card messages. Result displays its own artwork and Download, Share and new-scene actions. Example label disappears for a real result.
+- New-scene action returns to the empty composer. Sign-in dialog opens and dismisses correctly. This checkout/auth implementation is unchanged. Actual Google authentication and a payment transaction were not repeated. The copied local environment has a dummy OAuth client value, producing a Google widget configuration error when sign-in was opened. This is a local preview limitation, not a production OAuth change.
+- Error retention/retry is covered by the component regression test, not claimed as a browser screenshot check.
+- Installed presentation checked at `?runtime=app` in a 390px browser: web hero, artwork and support/footer remain hidden; original create/ideas/settings navigation remains. `implementation-installed.png`. This is a browser runtime check, not a Play-installed native end-to-end test.
+- Component checks: 36 passed across DoodleClient, DoodleStage and MobileAppWorkspace. Typecheck and targeted ESLint passed. Browser had no errors before opening Google sign-in; the local dummy-client error described above is the only observed console error.
+
+## Comparison history
+
+1. Initial capture: `implementation-desktop.png`. P2: header and supporting/control typography too small relative to source; footer lacked the reference's wordmark and clear legal row.
+2. Intermediate capture: `implementation-desktop-v2.png`. Added footer hierarchy and increased headline. Further focused comparison prompted control/header sizing and cream-surface corrections.
+3. Final capture: `implementation-desktop-v3.png`, combined full and focused comparisons above. Earlier P2 findings corrected. No actionable P0/P1/P2 visual findings remain. Mobile captured separately after final changes.
+
+## Follow-up polish
+
+- P3: raster illustration differs slightly in pose/stroke texture from the generated visual target. It retains the same subject, style, placement and size.
+- Preview is prepared locally. Production deployment and publishing are separate actions.

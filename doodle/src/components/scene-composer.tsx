@@ -14,6 +14,7 @@ interface SceneComposerProps {
   usageLoadingLabel: string;
   createButtonRef?: Ref<HTMLButtonElement>;
   sceneInputRef?: Ref<HTMLTextAreaElement>;
+  compactHeading?: boolean;
 }
 
 export function SceneComposer({
@@ -26,13 +27,14 @@ export function SceneComposer({
   usageLoadingLabel,
   createButtonRef,
   sceneInputRef,
+  compactHeading = false,
 }: SceneComposerProps) {
   const showCounter = scene.length >= 150;
 
   return (
     <section id="composer" className="composer-section" aria-labelledby="scene-title">
-      <h1 id="scene-title">{copy.title}</h1>
-      <p className="scene-hint">{copy.hint}</p>
+      {compactHeading ? <h2 id="scene-title">{copy.title}</h2> : <h1 id="scene-title">{copy.title}</h1>}
+      {compactHeading ? null : <p className="scene-hint">{copy.hint}</p>}
       <div className="doodle-composer">
         <label className="sr-only" htmlFor="scene">
           {copy.label}

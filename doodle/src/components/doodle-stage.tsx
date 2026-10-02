@@ -14,11 +14,13 @@ interface DoodleStageProps {
   error: string | null;
   onInspect?: () => void;
   copy: DoodleCopy["stage"];
+  referenceImage?: string;
+  referenceAlt?: string;
 }
 
 const LOADING_DELAYS = [8000, 12000, 25000, 30000];
 
-export function DoodleStage({ status, imageUrl, error, onInspect, copy }: DoodleStageProps) {
+export function DoodleStage({ status, imageUrl, error, onInspect, copy, referenceImage, referenceAlt }: DoodleStageProps) {
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -80,11 +82,11 @@ export function DoodleStage({ status, imageUrl, error, onInspect, copy }: Doodle
       className="doodle-stage doodle-stage-reference doodle-stage-result"
       type="button"
       onClick={onInspect}
-      aria-label={copy.referenceAria}
+      aria-label={referenceAlt ?? copy.referenceAria}
     >
       <Image
-        src="/references/doodle-reference-kiss.png"
-        alt={copy.referenceAlt}
+        src={referenceImage ?? "/references/doodle-reference-kiss.png"}
+        alt={referenceAlt ?? copy.referenceAlt}
         width={1024}
         height={1024}
         priority
