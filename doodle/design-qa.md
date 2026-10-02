@@ -1,6 +1,6 @@
 # Option 2 landing design QA
 
-final result: passed
+final result: needs one desktop spacing adjustment before release
 
 Source visual truth: `docs/design/landing-option-2.png`, the second displayed generated concept selected by the owner.
 
@@ -44,6 +44,13 @@ Evidence directory: `C:/Users/Sami/.codex/doodle-live-evidence/landing-concepts-
 
 - P3: raster illustration differs slightly in pose/stroke texture from the generated visual target. It retains the same subject, style, placement and size.
 - Preview is prepared locally. Production deployment and publishing are separate actions.
+
+## Fresh laptop and phone review, October 2
+
+- New audit captures: `review-laptop-1366.png` at 1366x768 and `review-phone-390.png` at 390x844, both at scroll position zero.
+- Phone: Create bottom at 510.94px, fully visible; readable purpose, input and suggestions; no horizontal overflow. Phone viewport presentation accepted.
+- Desktop P2: Create bottom at 800px in a 768px-high viewport. Its bottom 32px sits below the initial screen. The large headline and vertical spacing delay the immediate-use flow. Recommend tightening the desktop hero/composer spacing at shorter viewport heights while retaining the selected composition.
+- This finding concerns first-screen access, not failed generation. No implementation, backend, payment or publishing changes were made during the review. Actual Safari/macOS and physical phone execution remain outside this browser viewport review.
 
 ## Input and language-menu refinement, October 2
 
