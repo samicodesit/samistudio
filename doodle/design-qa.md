@@ -1,6 +1,6 @@
 # Option 2 landing design QA
 
-final result: needs one desktop spacing adjustment before release
+final result: passed local responsive presentation review
 
 Source visual truth: `docs/design/landing-option-2.png`, the second displayed generated concept selected by the owner.
 
@@ -51,6 +51,13 @@ Evidence directory: `C:/Users/Sami/.codex/doodle-live-evidence/landing-concepts-
 - Phone: Create bottom at 510.94px, fully visible; readable purpose, input and suggestions; no horizontal overflow. Phone viewport presentation accepted.
 - Desktop P2: Create bottom at 800px in a 768px-high viewport. Its bottom 32px sits below the initial screen. The large headline and vertical spacing delay the immediate-use flow. Recommend tightening the desktop hero/composer spacing at shorter viewport heights while retaining the selected composition.
 - This finding concerns first-screen access, not failed generation. No implementation, backend, payment or publishing changes were made during the review. Actual Safari/macOS and physical phone execution remain outside this browser viewport review.
+
+## Shorter desktop spacing correction, October 2
+
+- Owner authorized the final spacing adjustment. A scoped desktop media query at widths of at least 700px and heights up to 850px reduces header/hero gaps, scales the heading with viewport height and slightly reduces the composer blank area. Brand typography, generous controls and the selected centered hierarchy are retained. Tall-screen and phone rules remain intact.
+- Settled previews inspected at 1366x768, 1280x720, 1440x1000 and 390x844. Create bottom coordinates: 651.91px, 626.20px, 810.69px and 510.94px respectively, all within the initial viewport. No horizontal overflow. At 1366x768 the whole composer now ends at 672.91px, leaving comfortable space below it.
+- Evidence: `landing-laptop-spacing-fixed.png`, `landing-laptop-720-fixed.png`, `landing-large-desktop-final.png`, `landing-phone-spacing-final.png` in the existing evidence directory. Initial loading capture was replaced with the settled account/balance capture before acceptance.
+- Production build and TypeScript passed. This correction changes CSS only; no extra implementation-mirroring tests were added. Earlier functional checks remain separate evidence. Prepared locally, without publishing or production deployment.
 
 ## Input and language-menu refinement, October 2
 
