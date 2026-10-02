@@ -4,7 +4,6 @@ export const CARD_WIDTH = 1200;
 export const CARD_HEIGHT = 1500;
 const CARD_INK = "#20231f";
 const CARD_PAPER = "#fcfcf8";
-const CARD_STICKY = "#f4d85e";
 const MAX_MESSAGE_LENGTH = 80;
 const MESSAGE_MAX_WIDTH = 930;
 const MESSAGE_MAX_LINES = 3;
@@ -161,9 +160,7 @@ export async function renderCardBlob(source: Blob, message: string, locale: Loca
     const imageY = 112;
     const imageWidth = CARD_WIDTH - 204;
     const imageHeight = 930;
-    ctx.fillStyle = CARD_STICKY;
-    ctx.fillRect(imageX, imageY, imageWidth, imageHeight);
-    drawContainedImage(ctx, bitmap, imageX + 34, imageY + 34, imageWidth - 68, imageHeight - 68);
+    drawContainedImage(ctx, bitmap, imageX, imageY, imageWidth, imageHeight);
 
     const cleanMessage = limitCardMessage(message);
     if (cleanMessage) {
