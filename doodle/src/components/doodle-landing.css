@@ -58,7 +58,7 @@
 .landing-intro p { margin: 26px 0 0; color: var(--muted); font-size: 28px; line-height: 1.4; }
 .doodle-workspace-landing .workspace-copy { width: min(100%, 1024px); }
 .doodle-workspace-landing .composer-section h2 {
-  margin: 0 0 16px;
+  margin: 0 0 8px;
   font-family: var(--font-display);
   font-size: 30px;
   font-weight: 600;
@@ -181,7 +181,7 @@ body:has(.mobile-app-workspace[data-installed="true"]) .landing-resources { disp
   .landing-intro { margin-bottom: 30px; }
   .landing-intro h1 { font-size: clamp(35px, 9.6vw, 64px); letter-spacing: -.045em; line-height: 1.02; }
   .landing-intro p { margin-top: 16px; font-size: 17px; line-height: 1.4; text-wrap: balance; }
-  .doodle-workspace-landing .composer-section h2 { margin-bottom: 10px; font-size: 20px; }
+  .doodle-workspace-landing .composer-section h2 { margin-bottom: 6px; font-size: 20px; }
   .doodle-workspace-landing .doodle-composer { min-height: 218px; border-radius: 16px; }
   .doodle-workspace-landing .doodle-composer textarea { min-height: 126px; padding: 20px 20px 8px; font-size: 17px; }
   .animated-prompt-hint { inset: 20px 20px auto; font-size: 17px; }

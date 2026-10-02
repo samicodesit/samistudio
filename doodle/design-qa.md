@@ -69,3 +69,9 @@ Evidence directory: `C:/Users/Sami/.codex/doodle-live-evidence/landing-concepts-
 - Production build, TypeScript, targeted ESLint and 45 component checks passed. Existing page tests updated for the option 2 heading levels, disclosed supporting content and repeated header/footer wordmarks. No backend, authentication or billing changes in this refinement. Local preview only.
 - Typing correction verified separately: 38 targeted composer/client checks and rebuilt production bundle passed. New regression observes text starting empty, growing one character at a time, reaching the full prompt, then shrinking one character at a time back to empty. Browser captured actual `typing` text `A` and `deleting` text `A sleepy moon tucked under a clo`, with the real textarea still empty. Desktop and 390px layouts inspected, no horizontal overflow. Evidence: `placeholder-typing.png`, `placeholder-backspacing.png`, `placeholder-phone.png` in the existing QA evidence directory.
 - Reusable motion rule: when the owner asks for typing and untyping, animate the actual visible text and inspect both directions. An opacity reveal/fade is a different effect and does not satisfy that request.
+
+## Composer label spacing, October 2
+
+- Reduced the landing label gap from 16px to 8px on desktop and from 10px to 6px on phone, visually grouping the question with its input.
+- Inspected settled 1366x768 and 390x844 browser previews. Measured gaps are 8px and 6px respectively, with no horizontal overflow. Evidence: landing-label-tight-desktop.png and landing-label-tight-phone.png in the existing evidence directory.
+- Production build and TypeScript passed. Local preview refreshed; no publishing or functional-flow changes.
