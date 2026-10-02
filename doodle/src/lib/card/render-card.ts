@@ -1,17 +1,14 @@
 import type { Locale } from "@/lib/i18n";
+import { CLASSIC_CARD_FRAME, type CardFrame } from "./frame";
 
 export const CARD_WIDTH = 1200;
 export const CARD_HEIGHT = 1500;
-const CARD_INK = "#20231f";
-const CARD_PAPER = "#fcfcf8";
 const MAX_MESSAGE_LENGTH = 80;
-const MESSAGE_MAX_WIDTH = 930;
 const MESSAGE_MAX_LINES = 3;
 const MESSAGE_MAX_FONT_SIZE = 64;
 const MESSAGE_MIN_FONT_SIZE = 32;
 const MESSAGE_FONT_STEP = 2;
 const MESSAGE_LINE_HEIGHT_RATIO = 1.28;
-const MESSAGE_CENTER_Y = 1165;
 
 type TextMeasurer = (value: string) => number;
 
@@ -140,7 +137,7 @@ function drawContainedImage(ctx: CanvasRenderingContext2D, image: CanvasImageSou
   ctx.drawImage(image, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
 }
 
-export async function renderCardBlob(source: Blob, message: string, locale: Locale): Promise<Blob> {
+export async function renderCardBlob(source: Blob, message: string, locale: Locale, frame: CardFrame = CLASSIC_CARD_FRAME): Promise<Blob> {
   await loadCardFonts(locale);
   const bitmap = await createImageBitmap(source);
   try {
@@ -150,34 +147,34 @@ export async function renderCardBlob(source: Blob, message: string, locale: Loca
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("Canvas is unavailable");
 
-    ctx.fillStyle = CARD_PAPER;
+    ctx.fillStyle = frame.paperColor;
     ctx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
-    ctx.strokeStyle = "rgba(32, 35, 31, 0.2)";
-    ctx.lineWidth = 3;
-    ctx.strokeRect(48, 48, CARD_WIDTH - 96, CARD_HEIGHT - 96);
+    ctx.strokeStyle = frame.borderColor;
+    ctx.lineWidth = frame.borderWidth;
+    ctx.strokeRect(frame.borderInset, frame.borderInset, CARD_WIDTH - frame.borderInset * 2, CARD_HEIGHT - frame.borderInset * 2);
 
-    const imageX = 102;
-    const imageY = 112;
-    const imageWidth = CARD_WIDTH - 204;
-    const imageHeight = 930;
+    const imageX = frame.imageInset;
+    const imageY = frame.imageTop;
+    const imageWidth = CARD_WIDTH - frame.imageInset * 2;
+    const imageHeight = frame.imageHeight;
     drawContainedImage(ctx, bitmap, imageX, imageY, imageWidth, imageHeight);
 
     const cleanMessage = limitCardMessage(message);
     if (cleanMessage) {
-      ctx.fillStyle = CARD_INK;
+      ctx.fillStyle = frame.inkColor;
       ctx.textAlign = "center";
-      ctx.textBaseline = "top";
+      ctx.textBaseline = "middle";
       ctx.direction = locale === "ar" ? "rtl" : "ltr";
       const layout = fitCardMessage(
         cleanMessage,
-        MESSAGE_MAX_WIDTH,
+        frame.messageMaxWidth,
         value => ctx.measureText(value).width,
         size => {
           ctx.font = cardFont(locale, size);
         },
       );
       ctx.font = cardFont(locale, layout.fontSize);
-      const startY = MESSAGE_CENTER_Y - ((layout.lines.length - 1) * layout.lineHeight) / 2;
+      const startY = frame.messageCenterY - ((layout.lines.length - 1) * layout.lineHeight) / 2;
       layout.lines.forEach((line, index) => ctx.fillText(line, CARD_WIDTH / 2, startY + index * layout.lineHeight));
     }
 

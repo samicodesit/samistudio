@@ -2278,8 +2278,8 @@ dialog:focus-visible {
 }
 .card-preview-image {
   display: grid;
-  height: 62%;
-  margin: 7.5% 8.5% 0;
+  height: 70.4%;
+  margin: 6% 6% 0;
   place-items: center;
   overflow: hidden;
 }
@@ -2291,7 +2291,7 @@ dialog:focus-visible {
 }
 .card-preview-message {
   display: grid;
-  min-height: 28%;
+  min-height: 22.4%;
   margin: 0 9%;
   align-items: center;
   color: var(--graphite);

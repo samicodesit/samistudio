@@ -63,6 +63,7 @@ describe("card export contract", () => {
       const [source, x, y, width, height] = context.drawImage.mock.calls[0] as unknown as [unknown, number, number, number, number];
       expect(source).toBe(bitmap);
       expect(width / height).toBeCloseTo(1.5);
+      expect(width).toBeGreaterThan(CARD_WIDTH * 0.85);
       expect(x).toBeGreaterThan(0);
       expect(y).toBeGreaterThan(0);
       expect(x + width).toBeLessThan(CARD_WIDTH);
