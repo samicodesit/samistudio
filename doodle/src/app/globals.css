@@ -2262,13 +2262,9 @@ dialog:focus-visible {
   margin: 0 auto;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgba(32, 35, 31, 0.22);
-  background: var(--paper);
-  box-shadow: 8px 10px 0 rgba(32, 35, 31, 0.08);
-}
-.card-preview.is-rendered {
   border: 0;
-  box-shadow: none;
+  background: var(--paper);
+  box-shadow: 0 6px 24px rgba(32, 35, 31, 0.08);
 }
 .card-preview-rendered {
   display: block;
@@ -2278,8 +2274,8 @@ dialog:focus-visible {
 }
 .card-preview-image {
   display: grid;
-  height: 70.4%;
-  margin: 6% 6% 0;
+  height: 80%;
+  margin: 0;
   place-items: center;
   overflow: hidden;
 }
@@ -2291,7 +2287,7 @@ dialog:focus-visible {
 }
 .card-preview-message {
   display: grid;
-  min-height: 22.4%;
+  min-height: 20%;
   margin: 0 9%;
   align-items: center;
   color: var(--graphite);

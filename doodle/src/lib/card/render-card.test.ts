@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { CLASSIC_CARD_FRAME } from "./frame";
 import {
   CARD_HEIGHT,
   CARD_WIDTH,
@@ -64,11 +65,15 @@ describe("card export contract", () => {
       expect(source).toBe(bitmap);
       expect(width / height).toBeCloseTo(1.5);
       expect(width).toBeGreaterThan(CARD_WIDTH * 0.85);
-      expect(x).toBeGreaterThan(0);
+      expect(x).toBeGreaterThanOrEqual(0);
       expect(y).toBeGreaterThan(0);
-      expect(x + width).toBeLessThan(CARD_WIDTH);
+      expect(x + width).toBeLessThanOrEqual(CARD_WIDTH);
       expect(y + height).toBeLessThan(CARD_HEIGHT);
       expect(bitmap.close).toHaveBeenCalledOnce();
+      expect(context.strokeRect).not.toHaveBeenCalled();
+
+      await renderCardBlob(new Blob(["source"]), "", "en", { ...CLASSIC_CARD_FRAME, borderWidth: 8 });
+      expect(context.strokeRect).toHaveBeenCalledWith(x + 4, y + 4, width - 8, height - 8);
     } finally {
       vi.unstubAllGlobals();
     }

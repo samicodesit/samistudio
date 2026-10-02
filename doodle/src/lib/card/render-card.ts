@@ -126,7 +126,7 @@ async function loadCardFonts(locale: Locale): Promise<void> {
   ]);
 }
 
-function drawContainedImage(ctx: CanvasRenderingContext2D, image: CanvasImageSource, x: number, y: number, width: number, height: number): void {
+function drawContainedImage(ctx: CanvasRenderingContext2D, image: CanvasImageSource, x: number, y: number, width: number, height: number) {
   const sizedImage = image as CanvasImageSource & { width?: number; height?: number; videoWidth?: number; videoHeight?: number };
   const sourceWidth = sizedImage.videoWidth || sizedImage.width;
   const sourceHeight = sizedImage.videoHeight || sizedImage.height;
@@ -134,7 +134,9 @@ function drawContainedImage(ctx: CanvasRenderingContext2D, image: CanvasImageSou
   const scale = Math.min(width / sourceWidth, height / sourceHeight);
   const drawWidth = sourceWidth * scale;
   const drawHeight = sourceHeight * scale;
-  ctx.drawImage(image, x + (width - drawWidth) / 2, y + (height - drawHeight) / 2, drawWidth, drawHeight);
+  const bounds = { x: x + (width - drawWidth) / 2, y: y + (height - drawHeight) / 2, width: drawWidth, height: drawHeight };
+  ctx.drawImage(image, bounds.x, bounds.y, bounds.width, bounds.height);
+  return bounds;
 }
 
 export async function renderCardBlob(source: Blob, message: string, locale: Locale, frame: CardFrame = CLASSIC_CARD_FRAME): Promise<Blob> {
@@ -149,15 +151,18 @@ export async function renderCardBlob(source: Blob, message: string, locale: Loca
 
     ctx.fillStyle = frame.paperColor;
     ctx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
-    ctx.strokeStyle = frame.borderColor;
-    ctx.lineWidth = frame.borderWidth;
-    ctx.strokeRect(frame.borderInset, frame.borderInset, CARD_WIDTH - frame.borderInset * 2, CARD_HEIGHT - frame.borderInset * 2);
-
     const imageX = frame.imageInset;
     const imageY = frame.imageTop;
     const imageWidth = CARD_WIDTH - frame.imageInset * 2;
     const imageHeight = frame.imageHeight;
-    drawContainedImage(ctx, bitmap, imageX, imageY, imageWidth, imageHeight);
+    const imageBounds = drawContainedImage(ctx, bitmap, imageX, imageY, imageWidth, imageHeight);
+    if (frame.borderWidth > 0) {
+      // Frames hug the actual artwork, including non-square source images.
+      const inset = frame.borderWidth / 2;
+      ctx.strokeStyle = frame.borderColor;
+      ctx.lineWidth = frame.borderWidth;
+      ctx.strokeRect(imageBounds.x + inset, imageBounds.y + inset, imageBounds.width - frame.borderWidth, imageBounds.height - frame.borderWidth);
+    }
 
     const cleanMessage = limitCardMessage(message);
     if (cleanMessage) {
