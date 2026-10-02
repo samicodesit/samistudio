@@ -1,21 +1,41 @@
 {
-    "date":  "2026-10-01T20:41:43.509350+00:00",
-    "deploymentId":  "dpl_G6kXgdejq8wtZFhVSoyS5BF4upMm",
-    "previousDeploymentId":  "dpl_4t1Ga74p6GiTYRMXrJaPLzp62bXw",
+    "date":  "2026-10-02T11:41:17.5230207+00:00",
+    "deploymentId":  "dpl_2YjycmSA5qf6nvptiDbSysvfXXf2",
+    "previousDeploymentId":  "dpl_G6kXgdejq8wtZFhVSoyS5BF4upMm",
     "url":  "https://doodle.samistudio.nl",
-    "sourceCommit":  "13ea356",
+    "sourceCommit":  "439c00a",
     "runtimeAndReleaseFiles":  [
                                    {
                                        "file":  ".vercelignore",
                                        "sha":  "18fc7f7d195187ba8a523e7731f2a4ad9ebbf38b"
                                    },
                                    {
-                                       "file":  "README.md",
-                                       "sha":  "7a8865f1e90286441ce0b737fd0d24c052dee171"
+                                       "file":  "AGENTS.md",
+                                       "sha":  "25510cc4f421bf0b1b2a7374859127e5b0205d96"
+                                   },
+                                   {
+                                       "file":  "CLAUDE.md",
+                                       "sha":  "76e488855346db319fc11455bd8dc6879e2e51aa"
+                                   },
+                                   {
+                                       "file":  "design-qa.md",
+                                       "sha":  "1ff0e35dbd08c2271b5aae02bf439f538c484c93"
+                                   },
+                                   {
+                                       "file":  "docs",
+                                       "sha":  null
+                                   },
+                                   {
+                                       "file":  "e2e",
+                                       "sha":  null
                                    },
                                    {
                                        "file":  "eslint.config.mjs",
                                        "sha":  "6e9f47cc6dc72c301e2051f3f39a866c85571950"
+                                   },
+                                   {
+                                       "file":  "next-env.d.ts",
+                                       "sha":  "d3fc80b7fae627e01dce199d12132aa4fc32d773"
                                    },
                                    {
                                        "file":  "next.config.ts",
@@ -36,6 +56,54 @@
                                    {
                                        "file":  "public/.well-known/assetlinks.json",
                                        "sha":  "3fc9b521592bc738b81fb07fc1374f03c13a42a8"
+                                   },
+                                   {
+                                       "file":  "public/flags/br.svg",
+                                       "sha":  "efffb8f5ec1b4101455e02319a35d52ff030e86f"
+                                   },
+                                   {
+                                       "file":  "public/flags/de.svg",
+                                       "sha":  "f46bdcf00fbd79c764b116ef8250e678e4b71c8b"
+                                   },
+                                   {
+                                       "file":  "public/flags/es.svg",
+                                       "sha":  "c285598333fe5528683dcacfb4703245c15946fe"
+                                   },
+                                   {
+                                       "file":  "public/flags/fr.svg",
+                                       "sha":  "ef0dfe9b2ee885551ee3691eaf79348a0d35bdcc"
+                                   },
+                                   {
+                                       "file":  "public/flags/gb.svg",
+                                       "sha":  "161ee20a0a75bb06d4f2ca9acdbb137d9a963cec"
+                                   },
+                                   {
+                                       "file":  "public/flags/it.svg",
+                                       "sha":  "25ecff80eb26ef79709ab7278eb3991ac8cc2734"
+                                   },
+                                   {
+                                       "file":  "public/flags/jp.svg",
+                                       "sha":  "b5f2d0d5127becf2f525f44adb8ff9f8c8d67150"
+                                   },
+                                   {
+                                       "file":  "public/flags/kr.svg",
+                                       "sha":  "a134d8392d41c775ee42fe2a0dba2cd5c043117b"
+                                   },
+                                   {
+                                       "file":  "public/flags/LICENSE.txt",
+                                       "sha":  "48ba26b5a819c26a7845543a7b281e5154f687ac"
+                                   },
+                                   {
+                                       "file":  "public/flags/nl.svg",
+                                       "sha":  "c2e921ab5ae421e9fa26fbf464240e7b95a77825"
+                                   },
+                                   {
+                                       "file":  "public/flags/README.md",
+                                       "sha":  "33d6cd46c04f479a9fd27b68671218eca880b2ba"
+                                   },
+                                   {
+                                       "file":  "public/flags/sa.svg",
+                                       "sha":  "939c037d34ab112a74126be0b99b2a53332a5994"
                                    },
                                    {
                                        "file":  "public/ideas/birthday-dog.webp",
@@ -70,6 +138,10 @@
                                        "sha":  "dc9817b772dd88db59cd3cacd5e805093572570b"
                                    },
                                    {
+                                       "file":  "public/landing/birthday-dog.webp",
+                                       "sha":  "15438cb1cbb761b1c2a67cba0c803fe70d040f1f"
+                                   },
+                                   {
                                        "file":  "public/offline.html",
                                        "sha":  "28013381a7d7a7e7e0276815f4bac05ad2d29856"
                                    },
@@ -79,47 +151,55 @@
                                    },
                                    {
                                        "file":  "public/store-badges/google-play-ar.svg",
-                                       "sha":  "711ccb2f786ef3255404e36ed842ecc8dc8c23a7"
+                                       "sha":  "ded0292901ee7874682e44bc332ff6e6f4507ce0"
                                    },
                                    {
                                        "file":  "public/store-badges/google-play-de.svg",
-                                       "sha":  "e9e3a4fdeea45b615478d93c51b84122ff0410e5"
+                                       "sha":  "a1b59205b55f7bbb7a7ca690e7ef73056efa0c2c"
                                    },
                                    {
                                        "file":  "public/store-badges/google-play-en.svg",
-                                       "sha":  "42a4d4c1d1162181bfff40a1caa96908c048bf17"
+                                       "sha":  "dc0011176b13d72981d34fc53c5cbf7be8f5d11e"
                                    },
                                    {
                                        "file":  "public/store-badges/google-play-es.svg",
-                                       "sha":  "ed3b4ff91c3c73be23311e3704ea87726d108d59"
+                                       "sha":  "f2a0d59e4abc3e95d6cbdd4fb44103593e982ba5"
                                    },
                                    {
                                        "file":  "public/store-badges/google-play-fr.svg",
-                                       "sha":  "429d4c537d58a665401fc751fce12289eb1e1562"
+                                       "sha":  "42573c6d76a9ef9d976914f820cde31822fea552"
                                    },
                                    {
                                        "file":  "public/store-badges/google-play-it.svg",
-                                       "sha":  "46b6768cb37451fa1390ca2e8fa6cb10e0439767"
+                                       "sha":  "8ee37dc5e53ee58492ae4de95f06bef38544bf97"
                                    },
                                    {
                                        "file":  "public/store-badges/google-play-ja.svg",
-                                       "sha":  "2a146bb91cc141bfbded8132a369b84d73a300a9"
+                                       "sha":  "25cea187f419b3dd98fe4b069793b5da428bb061"
                                    },
                                    {
                                        "file":  "public/store-badges/google-play-ko.svg",
-                                       "sha":  "345f8e003dd051f29e5a6667441b1963822780c0"
+                                       "sha":  "e4aebf4b76e9e9e1a61acf1955ebcbced5e21329"
                                    },
                                    {
                                        "file":  "public/store-badges/google-play-nl.svg",
-                                       "sha":  "358fa69847a6fc141c840d64269f09d942fb668f"
+                                       "sha":  "ef94af6875eb54500d774d296b5468a820ce32f6"
                                    },
                                    {
                                        "file":  "public/store-badges/google-play-pt-br.svg",
-                                       "sha":  "9b1152d6c258adff6d82100f5cf7cb25d4166c22"
+                                       "sha":  "759f5e0af1a0e4581d7d8010be69916c8c498816"
                                    },
                                    {
                                        "file":  "public/sw.js",
                                        "sha":  "bf9b22fcba5c3f8ffa8458e3ef2a9a5ebe7dc723"
+                                   },
+                                   {
+                                       "file":  "README.md",
+                                       "sha":  "7a8865f1e90286441ce0b737fd0d24c052dee171"
+                                   },
+                                   {
+                                       "file":  "scripts",
+                                       "sha":  null
                                    },
                                    {
                                        "file":  "src/app/(english)/blog/[slug]/page.tsx",
@@ -235,19 +315,19 @@
                                    },
                                    {
                                        "file":  "src/app/api/checkout/diagnostic/route.test.ts",
-                                       "sha":  "ef1b32f1b3df5f482e29b1e807dcdb0920e74646"
+                                       "sha":  "d4886eb05ed1633a40ec75a9c441327a55d0acd4"
                                    },
                                    {
                                        "file":  "src/app/api/checkout/diagnostic/route.ts",
-                                       "sha":  "b83897eb2688c8c9d979d19558ee0a654e76f2bc"
+                                       "sha":  "ff1894689e98819057e79046a6bda3f86ad200f8"
                                    },
                                    {
                                        "file":  "src/app/api/checkout/elements/route.test.ts",
-                                       "sha":  "af7e60b4806af26badcbc503960b931277e7436f"
+                                       "sha":  "163c08169489aa93223f6dff8b3d0d1c06fbcf5c"
                                    },
                                    {
                                        "file":  "src/app/api/checkout/elements/route.ts",
-                                       "sha":  "dce5e91207e1ac75f3448adc1396754a894481a1"
+                                       "sha":  "dd7c0e3a78c7f232efe76acffe1d4eebbde876f4"
                                    },
                                    {
                                        "file":  "src/app/api/checkout/route.test.ts",
@@ -267,11 +347,11 @@
                                    },
                                    {
                                        "file":  "src/app/api/internal/play/reconcile-voids/route.test.ts",
-                                       "sha":  "324bda2b830dade7322f6abba611ac4dabc6edee"
+                                       "sha":  "064ade9e8e9bd0ccf50fa36388bb46d0901adffa"
                                    },
                                    {
                                        "file":  "src/app/api/internal/play/reconcile-voids/route.ts",
-                                       "sha":  "81270b1372a23aecea03b79bd43870d606ce52ea"
+                                       "sha":  "9c19ae4908ef907c48697854e6650c02f64d56f6"
                                    },
                                    {
                                        "file":  "src/app/api/native/attestation/challenge/route.test.ts",
@@ -406,12 +486,16 @@
                                        "sha":  "314a18bf4e6cf8091b90bae9da14bc57f544b2c3"
                                    },
                                    {
+                                       "file":  "src/components/animated-prompt-hint.tsx",
+                                       "sha":  "fdd271a1faa451fd028bcd692b0503b462084aeb"
+                                   },
+                                   {
                                        "file":  "src/components/apple-pay-checkout.test.tsx",
-                                       "sha":  "8b315d0563d59533c7809b07c7627fffe07fe826"
+                                       "sha":  "3e748e38f74ac0fce80b8ed83ad278a38e004fee"
                                    },
                                    {
                                        "file":  "src/components/apple-pay-checkout.tsx",
-                                       "sha":  "b66f97a0a05ffc86fb53e9467dbb3329cf9dfab4"
+                                       "sha":  "63e7cd5ca4049ffdc16a8f236653935602be99f5"
                                    },
                                    {
                                        "file":  "src/components/card-composer.test.tsx",
@@ -431,15 +515,15 @@
                                    },
                                    {
                                        "file":  "src/components/discovery-links.css",
-                                       "sha":  "f6da29642cc3f5a9cf6141bdf1da2018492ce35b"
+                                       "sha":  "9ddc5a550b3e8122c7249f16d707c40eaa7e6543"
                                    },
                                    {
                                        "file":  "src/components/discovery-links.test.tsx",
-                                       "sha":  "b6e3e802f28df4d0cac87f1494b4117722a882bd"
+                                       "sha":  "75a18c408269a690eab1712810c8514785acec83"
                                    },
                                    {
                                        "file":  "src/components/discovery-links.tsx",
-                                       "sha":  "3754ee12d490f3fbc9b305b0b1183383cf0a1f9b"
+                                       "sha":  "b619f8c9988795180ee2e16928d6c9bcf8d67cc3"
                                    },
                                    {
                                        "file":  "src/components/doodle-analytics.test.tsx",
@@ -451,23 +535,27 @@
                                    },
                                    {
                                        "file":  "src/components/doodle-client.test.tsx",
-                                       "sha":  "7c5bf7c921cda041b02640cd3d5ce0a344e478c9"
+                                       "sha":  "96f52a20f4b1acf4b27f50bf8838c8c2a422e28a"
                                    },
                                    {
                                        "file":  "src/components/doodle-client.tsx",
-                                       "sha":  "95eaa6924bac0e5fe78a3241014b34182cb47750"
+                                       "sha":  "f4cfc2494d184dbb8e366b10061dc11d9d4a56d4"
                                    },
                                    {
                                        "file":  "src/components/doodle-ideas-page.tsx",
                                        "sha":  "67b05a1b10e5aab78bdf16683ff3fe1a63b379a3"
                                    },
                                    {
+                                       "file":  "src/components/doodle-landing.css",
+                                       "sha":  "3c0b8a547ceba27acb20de3552364dfabe85bdf8"
+                                   },
+                                   {
                                        "file":  "src/components/doodle-page.test.tsx",
-                                       "sha":  "36b825eca0bffe432ccc7e416467edade3f1543d"
+                                       "sha":  "aead4c0c0661c7a79f77dc9f5df516587828e722"
                                    },
                                    {
                                        "file":  "src/components/doodle-page.tsx",
-                                       "sha":  "e5317506d6904fd3126fcf2234f286cd6f09a06f"
+                                       "sha":  "0df3c70b72be802c2678756b0f49b76dca2ef71d"
                                    },
                                    {
                                        "file":  "src/components/doodle-stage.test.tsx",
@@ -475,7 +563,7 @@
                                    },
                                    {
                                        "file":  "src/components/doodle-stage.tsx",
-                                       "sha":  "cc588839165b022e531fcca03ffa273b4cb4143a"
+                                       "sha":  "9a3a2514db6415f0de64fa1c61f533be97eb21d5"
                                    },
                                    {
                                        "file":  "src/components/editorial-pages.tsx",
@@ -498,6 +586,14 @@
                                        "sha":  "bf6dd8f28a435ff79c9e64b7ba10345116cfac24"
                                    },
                                    {
+                                       "file":  "src/components/language-switcher.test.tsx",
+                                       "sha":  "ad19f7eda091ada3fa05b4a2b57f8986604e90da"
+                                   },
+                                   {
+                                       "file":  "src/components/language-switcher.tsx",
+                                       "sha":  "40df8a677792d847454671116401d2cc093d1716"
+                                   },
+                                   {
                                        "file":  "src/components/legal-page.test.tsx",
                                        "sha":  "c41cd20f5344dae18bf68057adf1eee1996c175e"
                                    },
@@ -515,7 +611,7 @@
                                    },
                                    {
                                        "file":  "src/components/mobile-app-workspace.tsx",
-                                       "sha":  "acf6ec37023969defc609354b0fa1ccb381b8175"
+                                       "sha":  "d085f9f19a5d758902e54ba4ce72bf7c10ae6177"
                                    },
                                    {
                                        "file":  "src/components/purchase-dialog.test.tsx",
@@ -550,8 +646,12 @@
                                        "sha":  "35f8f36f7214af377543c5e4f2ddcf2e3ca83bea"
                                    },
                                    {
+                                       "file":  "src/components/scene-composer.test.tsx",
+                                       "sha":  "e2d6748d09e6ca97b6be8c9ba48a71378d243098"
+                                   },
+                                   {
                                        "file":  "src/components/scene-composer.tsx",
-                                       "sha":  "0ac80975d276593eacc14636d0372beebc7a5ca9"
+                                       "sha":  "ea25b0db307c2a4820a7e18b2b5a898757e18b0b"
                                    },
                                    {
                                        "file":  "src/components/service-worker-registration.tsx",
@@ -611,11 +711,11 @@
                                    },
                                    {
                                        "file":  "src/lib/billing/apple-pay-diagnostics.test.ts",
-                                       "sha":  "861394e9f3bade4471c7946f658af2c40685e94a"
+                                       "sha":  "6610aea85dea936cbf8dd2acbd25cee2e0be564d"
                                    },
                                    {
                                        "file":  "src/lib/billing/apple-pay-diagnostics.ts",
-                                       "sha":  "143af014d4a53da69288599f2052a7bf9a31d3e0"
+                                       "sha":  "04bc0f19ccdd84ddddbd73f364a87ee124e74e82"
                                    },
                                    {
                                        "file":  "src/lib/billing/checkout.test.ts",
@@ -751,11 +851,11 @@
                                    },
                                    {
                                        "file":  "src/lib/generation/prompt.test.ts",
-                                       "sha":  "32548b054fba2283dcca58af434922bcf8db0e42"
+                                       "sha":  "f6671aa5a97a9d7e2d89a3dc49771ac2b6e3c438"
                                    },
                                    {
                                        "file":  "src/lib/generation/prompt.ts",
-                                       "sha":  "a4499136981cb49bc22c3d6d53de097f2b64a687"
+                                       "sha":  "2333f6a589820fc73a39503c13567694b5616e07"
                                    },
                                    {
                                        "file":  "src/lib/i18n.test.ts",
@@ -764,6 +864,10 @@
                                    {
                                        "file":  "src/lib/i18n.ts",
                                        "sha":  "904be94dc12e436674af1581f7adc8a770c4f949"
+                                   },
+                                   {
+                                       "file":  "src/lib/landing-copy.ts",
+                                       "sha":  "94283ebd4279d86ec4b82acfd694ac37724adec1"
                                    },
                                    {
                                        "file":  "src/lib/native-attestation.test.ts",
@@ -863,15 +967,15 @@
                                    },
                                    {
                                        "file":  "src/lib/usage-metrics.redis.integration.test.ts",
-                                       "sha":  "c78a8d79f3f94ae2739460fa983e0ae514039d03"
+                                       "sha":  "0e96df5cdbed76640f735af29046f7b200567734"
                                    },
                                    {
                                        "file":  "src/lib/usage-metrics.test.ts",
-                                       "sha":  "d0798761af5c36650df8a5be3dd71927f2032f46"
+                                       "sha":  "57310514debbac2f58f9840e285c752c55f31306"
                                    },
                                    {
                                        "file":  "src/lib/usage-metrics.ts",
-                                       "sha":  "543294f0ee6791194388f7d962447fd40c6e57e2"
+                                       "sha":  "8ac59182a8f6fdfe3ef31bede2d42c9b3025a815"
                                    },
                                    {
                                        "file":  "src/test/setup.ts",
@@ -883,63 +987,24 @@
                                    },
                                    {
                                        "file":  "src/vercel-cron.test.ts",
-                                       "sha":  "754fb4cf3686b451937c8e830c65fab648957b31"
-                                   },
-                                   {
-                                       "file":  "tmp/download-vercel-source.mjs",
-                                       "sha":  "268048f6344f1a7cb0ff9660fc783a9896973b69"
+                                       "sha":  "2d624318b5062415c174dc323a9a3438943f60f9"
                                    },
                                    {
                                        "file":  "tsconfig.json",
                                        "sha":  "b40a6425fac8941c2c9c456372fe100efd6f2edb"
                                    },
                                    {
+                                       "file":  "tsconfig.tsbuildinfo",
+                                       "sha":  "098302a1e0d0b1501d6430498070192c6ea9fb8e"
+                                   },
+                                   {
                                        "file":  "vercel.json",
-                                       "sha":  "36b4b0b328a1384a26c8fb8c1ef4f767436ad17a"
+                                       "sha":  "a4a03fcc2aab3820a42a78f9a7d5d3dc0ac21e44"
                                    },
                                    {
                                        "file":  "vitest.config.ts",
                                        "sha":  "3b35977dd9b4c3753d261b699ed066c2d103b219"
                                    }
                                ],
-    "excludedMetadata":  [
-                             "AGENTS.md",
-                             "CLAUDE.md",
-                             "next-env.d.ts",
-                             "tsconfig.tsbuildinfo"
-                         ],
-    "verification":  {
-                         "tests":  "496 passed; one opt-in live image test skipped",
-                         "typecheck":  "backend and native passed",
-                         "lint":  "0 errors, 2 existing image warnings",
-                         "productionBuild":  "Vercel passed; signed Android bundleRelease passed",
-                         "exactLocalSourceHashes":  228,
-                         "autoExposeSystemEnvs":  true,
-                         "http":  [
-                                      {
-                                          "path":  "/",
-                                          "status":  200
-                                      },
-                                      {
-                                          "path":  "/api/native/config",
-                                          "status":  200
-                                      },
-                                      {
-                                          "path":  "/api/play/config",
-                                          "status":  401
-                                      }
-                                  ],
-                         "privacyRender":  "Published privacy disclosure visually inspected at desktop 1280px and phone 360px; no functional app-flow claim.",
-                         "seededQaAccounts":  2,
-                         "trialRender":  "Live production inspected at desktop 1280px and mobile 360px: four free remaining, no horizontal overflow, brand fonts loaded.",
-                         "nativeTests":  "56 passed",
-                         "trialAccountResponse":  {
-                                                      "authenticated":  false,
-                                                      "balance":  0,
-                                                      "freeRemaining":  4
-                                                  },
-                         "trialRedis":  "Four concurrent reservations, finalization idempotency, fifth rejection, failed hold release, and existing two uses retain two remaining."
-                     },
-    "nativeStatus":  "Public Android remains 0.1.4/code 6 pending approval. Signed 0.1.5/code 7 and four-free English description submitted through Play Console on 1 October 2026. Changes in review with Google quick checks running. Managed publishing off; automatic 100% rollout after approval. Proof: C:/Users/Sami/.codex/doodle-live-evidence/build-7-submitted.png. Download estimate 13.5 MB (-371 B); update 2.91 MB.",
-    "measurement":  "Daily successful drawings and newly fulfilled non-test paid packs. Known QA account hashes seeded. Best-effort aggregate counts; no new live drawing or purchase test claimed."
+    "verification":  "Deployment READY and live alias visually inspected. Hashes record the unchanged upload source via Vercel dry run after deployment."
 }
