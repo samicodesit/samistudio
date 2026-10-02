@@ -2,6 +2,7 @@ import "server-only";
 
 import { claimPlayCredits, getPlayCreditClaim, markPlayPurchaseConsumed } from "./play-credits";
 import { trackUsage } from "../usage-metrics";
+import { notifyOwnerSale } from "./sale-notification";
 
 export type ProductPurchaseV2 = {
   testPurchaseContext?: { fopType?: string };
@@ -76,6 +77,7 @@ export async function processPlayPurchase(input: {
   if (offer.consumptionState === "CONSUMPTION_STATE_CONSUMED") {
     try {
       const claim = await getPlayCreditClaim(input.accountId, input.purchaseToken);
+      notifyOwnerSale({ channel: "android", id: input.purchaseToken, isTest: purchase.testPurchaseContext !== undefined });
       if (claim.state !== "consumed") {
         try { await markPlayPurchaseConsumed(input.accountId, input.purchaseToken); } catch {}
       }
@@ -102,6 +104,7 @@ export async function processPlayPurchase(input: {
     actor: `account:${input.accountId}`, email: input.email,
     isTest: purchase.testPurchaseContext !== undefined,
   });
+  notifyOwnerSale({ channel: "android", id: input.purchaseToken, isTest: purchase.testPurchaseContext !== undefined });
 
   try {
     await input.publisher.consumeProductPurchase(input.productId, input.purchaseToken);

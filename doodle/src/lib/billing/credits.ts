@@ -2,6 +2,7 @@ import "server-only";
 
 import { redisCommand, redisInteger } from "@/lib/redis";
 import { trackUsage } from "@/lib/usage-metrics";
+import { notifyOwnerSale } from "./sale-notification";
 
 export type CreditReservation = { reserved: boolean; remaining: number };
 export type CreditFinalization = { finalized: boolean; remaining: number };
@@ -151,6 +152,7 @@ export async function fulfillCreditPack(accountId: string, checkoutSessionId: st
     metric: "purchases", channel: "web", id: checkoutSessionId,
     actor: `account:${accountId}`, ...usage,
   });
+  if (usage) notifyOwnerSale({ channel: "web", id: checkoutSessionId, isTest: usage.isTest });
   return remaining;
 }
 

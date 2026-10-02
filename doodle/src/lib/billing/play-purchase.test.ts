@@ -3,6 +3,8 @@ import { processPlayPurchase, type PlayPublisherClient, type ProductPurchaseV2 }
 
 vi.mock("server-only", () => ({}));
 const ledger = vi.hoisted(() => ({ claimPlayCredits: vi.fn(), getPlayCreditClaim: vi.fn(), markPlayPurchaseConsumed: vi.fn() }));
+const notification = vi.hoisted(() => vi.fn());
+vi.mock("./sale-notification", () => ({ notifyOwnerSale: notification }));
 vi.mock("./play-credits", () => ledger);
 
 const basePurchase: ProductPurchaseV2 = {
@@ -20,6 +22,7 @@ function client(purchase = basePurchase): PlayPublisherClient {
 
 describe("Play purchase processing", () => {
   beforeEach(() => {
+    notification.mockReset();
     Object.values(ledger).forEach((mock) => mock.mockReset());
     ledger.claimPlayCredits.mockResolvedValue({ granted: true, balance: 10 });
     ledger.markPlayPurchaseConsumed.mockResolvedValue(undefined);
@@ -43,6 +46,7 @@ describe("Play purchase processing", () => {
   ])("never grants an ineligible purchase %#", async (purchase, kind) => {
     await expect(processPlayPurchase({ accountId: "account", expectedObfuscatedAccountId: "bound-account", purchaseToken: "token", productId: "doodle_credits_10", publisher: client(purchase) })).rejects.toMatchObject({ kind });
     expect(ledger.claimPlayCredits).not.toHaveBeenCalled();
+    expect(notification).not.toHaveBeenCalled();
   });
 
   it("returns granted-but-unconsumed after a consume failure and retries without double grant", async () => {
