@@ -44,3 +44,12 @@ Evidence directory: `C:/Users/Sami/.codex/doodle-live-evidence/landing-concepts-
 
 - P3: raster illustration differs slightly in pose/stroke texture from the generated visual target. It retains the same subject, style, placement and size.
 - Preview is prepared locally. Production deployment and publishing are separate actions.
+
+## Input and language-menu refinement, October 2
+
+- Owner requested dimmer animated input hints, at least five prompts, flags and a higher dropdown with opening/closing motion.
+- Five localized hints cycle through a birthday dog, sleepy moon, lunchbox high-five, frog under a leaf and book hugging a bookmark. First hint is immediately readable, each finished hint holds 2.8 seconds, fades over 450ms, then the next types in with soft character opacity reveals. Full word positions stay fixed during typing. The input value remains empty and Create stays disabled until the visitor enters their own text.
+- Hint animation disappears on input focus, preserves all drafts, pauses in hidden tabs and falls back to the static native placeholder for reduced motion. Decorative letters are hidden from accessibility announcements.
+- Language menu uses local SVG images, independent of emoji/font support. Language names remain explicit and links retain original locale destinations. Menu lifted 6px, restrained shadow, 220ms opening and 160ms closing fade/slide. Escape returns focus to the trigger; outside pointer and focus departure dismiss the menu. Reduced-motion styling removes spatial motion.
+- Browser verification on the rebuilt real UI: desktop and 390x844 viewport inspected; all ten flags decoded; no horizontal overflow; typed draft retained and hint removed; focus departure closed the menu; readable language link names and Dutch destination verified. Saved `landing-flags-desktop.png` and `landing-flags-mobile.png` in the existing landing QA evidence directory. Safari/macOS and physical phone browsers were not directly run in this Windows session.
+- Production build, TypeScript, targeted ESLint and 45 component checks passed. Existing page tests updated for the option 2 heading levels, disclosed supporting content and repeated header/footer wordmarks. No backend, authentication or billing changes in this refinement. Local preview only.

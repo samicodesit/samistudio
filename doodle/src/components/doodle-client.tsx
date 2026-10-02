@@ -437,6 +437,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
             createButtonRef={createButtonRef}
             sceneInputRef={sceneInputRef}
             compactHeading={Boolean(landing)}
+            placeholderPrompts={landing?.placeholderPrompts}
           />
         )}
         {generation.status !== "generating" && generation.status !== "ready" ? (

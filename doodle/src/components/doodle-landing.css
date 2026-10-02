@@ -11,6 +11,28 @@
 }
 .doodle-landing .doodle-wordmark { font-size: 48px; }
 .doodle-landing .language-switcher summary { border-color: transparent; font-size: 22px; }
+.language-switcher-animated summary { display: flex; align-items: center; justify-content: center; gap: 9px; }
+.language-switcher-animated summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.language-flag { display: block; width: 24px; height: 18px; flex-shrink: 0; border-radius: 2px; box-shadow: 0 0 0 1px rgba(32,35,31,.08); }
+.language-switcher-animated nav {
+  top: calc(100% + 2px);
+  width: 228px;
+  max-width: calc(100vw - 40px);
+  max-height: calc(100svh - 100px);
+  overflow-y: auto;
+  border-radius: 16px;
+  background: #fcfdfa;
+  box-shadow: 0 12px 32px rgba(32,35,31,.11);
+  transform-origin: top right;
+}
+.language-switcher-animated nav a { display: flex; align-items: center; gap: 13px; min-height: 48px; padding: 10px 13px; font-size: 15px; }
+.language-switcher-animated[data-state="open"] nav { animation: language-menu-in 220ms cubic-bezier(.2,.8,.2,1) both; }
+.language-switcher-animated[data-state="closing"] nav { animation: language-menu-out 160ms ease-in both; }
+@keyframes language-menu-in { from { opacity: 0; transform: translateY(-6px) scale(.985); } to { opacity: 1; transform: none; } }
+@keyframes language-menu-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(-4px) scale(.99); } }
+@media (prefers-reduced-motion: reduce) {
+  .language-switcher-animated[data-state] nav { animation-duration: 1ms; }
+}
 .doodle-landing .doodle-header .account-sign-in-action { min-height: 64px; padding-inline: 30px; border-radius: 999px; font-size: 22px; }
 .doodle-landing .doodle-main {
   width: min(1100px, calc(100% - 64px));
@@ -44,6 +66,7 @@
   line-height: 1.2;
 }
 .doodle-workspace-landing .doodle-composer {
+  position: relative;
   min-height: 280px;
   border-radius: 20px;
   background: #fcfdfa;
@@ -51,7 +74,26 @@
 }
 .doodle-workspace-landing .doodle-composer:focus-within { transform: none; box-shadow: 0 0 0 3px var(--focus); }
 .doodle-workspace-landing .doodle-composer textarea { min-height: 174px; padding: 28px 32px 12px; font-size: 28px; }
-.doodle-workspace-landing .doodle-composer textarea::placeholder { color: #70776f; }
+.doodle-workspace-landing .doodle-composer textarea::placeholder { color: #8c958b; transition: opacity 180ms ease; }
+.doodle-workspace-landing .doodle-composer:has(.animated-prompt-hint) textarea::placeholder { opacity: 0; }
+.doodle-workspace-landing .doodle-composer textarea:focus::placeholder { opacity: 0; }
+.animated-prompt-hint {
+  position: absolute;
+  inset: 28px 32px auto;
+  pointer-events: none;
+  color: #8c958b;
+  font-size: 28px;
+  line-height: 1.5;
+  opacity: 1;
+  transition: opacity 450ms cubic-bezier(.4, 0, .2, 1);
+}
+.animated-prompt-hint[data-phase="fading"] { opacity: 0; }
+.prompt-hint-word { white-space: nowrap; }
+.animated-prompt-hint [data-visible] { transition: opacity 140ms ease-out; }
+.animated-prompt-hint [data-visible="false"] { opacity: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .doodle-workspace-landing .doodle-composer textarea::placeholder { transition: none; }
+}
 .doodle-workspace-landing .composer-footer { padding: 16px 20px 20px 32px; }
 .doodle-workspace-landing .usage-copy { font-size: 22px; font-weight: 400; }
 .doodle-workspace-landing .composer-footer > button {
@@ -133,6 +175,7 @@ body:has(.mobile-app-workspace[data-installed="true"]) .landing-resources { disp
   .doodle-workspace-landing .composer-section h2 { margin-bottom: 10px; font-size: 20px; }
   .doodle-workspace-landing .doodle-composer { min-height: 218px; border-radius: 16px; }
   .doodle-workspace-landing .doodle-composer textarea { min-height: 126px; padding: 20px 20px 8px; font-size: 17px; }
+  .animated-prompt-hint { inset: 20px 20px auto; font-size: 17px; }
   .doodle-workspace-landing .composer-footer { flex-wrap: wrap; padding: 12px; gap: 12px; }
   .doodle-workspace-landing .composer-meta { padding-inline: 8px; }
   .doodle-workspace-landing .usage-copy { font-size: 13px; }

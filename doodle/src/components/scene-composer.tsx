@@ -1,6 +1,7 @@
 "use client";
 
-import type { Ref } from "react";
+import { useState, type Ref } from "react";
+import { AnimatedPromptHint } from "./animated-prompt-hint";
 import { MAX_SCENE_LENGTH } from "@/lib/app-config";
 import type { DoodleCopy } from "@/lib/i18n";
 
@@ -15,6 +16,7 @@ interface SceneComposerProps {
   createButtonRef?: Ref<HTMLButtonElement>;
   sceneInputRef?: Ref<HTMLTextAreaElement>;
   compactHeading?: boolean;
+  placeholderPrompts?: readonly string[];
 }
 
 export function SceneComposer({
@@ -28,8 +30,10 @@ export function SceneComposer({
   createButtonRef,
   sceneInputRef,
   compactHeading = false,
+  placeholderPrompts,
 }: SceneComposerProps) {
   const showCounter = scene.length >= 150;
+  const [focused, setFocused] = useState(false);
 
   return (
     <section id="composer" className="composer-section" aria-labelledby="scene-title">
@@ -45,10 +49,13 @@ export function SceneComposer({
           name="scene"
           value={scene}
           onChange={(event) => onSceneChange(event.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           maxLength={MAX_SCENE_LENGTH}
           placeholder={copy.placeholder}
           disabled={isGenerating}
         />
+        {placeholderPrompts?.length && !scene && !focused && !isGenerating ? <AnimatedPromptHint prompts={placeholderPrompts} /> : null}
         <div className="composer-footer">
           <div className="composer-meta">
             {usage === null

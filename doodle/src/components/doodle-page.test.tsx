@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { DoodlePage } from "./doodle-page";
 
@@ -6,7 +6,9 @@ describe("DoodlePage", () => {
   it("renders localized tool and crawlable supporting content", () => {
     const { container } = render(<DoodlePage locale="de" />);
 
-    expect(screen.getByRole("heading", { level: 1, name: "Was sollen wir zeichnen?" })).toBeInTheDocument();
+    fireEvent.click(container.querySelector(".language-switcher summary")!);
+    fireEvent.click(container.querySelector(".landing-resources summary")!);
+    expect(screen.getByRole("heading", { level: 2, name: "Was sollen wir zeichnen?" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 2, name: "So funktioniert es" })).toBeInTheDocument();
     expect(screen.getByText("Deutsch")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Nederlands" })).toHaveAttribute("href", "/nl");
@@ -32,12 +34,13 @@ describe("DoodlePage", () => {
   });
 
   it("renders the Arabic tool in natural Modern Standard Arabic", () => {
-    render(<DoodlePage locale="ar" />);
+    const { container } = render(<DoodlePage locale="ar" />);
+    fireEvent.click(container.querySelector(".language-switcher summary")!);
 
-    expect(screen.getByRole("heading", { level: 1, name: "ماذا نرسم؟" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "ماذا نرسم؟" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "أنشئ رسمة" })).toBeDisabled();
     expect(screen.getByRole("link", { name: "English" })).toHaveAttribute("hrefLang", "en");
-    expect(screen.getByRole("link", { name: "الصفحة الرئيسية لـ Doodle" })).toHaveAttribute("dir", "ltr");
+    for (const link of screen.getAllByRole("link", { name: "الصفحة الرئيسية لـ Doodle" })) expect(link).toHaveAttribute("dir", "ltr");
   });
 
   it("links English visitors to the doodle ideas gallery", () => {

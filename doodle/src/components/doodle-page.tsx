@@ -3,7 +3,6 @@ import { MobileAppWorkspace } from "./mobile-app-workspace";
 import { AndroidAppLink, DrawingGuides } from "./discovery-links";
 import {
   SITE_URL,
-  SUPPORTED_LOCALES,
   type Locale,
   getCopy,
   htmlLang,
@@ -13,6 +12,7 @@ import { getDoodleIdeas, ideasPath } from "@/lib/doodle-ideas";
 import { getEditorialCopy, getEditorialPath } from "@/lib/editorial";
 import { DEFAULT_SUGGESTION_IDS, type SceneIdeaId } from "@/lib/scenes/suggestions";
 import { getLandingCopy } from "@/lib/landing-copy";
+import { LanguageSwitcher } from "./language-switcher";
 import "./doodle-landing.css";
 
 export function DoodlePage({
@@ -60,16 +60,7 @@ export function DoodlePage({
           Doodle<span aria-hidden="true">.</span>
         </Link>
         <Link className="landing-examples-link" href={ideasPath(locale)}>{landing.examples}</Link>
-        <details className="language-switcher">
-          <summary aria-label={copy.header.languageLabel}>{copy.localeLabel}</summary>
-          <nav aria-label={copy.header.languageLabel}>
-            {SUPPORTED_LOCALES.filter((item) => item !== locale).map((item) => (
-              <Link key={item} href={localePath(item)} hrefLang={htmlLang(item)}>
-                {getCopy(item).localeLabel}
-              </Link>
-            ))}
-          </nav>
-        </details>
+        <LanguageSwitcher locale={locale} />
         <div className="web-account-slot" data-account-host="web" aria-label={copy.account.label} />
       </header>
       <main>

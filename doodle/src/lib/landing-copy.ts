@@ -21,6 +21,7 @@ export function getLandingCopy(locale: Locale) {
   const examplePrompt = locale === "en" ? "A happy dog holding a birthday balloon" : ideas.featured[2];
   return {
     title, titleEnd, subtitle, examples, tryIdea, exampleLabel, momentTitle, momentBody, phoneTitle, examplePrompt,
+    placeholderPrompts: [examplePrompt, ideas.quickIdeas[2], ideas.featured[5], ideas.quickIdeas[0], ideas.quickIdeas[13]],
     suggestions: [
       { label: birthday, prompt: examplePrompt },
       { label: lunchbox, prompt: ideas.featured[5] },
