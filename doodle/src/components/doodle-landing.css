@@ -84,13 +84,12 @@
   color: #8c958b;
   font-size: 28px;
   line-height: 1.5;
-  opacity: 1;
-  transition: opacity 450ms cubic-bezier(.4, 0, .2, 1);
+  white-space: pre-wrap;
 }
-.animated-prompt-hint[data-phase="fading"] { opacity: 0; }
-.prompt-hint-word { white-space: nowrap; }
-.animated-prompt-hint [data-visible] { transition: opacity 140ms ease-out; }
-.animated-prompt-hint [data-visible="false"] { opacity: 0; }
+.prompt-hint-caret { display: inline-block; height: 1em; margin-inline-start: 2px; border-inline-start: 1.5px solid currentColor; vertical-align: -.1em; }
+.animated-prompt-hint[data-phase="hold"] .prompt-hint-caret,
+.animated-prompt-hint[data-phase="waiting"] .prompt-hint-caret { animation: prompt-caret-blink 900ms steps(1, end) infinite; }
+@keyframes prompt-caret-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 @media (prefers-reduced-motion: reduce) {
   .doodle-workspace-landing .doodle-composer textarea::placeholder { transition: none; }
 }

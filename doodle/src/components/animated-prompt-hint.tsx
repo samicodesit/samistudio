@@ -17,21 +17,24 @@ const motionAllowed = () => !window.matchMedia("(prefers-reduced-motion: reduce)
 export function AnimatedPromptHint({ prompts }: { prompts: readonly string[] }) {
   const enabled = useSyncExternalStore(subscribeToMotion, motionAllowed, () => false);
   const [index, setIndex] = useState(0);
-  const [count, setCount] = useState(() => Array.from(prompts[0]).length);
-  const [phase, setPhase] = useState<"typing" | "hold" | "fading">("hold");
+  const [count, setCount] = useState(0);
+  const [phase, setPhase] = useState<"waiting" | "typing" | "hold" | "deleting">("waiting");
   const prompt = prompts[index];
   const length = Array.from(prompt).length;
   const previousLetter = Array.from(prompt)[count - 1];
 
   useEffect(() => {
     if (!enabled) return;
-    const delay = phase === "hold" ? 2800 : phase === "fading" ? 700 : previousLetter === " " ? 110 : 55;
+    const delay = phase === "hold" ? 2400 : phase === "waiting" ? 550 : phase === "deleting" ? 32 : previousLetter === " " ? 130 : 65;
     const timer = window.setTimeout(() => {
-      if (phase === "hold") setPhase("fading");
-      else if (phase === "fading") {
-        setIndex((current) => (current + 1) % prompts.length);
-        setCount(0);
-        setPhase("typing");
+      if (phase === "waiting") setPhase("typing");
+      else if (phase === "hold") setPhase("deleting");
+      else if (phase === "deleting") {
+        if (count > 0) setCount(count - 1);
+        else {
+          setIndex((current) => (current + 1) % prompts.length);
+          setPhase("waiting");
+        }
       } else if (count < length) setCount(count + 1);
       else setPhase("hold");
     }, delay);
@@ -39,10 +42,7 @@ export function AnimatedPromptHint({ prompts }: { prompts: readonly string[] }) 
   }, [enabled, phase, count, previousLetter, length, prompts.length]);
 
   if (!enabled) return null;
-  let position = 0;
   return <div className="animated-prompt-hint" data-phase={phase} aria-hidden="true">
-    {prompt.split(/(\s+)/).map((word, wordIndex) => <span key={`${index}-${wordIndex}`} className={word.trim() ? "prompt-hint-word" : undefined}>
-      {Array.from(word).map((letter, letterIndex) => <span key={letterIndex} data-visible={position++ < count}>{letter}</span>)}
-    </span>)}
+    <span>{Array.from(prompt).slice(0, count).join("")}</span><span className="prompt-hint-caret" />
   </div>;
 }
