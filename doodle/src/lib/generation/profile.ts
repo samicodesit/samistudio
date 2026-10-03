@@ -1,5 +1,7 @@
 export type ImageQuality = "low" | "medium" | "high";
 
+export const DOODLE_PAPER_COLOR = "#FFEB8A";
+
 export interface GenerationProfile {
   id: string;
   model: string;

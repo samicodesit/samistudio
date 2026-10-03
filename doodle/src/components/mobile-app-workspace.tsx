@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Lightbulb, PencilLine, Settings } from "lucide-react";
+import { Lightbulb, Maximize2, PencilLine, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DoodleClient } from "./doodle-client";
+import { DoodlePreviewDialog } from "./doodle-preview-dialog";
 import { isPlayRuntime } from "@/lib/billing/play-client";
 import { getCopy, localePath, SUPPORTED_LOCALES, type DoodleCopy, type Locale } from "@/lib/i18n";
 import { getDoodleIdeas, IDEA_IMAGES } from "@/lib/doodle-ideas";
@@ -36,6 +37,7 @@ export function MobileAppWorkspace({ locale, copy, initialScene = "", initialSug
   const [installed, setInstalled] = useState(false);
   const [tab, setTab] = useState<Tab>("create");
   const [draft, setDraft] = useState({ scene: initialScene, revision: 0 });
+  const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const labels = LABELS[locale];
   const ideas = getDoodleIdeas(locale);
 
@@ -56,6 +58,12 @@ export function MobileAppWorkspace({ locale, copy, initialScene = "", initialSug
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
+  function selectIdea(prompt: string) {
+    setPreviewIndex(null);
+    setDraft(previous => ({ scene: prompt, revision: previous.revision + 1 }));
+    selectTab("create");
+  }
+
   return <div className="mobile-app-workspace" data-installed={installed}>
     <div className="app-account-slot" data-account-host="app" aria-label={copy.account.label} />
     {/* Keep Create mounted across tabs so browsing never discards a drawing. */}
@@ -65,14 +73,16 @@ export function MobileAppWorkspace({ locale, copy, initialScene = "", initialSug
     {installed && tab === "ideas" ? <section className="app-panel" aria-labelledby="app-ideas-title">
       <h1 id="app-ideas-title">{labels[1]}</h1>
       <p>{IDEAS_HINT[locale]}</p>
-      <div className="app-ideas-grid">{ideas.featured.map((prompt, index) => <button key={prompt} type="button" aria-label={`${ideas.tryIdea}: ${prompt}`} onClick={() => {
-        setDraft(previous => ({ scene: prompt, revision: previous.revision + 1 }));
-        selectTab("create");
-      }}>
-        <Image src={IDEA_IMAGES[index]} alt="" width={360} height={360} />
-        <span>{prompt}</span><strong>{ideas.tryIdea} <span aria-hidden="true">↗</span></strong>
-      </button>)}</div>
+      <div className="app-ideas-grid">{ideas.featured.map((prompt, index) => <div className="app-idea-card" key={prompt}>
+        <button type="button" className="app-idea-preview" aria-label={`${ideas.viewLarger}: ${prompt}`} onClick={() => setPreviewIndex(index)}><Image src={IDEA_IMAGES[index]} alt="" width={360} height={360} /><span className="stage-inspect-label" aria-hidden="true"><Maximize2 size={16} /></span></button>
+        <button type="button" className="app-idea-select" aria-label={`${ideas.tryIdea}: ${prompt}`} onClick={() => selectIdea(prompt)}><span>{prompt}</span><strong>{ideas.tryIdea} <span aria-hidden="true">↗</span></strong></button>
+      </div>)}</div>
     </section> : null}
+    {previewIndex !== null ? <DoodlePreviewDialog key={IDEA_IMAGES[previewIndex]} open locale={locale} copy={copy.dialog} imageUrl={IDEA_IMAGES[previewIndex]} imageAlt={ideas.featured[previewIndex]} label={ideas.featured[previewIndex]} onClose={() => setPreviewIndex(null)} footer={<>
+      <p className="doodle-preview-caption">{ideas.featured[previewIndex]}</p>
+      <button type="button" className="dialog-download-action" onClick={() => selectIdea(ideas.featured[previewIndex])}>{ideas.tryIdea}</button>
+      <a className="dialog-secondary-action" href={IDEA_IMAGES[previewIndex]} target="_blank" rel="noreferrer">{ideas.openTab}</a>
+    </>} /> : null}
     {installed && tab === "settings" ? <section className="app-panel app-settings" aria-labelledby="app-settings-title">
       <h1 id="app-settings-title">{labels[2]}</h1>
       <h2>{copy.header.languageLabel}</h2>

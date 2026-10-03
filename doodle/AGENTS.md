@@ -35,7 +35,7 @@ Factual accuracy alone is not sufficient QA. Before recommending or publishing c
 
 Apply this as a short internal check, not another approval round or a lengthy review ritual. When a correction reveals a reusable mistake, record the decision rule and apply it to subsequent work rather than only patching that instance.
 
-Use sub-agents when independent work can progress in parallel, such as responsive QA, Android readiness research, and launch execution. Give each agent a bounded scope and clear file or browser ownership so one visible workflow does not stall while unrelated work proceeds.
+Work inline by default. Use sub-agents only when the user explicitly requests them for the current task. Independent work or a review requirement does not authorize delegation. When explicitly authorized, give each agent a bounded scope and clear file or browser ownership.
 
 ### Required final presentation check
 

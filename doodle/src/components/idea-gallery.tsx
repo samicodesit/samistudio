@@ -2,9 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState, useSyncExternalStore, type ComponentProps } from "react";
+import { useState, useSyncExternalStore, type ComponentProps } from "react";
 import { IDEA_IMAGES, type IdeasCopy } from "@/lib/doodle-ideas";
-import { type Locale, localePath } from "@/lib/i18n";
+import { type Locale, getCopy, localePath } from "@/lib/i18n";
+import { DoodlePreviewDialog } from "./doodle-preview-dialog";
 import { readSafeAttribution, serializeSafeAttribution, type SafeAttribution } from "./doodle-analytics";
 
 function subscribeToLocation() {
@@ -45,12 +46,7 @@ export function IdeaGallery({ locale, copy }: { locale: Locale; copy: IdeasCopy 
   const locationSearch = useSyncExternalStore(subscribeToLocation, getLocationSearch, getServerLocationSearch);
   const attribution = readSafeAttribution(locationSearch);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const selected = selectedIndex === null ? null : { prompt: copy.featured[selectedIndex], image: IDEA_IMAGES[selectedIndex] };
-
-  useEffect(() => {
-    if (selectedIndex !== null) dialogRef.current?.showModal();
-  }, [selectedIndex]);
 
   return (
     <>
@@ -69,17 +65,11 @@ export function IdeaGallery({ locale, copy }: { locale: Locale; copy: IdeasCopy 
         ))}
       </div>
       {selected ? (
-        <dialog ref={dialogRef} className="idea-dialog" aria-label={selected.prompt} onCancel={(event) => { event.preventDefault(); setSelectedIndex(null); }} onClick={(event) => { if (event.target === event.currentTarget) setSelectedIndex(null); }}>
-          <div className="idea-dialog-card">
-            <button className="idea-dialog-close" type="button" onClick={() => setSelectedIndex(null)} aria-label={copy.close}>×</button>
-            <Image src={selected.image} alt={selected.prompt} width={900} height={900} />
-            <div>
-              <p>{selected.prompt}</p>
-              <Link href={ideaUrl(locale, selected.prompt, attribution)}>{copy.tryIdea}</Link>
-              <a href={selected.image} target="_blank" rel="noreferrer">{copy.openTab}</a>
-            </div>
-          </div>
-        </dialog>
+        <DoodlePreviewDialog key={selected.image} open imageUrl={selected.image} imageAlt={selected.prompt} label={selected.prompt} locale={locale} copy={getCopy(locale).dialog} onClose={() => setSelectedIndex(null)} footer={<>
+          <p className="doodle-preview-caption">{selected.prompt}</p>
+          <Link className="dialog-download-action" href={ideaUrl(locale, selected.prompt, attribution)}>{copy.tryIdea}</Link>
+          <a className="dialog-secondary-action" href={selected.image} target="_blank" rel="noreferrer">{copy.openTab}</a>
+        </>} />
       ) : null}
     </>
   );

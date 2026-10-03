@@ -49,7 +49,7 @@ export interface DoodleCopy {
     readyTitle: string;
   };
   errors: { refused: string; timeout: string; general: string; unavailable: string; rateLimited: string };
-  suggestions: { title: string; items: readonly string[] };
+  suggestions: { title: string; refresh: string; items: readonly string[] };
   stage: {
     loadingPrimary: string;
     loadingMessages: readonly [string, string, string, string, string];
@@ -144,6 +144,7 @@ const COPY = {
     },
     suggestions: {
       title: "Or try one",
+      refresh: "Refresh ideas",
       items: SCENE_SUGGESTIONS_BY_LOCALE.en,
     },
     stage: {
@@ -244,6 +245,7 @@ const COPY = {
     },
     suggestions: {
       title: "Of probeer deze",
+      refresh: "Nieuwe ideeën",
       items: SCENE_SUGGESTIONS_BY_LOCALE.nl,
     },
     stage: {
@@ -280,7 +282,7 @@ const COPY = {
     composer: { title: "Was sollen wir zeichnen?", hint: "Klein und eindeutig ist am besten.", label: "Beschreibe eine Szene", placeholder: "Ein kleiner Moment...", create: "Doodle erstellen", drawing: "Wird gezeichnet..." },
     status: { generatingEyebrow: "Ein kleiner Moment entsteht", generatingTitle: "Dein Doodle wird gezeichnet.", waitHint: "Die einfachen Linien brauchen einen Moment. Bleib einfach hier.", readyEyebrow: "Frisch gezeichnet", readyTitle: "Dein Doodle ist fertig." },
     errors: { refused: "Diese Szene konnte nicht gezeichnet werden. Beschreibe sie anders.", timeout: "Das Doodle hat zu lange gebraucht. Versuch es noch einmal.", general: "Doodle konnte das Bild nicht fertigstellen. Versuch es noch einmal.", unavailable: "Das Erstellen von Doodles ist vorübergehend nicht verfügbar. Versuch es später erneut.", rateLimited: "Du hast heute schon viele Doodles erstellt. Versuch es morgen wieder." },
-    suggestions: { title: "Oder probiere das", items: SCENE_SUGGESTIONS_BY_LOCALE.de },
+    suggestions: { title: "Oder probiere das", refresh: "Neue Ideen", items: SCENE_SUGGESTIONS_BY_LOCALE.de },
     stage: { loadingPrimary: "Dein Doodle wird gezeichnet...", loadingMessages: ["Ein frischer Notizzettel liegt bereit…", "Die wichtigsten Formen entstehen…", "Die Linien bleiben schön einfach…", "Die letzten kleinen Details kommen dazu…", "Noch einen Moment — dieses Bild braucht etwas Zeit."], loadingSr: "Das kann bis zu zwei Minuten dauern.", generatedAlt: "Erstelltes Doodle auf einem Notizzettel", viewLarger: "Größer ansehen", referenceAria: "Beispiel-Doodle größer ansehen", referenceAlt: "Einfaches Doodle von zwei kopfüber küssenden Katzen auf einem gelben Notizzettel" },
     actions: { download: "Herunterladen", tryAgain: "Noch einmal", redraw: "Diese Idee neu zeichnen", newScene: "Etwas anderes zeichnen", makeCard: "Karte erstellen" },
     card: { title: "Füge eine kleine Nachricht hinzu", messageLabel: "Deine Nachricht (optional)", messagePlaceholder: "Danke!", messageHint: "Bis zu 80 Zeichen", previewAlt: "Kartenvorschau", preparing: "Deine Karte wird vorbereitet", download: "Karte herunterladen", share: "Karte teilen", shareFallback: "Teilen ist hier nicht verfügbar. Lade die Karte herunter.", close: "Karte schließen", error: "Die Karte konnte nicht vorbereitet werden. Versuch es noch einmal." },
@@ -298,7 +300,7 @@ const COPY = {
     composer: { title: "Qu’allons-nous dessiner ?", hint: "Choisissez une scène simple et précise.", label: "Décrivez une scène", placeholder: "Un petit moment...", create: "Créer le dessin", drawing: "Dessin en cours..." },
     status: { generatingEyebrow: "Un petit moment prend forme", generatingTitle: "Votre dessin prend vie.", waitHint: "Les lignes simples demandent un peu de temps. Restez ici.", readyEyebrow: "Tout juste dessiné", readyTitle: "Votre dessin est prêt." },
     errors: { refused: "Cette scène n’a pas pu être dessinée. Essayez de la décrire autrement.", timeout: "Le dessin a pris trop de temps. Veuillez réessayer.", general: "Doodle n’a pas pu terminer l’image. Veuillez réessayer.", unavailable: "La création de dessins est momentanément indisponible. Réessayez plus tard.", rateLimited: "Vous avez créé beaucoup de dessins aujourd’hui. Réessayez demain." },
-    suggestions: { title: "Ou essayez ceci", items: SCENE_SUGGESTIONS_BY_LOCALE.fr },
+    suggestions: { title: "Ou essayez ceci", refresh: "Actualiser les idées", items: SCENE_SUGGESTIONS_BY_LOCALE.fr },
     stage: { loadingPrimary: "Votre dessin prend vie...", loadingMessages: ["Une nouvelle note se prépare…", "Les formes principales apparaissent…", "Les lignes restent toutes simples…", "Les derniers petits détails arrivent…", "Encore un instant — ce dessin demande un peu de temps."], loadingSr: "Cela peut prendre jusqu’à deux minutes.", generatedAlt: "Doodle généré sur une note adhésive", viewLarger: "Agrandir", referenceAria: "Agrandir l’exemple de doodle", referenceAlt: "Doodle simple de deux chats qui s’embrassent la tête en bas sur une note jaune" },
     actions: { download: "Télécharger", tryAgain: "Réessayer", redraw: "Redessiner cette idée", newScene: "Dessiner autre chose", makeCard: "Créer une carte" },
     card: { title: "Ajoutez un petit message", messageLabel: "Votre message (facultatif)", messagePlaceholder: "Merci !", messageHint: "80 caractères maximum", previewAlt: "Aperçu de la carte", preparing: "Préparation de votre carte", download: "Télécharger la carte", share: "Partager la carte", shareFallback: "Le partage n’est pas disponible ici. Téléchargez la carte.", close: "Fermer la carte", error: "La carte n’a pas pu être préparée. Réessayez." },
@@ -316,7 +318,7 @@ const COPY = {
     composer: { title: "¿Qué dibujamos?", hint: "Elige una escena pequeña y clara.", label: "Describe una escena", placeholder: "Un pequeño momento...", create: "Crear dibujo", drawing: "Dibujando..." },
     status: { generatingEyebrow: "Un pequeño momento en proceso", generatingTitle: "Estamos dibujando tu idea.", waitHint: "Las líneas sencillas llevan un poco de tiempo. Puedes quedarte aquí.", readyEyebrow: "Recién dibujado", readyTitle: "Tu dibujo está listo." },
     errors: { refused: "No pudimos dibujar esa escena. Prueba a describirla de otra manera.", timeout: "El dibujo tardó demasiado. Inténtalo de nuevo.", general: "Doodle no pudo terminar la imagen. Inténtalo de nuevo.", unavailable: "La creación de dibujos no está disponible temporalmente. Vuelve a intentarlo más tarde.", rateLimited: "Has creado muchos dibujos hoy. Vuelve a intentarlo mañana." },
-    suggestions: { title: "O prueba una idea", items: SCENE_SUGGESTIONS_BY_LOCALE.es },
+    suggestions: { title: "O prueba una idea", refresh: "Actualizar ideas", items: SCENE_SUGGESTIONS_BY_LOCALE.es },
     stage: { loadingPrimary: "Estamos dibujando tu idea...", loadingMessages: ["Preparando una nota nueva…", "Trazando las formas principales…", "Manteniendo las líneas sencillas…", "Añadiendo los últimos detalles…", "Seguimos dibujando — esta escena necesita un momento."], loadingSr: "Puede tardar hasta dos minutos.", generatedAlt: "Doodle generado sobre una nota adhesiva", viewLarger: "Ver más grande", referenceAria: "Ver el doodle de ejemplo más grande", referenceAlt: "Doodle sencillo de dos gatos besándose boca abajo sobre una nota amarilla" },
     actions: { download: "Descargar", tryAgain: "Intentar de nuevo", redraw: "Volver a dibujar esta idea", newScene: "Dibujar otra cosa", makeCard: "Crear una tarjeta" },
     card: { title: "Añade un pequeño mensaje", messageLabel: "Tu mensaje (opcional)", messagePlaceholder: "¡Gracias!", messageHint: "Hasta 80 caracteres", previewAlt: "Vista previa de la tarjeta", preparing: "Preparando tu tarjeta", download: "Descargar tarjeta", share: "Compartir tarjeta", shareFallback: "Compartir no está disponible aquí. Descarga la tarjeta.", close: "Cerrar tarjeta", error: "No se pudo preparar la tarjeta. Inténtalo de nuevo." },
@@ -334,7 +336,7 @@ const COPY = {
     composer: { title: "O que vamos desenhar?", hint: "Escolha uma cena pequena e clara.", label: "Descreva uma cena", placeholder: "Um pequeno momento...", create: "Criar desenho", drawing: "Desenhando..." },
     status: { generatingEyebrow: "Um pequeno momento ganhando forma", generatingTitle: "Estamos fazendo seu desenho.", waitHint: "Linhas simples levam um tempinho. Pode ficar por aqui.", readyEyebrow: "Desenho novinho", readyTitle: "Seu desenho está pronto." },
     errors: { refused: "Não foi possível desenhar essa cena. Tente descrevê-la de outro jeito.", timeout: "O desenho demorou demais. Tente novamente.", general: "O Doodle não conseguiu terminar a imagem. Tente novamente.", unavailable: "A criação de desenhos está temporariamente indisponível. Tente mais tarde.", rateLimited: "Você já criou muitos desenhos hoje. Tente de novo amanhã." },
-    suggestions: { title: "Ou experimente uma ideia", items: SCENE_SUGGESTIONS_BY_LOCALE["pt-br"] },
+    suggestions: { title: "Ou experimente uma ideia", refresh: "Atualizar ideias", items: SCENE_SUGGESTIONS_BY_LOCALE["pt-br"] },
     stage: { loadingPrimary: "Estamos fazendo seu desenho...", loadingMessages: ["Preparando um novo bloquinho…", "Rascunhando as formas principais…", "Mantendo os traços simples…", "Acrescentando os últimos detalhes…", "Ainda desenhando — esta cena precisa de mais um momento."], loadingSr: "Isso pode levar até dois minutos.", generatedAlt: "Desenho gerado em um bloquinho adesivo", viewLarger: "Ver maior", referenceAria: "Ver o desenho de exemplo em tamanho maior", referenceAlt: "Desenho simples de dois gatos se beijando de cabeça para baixo em um bloquinho amarelo" },
     actions: { download: "Baixar", tryAgain: "Tentar novamente", redraw: "Desenhar esta ideia de novo", newScene: "Desenhar outra coisa", makeCard: "Criar um cartão" },
     card: { title: "Adicione uma mensagem curta", messageLabel: "Sua mensagem (opcional)", messagePlaceholder: "Obrigado!", messageHint: "Até 80 caracteres", previewAlt: "Prévia do cartão", preparing: "Preparando seu cartão", download: "Baixar cartão", share: "Compartilhar cartão", shareFallback: "O compartilhamento não está disponível aqui. Baixe o cartão.", close: "Fechar cartão", error: "Não foi possível preparar o cartão. Tente novamente." },
@@ -352,7 +354,7 @@ const COPY = {
     composer: { title: "Cosa disegniamo?", hint: "Scegli una scena piccola e chiara.", label: "Descrivi una scena", placeholder: "Un piccolo momento...", create: "Crea disegno", drawing: "Sto disegnando..." },
     status: { generatingEyebrow: "Un piccolo momento prende forma", generatingTitle: "Sto creando il tuo disegno.", waitHint: "Le linee semplici richiedono un po’ di tempo. Puoi restare qui.", readyEyebrow: "Appena disegnato", readyTitle: "Il tuo disegno è pronto." },
     errors: { refused: "Non è stato possibile disegnare questa scena. Prova a descriverla in un altro modo.", timeout: "Il disegno ha impiegato troppo tempo. Riprova.", general: "Doodle non è riuscito a completare l’immagine. Riprova.", unavailable: "La creazione dei disegni non è momentaneamente disponibile. Riprova più tardi.", rateLimited: "Hai già creato molti doodle oggi. Riprova domani." },
-    suggestions: { title: "Oppure prova un’idea", items: SCENE_SUGGESTIONS_BY_LOCALE.it },
+    suggestions: { title: "Oppure prova un’idea", refresh: "Aggiorna le idee", items: SCENE_SUGGESTIONS_BY_LOCALE.it },
     stage: { loadingPrimary: "Sto creando il tuo disegno...", loadingMessages: ["Preparo un nuovo foglietto…", "Disegno le forme principali…", "Mantengo le linee semplici…", "Aggiungo gli ultimi dettagli…", "Sto ancora disegnando — serve ancora un momento."], loadingSr: "Potrebbero volerci fino a due minuti.", generatedAlt: "Doodle generato su un foglietto adesivo", viewLarger: "Ingrandisci", referenceAria: "Ingrandisci il doodle di esempio", referenceAlt: "Doodle semplice di due gatti che si baciano a testa in giù su un foglietto giallo" },
     actions: { download: "Scarica", tryAgain: "Riprova", redraw: "Ridisegna questa idea", newScene: "Disegna qualcos’altro", makeCard: "Crea una cartolina" },
     card: { title: "Aggiungi un piccolo messaggio", messageLabel: "Il tuo messaggio (facoltativo)", messagePlaceholder: "Grazie!", messageHint: "Fino a 80 caratteri", previewAlt: "Anteprima della cartolina", preparing: "Preparazione della cartolina", download: "Scarica cartolina", share: "Condividi cartolina", shareFallback: "La condivisione non è disponibile qui. Scarica la cartolina.", close: "Chiudi cartolina", error: "Non è stato possibile preparare la cartolina. Riprova." },
@@ -370,7 +372,7 @@ const COPY = {
     composer: { title: "何を描こう？", hint: "小さくて分かりやすい場面がおすすめです。", label: "場面を入力", placeholder: "小さなひととき...", create: "イラストを作る", drawing: "描いています..." },
     status: { generatingEyebrow: "小さなひとときを制作中", generatingTitle: "イラストを描いています。", waitHint: "シンプルな線にするまで少し時間がかかります。このままお待ちください。", readyEyebrow: "できたてのイラスト", readyTitle: "イラストができました。" },
     errors: { refused: "この場面は描けませんでした。別の言い方で説明してみてください。", timeout: "時間がかかりすぎました。もう一度お試しください。", general: "イラストを完成できませんでした。もう一度お試しください。", unavailable: "現在イラストを作成できません。時間をおいてお試しください。", rateLimited: "今日はたくさん作りました。また明日お試しください。" },
-    suggestions: { title: "こんな場面もおすすめ", items: SCENE_SUGGESTIONS_BY_LOCALE.ja },
+    suggestions: { title: "こんな場面もおすすめ", refresh: "アイデアを更新", items: SCENE_SUGGESTIONS_BY_LOCALE.ja },
     stage: { loadingPrimary: "イラストを描いています...", loadingMessages: ["新しい付箋を用意しています…", "大まかな形を描いています…", "線をシンプルに整えています…", "最後の小さなディテールを加えています…", "もう少しだけお待ちください。"], loadingSr: "完成まで最大2分ほどかかることがあります。", generatedAlt: "付箋に描かれた生成イラスト", viewLarger: "大きく見る", referenceAria: "サンプルのイラストを大きく見る", referenceAlt: "黄色い付箋に描かれた、逆さまでキスをする2匹の猫のシンプルなイラスト" },
     actions: { download: "ダウンロード", tryAgain: "もう一度", redraw: "同じアイデアで描き直す", newScene: "別のものを描く", makeCard: "カードを作る" },
     card: { title: "ひとことを添える", messageLabel: "メッセージ（任意）", messagePlaceholder: "ありがとう！", messageHint: "80文字まで", previewAlt: "カードのプレビュー", preparing: "カードを準備しています", download: "カードをダウンロード", share: "カードを共有", shareFallback: "この環境では共有できません。カードをダウンロードしてください。", close: "カードを閉じる", error: "カードを準備できませんでした。もう一度お試しください。" },
@@ -388,7 +390,7 @@ const COPY = {
     composer: { title: "무엇을 그려 볼까요?", hint: "작고 분명한 장면을 적어 주세요.", label: "장면 설명", placeholder: "작은 순간 하나...", create: "그림 만들기", drawing: "그리는 중..." },
     status: { generatingEyebrow: "작은 순간을 그리고 있어요", generatingTitle: "그림을 만들고 있어요.", waitHint: "단순한 선으로 다듬는 데 시간이 조금 걸려요. 여기서 기다려 주세요.", readyEyebrow: "방금 완성된 그림", readyTitle: "그림이 완성됐어요." },
     errors: { refused: "이 장면은 그릴 수 없었어요. 다른 말로 설명해 보세요.", timeout: "그림을 만드는 데 너무 오래 걸렸어요. 다시 시도해 주세요.", general: "그림을 완성하지 못했어요. 다시 시도해 주세요.", unavailable: "지금은 그림을 만들 수 없어요. 잠시 후 다시 시도해 주세요.", rateLimited: "오늘은 그림을 많이 만들었어요. 내일 다시 시도해 주세요." },
-    suggestions: { title: "이런 장면도 좋아요", items: SCENE_SUGGESTIONS_BY_LOCALE.ko },
+    suggestions: { title: "이런 장면도 좋아요", refresh: "아이디어 새로고침", items: SCENE_SUGGESTIONS_BY_LOCALE.ko },
     stage: { loadingPrimary: "그림을 만들고 있어요...", loadingMessages: ["새 메모지를 준비하고 있어요…", "큰 모양부터 그리고 있어요…", "선을 단순하게 다듬고 있어요…", "마지막 작은 디테일을 더하고 있어요…", "조금만 더 기다려 주세요."], loadingSr: "완성까지 최대 2분 정도 걸릴 수 있어요.", generatedAlt: "메모지에 생성된 낙서 그림", viewLarger: "크게 보기", referenceAria: "예시 그림 크게 보기", referenceAlt: "노란 메모지에 거꾸로 키스하는 고양이 두 마리를 그린 단순한 그림" },
     actions: { download: "다운로드", tryAgain: "다시 만들기", redraw: "같은 아이디어로 다시 그리기", newScene: "다른 그림 그리기", makeCard: "카드 만들기" },
     card: { title: "짧은 메시지를 더해 보세요", messageLabel: "메시지 (선택 사항)", messagePlaceholder: "고마워요!", messageHint: "80자까지", previewAlt: "카드 미리보기", preparing: "카드를 준비하는 중", download: "카드 다운로드", share: "카드 공유", shareFallback: "이 환경에서는 공유할 수 없습니다. 카드를 다운로드하세요.", close: "카드 닫기", error: "카드를 준비하지 못했습니다. 다시 시도해 주세요." },
@@ -406,7 +408,7 @@ const COPY = {
     composer: { title: "ماذا نرسم؟", hint: "اكتب فكرة بسيطة وواضحة.", label: "صِف ما تريد رسمه", placeholder: "اكتب فكرتك هنا...", create: "أنشئ رسمة", drawing: "جارٍ الرسم..." },
     status: { generatingEyebrow: "لحظة صغيرة قيد الرسم", generatingTitle: "نرسم فكرتك الآن.", waitHint: "تحتاج الخطوط البسيطة إلى قليل من الوقت. يمكنك الانتظار هنا.", readyEyebrow: "رسمة جديدة", readyTitle: "رسمتك جاهزة." },
     errors: { refused: "تعذّر رسم هذا المشهد. جرّب وصفه بطريقة مختلفة.", timeout: "استغرق الرسم وقتًا أطول من اللازم. حاول مرة أخرى.", general: "تعذّر على Doodle إكمال الرسمة. حاول مرة أخرى.", unavailable: "إنشاء الرسومات غير متاح مؤقتًا. حاول لاحقًا.", rateLimited: "أنشأت رسومات كثيرة اليوم. جرّب مرة أخرى غدًا." },
-    suggestions: { title: "أو جرّب فكرة", items: SCENE_SUGGESTIONS_BY_LOCALE.ar },
+    suggestions: { title: "أو جرّب فكرة", refresh: "تحديث الأفكار", items: SCENE_SUGGESTIONS_BY_LOCALE.ar },
     stage: { loadingPrimary: "نرسم فكرتك...", loadingMessages: ["نحضّر ورقة ملاحظات جديدة…", "نرسم الأشكال الأساسية…", "نبقي الخطوط بسيطة…", "نضيف اللمسات الصغيرة الأخيرة…", "ما زلنا نرسم — يحتاج هذا المشهد إلى لحظة أخرى."], loadingSr: "قد يستغرق ذلك ما يصل إلى دقيقتين.", generatedAlt: "رسمة مولّدة على ورقة ملاحظات لاصقة", viewLarger: "عرض بحجم أكبر", referenceAria: "عرض الرسمة النموذجية بحجم أكبر", referenceAlt: "رسمة بسيطة لشخصية معلّقة رأسًا على عقب تقبّل قطة على ورقة ملاحظات صفراء" },
     actions: { download: "تنزيل", tryAgain: "جرّب مرة أخرى", redraw: "أعد رسم هذه الفكرة", newScene: "ارسم شيئًا آخر", makeCard: "أنشئ بطاقة" },
     card: { title: "أضف رسالة صغيرة", messageLabel: "رسالتك (اختياري)", messagePlaceholder: "شكرًا!", messageHint: "حتى 80 حرفًا", previewAlt: "معاينة البطاقة", preparing: "جارٍ تجهيز بطاقتك", download: "تنزيل البطاقة", share: "مشاركة البطاقة", shareFallback: "المشاركة غير متاحة هنا. نزّل البطاقة بدلًا من ذلك.", close: "إغلاق البطاقة", error: "تعذّر تجهيز البطاقة. حاول مرة أخرى." },

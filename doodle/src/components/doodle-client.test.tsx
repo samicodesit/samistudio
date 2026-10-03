@@ -53,6 +53,55 @@ function deferred<T>() {
 }
 
 describe("DoodleClient", () => {
+  it("refreshes three ideas without changing the draft or calling generation", async () => {
+    renderClient("en", "A mug beside my journal");
+    await screen.findByText("2 free doodles left");
+    const previous = suggestionLabels();
+    const calls = vi.mocked(fetch).mock.calls.length;
+    const refresh = screen.getByRole("button", { name: "Refresh ideas" });
+
+    fireEvent.click(refresh);
+
+    expect(refresh).toBeDisabled();
+    expect(document.querySelector(".suggestions-list")).toHaveAttribute("data-refresh-phase", "entering");
+    const entering = suggestionLabels();
+    expect(entering.every((idea) => !previous.includes(idea))).toBe(true);
+    fireEvent.click(refresh);
+    expect(suggestionLabels()).toEqual(entering);
+    await waitFor(() => expect(refresh).toBeEnabled());
+
+    const next = suggestionLabels();
+    expect(next).toHaveLength(3);
+    expect(new Set(next).size).toBe(3);
+    expect(next.every((idea) => !previous.includes(idea))).toBe(true);
+    expect(screen.getByRole("textbox")).toHaveValue("A mug beside my journal");
+    expect(fetch).toHaveBeenCalledTimes(calls);
+    expect(refresh).toHaveAttribute("title", "Refresh ideas");
+  });
+
+  it("refreshes Arabic ideas with a localized accessible button", async () => {
+    renderClient("ar", "مشهد صغير");
+    const previous = suggestionLabels();
+    fireEvent.click(screen.getByRole("button", { name: "تحديث الأفكار" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "تحديث الأفكار" })).toBeEnabled());
+    const next = suggestionLabels();
+    expect(next.every((idea) => getCopy("ar").suggestions.items.includes(idea))).toBe(true);
+    expect(next.every((idea) => !previous.includes(idea))).toBe(true);
+    expect(screen.getByRole("textbox")).toHaveValue("مشهد صغير");
+  });
+
+  it("refreshes immediately without motion when reduced motion is enabled", () => {
+    const originalMatchMedia = window.matchMedia;
+    vi.spyOn(window, "matchMedia").mockImplementation((query) => ({ ...originalMatchMedia(query), matches: query.includes("prefers-reduced-motion") }));
+    renderClient();
+    const previous = suggestionLabels();
+    const refresh = screen.getByRole("button", { name: "Refresh ideas" });
+    fireEvent.click(refresh);
+    expect(refresh).toBeEnabled();
+    expect(suggestionLabels().every((idea) => !previous.includes(idea))).toBe(true);
+    expect(document.querySelector(".suggestions-list")).toHaveAttribute("data-refresh-phase", "idle");
+  });
+
   it("lets a landing-page visitor choose an editable occasion without generating", async () => {
     renderClient("en", "", true);
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Your words.A little drawing.");
@@ -261,7 +310,7 @@ describe("DoodleClient", () => {
 
     const dialog = screen.getByRole("dialog");
     expect(dialog).toBeVisible();
-    expect(within(dialog).getByRole("img", { name: "Sticky-note doodle" })).toBeVisible();
+    expect(within(dialog).getByRole("img", { name: getCopy("en").stage.referenceAlt })).toBeVisible();
   });
 
   it("moves from idle to generating to ready", async () => {

@@ -4,7 +4,8 @@
 import Image from "next/image";
 import { Maximize2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { DoodleCopy } from "@/lib/i18n";
+import type { DoodleCopy, Locale } from "@/lib/i18n";
+import { DoodleGridFrame } from "./doodle-grid-frame";
 
 type StageStatus = "idle" | "generating" | "ready" | "error";
 
@@ -16,11 +17,14 @@ interface DoodleStageProps {
   copy: DoodleCopy["stage"];
   referenceImage?: string;
   referenceAlt?: string;
+  locale?: Locale;
+  gridEnabled?: boolean;
+  onToggleGrid?: () => void;
 }
 
 const LOADING_DELAYS = [8000, 12000, 25000, 30000];
 
-export function DoodleStage({ status, imageUrl, error, onInspect, copy, referenceImage, referenceAlt }: DoodleStageProps) {
+export function DoodleStage({ status, imageUrl, error, onInspect, copy, referenceImage, referenceAlt, locale = "en", gridEnabled = false, onToggleGrid }: DoodleStageProps) {
   const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
 
   useEffect(() => {
@@ -62,10 +66,12 @@ export function DoodleStage({ status, imageUrl, error, onInspect, copy, referenc
 
   if (status === "ready" && imageUrl) {
     return (
+      <DoodleGridFrame className="grid-result-wrap" locale={locale} enabled={gridEnabled} onToggle={onToggleGrid}>
       <button className="doodle-stage doodle-stage-result" type="button" onClick={onInspect} aria-label={copy.viewLarger}>
         <img src={imageUrl} alt={copy.generatedAlt} />
         <span className="stage-inspect-label" aria-hidden="true"><Maximize2 size={20} /></span>
       </button>
+      </DoodleGridFrame>
     );
   }
 

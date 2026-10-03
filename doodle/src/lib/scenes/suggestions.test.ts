@@ -8,11 +8,11 @@ import {
 import { getCopy, SUPPORTED_LOCALES } from "@/lib/i18n";
 
 describe("suggestions", () => {
-  it("contains exactly 50 unique approved scenes with stable IDs", () => {
-    expect(SCENE_IDEAS).toHaveLength(50);
-    expect(SCENE_SUGGESTIONS).toHaveLength(50);
-    expect(new Set(SCENE_IDEAS.map((idea) => idea.id)).size).toBe(50);
-    expect(new Set(SCENE_IDEAS.map((idea) => idea.prompt)).size).toBe(50);
+  it("offers 75 distinct scenes with stable IDs", () => {
+    expect(SCENE_IDEAS).toHaveLength(75);
+    expect(SCENE_SUGGESTIONS).toHaveLength(75);
+    expect(new Set(SCENE_IDEAS.map((idea) => idea.id)).size).toBe(75);
+    expect(new Set(SCENE_IDEAS.map((idea) => idea.prompt)).size).toBe(75);
   });
 
   it("selects three distinct suggestions", () => {
@@ -40,7 +40,7 @@ describe("suggestions", () => {
   });
 
   it("falls back to the full bank when fewer than three candidates remain", () => {
-    const recentIds = SCENE_IDEAS.slice(0, 48).map((idea) => idea.id);
+    const recentIds = SCENE_IDEAS.slice(0, -2).map((idea) => idea.id);
     const result = pickSceneIdeas({ random: () => 0.25, recentIds });
 
     expect(result).toHaveLength(3);
@@ -58,11 +58,11 @@ describe("suggestions", () => {
     ]);
   });
 
-  it.each(SUPPORTED_LOCALES)("has 50 localized prompts for %s", (locale) => {
+  it.each(SUPPORTED_LOCALES)("has 75 localized prompts for %s", (locale) => {
     const prompts = getCopy(locale).suggestions.items;
 
-    expect(prompts).toHaveLength(50);
-    expect(new Set(prompts).size).toBe(50);
+    expect(prompts).toHaveLength(75);
+    expect(new Set(prompts).size).toBe(75);
     expect(prompts.every((prompt) => prompt.trim().length > 0)).toBe(true);
   });
 });

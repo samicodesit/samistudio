@@ -1,4 +1,4 @@
-import { SIMPLE_PROFILE, type GenerationProfile } from "./profile";
+import { DOODLE_PAPER_COLOR, SIMPLE_PROFILE, type GenerationProfile } from "./profile";
 
 const SIMPLE_PROMPT = `Draw one square image as an extremely simple sticky-note doodle.
 
@@ -6,7 +6,7 @@ Style:
 - minimal dark pencil or pen line art
 - drawn by a normal person, not polished or professional
 - simple rounded cartoon figures with no realistic anatomy
-- no shading and no color except the pale-yellow sticky-note paper
+- no shading and no color except the warm-yellow sticky-note paper
 - loose, slightly imperfect lines
 - cute but not overly detailed
 - few enough details to copy by hand in under two minutes
@@ -20,8 +20,11 @@ Style:
 Paper background:
 - the entire square canvas IS the yellow paper surface, not a physical note
   placed on another surface
-- a flat, evenly colored pale-yellow background from edge to edge
+- a flat, evenly colored warm-yellow background from edge to edge
+- use sRGB ${DOODLE_PAPER_COLOR} as the single base paper color: warm, muted
+  yellow with a little saturation, not cream, orange, or neon yellow
 - any subtle paper texture must be uniform across the entire image
+- texture may vary brightness slightly but must keep the same yellow hue
 - draw directly on the same paper; keep the same yellow inside and outside
   the figures and objects
 - no lighter patch behind the scene, white backing, halo, glow, spotlight,

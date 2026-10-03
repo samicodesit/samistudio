@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { track } from "@vercel/analytics";
+import { RefreshCw } from "lucide-react";
 import type { AccountSummary } from "@/app/api/account/route";
 import { formatCount, localePath, SUPPORTED_LOCALES, type DoodleCopy, type Locale } from "@/lib/i18n";
 import { DEFAULT_SUGGESTION_IDS, localizeSceneIdeas, pickSceneIdeas, type SceneIdeaId } from "@/lib/scenes/suggestions";
@@ -11,7 +12,7 @@ import { SceneComposer } from "./scene-composer";
 import { DoodleStage } from "./doodle-stage";
 import { PurchaseDialog } from "./purchase-dialog";
 import { ResultActions } from "./result-actions";
-import { ResultDialog } from "./result-dialog";
+import { DoodlePreviewDialog } from "./doodle-preview-dialog";
 import { isPlayRuntime } from "@/lib/billing/play-client";
 import { LANDING_EXAMPLE, type LandingCopy } from "@/lib/landing-copy";
 
@@ -78,6 +79,8 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   const [scene, setScene] = useState(initialScene);
   const initialIds = initialSuggestionIds ?? DEFAULT_SUGGESTION_IDS;
   const [suggestionIds, setSuggestionIds] = useState<readonly SceneIdeaId[]>(initialIds);
+  const [suggestionRefreshPhase, setSuggestionRefreshPhase] = useState<"idle" | "entering">("idle");
+  const suggestionRefreshTimer = useRef<number | null>(null);
   const [generation, setGeneration] = useState<GenerationState>(IDLE_STATE);
   const [account, setAccount] = useState<AccountSummary>(INITIAL_ACCOUNT);
   const [accountReady, setAccountReady] = useState(false);
@@ -88,6 +91,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   const [checkoutRetry, setCheckoutRetry] = useState<string | null>(null);
   const [checkoutConfirming, setCheckoutConfirming] = useState(false);
   const [isResultOpen, setIsResultOpen] = useState(false);
+  const [gridImageUrl, setGridImageUrl] = useState<string | null>(null);
   const currentObjectUrl = useRef<string | null>(null);
   const handledCheckout = useRef<string | null>(null);
   const pendingCheckout = useRef<string | null>(null);
@@ -127,6 +131,24 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
     recentSuggestionIds.current = nextIds;
     setSuggestionIds(nextIds);
   }, [copy.suggestions.items]);
+
+  useEffect(() => () => {
+    if (suggestionRefreshTimer.current !== null) window.clearTimeout(suggestionRefreshTimer.current);
+  }, []);
+
+  const animateSuggestionRefresh = useCallback(() => {
+    if (suggestionRefreshTimer.current !== null) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      refreshSuggestions();
+      return;
+    }
+    refreshSuggestions();
+    setSuggestionRefreshPhase("entering");
+    suggestionRefreshTimer.current = window.setTimeout(() => {
+      suggestionRefreshTimer.current = null;
+      setSuggestionRefreshPhase("idle");
+    }, 320);
+  }, [refreshSuggestions]);
 
   const restoreCreateFocus = useCallback(() => {
     const target = purchaseReturnFocus.current;
@@ -447,10 +469,21 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
         </section> : <section className="suggestions-section" aria-labelledby="suggestions-title">
           <div className="suggestions-heading">
             <h2 id="suggestions-title">{copy.suggestions.title}</h2>
+            <button
+              type="button"
+              className="suggestions-refresh"
+              aria-label={copy.suggestions.refresh}
+              title={copy.suggestions.refresh}
+              onClick={animateSuggestionRefresh}
+              disabled={suggestionRefreshPhase !== "idle"}
+              data-refreshing={suggestionRefreshPhase !== "idle"}
+            >
+              <RefreshCw size={18} aria-hidden="true" />
+            </button>
           </div>
-          <div className="suggestions-list">
+          <div className="suggestions-list" data-refresh-phase={suggestionRefreshPhase} aria-busy={suggestionRefreshPhase !== "idle"}>
             {suggestions.map((suggestion) => (
-              <button key={suggestion.id} type="button" onClick={() => handleSuggestion(suggestion.prompt)}>
+              <button key={suggestion.id} type="button" disabled={suggestionRefreshPhase !== "idle"} onClick={() => handleSuggestion(suggestion.prompt)}>
                 <span>{suggestion.prompt}</span>
                 <span className="suggestion-plus" aria-hidden="true">
                   +
@@ -471,6 +504,9 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
           error={generation.error}
           onInspect={() => setIsResultOpen(true)}
           copy={copy.stage}
+          locale={locale}
+          gridEnabled={generation.imageUrl !== null && gridImageUrl === generation.imageUrl}
+          onToggleGrid={() => setGridImageUrl(current => current === generation.imageUrl ? null : generation.imageUrl)}
           referenceImage={landing ? LANDING_EXAMPLE : undefined}
           referenceAlt={landing ? `${landing.exampleLabel}: ${landing.examplePrompt}` : undefined}
         />
@@ -481,12 +517,16 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
         </div>
       </div>
       {isResultOpen ? (
-        <ResultDialog
+        <DoodlePreviewDialog
           key={isResultOpen ? "open" : "closed"}
           imageUrl={inspectedImageUrl}
           open={isResultOpen}
           onClose={() => setIsResultOpen(false)}
           copy={copy.dialog}
+          imageAlt={generation.status === "ready" ? copy.stage.generatedAlt : landing ? `${landing.exampleLabel}: ${landing.examplePrompt}` : copy.stage.referenceAlt}
+          locale={locale}
+          gridEnabled={generation.status === "ready" ? gridImageUrl === generation.imageUrl : undefined}
+          onToggleGrid={generation.status === "ready" ? () => setGridImageUrl(current => current === generation.imageUrl ? null : generation.imageUrl) : undefined}
         />
       ) : null}
       {isPurchaseOpen ? (

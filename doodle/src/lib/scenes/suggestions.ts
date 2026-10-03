@@ -54,6 +54,31 @@ export const SCENE_IDEAS = [
   { id: "child-notebook-sticker", prompt: "A child placing a sticker on a notebook" },
   { id: "rabbit-gift-ribbon", prompt: "A rabbit tying a ribbon around a gift" },
   { id: "koala-lunchbox-wave", prompt: "A koala waving from a lunchbox" },
+  { id: "camper-pine-tree", prompt: "A campervan parked beside a pine tree" },
+  { id: "mug-closed-book", prompt: "A steaming mug beside a closed book" },
+  { id: "pencil-notebook", prompt: "A pencil leaning against a notebook" },
+  { id: "hikers-sharing-thermos", prompt: "Two hikers sharing a thermos" },
+  { id: "bicycle-flower-basket", prompt: "A bicycle with flowers in its basket" },
+  { id: "turtle-backpack", prompt: "A turtle carrying a little backpack" },
+  { id: "paper-plane-cloud", prompt: "A paper plane flying over a cloud" },
+  { id: "person-window-reading", prompt: "A person reading beside a window" },
+  { id: "toast-butter-knife", prompt: "A slice of toast beside a butter knife" },
+  { id: "teapot-pouring-cup", prompt: "A teapot pouring tea into a cup" },
+  { id: "hedgehog-scarf", prompt: "A hedgehog wrapped in a scarf" },
+  { id: "plant-new-leaf", prompt: "A small plant growing a new leaf" },
+  { id: "sneakers-door", prompt: "A pair of sneakers beside a door" },
+  { id: "campfire-kettle", prompt: "A kettle warming over a small campfire" },
+  { id: "moon-hanging-star", prompt: "A crescent moon with a star hanging from it" },
+  { id: "whale-paper-boat", prompt: "A whale lifting a paper boat on its spout" },
+  { id: "record-player", prompt: "A record spinning on a little turntable" },
+  { id: "person-desk-stretch", prompt: "A person stretching at a desk" },
+  { id: "bee-sunflower", prompt: "A bee hovering beside a sunflower" },
+  { id: "castle-cloud", prompt: "A little castle sitting on a cloud" },
+  { id: "mittens-string", prompt: "Two mittens joined by a string" },
+  { id: "apple-basket-bench", prompt: "A basket of apples on a bench" },
+  { id: "cactus-sunglasses", prompt: "A cactus wearing sunglasses" },
+  { id: "person-feeding-ducks", prompt: "A person feeding two ducks" },
+  { id: "robot-carrying-plant", prompt: "A small robot carrying a potted plant" },
 ] as const satisfies readonly SceneIdeaDefinition[];
 
 export type SceneIdeaId = (typeof SCENE_IDEAS)[number]["id"];
@@ -123,4 +148,3 @@ export function localizeSceneIdeas(
     return index < 0 ? [] : [localizedIdea({ idea: SCENE_IDEAS[index], index }, prompts)];
   });
 }
-

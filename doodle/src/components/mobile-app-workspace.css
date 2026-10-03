@@ -27,6 +27,7 @@ body:has(.mobile-app-workspace[data-installed="true"]) .doodle-main {
 .mobile-app-workspace[data-installed="true"] #ready-title { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .mobile-app-workspace[data-installed="true"] .result-actions { margin-top: 0; }
 .mobile-app-workspace[data-installed="true"] .composer-section h1 { font-size: clamp(32px, 8vw, 42px); }
+.mobile-app-workspace[data-installed="true"] .scene-hint { margin-bottom: 11px; }
 .mobile-app-workspace[data-installed="true"] .state-copy h1 { font-size: clamp(28px, 7.5vw, 36px); }
 .mobile-app-workspace[data-installed="true"] .doodle-stage-reference { display: none; }
 .mobile-app-workspace[data-installed="true"] .workspace-usage { margin-top: 8px; }
@@ -74,9 +75,12 @@ html[dir="rtl"] .mobile-app-workspace[data-installed="true"] .app-panel h1 { let
 .app-panel h1 { margin: 0 0 12px; font-family: var(--font-display); font-size: 36px; line-height: 1.1; letter-spacing: -.04em; }
 .app-panel > p { margin: 0 0 24px; color: var(--muted); font-size: 16px; line-height: 1.5; }
 .app-ideas-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.app-ideas-grid button { display: flex; flex-direction: column; gap: 10px; padding: 0 0 14px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--paper); text-align: start; }
+.app-idea-card { display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--paper); }
+.app-ideas-grid button { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 0; border: 0; background: transparent; text-align: start; }
+.app-ideas-grid .app-idea-select { flex: 1; padding-bottom: 14px; }
+.app-idea-preview .stage-inspect-label { width: 28px; height: 28px; bottom: 8px; inset-inline-end: 8px; }
 .app-ideas-grid img { width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; }
-.app-ideas-grid button > span { padding: 0 12px; font-size: 14px; line-height: 1.4; }
+.app-ideas-grid .app-idea-select > span { padding: 0 12px; font-size: 14px; line-height: 1.4; }
 .app-ideas-grid strong { margin-top: auto; padding: 0 12px; color: var(--moss); font-size: 13px; }
 .app-settings h2 { margin: 28px 0 12px; font-size: 16px; font-weight: 600; }
 .app-language-list, .app-support-links { display: grid; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--paper); }
