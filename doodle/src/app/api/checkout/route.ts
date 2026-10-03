@@ -1,3 +1,4 @@
+import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { createPackCheckout } from "@/lib/billing/checkout";
 import { hasLocale } from "@/lib/i18n";
@@ -8,7 +9,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
   if (!hasSameOrigin(request)) {
     return NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
@@ -30,12 +31,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "invalid_locale" }, { status: 400 });
   }
 
+  diagnostics.stage = "session_read";
   const user = await getCurrentUser();
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
   try {
+    diagnostics.stage = "billing_prepare";
     const checkout = await createPackCheckout({
       userId: user.id,
       email: user.email,
@@ -48,4 +51,8 @@ export async function POST(request: NextRequest) {
   } catch {
     return NextResponse.json({ error: "billing_unavailable" }, { status: 503 });
   }
+}
+
+export async function POST(request: NextRequest) {
+  return diagnoseRequest(request, "billing", (diagnostics) => handlePOST(request, diagnostics));
 }

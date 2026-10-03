@@ -1,3 +1,4 @@
+import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { clearSessionCookie, getCurrentUser } from "@/lib/auth/session";
 import { deletePaidAccount, getPaidBalance } from "@/lib/billing/credits";
@@ -25,9 +26,12 @@ function errorResponse(error: string, status: number) {
   );
 }
 
-export async function GET(request: NextRequest) {
+async function handleGET(request: NextRequest, diagnostics: RequestDiagnostics) {
+  diagnostics.stage = "session_read";
   const identity = getTrialIdentity(request);
+  diagnostics.stage = "session_read";
   const user = await getCurrentUser(request);
+  diagnostics.stage = "account_read";
   const summary: AccountSummary = user
     ? {
         authenticated: true,
@@ -48,7 +52,7 @@ export async function GET(request: NextRequest) {
   return response;
 }
 
-export async function DELETE(request: NextRequest) {
+async function handleDELETE(request: NextRequest, diagnostics: RequestDiagnostics) {
   if (!hasSameOrigin(request)) {
     return errorResponse("forbidden", 403);
   }
@@ -68,12 +72,14 @@ export async function DELETE(request: NextRequest) {
     return errorResponse("confirmation_required", 400);
   }
 
+  diagnostics.stage = "session_read";
   const user = await getCurrentUser(request);
   if (!user) {
     return errorResponse("unauthorized", 401);
   }
 
   try {
+    diagnostics.stage = "account_read";
     await deletePaidAccount(user.id, user.identityKey);
     await revokeNativeSession(request);
     const response = new NextResponse(null, {
@@ -85,4 +91,12 @@ export async function DELETE(request: NextRequest) {
   } catch {
     return errorResponse("delete_failed", 500);
   }
+}
+
+export async function GET(request: NextRequest) {
+  return diagnoseRequest(request, "account", (diagnostics) => handleGET(request, diagnostics));
+}
+
+export async function DELETE(request: NextRequest) {
+  return diagnoseRequest(request, "account", (diagnostics) => handleDELETE(request, diagnostics));
 }

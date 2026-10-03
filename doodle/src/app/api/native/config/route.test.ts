@@ -1,3 +1,4 @@
+vi.mock("server-only", () => ({}));
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "./route";
 
@@ -15,7 +16,7 @@ describe("native config route", () => {
   it("reports a disabled, non-credential-bearing config when Integrity is unavailable", async () => {
     mocks.getNativeAttestationConfig.mockReturnValue(null);
 
-    const response = await GET();
+    const response = await GET(new Request("https://doodle.samistudio.nl/api/native/config"));
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({
@@ -31,7 +32,7 @@ describe("native config route", () => {
   it("exposes only the public project number for a valid config", async () => {
     mocks.getNativeAttestationConfig.mockReturnValue({ cloudProjectNumber: "368967912119" });
 
-    const response = await GET();
+    const response = await GET(new Request("https://doodle.samistudio.nl/api/native/config"));
 
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual({
@@ -49,7 +50,7 @@ describe("native config route", () => {
       throw new Error("private key");
     });
 
-    const response = await GET();
+    const response = await GET(new Request("https://doodle.samistudio.nl/api/native/config"));
 
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ error: "native_generation_unavailable" });

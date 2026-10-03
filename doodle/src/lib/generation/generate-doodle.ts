@@ -1,4 +1,5 @@
 import OpenAI from "openai";
+import { providerFailure, type ProviderFailure } from "@/lib/diagnostics/provider";
 import { normalizeScene } from "@/lib/scenes/scene";
 import { SIMPLE_PROFILE } from "./profile";
 import { buildDoodlePrompt } from "./prompt";
@@ -21,7 +22,7 @@ export interface GeneratedDoodle {
 export type GenerationErrorKind = "refused" | "timeout" | "malformed" | "upstream";
 
 export class GenerationError extends Error {
-  constructor(readonly kind: GenerationErrorKind, message: string) {
+  constructor(readonly kind: GenerationErrorKind, message: string, readonly diagnostics: ProviderFailure = {}) {
     super(message);
     this.name = "GenerationError";
   }
@@ -87,9 +88,10 @@ export async function generateDoodle(scene: string, client: ImageClient = produc
       quality: SIMPLE_PROFILE.quality,
     });
   } catch (error) {
-    if (isTimeout(error)) throw new GenerationError("timeout", "The image request timed out.");
-    if (isRefusal(error)) throw new GenerationError("refused", "The image request was refused.");
-    throw new GenerationError("upstream", "The image request failed.");
+    const diagnostics = providerFailure(error);
+    if (isTimeout(error)) throw new GenerationError("timeout", "The image request timed out.", diagnostics);
+    if (isRefusal(error)) throw new GenerationError("refused", "The image request was refused.", diagnostics);
+    throw new GenerationError("upstream", "The image request failed.", diagnostics);
   }
 
   const encoded = response.data?.[0]?.b64_json;

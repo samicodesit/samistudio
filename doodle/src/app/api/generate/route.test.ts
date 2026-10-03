@@ -106,6 +106,18 @@ describe("generate route", () => {
     });
   });
 
+  it("correlates provider failure without exposing scene or exception text", async () => {
+    const log = vi.spyOn(console, "error").mockImplementation(() => {});
+    const requestId = "df9c4bb8-4ab8-49d6-a938-e0ed35616729";
+    mocks.generateDoodle.mockRejectedValue(new GenerationError("timeout", "Timed out"));
+    const response = await POST(request("Private scene", "http://localhost:3000", { "x-doodle-request-id": requestId }));
+    expect(response.status).toBe(504);
+    expect(response.headers.get("x-doodle-request-id")).toBe(requestId);
+    expect(log).toHaveBeenCalledWith("[doodle-diagnostics]", expect.any(String));
+    const event = JSON.parse(log.mock.calls[0][1] as string);
+    expect(event).toMatchObject({ requestId, stage: "image_provider", code: "timeout", operation: "generation" });
+    expect(JSON.stringify(event)).not.toContain("Private scene");
+  });
   it("records one successful drawing without sending its prompt or image to metrics", async () => {
     const response = await POST(request("Two cats hug"));
     expect(response.status).toBe(200);

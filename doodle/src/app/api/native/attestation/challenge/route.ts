@@ -1,3 +1,4 @@
+import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { getNativeBearer } from "@/lib/native-session";
 import { getCurrentUser } from "@/lib/auth/session";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
@@ -22,7 +23,7 @@ function errorResponse(error: string, status: number) {
   );
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
   if (!hasSameOrigin(request)) return errorResponse("forbidden", 403);
 
   let body: Record<string, unknown>;
@@ -51,6 +52,7 @@ export async function POST(request: NextRequest) {
     return errorResponse("invalid_request", 400);
   }
 
+  diagnostics.stage = "session_read";
   let principal: string;
   if (operation === "generate") {
     const bearer = getNativeBearer(request);
@@ -90,11 +92,13 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  diagnostics.stage = "rate_limit";
   const challengeLimit = await checkNativeChallengeLimit(request, operation as "guest" | "generate");
   if (challengeLimit === "rate_limited") return errorResponse("rate_limited", 429);
   if (challengeLimit === "unavailable") return errorResponse("native_generation_unavailable", 503);
 
   try {
+    diagnostics.stage = "attestation_challenge";
     const challenge = await createNativeChallenge({
       operation: operation as NativeAttestationOperation,
       installId,
@@ -111,4 +115,8 @@ export async function POST(request: NextRequest) {
     }
     return errorResponse("native_generation_unavailable", 503);
   }
+}
+
+export async function POST(request: NextRequest) {
+  return diagnoseRequest(request, "integrity", (diagnostics) => handlePOST(request, diagnostics));
 }

@@ -1,3 +1,4 @@
+import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { createHash, randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { generateDoodle, GenerationError } from "@/lib/generation/generate-doodle";
@@ -49,7 +50,7 @@ async function finalizeWithReplay(operation: () => Promise<{ finalized: boolean;
   }
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
   const nativeClient = request.headers.get("x-doodle-client") === "native-android";
   if (!hasSameOrigin(request)) {
     return nativeClient ? nativeError("forbidden", 403) : NextResponse.json({ error: "forbidden" }, { status: 403 });
@@ -95,6 +96,7 @@ export async function POST(request: NextRequest) {
     return nativeClient ? nativeError("invalid_scene", 400) : NextResponse.json({ error: "invalid_scene" }, { status: 400 });
   }
 
+  diagnostics.stage = "session_read";
   let user: Awaited<ReturnType<typeof getCurrentUser>> = null;
   let nativeBearer: string | null | undefined;
   let nativeTrialIdentity: TrialIdentity | undefined;
@@ -135,6 +137,7 @@ export async function POST(request: NextRequest) {
     if (!installId || !challenge || !integrityToken || !nativePrincipalValue) {
       return nativeError("native_attestation_required", 403);
     }
+    diagnostics.stage = "attestation_verify";
     let integrity: "verified" | "unavailable" | "invalid";
     try {
       integrity = await consumeNativeAttestation({
@@ -161,6 +164,7 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  diagnostics.stage = "credit_reserve";
   let reservation:
     | { kind: "paid"; userId: string }
     | { kind: "free"; identity: TrialIdentity }
@@ -246,6 +250,7 @@ export async function POST(request: NextRequest) {
   try {
     if (reservation.kind === "free") {
       infrastructureFailure = true;
+      diagnostics.stage = "rate_limit";
       const limit = await checkGenerationLimit(request);
       if (limit !== "allowed") {
         const response = nativeClient
@@ -261,6 +266,7 @@ export async function POST(request: NextRequest) {
     }
 
     infrastructureFailure = false;
+    diagnostics.stage = "image_provider";
     const result = await generateDoodle(scene);
     infrastructureFailure = true;
     const response = new NextResponse(Buffer.from(result.bytes), {
@@ -279,12 +285,14 @@ export async function POST(request: NextRequest) {
       });
       return response;
     };
+    diagnostics.stage = "credit_finalize";
     const finalized = await finalizeWithReplay(
       reservation.kind === "paid"
         ? () => finalizePaidCredit(reservation.userId, reservationId)
         : () => finalizeFreeDoodle(reservation.identity, reservationId),
     );
     if (!finalized) {
+      diagnostics.failureCode = "limit_unavailable";
       response.headers.set("X-Doodle-Balance-Uncertain", "1");
       return success();
     }
@@ -301,6 +309,8 @@ export async function POST(request: NextRequest) {
     await release();
     if (infrastructureFailure) return unavailable(nativeClient);
     if (error instanceof GenerationError) {
+      Object.assign(diagnostics, error.diagnostics);
+      diagnostics.failureCode = error.kind;
       if (error.kind === "refused") {
         return nativeClient ? nativeError("refused", 422) : NextResponse.json({ error: "refused" }, { status: 422 });
       }
@@ -310,4 +320,8 @@ export async function POST(request: NextRequest) {
     }
     return nativeClient ? nativeError("temporary_error", 502) : NextResponse.json({ error: "temporary_error" }, { status: 502 });
   }
+}
+
+export async function POST(request: NextRequest) {
+  return diagnoseRequest(request, "generation", (diagnostics) => handlePOST(request, diagnostics));
 }

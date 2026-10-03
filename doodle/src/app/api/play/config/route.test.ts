@@ -1,3 +1,4 @@
+vi.mock("server-only", () => ({}));
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "./route";
 
@@ -14,21 +15,21 @@ beforeEach(() => {
 describe("Play config route", () => {
   it("requires an authenticated account", async () => {
     mocks.getCurrentUser.mockResolvedValue(null);
-    const response = await GET();
+    const response = await GET(new Request("https://doodle.samistudio.nl/api/play/config"));
     expect(response.status).toBe(401);
     expect(response.headers.get("cache-control")).toBe("no-store");
     expect(mocks.getPlayBillingConfig).not.toHaveBeenCalled();
   });
   it("fails closed while disabled", async () => {
     mocks.getPlayBillingConfig.mockReturnValue(null);
-    const response = await GET();
+    const response = await GET(new Request("https://doodle.samistudio.nl/api/play/config"));
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ error: "play_unavailable" });
     expect(response.headers.get("cache-control")).toBe("no-store");
   });
   it("does not expose configuration error details", async () => {
     mocks.getPlayBillingConfig.mockImplementation(() => { throw new Error("private-key-secret"); });
-    const response = await GET();
+    const response = await GET(new Request("https://doodle.samistudio.nl/api/play/config"));
     expect(response.status).toBe(503);
     expect(await response.json()).toEqual({ error: "play_unavailable" });
   });

@@ -1,11 +1,13 @@
+import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { getNativeAttestationConfig } from "@/lib/native-attestation";
 import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+async function handleGET(request: Request, diagnostics: RequestDiagnostics) {
   try {
+    diagnostics.stage = "config_fetch";
     const config = getNativeAttestationConfig();
     return NextResponse.json(
       {
@@ -24,4 +26,8 @@ export async function GET() {
       { status: 503, headers: { "Cache-Control": "no-store" } },
     );
   }
+}
+
+export async function GET(request: Request) {
+  return diagnoseRequest(request, "integrity", (diagnostics) => handleGET(request, diagnostics));
 }

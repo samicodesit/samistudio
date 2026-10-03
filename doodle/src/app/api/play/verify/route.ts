@@ -1,3 +1,4 @@
+import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
@@ -61,14 +62,16 @@ function parseInput(value: unknown): { purchaseToken: string; productId: typeof 
   return { purchaseToken: record.purchaseToken, productId: PLAY_PRODUCT_ID };
 }
 
-export async function POST(request: Request) {
+async function handlePOST(request: Request, diagnostics: RequestDiagnostics) {
   if (!hasSameOrigin(request)) return json({ error: "forbidden" }, 403);
 
   let user;
   let config;
   try {
+    diagnostics.stage = "session_read";
     user = await getCurrentUser(request);
     if (!user) return json({ error: "unauthorized" }, 401);
+    diagnostics.stage = "billing_prepare";
     config = getPlayBillingConfig();
     if (!config) return json({ error: "play_unavailable" }, 503);
   } catch {
@@ -85,6 +88,7 @@ export async function POST(request: Request) {
   }
 
   try {
+    diagnostics.stage = "billing_verify";
     const result = await processPlayPurchase({
       accountId: user.id,
       email: user.email,
@@ -102,4 +106,8 @@ export async function POST(request: Request) {
     }
     return json({ error: "play_unavailable" }, 503);
   }
+}
+
+export async function POST(request: Request) {
+  return diagnoseRequest(request, "billing", (diagnostics) => handlePOST(request, diagnostics));
 }

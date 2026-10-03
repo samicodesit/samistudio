@@ -1,3 +1,4 @@
+import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { revokeNativeSession } from "@/lib/native-session";
 import { NextRequest, NextResponse } from "next/server";
@@ -5,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
   if (!hasSameOrigin(request)) {
     return NextResponse.json(
       { error: "forbidden" },
@@ -13,6 +14,7 @@ export async function POST(request: NextRequest) {
     );
   }
   try {
+    diagnostics.stage = "session_read";
     await revokeNativeSession(request);
     return new NextResponse(null, {
       status: 204,
@@ -24,4 +26,8 @@ export async function POST(request: NextRequest) {
       { status: 503, headers: { "Cache-Control": "no-store" } },
     );
   }
+}
+
+export async function POST(request: NextRequest) {
+  return diagnoseRequest(request, "auth", (diagnostics) => handlePOST(request, diagnostics));
 }

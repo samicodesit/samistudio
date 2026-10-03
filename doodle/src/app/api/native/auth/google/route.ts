@@ -1,3 +1,4 @@
+import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { createOrGetGoogleAccount } from "@/lib/auth/accounts";
 import { verifyGoogleCredential } from "@/lib/auth/google";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
@@ -15,7 +16,7 @@ function errorResponse(error: string, status: number) {
   );
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
   if (!hasSameOrigin(request)) return errorResponse("forbidden", 403);
 
   let body: Record<string, unknown>;
@@ -31,6 +32,7 @@ export async function POST(request: NextRequest) {
     return errorResponse("invalid_request", 400);
   }
 
+  diagnostics.stage = "google_token";
   let google: { sub: string; email: string };
   try {
     google = await verifyGoogleCredential(body.credential);
@@ -39,7 +41,9 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    diagnostics.stage = "account_read";
     const account = await createOrGetGoogleAccount(google.sub);
+    diagnostics.stage = "session_create";
     const session = await createNativeSession({ ...account, email: google.email });
     return NextResponse.json(
       { authenticated: true, email: google.email, ...session },
@@ -48,4 +52,8 @@ export async function POST(request: NextRequest) {
   } catch {
     return errorResponse("auth_unavailable", 503);
   }
+}
+
+export async function POST(request: NextRequest) {
+  return diagnoseRequest(request, "auth", (diagnostics) => handlePOST(request, diagnostics));
 }

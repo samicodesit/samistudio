@@ -1,3 +1,4 @@
+import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { getFreeRemaining, signedTrialToken, TRIAL_TTL_SECONDS } from "@/lib/generation/free-allowance";
 import { hasExactKeys, NativeRequestError, readNativeJson } from "@/lib/native-contracts";
@@ -15,7 +16,7 @@ function errorResponse(error: string, status: number) {
   );
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
   if (!hasSameOrigin(request)) return errorResponse("forbidden", 403);
 
   let body: Record<string, unknown>;
@@ -36,6 +37,7 @@ export async function POST(request: NextRequest) {
     return errorResponse("invalid_request", 400);
   }
 
+  diagnostics.stage = "attestation_verify";
   let integrity: "verified" | "unavailable" | "invalid";
   try {
     integrity = await consumeNativeAttestation({
@@ -56,6 +58,7 @@ export async function POST(request: NextRequest) {
   if (integrity !== "verified") return errorResponse("native_attestation_failed", 403);
 
   try {
+    diagnostics.stage = "account_read";
     const identity = await getOrCreateNativeTrialIdentity(body.installId);
     const freeRemaining = await getFreeRemaining(identity);
     return NextResponse.json(
@@ -72,4 +75,8 @@ export async function POST(request: NextRequest) {
   } catch {
     return errorResponse("native_generation_unavailable", 503);
   }
+}
+
+export async function POST(request: NextRequest) {
+  return diagnoseRequest(request, "guest", (diagnostics) => handlePOST(request, diagnostics));
 }

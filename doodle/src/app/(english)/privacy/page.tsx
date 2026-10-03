@@ -8,7 +8,7 @@ export const metadata = legalMetadata(
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy policy" intro="This policy explains what information Doodle uses and why." updated="October 1, 2026">
+    <LegalPage title="Privacy policy" intro="This policy explains what information Doodle uses and why." updated="October 2, 2026">
       <section>
         <h2>Who operates Doodle</h2>
         <p>Doodle is operated by {OPERATOR_NAME}, publishing as Sami Studio (samistudio.nl) in the Netherlands. For privacy questions or requests, email <ContactEmail />.</p>
@@ -24,6 +24,7 @@ export default function PrivacyPage() {
           <li><strong>Analytics.</strong> Vercel Web Analytics measures page visits and events such as successful generation and use of sharing controls to help us improve Doodle. It also processes browser and device information, referring pages and approximate location such as city, region or country. It does not request GPS access. Our custom events do not include your doodle description, image, email or payment token.</li>
           <li><strong>Usage counts.</strong> We also count successful drawings and newly delivered paid credit packs by day, separately for Android and web. These counts exclude known testing accounts and test purchases. Hashed operation references prevent duplicates; the counts contain no prompt, image, email or raw purchase token.</li>
           <li><strong>Reports.</strong> If you report a generated doodle, we store the reason and any details you enter. We upload the doodle and its description only when you select the option that clearly asks us to include them for review.</li>
+          <li><strong>Diagnostics.</strong> The Android app keeps and automatically sends limited failure information to Doodle: UTC time, app version and build, Android version, failure stage and code, and a random request reference. This helps us investigate connection, sign-in and generation problems. These records exclude your doodle description, image, email, account identifier, payment receipt and authentication tokens. You can also choose to share a diagnostic file from Settings.</li>
           <li><strong>Messages.</strong> If you contact us, we process your email address and message to reply.</li>
         </ul>
       </section>
@@ -35,12 +36,13 @@ export default function PrivacyPage() {
 
       <section>
         <h2>Service providers</h2>
-        <p>Doodle relies on Google for sign-in and Google Play purchases, OpenAI for image generation, Stripe for web payments, Vercel for hosting, analytics and bot protection, and Upstash for account, allowance, balance, usage-count and report storage. These providers process information under their own terms and privacy commitments. Information may be processed outside the EEA using legally recognized safeguards.</p>
+        <p>Doodle relies on Google for sign-in and Google Play purchases, OpenAI for image generation, Stripe for web payments, Vercel for hosting, analytics and bot protection, and Upstash for account, allowance, balance, usage-count, diagnostic and report storage. These providers process information under their own terms and privacy commitments. Information may be processed outside the EEA using legally recognized safeguards.</p>
       </section>
 
       <section>
         <h2>Retention</h2>
         <p>Signed-in sessions last up to 30 days. The anonymous free-allowance cookie and associated count can remain for up to one year. Rate-limit counters expire after about two days. Submitted reports and any included doodle or description are kept for up to 30 days. Account and balance records remain until the account is deleted, while transaction or support records may be kept as required for tax, fraud prevention and legal claims.</p>
+        <p>Android failure records are kept for up to seven days on your device. Uploaded failure records and our structured server failure records expire within 30 days after their storage day ends. If you share diagnostics with support, we keep that copy only as needed to resolve your request.</p>
         <p>Daily usage counts and hashed duplicate references expire after 366 days. Protected identifiers of known testing accounts remain excluded from these counts.</p>
         <p>Service providers have separate retention periods. OpenAI may keep generation content in abuse-monitoring logs for up to 30 days by default, with exceptions for legal requirements. Vercel discards its analytics visitor-session identifier after 24 hours; aggregate statistics may remain. See <a href="https://developers.openai.com/api/docs/guides/your-data">OpenAI data controls</a> and <a href="https://vercel.com/docs/analytics/privacy-policy">Vercel Analytics privacy information</a>.</p>
       </section>

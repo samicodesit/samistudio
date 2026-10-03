@@ -1,4 +1,5 @@
-﻿import { timingSafeEqual } from "node:crypto";
+import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
+import { timingSafeEqual } from "node:crypto";
 import { createOrGetGoogleAccount } from "@/lib/auth/accounts";
 import { verifyGoogleCredential } from "@/lib/auth/google";
 import { setSessionCookie } from "@/lib/auth/session";
@@ -22,11 +23,12 @@ function matchesCsrfToken(formToken: string | null, cookieToken: string | undefi
   return formBytes.length === cookieBytes.length && timingSafeEqual(formBytes, cookieBytes);
 }
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
   let form: FormData;
   try {
     form = await request.formData();
   } catch {
+    diagnostics.failureCode = "invalid_request";
     return redirectWithAuthResult("error");
   }
 
@@ -34,23 +36,36 @@ export async function POST(request: NextRequest) {
   const credential = form.get("credential");
   const cookieToken = request.cookies.get("g_csrf_token")?.value;
   if (typeof csrfToken !== "string" || !matchesCsrfToken(csrfToken, cookieToken)) {
+    diagnostics.failureCode = "invalid_request";
     return redirectWithAuthResult("error");
   }
-  if (typeof credential !== "string") return redirectWithAuthResult("error");
+  if (typeof credential !== "string") {
+    diagnostics.failureCode = "invalid_request";
+    return redirectWithAuthResult("error");
+  }
 
+  diagnostics.stage = "google_token";
   let google: { sub: string; email: string };
   try {
     google = await verifyGoogleCredential(credential);
   } catch {
+    diagnostics.failureCode = "invalid_credential";
     return redirectWithAuthResult("error");
   }
 
   try {
+    diagnostics.stage = "account_read";
     const account = await createOrGetGoogleAccount(google.sub);
     const response = redirectWithAuthResult("success");
+    diagnostics.stage = "session_create";
     setSessionCookie(response, { ...account, email: google.email });
     return response;
   } catch {
+    diagnostics.failureCode = "auth_unavailable";
     return redirectWithAuthResult("error");
   }
+}
+
+export async function POST(request: NextRequest) {
+  return diagnoseRequest(request, "auth", (diagnostics) => handlePOST(request, diagnostics));
 }
