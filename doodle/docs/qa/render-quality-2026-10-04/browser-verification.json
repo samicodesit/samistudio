@@ -1,0 +1,53 @@
+{
+  "verifiedAt": "2026-10-04T17:12:59.753Z",
+  "url": "https://doodle-layout-review-f9qmvr963-codenamez.vercel.app/render-quality.html",
+  "rows": [
+    {
+      "quality": "low",
+      "original": false,
+      "status": 200,
+      "sha256": "68a0eeb5f383a53705a69e3ce95afff06aefd7950a807a0220c79b09210cfd62"
+    },
+    {
+      "quality": "low",
+      "original": true,
+      "status": 200,
+      "sha256": "68a0eeb5f383a53705a69e3ce95afff06aefd7950a807a0220c79b09210cfd62"
+    },
+    {
+      "quality": "medium",
+      "original": false,
+      "status": 200,
+      "sha256": "2cd9638e73e465ec41d5029b31925193419b8caced65307a4db20843f15c83c6"
+    },
+    {
+      "quality": "medium",
+      "original": true,
+      "status": 200,
+      "sha256": "e5cc8842ac4cb0cef35eaf78bfcc899afba7c4e36ddecaeb8cb549acbcb1c2ff"
+    },
+    {
+      "quality": "high",
+      "original": false,
+      "status": 200,
+      "sha256": "02b1c1b9997cb231ed086e565ef34ab5bd81a93a1e71c18c149644049277cb92"
+    },
+    {
+      "quality": "high",
+      "original": true,
+      "status": 200,
+      "sha256": "ded948c9ad82a9208c8bc45aa4ed0d035a607d8e8cb8f09966b0aafb5e93eea3"
+    }
+  ],
+  "desktopVisual": true,
+  "mobile390": {
+    "allImagesLoaded": true,
+    "overflow": false
+  },
+  "mobile320": {
+    "originalHighLoaded": true,
+    "overflow": false
+  },
+  "viewportReset": true,
+  "productionAppUnchanged": true
+}

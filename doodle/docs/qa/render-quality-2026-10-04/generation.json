@@ -1,0 +1,106 @@
+{
+  "approval": "Owner approved up to $0.06 total for three requests. No retries.",
+  "model": "gpt-image-1-mini",
+  "size": "1024x1024",
+  "scene": "A cozy bookshop with bookshelves visible through its window, potted plants by the doorway, and a bicycle parked outside",
+  "detailLevel": "detailed",
+  "promptVersion": "detailed-v1",
+  "promptSha256": "4ca13c68f074dd3628ec75ec5db15e52c98e87e02d6bfd0e029318ee8f265c31",
+  "promptCharacters": 2962,
+  "pricing": {
+    "textInputUsdPerMillion": 2,
+    "imageOutputUsdPerMillion": 8,
+    "budgetUsd": 0.06
+  },
+  "limitation": "One independent sample per setting. Composition can vary naturally. Not a production end-to-end check.",
+  "attempts": [
+    {
+      "quality": "low",
+      "status": "complete",
+      "startedAt": "2026-10-04T17:03:06.773Z",
+      "usage": {
+        "input_tokens": 596,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 596
+        },
+        "output_tokens": 272,
+        "output_tokens_details": {
+          "image_tokens": 272,
+          "text_tokens": 0
+        },
+        "total_tokens": 868
+      },
+      "generationMs": 9369,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "uncertain",
+        "durationMs": 160
+      },
+      "sha256": "68a0eeb5f383a53705a69e3ce95afff06aefd7950a807a0220c79b09210cfd62",
+      "originalSha256": "68a0eeb5f383a53705a69e3ce95afff06aefd7950a807a0220c79b09210cfd62",
+      "tokenRateEstimateUsd": 0.003368,
+      "publishedRateEstimateUsd": 0.006192,
+      "runningEstimateUsd": 0.006192
+    },
+    {
+      "quality": "medium",
+      "status": "complete",
+      "startedAt": "2026-10-04T17:03:16.312Z",
+      "usage": {
+        "input_tokens": 596,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 596
+        },
+        "output_tokens": 1056,
+        "output_tokens_details": {
+          "image_tokens": 1056,
+          "text_tokens": 0
+        },
+        "total_tokens": 1652
+      },
+      "generationMs": 12744,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 144
+      },
+      "sha256": "2cd9638e73e465ec41d5029b31925193419b8caced65307a4db20843f15c83c6",
+      "originalSha256": "e5cc8842ac4cb0cef35eaf78bfcc899afba7c4e36ddecaeb8cb549acbcb1c2ff",
+      "tokenRateEstimateUsd": 0.00964,
+      "publishedRateEstimateUsd": 0.012192,
+      "runningEstimateUsd": 0.018383999999999998
+    },
+    {
+      "quality": "high",
+      "status": "complete",
+      "startedAt": "2026-10-04T17:03:29.207Z",
+      "usage": {
+        "input_tokens": 596,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 596
+        },
+        "output_tokens": 4160,
+        "output_tokens_details": {
+          "image_tokens": 4160,
+          "text_tokens": 0
+        },
+        "total_tokens": 4756
+      },
+      "generationMs": 27956,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 138
+      },
+      "sha256": "02b1c1b9997cb231ed086e565ef34ab5bd81a93a1e71c18c149644049277cb92",
+      "originalSha256": "ded948c9ad82a9208c8bc45aa4ed0d035a607d8e8cb8f09966b0aafb5e93eea3",
+      "tokenRateEstimateUsd": 0.034472,
+      "publishedRateEstimateUsd": 0.037191999999999996,
+      "runningEstimateUsd": 0.05557599999999999
+    }
+  ],
+  "costBasis": "Published per-image output estimates plus reported prompt tokens. Token-rate estimate also retained. No billing-invoice reconciliation."
+}
