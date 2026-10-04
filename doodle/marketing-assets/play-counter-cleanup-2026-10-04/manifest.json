@@ -1,0 +1,70 @@
+{
+  "status": "Current counter-free release candidates. Owner visual acceptance and publishing approval pending.",
+  "dimensions": {
+    "width": 1080,
+    "height": 1920,
+    "alpha": false
+  },
+  "method": "Built-in Image Gen removes counter text. Only the local blank-panel region is used, color-matched to the original panel and feathered at its edges. All other decoded pixels are verified identical. Originals are retained.",
+  "scope": "Marketing-only counter cleanup in screenshots 1 and 4. Screenshots 2 and 3 retained unchanged. No app behavior or pricing changes.",
+  "review": "Inspect full-size and phone-size exports before publication. These are composed marketing assets, not new functional verification.",
+  "records": [
+    {
+      "slot": 1,
+      "file": "exports/01-idea-to-doodle.png",
+      "source": "01-original.png",
+      "sourceSha256": "738ba5ac8ff4f2021bd2de1a1f35d7d8f75e8171415b287b2140c6ee559dbcab",
+      "imageGenEdit": "01-imagegen.png",
+      "imageGenSha256": "c68a93e951eb4f354c3cfe390f2461ddf995db58084ddf430ee1230e20537800",
+      "sha256": "b05e41d75138f6c79cb81b2af41406ef15ffbf6b0c785822cfeba8d0df427412",
+      "region": {
+        "left": 115,
+        "top": 1710,
+        "width": 450,
+        "height": 90
+      },
+      "changedInside": 29289,
+      "changedOutside": 0,
+      "darkCounterPixels": 0
+    },
+    {
+      "slot": 2,
+      "file": "exports/02-detail-levels.png",
+      "source": "../play-detail-levels-2026-10-04/02-detail-levels.png",
+      "sha256": "78d3b02f0a5fbc5f48a81e91b6176a2a07a4a23605ed69477d5f833863a20a6e",
+      "changedOutside": 0,
+      "unchanged": true
+    },
+    {
+      "slot": 3,
+      "file": "exports/03-find-an-idea.png",
+      "source": "03-original.png",
+      "sha256": "da015729de4106b5956cc2fa4ca1eb392d074d01f905aef245ad3064e5599a75",
+      "changedOutside": 0,
+      "unchanged": true
+    },
+    {
+      "slot": 4,
+      "file": "exports/04-save-share.png",
+      "source": "04-original.png",
+      "sourceSha256": "2b8815562a204abc27d744bfab4c03c5220affd40c9cc893aa21c8fc07abdb01",
+      "imageGenEdit": "04-imagegen.png",
+      "imageGenSha256": "f24c3e8cc96fef62b84f5c0a7c1716621feb73839a9e8f1640ab0a9383368b8f",
+      "sha256": "c0b6be6fcce46c421bbb492072e6b95040bf1cfe32982d457c9a64d3ba9efdfe",
+      "region": {
+        "left": 115,
+        "top": 1710,
+        "width": 450,
+        "height": 90
+      },
+      "changedInside": 29604,
+      "changedOutside": 0,
+      "darkCounterPixels": 0
+    }
+  ],
+  "agentReview": "All four images visually reviewed at full export size. Counter patches blend with the panel without visible text residue. Outside-region pixel verification is exact. Owner whole-asset acceptance remains pending. Phone browser review at 390 CSS px confirmed all four decoded images and no overflow.",
+  "imageGenInstructions": {
+    "slot1": "Remove ONLY the small gray '3 free doodles left' text near the bottom of the inner app panel, below Draw something else. Fill that exact area seamlessly with the existing pale sage panel background. Leave the space blank. Preserve every other feature, aspect ratio, artwork, typography, controls, colors and spacing. No new text, icons, repositioning, redraw or cropping.",
+    "slot4": "Remove ONLY the small gray '1 free doodle left' text near the bottom of the inner app panel, below Draw something else. Fill that exact area seamlessly with the existing pale sage panel background. Leave the space blank. Preserve every other feature, aspect ratio, artwork, typography, controls, colors and spacing. No new text, icons, repositioning, redraw or cropping."
+  }
+}

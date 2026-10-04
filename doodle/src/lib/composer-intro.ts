@@ -11,7 +11,7 @@ const INTRO: Record<Locale, { title: string; hint: string }> = {
   it: { title: "Disegniamo.", hint: "Qual è la tua idea?" },
   ja: { title: "描いてみよう。", hint: "どんなアイデア？" },
   ko: { title: "그려 볼까요?", hint: "어떤 아이디어인가요?" },
-  ar: { title: "لنرسم.", hint: "ما فكرتك؟" },
+  ar: { title: "يلا نرسم", hint: "ما فكرتك؟" },
 };
 
 export function getComposerIntro(locale: Locale) {

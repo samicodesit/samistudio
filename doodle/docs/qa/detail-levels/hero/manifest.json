@@ -8,101 +8,133 @@
       "width": 1440,
       "height": 900,
       "format": "png",
-      "bytes": 243053,
-      "sha256": "c24fb81fb15902773501bcd9c2534b519c0c8245c97018390c91a02c9bd34daa",
+      "bytes": 244032,
+      "sha256": "dea4e1419ed5da9b784ad2e09e0ad134e35f064283b70a6a5749cb3f395600bb",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Production Webpack app rendering, Chromium. Account and generation mocked."
+      "source": "Webpack development app rendering, Chromium. Account and generation mocked."
     },
     {
       "file": "web-en-390.png",
       "width": 390,
       "height": 844,
       "format": "png",
-      "bytes": 73525,
-      "sha256": "e40e7ccdc6099b8d02d89ef62ee2beab3ceb6c7e85c2fc834d616be03063db75",
+      "bytes": 84107,
+      "sha256": "b888a03694a63d3f374f98493090714c865bdf86a6077c42e5abb6902971193d",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Production Webpack app rendering, Chromium. Account and generation mocked."
+      "source": "Webpack development app rendering, Chromium. Account and generation mocked."
     },
     {
       "file": "web-en-320.png",
       "width": 320,
       "height": 844,
       "format": "png",
-      "bytes": 47821,
-      "sha256": "842ce12ad2d0af53f9308e8f4df906d85af15cf39063ba9865f90dcc668ccfa4",
+      "bytes": 59511,
+      "sha256": "99288c927c15fac09d1cfe7e7b8fb531615b53c4593d685b8ed8a23ba0376b3e",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Production Webpack app rendering, Chromium. Account and generation mocked."
+      "source": "Webpack development app rendering, Chromium. Account and generation mocked."
     },
     {
       "file": "web-ar-390.png",
       "width": 390,
       "height": 844,
       "format": "png",
-      "bytes": 75014,
-      "sha256": "7dcfd1184e2c82af947576062b3ecde1ec28d4963ee4a1b0eb26d2ba3655d826",
+      "bytes": 85960,
+      "sha256": "7f11e02ca72f11d4468cfa4ac9fda4d16c4705174c5051f2b8c5a0d3790d94b0",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Production Webpack app rendering, Chromium. Account and generation mocked."
+      "source": "Webpack development app rendering, Chromium. Account and generation mocked."
     },
     {
       "file": "app-en-390.png",
       "width": 390,
       "height": 844,
       "format": "png",
-      "bytes": 35365,
-      "sha256": "c570a8ada4599ababa452b8f4e3b656c3294d223e7fa4969148a74d2fef88384",
+      "bytes": 38253,
+      "sha256": "e49e575cbf7c7a4c7f7dd9b5cdcb3d7197f45667ee3a1caf6f610e3208d053d9",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Production Webpack app rendering, Chromium. Account and generation mocked."
+      "source": "Webpack development app rendering, Chromium. Account and generation mocked."
     },
     {
       "file": "app-ar-320.png",
       "width": 320,
       "height": 844,
       "format": "png",
-      "bytes": 36976,
-      "sha256": "b1d9f4b3379405eb6dc7aafac25023ce5db183613151b0e4e6b950b102a3f95e",
+      "bytes": 38262,
+      "sha256": "9c652fb3783a54d9ec6ddd1c015394cf70d0ad2edada6f0d190887b7b0e4a89f",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Production Webpack app rendering, Chromium. Account and generation mocked."
+      "source": "Webpack development app rendering, Chromium. Account and generation mocked."
     },
     {
       "file": "native-en-320.png",
       "width": 840,
       "height": 1868,
       "format": "png",
-      "bytes": 171644,
-      "sha256": "74fd5eaf76c40691449839096832ff6a4b0f24887e2405f097e4baf8592ca78e",
+      "bytes": 160546,
+      "sha256": "fd029201e043dfcc2886939f654dfade4acdfab3d36fbb7aaeede9a348797474",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Play emulator API 36, isolated presentation fixture. 320 dp; account and generation simulated."
+      "source": "Installed isolated Android fixture. Account and generation simulated."
     },
     {
       "file": "native-en-320-collapsed.png",
       "width": 840,
       "height": 1868,
       "format": "png",
-      "bytes": 135673,
-      "sha256": "5a6b01b3b128846bc75337b2a9f7af27c91ef05e9a3848444bcc2f9eddb56c5f",
+      "bytes": 124827,
+      "sha256": "fddfd0091dcd3b9cd112fef9f7c855ff1841f992336f74be4d5ef88e78969f54",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Play emulator API 36, isolated presentation fixture. 320 dp; account and generation simulated."
+      "source": "Installed isolated Android fixture. Account and generation simulated."
     },
     {
       "file": "native-en-320-large.png",
       "width": 840,
       "height": 1868,
       "format": "png",
-      "bytes": 168190,
-      "sha256": "b7b9e4ae965f0f948d031ced8fdda494f6319164967be417dd83f969f12674aa",
+      "bytes": 168333,
+      "sha256": "7d6873b3d82b330a941670f46e6d787c6d31d088bf5c338ddf9881ebb5ef493e",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Play emulator API 36, isolated presentation fixture. 320 dp; account and generation simulated."
+      "source": "Installed isolated Android fixture. Account and generation simulated."
     },
     {
       "file": "native-ar-320-large.png",
       "width": 840,
       "height": 1868,
       "format": "png",
-      "bytes": 152172,
-      "sha256": "a0aec571c9eb4fdd6dc1b8e6a6f79f7cd53c937cddf8a2f50a5f056d7d4ad3b8",
+      "bytes": 147865,
+      "sha256": "2d3154205af1b6e08afcb6244801c0eca08b9fc881d72f9689e3a58b35b0e4f6",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Play emulator API 36, isolated presentation fixture. 320 dp; account and generation simulated."
+      "source": "Installed isolated Android fixture. Account and generation simulated."
+    },
+    {
+      "file": "native-ar-320.png",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
+      "width": 840,
+      "height": 1868,
+      "format": "png",
+      "bytes": 141523,
+      "sha256": "24e8b26f540ccff7b24c722b3f78e8e980a330bfde26bd8374a441da40788675",
+      "source": "Installed isolated Android fixture. Account and generation simulated."
+    },
+    {
+      "file": "desktop-afterword.jpg",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
+      "width": 1265,
+      "height": 889,
+      "format": "jpeg",
+      "bytes": 70626,
+      "sha256": "ebc349a3c2730a6434bb5fe6617eb52c0d05877797e82a3b9a1e3e5b429a9f44",
+      "source": "Webpack development app, browser visual review. Local account service unavailable. Presentation only."
+    },
+    {
+      "file": "phone-afterword.jpg",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
+      "width": 375,
+      "height": 812,
+      "format": "jpeg",
+      "bytes": 31721,
+      "sha256": "b83b98927252bd5b6808537552d375d93a94ec46b79d9b35a149e581dd5ce89e",
+      "source": "Webpack development app, browser visual review. Local account service unavailable. Presentation only."
     }
   ],
-  "finalCopy": "What’s your idea?, with equivalents in all ten languages."
+  "finalCopy": "What’s your idea?, with equivalents in all ten languages.",
+  "latestChanges": "Removed the afterword guide block and duplicate phone divider. Native narrow headings share the drawer upper space without wrapping unnecessarily. Arabic heading uses the owner-requested casual phrase with sufficient line height.",
+  "updatedAt": "2026-10-04T11:41:38.441Z"
 }

@@ -1,67 +1,112 @@
 {
-  "url": "https://doodle-layout-review-8ar7krqzp-codenamez.vercel.app/implemented.html",
+  "base": "https://doodle-layout-review-9atjkigyb-codenamez.vercel.app",
   "project": "doodle-layout-review",
   "plan": "Hobby",
   "staticOnly": true,
   "liveAppChanged": false,
-  "verifiedAt": "2026-10-04T10:53:28.027Z",
-  "galleryHttp": 200,
+  "verifiedAt": "2026-10-04T11:43:56.459Z",
+  "pages": [
+    {
+      "path": "/implemented.html",
+      "http": 200
+    },
+    {
+      "path": "/store.html",
+      "http": 200
+    }
+  ],
   "checks": [
     {
-      "file": "web-en-desktop.png",
+      "path": "/implemented/web-en-desktop.png",
       "http": 200,
       "matchingSha256": true
     },
     {
-      "file": "web-en-390.png",
+      "path": "/implemented/web-en-390.png",
       "http": 200,
       "matchingSha256": true
     },
     {
-      "file": "web-en-320.png",
+      "path": "/implemented/web-en-320.png",
       "http": 200,
       "matchingSha256": true
     },
     {
-      "file": "web-ar-390.png",
+      "path": "/implemented/web-ar-390.png",
       "http": 200,
       "matchingSha256": true
     },
     {
-      "file": "app-en-390.png",
+      "path": "/implemented/app-en-390.png",
       "http": 200,
       "matchingSha256": true
     },
     {
-      "file": "app-ar-320.png",
+      "path": "/implemented/app-ar-320.png",
       "http": 200,
       "matchingSha256": true
     },
     {
-      "file": "native-en-320.png",
+      "path": "/implemented/native-en-320.png",
       "http": 200,
       "matchingSha256": true
     },
     {
-      "file": "native-en-320-collapsed.png",
+      "path": "/implemented/native-en-320-collapsed.png",
       "http": 200,
       "matchingSha256": true
     },
     {
-      "file": "native-en-320-large.png",
+      "path": "/implemented/native-en-320-large.png",
       "http": 200,
       "matchingSha256": true
     },
     {
-      "file": "native-ar-320-large.png",
+      "path": "/implemented/native-ar-320-large.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/native-ar-320.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/desktop-afterword.jpg",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/phone-afterword.jpg",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/store-current/01-idea-to-doodle.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/store-current/02-detail-levels.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/store-current/03-find-an-idea.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/store-current/04-save-share.png",
       "http": 200,
       "matchingSha256": true
     }
   ],
   "visualReview": {
     "viewport": "390x844 CSS px",
-    "allTenImagesDecoded": true,
+    "loadedImages": 13,
+    "totalImages": 13,
     "horizontalOverflow": false,
-    "reviewedAt": "2026-10-04T10:54:30.673Z"
+    "reviewedAt": "2026-10-04T11:45:45.917Z"
   }
 }

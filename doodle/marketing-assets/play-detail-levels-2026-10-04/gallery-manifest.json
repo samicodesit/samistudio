@@ -26,5 +26,7 @@
     }
   ],
   "referenceManifest": "/home/mests/projects/samistudio/doodle/marketing-assets/play-gallery-2026-10-02/manifest.json",
-  "verification": "Slots 1, 3 and 4 match submitted byte hashes. Slot 2 keeps the same type scale, header offsets, fonts and brand text colors, on a lavender pastel backdrop."
+  "verification": "Slots 1, 3 and 4 match submitted byte hashes. Slot 2 keeps the same type scale, header offsets, fonts and brand text colors, on a lavender pastel backdrop.",
+  "currentReleaseCandidateManifest": "../play-counter-cleanup-2026-10-04/manifest.json",
+  "selectionStatus": "This manifest retains original provenance. Use the counter-free four-image candidate set for the upcoming release, pending owner acceptance."
 }

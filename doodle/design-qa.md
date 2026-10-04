@@ -12,7 +12,7 @@ The [hybrid target](docs/qa/detail-levels/hero/hybrid-target.png) is an illustra
 
 These references establish composition, not exact copy or pixel specifications. The implementation retains existing localized desktop copy, substantive SEO content and suggestion behavior. The source's invented guides, gradients and redundant native wordmark were not adopted. Artwork was extracted with Image Gen and exported proportionally with transparency; small drawing differences remain. [Artwork provenance](docs/qa/detail-levels/hero-assets.json).
 
-Web captures use the production Webpack app with fixture account/generation responses. Native captures use the isolated presentation package on the Play API 36 emulator, at 320 dp and 100%/200% text. This is UI verification, not live provider, payment or Integrity validation. [Current screenshot manifest](docs/qa/detail-levels/hero/manifest.json).
+The initial comparison captures used the production Webpack app with fixture account/generation responses. Current follow-up web captures use the development Webpack app; the manifest records the distinction. Native captures use the isolated presentation package on the Play API 36 emulator, at 320 dp and 100%/200% text. This is UI verification, not live provider, payment or Integrity validation. [Current screenshot manifest](docs/qa/detail-levels/hero/manifest.json).
 
 ## Findings and corrections
 
@@ -20,7 +20,7 @@ Web captures use the production Webpack app with fixture account/generation resp
 2. P2: inherited header margins split utility links across the header. Removed the extra automatic language margin. Examples, language and sign-in now form one group.
 3. P2: at 320 dp and 200% Android text, the credit label broke into fragments beside Create. Stack credit text and Create at enlarged text sizes. Revised English and Arabic captures are readable.
 4. P2: enlarged Arabic suggestion-heading descenders were clipped. Increased its line height for Alexandria and inspected the installed fixture again; the full heading is visible.
-5. Drawer and tab stay joined to the input, with thin dividers and a 4 px/dp trailing inset. Native input bounds were identical before and after collapse: [49,612][791,922]. Browser checks cover the stationary input, all selections, RTL, focus and reduced motion.
+5. Drawer and tab stay joined to the input, with thin dividers and a 4 px/dp trailing inset. The original native input bounds were identical before and after collapse: [49,612][791,922]. The compact-heading follow-up also remains stationary at [49,608][791,918]. Browser checks cover the stationary input, all selections, RTL, focus and reduced motion.
 6. Inspected phone, installed web, tablet and desktop captures, Arabic direction and native enlarged text. No unresolved P0/P1/P2 presentation findings. Very large text remains scrollable; narrow headings and navigation labels can wrap.
 
 ## Verification
@@ -39,8 +39,18 @@ Initial browser failures expected the old heading, fixed font size and visible p
 
 ## Delivery and release boundaries
 
-[Phone-accessible image gallery](https://doodle-layout-review-8ar7krqzp-codenamez.vercel.app/implemented.html). Only current manifest-listed captures are included. Anonymous requests returned HTTP 200 for the gallery and all ten images with matching hashes. All images decoded, with no gallery overflow at 390 CSS px. The isolated Hobby preview is static, with no app functions. [Delivery verification](docs/qa/detail-levels/hero/preview-verification.json).
+[Phone-accessible image gallery](https://doodle-layout-review-9atjkigyb-codenamez.vercel.app/implemented.html). Only current manifest-listed captures are included. Anonymous requests returned HTTP 200 for the gallery and all thirteen current UI images with matching hashes. All images decoded, with no gallery overflow at 390 CSS px. The isolated Hobby preview is static, with no app functions. [Delivery verification](docs/qa/detail-levels/hero/preview-verification.json).
 
 Owner final visual acceptance, independent release review, separate production deployment/publishing approval and real Play-installed generation/Integrity verification remain release gates. No live Doodle deployment or Android publication occurred.
 
 Previous selector-specific QA is preserved in [the joined-drawer record](docs/qa/detail-levels/joined-drawer-design-qa.md).
+
+## Owner follow-up, October 4
+
+Removed the visible Drawing guides column from the supporting row. The existing guide pages, footer link and expandable supporting content remain. The desktop row now has two balanced columns, with pastel artwork capped at 540 px. On phones, removed the supporting section top border and its padding, keeping the suggestion-list divider and a 28 px section gap. Inspected desktop and phone renders directly.
+
+Narrow native screens below 380 dp use a full-width heading. At normal text sizes, its margin uses 24 dp of the selector's empty upper area, keeping the heading connected without moving the input when the drawer collapses. Enlarged text keeps its own space. Replaced the Arabic heading with the owner-requested casual phrase, and used 34 dp line height for Alexandria descenders. Inspected the installed fixture at 320 dp with normal and 200% text, in English and Arabic.
+
+Fresh checks for this follow-up: four localized page component tests and two browser layout tests passed. Browser checks cover all ten public languages at 320, 390 and 1280 px, plus tablet/desktop artwork and stationary drawer input. Web and native TypeScript passed, the changed page lint check passed, and the final Android fixture built and installed. Earlier full-suite counts above describe the preceding implementation, not a new full-suite run for this small revision.
+
+The [four current store screenshot candidates](https://doodle-layout-review-9atjkigyb-codenamez.vercel.app/store.html) remove the counter text from slots 1 and 4 using built-in Image Gen edits restricted to a local blank-panel patch. Color-matched and feathered the patches; verified zero decoded pixel differences outside each region and no dark counter remnants. Slots 2 and 3 are byte-identical to their selected sources. Full-size exports and the 390 px browser gallery were visually inspected. [Current release asset manifest](marketing-assets/play-counter-cleanup-2026-10-04/manifest.json). Original files and raw edits are retained. These are marketing-only candidates; app usage/credit behavior is unchanged. Nothing was published to Doodle or Play Console.

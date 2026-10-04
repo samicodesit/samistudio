@@ -145,7 +145,7 @@ function NativeComposer({
   const { width, fontScale } = useWindowDimensions();
   const compact = width < 360;
   const intro = getComposerIntro(locale);
-  const stackedHeading = fontScale > 1.3;
+  const stackedHeading = width < 380 || fontScale > 1.3;
   const disabled = !detailReady || !canSubmitScene(draft.scene, draft.maxLength);
   return (
     <View style={[styles.composerScreen, compact && styles.compactComposerScreen]}>
@@ -165,11 +165,11 @@ function NativeComposer({
       ) : null}
 
       <View style={[styles.composerBlock, compact && styles.compactComposerBlock]}>
-        {stackedHeading ? <Text accessibilityRole="header" style={[styles.composerTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text> : null}
+        {stackedHeading ? <Text accessibilityRole="header" style={[styles.composerTitle, locale === "ar" && styles.arabicComposerTitle, fontScale <= 1.3 && styles.compactStackedTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text> : null}
         <View style={styles.inputStack}>
           <View style={[styles.detailRow, { flexDirection: nativeRowDirection(direction) }]}>
             <View style={styles.sceneHeading}>
-              {stackedHeading ? null : <Text accessibilityRole="header" style={[styles.composerTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text>}
+              {stackedHeading ? null : <Text accessibilityRole="header" style={[styles.composerTitle, locale === "ar" && styles.arabicComposerTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text>}
               <Text style={[styles.composerHint, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{intro.hint}</Text>
             </View>
             <NativeDetailSelector locale={locale} direction={direction} value={detailLevel} reducedMotion={reducedMotion} disabled={!detailReady} onChange={onDetailLevelChange} onFocusVisible={onDetailFocus} />
@@ -374,6 +374,9 @@ const styles = StyleSheet.create({
   composerBlock: { gap: 11 },
   compactComposerBlock: { gap: 9 },
   composerTitle: { color: NATIVE_COLORS.graphite, fontSize: 25, fontWeight: "600", lineHeight: 29 },
+  arabicComposerTitle: { lineHeight: 34 },
+  // Use the selector's empty upper area to keep the single-line title connected.
+  compactStackedTitle: { marginBottom: -24 },
   composerHint: { color: NATIVE_COLORS.muted, fontSize: 16, lineHeight: 22 },
   inputStack: {},
   detailRow: { alignItems: "flex-end", gap: 8 },

@@ -1,0 +1,110 @@
+{
+  "base": "https://doodle-layout-review-9atjkigyb-codenamez.vercel.app",
+  "project": "doodle-layout-review",
+  "plan": "Hobby",
+  "staticOnly": true,
+  "liveAppChanged": false,
+  "verifiedAt": "2026-10-04T11:43:56.459Z",
+  "pages": [
+    {
+      "path": "/implemented.html",
+      "http": 200
+    },
+    {
+      "path": "/store.html",
+      "http": 200
+    }
+  ],
+  "checks": [
+    {
+      "path": "/implemented/web-en-desktop.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/web-en-390.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/web-en-320.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/web-ar-390.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/app-en-390.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/app-ar-320.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/native-en-320.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/native-en-320-collapsed.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/native-en-320-large.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/native-ar-320-large.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/native-ar-320.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/desktop-afterword.jpg",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/implemented/phone-afterword.jpg",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/store-current/01-idea-to-doodle.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/store-current/02-detail-levels.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/store-current/03-find-an-idea.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "path": "/store-current/04-save-share.png",
+      "http": 200,
+      "matchingSha256": true
+    }
+  ],
+  "storeVisualReview": {
+    "viewport": "390x844",
+    "allFourImagesDecoded": true,
+    "horizontalOverflow": false
+  }
+}
