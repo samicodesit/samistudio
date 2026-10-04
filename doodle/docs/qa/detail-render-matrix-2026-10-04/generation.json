@@ -1,0 +1,310 @@
+{
+  "approval": "Owner approved up to $0.18 total for nine requests, with no automatic retries.",
+  "scene": "Two friends making pancakes together in a cozy kitchen",
+  "model": "gpt-image-1-mini",
+  "size": "1024x1024",
+  "imageCountPerRequest": 1,
+  "budgetUsd": 0.18,
+  "pricing": {
+    "outputEstimatesUsd": {
+      "low": 0.005,
+      "medium": 0.011,
+      "high": 0.036
+    },
+    "textInputUsdPerMillion": 2,
+    "imageOutputUsdPerMillion": 8
+  },
+  "costBasis": "Published per-image output estimates plus reported prompt tokens. Token-rate estimate retained separately. Not a reconciled invoice.",
+  "limitation": "One independent sample per detail and quality combination. Composition varies naturally. Not live-route or Play-installed end-to-end verification.",
+  "productionChanged": false,
+  "attempts": [
+    {
+      "detailLevel": "simple",
+      "quality": "low",
+      "promptVersion": "simple-v1",
+      "promptSha256": "bc43b03a749e3fc877489101f0032133510ca5dd762c5b803df5d8e0e576825a",
+      "status": "complete",
+      "startedAt": "2026-10-04T18:18:25.265Z",
+      "generationMs": 8922,
+      "usage": {
+        "input_tokens": 711,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 711
+        },
+        "output_tokens": 272,
+        "output_tokens_details": {
+          "image_tokens": 272,
+          "text_tokens": 0
+        },
+        "total_tokens": 983
+      },
+      "tokenRateEstimateUsd": 0.003598,
+      "publishedRateEstimateUsd": 0.006422000000000001,
+      "runningEstimateUsd": 0.006422000000000001,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 324
+      },
+      "sha256": "b32e802756adc0d0e0b791e7184cedfe25e2232cf62a22faa632ede197e7b620",
+      "originalSha256": "a20f35688c95c129f6d2c803b698261183d18f5ec3f787a10d8ef02d3caeb761"
+    },
+    {
+      "detailLevel": "simple",
+      "quality": "medium",
+      "promptVersion": "simple-v1",
+      "promptSha256": "bc43b03a749e3fc877489101f0032133510ca5dd762c5b803df5d8e0e576825a",
+      "status": "complete",
+      "startedAt": "2026-10-04T18:18:34.519Z",
+      "generationMs": 12803,
+      "usage": {
+        "input_tokens": 711,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 711
+        },
+        "output_tokens": 1056,
+        "output_tokens_details": {
+          "image_tokens": 1056,
+          "text_tokens": 0
+        },
+        "total_tokens": 1767
+      },
+      "tokenRateEstimateUsd": 0.00987,
+      "publishedRateEstimateUsd": 0.012421999999999999,
+      "runningEstimateUsd": 0.018844,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 192
+      },
+      "sha256": "2e093f605c74032f0f02f6b0266cfa750dc3019724ad327dc54f03d407c0235d",
+      "originalSha256": "5a6a4328206c913e2bd22d8dc693f592831a0b4616b5aa21656ac3e1e2dad7cf"
+    },
+    {
+      "detailLevel": "simple",
+      "quality": "high",
+      "promptVersion": "simple-v1",
+      "promptSha256": "bc43b03a749e3fc877489101f0032133510ca5dd762c5b803df5d8e0e576825a",
+      "status": "complete",
+      "startedAt": "2026-10-04T18:18:47.521Z",
+      "generationMs": 27494,
+      "usage": {
+        "input_tokens": 711,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 711
+        },
+        "output_tokens": 4160,
+        "output_tokens_details": {
+          "image_tokens": 4160,
+          "text_tokens": 0
+        },
+        "total_tokens": 4871
+      },
+      "tokenRateEstimateUsd": 0.034702,
+      "publishedRateEstimateUsd": 0.037422,
+      "runningEstimateUsd": 0.056266,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 146
+      },
+      "sha256": "a2d3d4879e1c50fd311058c9e97e95df2bde15ec1887ebaea5dfc0c7ddc75e50",
+      "originalSha256": "8ed31a998e86769f4797cf82822c43de2c08a2ce6772eb427626d2a4f364f2d5"
+    },
+    {
+      "detailLevel": "medium",
+      "quality": "low",
+      "promptVersion": "medium-v1",
+      "promptSha256": "4b49328749e9c53fccd304221559257a439ef30b1d7b9d7dadc6614ed0340f4a",
+      "status": "complete",
+      "startedAt": "2026-10-04T18:19:15.167Z",
+      "generationMs": 8513,
+      "usage": {
+        "input_tokens": 539,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 539
+        },
+        "output_tokens": 272,
+        "output_tokens_details": {
+          "image_tokens": 272,
+          "text_tokens": 0
+        },
+        "total_tokens": 811
+      },
+      "tokenRateEstimateUsd": 0.003254,
+      "publishedRateEstimateUsd": 0.006078,
+      "runningEstimateUsd": 0.062344,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 161
+      },
+      "sha256": "9c70a4e88da39e7e39571334112cc315f46de11c94dbc85f11b08977b4b2c080",
+      "originalSha256": "6e82671e04ee800797ab99cc18bcd5f11b46be5fbd7fac8057b2900486d7ee2d"
+    },
+    {
+      "detailLevel": "medium",
+      "quality": "medium",
+      "promptVersion": "medium-v1",
+      "promptSha256": "4b49328749e9c53fccd304221559257a439ef30b1d7b9d7dadc6614ed0340f4a",
+      "status": "complete",
+      "startedAt": "2026-10-04T18:19:23.846Z",
+      "generationMs": 12038,
+      "usage": {
+        "input_tokens": 539,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 539
+        },
+        "output_tokens": 1056,
+        "output_tokens_details": {
+          "image_tokens": 1056,
+          "text_tokens": 0
+        },
+        "total_tokens": 1595
+      },
+      "tokenRateEstimateUsd": 0.009526,
+      "publishedRateEstimateUsd": 0.012077999999999998,
+      "runningEstimateUsd": 0.07442199999999999,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 125
+      },
+      "sha256": "26142b65ffb37c09146c6bdb45fd44be08829fb0eaa2173948d180cf2afca868",
+      "originalSha256": "d940415033ccc11fb42ec0fdb37e4f1efd377ced451bba1c58b3ebb4099ee971"
+    },
+    {
+      "detailLevel": "medium",
+      "quality": "high",
+      "promptVersion": "medium-v1",
+      "promptSha256": "4b49328749e9c53fccd304221559257a439ef30b1d7b9d7dadc6614ed0340f4a",
+      "status": "complete",
+      "startedAt": "2026-10-04T18:19:36.018Z",
+      "generationMs": 27876,
+      "usage": {
+        "input_tokens": 539,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 539
+        },
+        "output_tokens": 4160,
+        "output_tokens_details": {
+          "image_tokens": 4160,
+          "text_tokens": 0
+        },
+        "total_tokens": 4699
+      },
+      "tokenRateEstimateUsd": 0.034358,
+      "publishedRateEstimateUsd": 0.037078,
+      "runningEstimateUsd": 0.11149999999999999,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 132
+      },
+      "sha256": "ffbfdef2b6d96c1900036c18c8b94c884f740e7d92bfe52ebfe6e2ace89d3349",
+      "originalSha256": "446ceb304ec0ad734959b4bffa50a962a2e6054a24e1ebd7bbef24ec8e4ee677"
+    },
+    {
+      "detailLevel": "detailed",
+      "quality": "low",
+      "promptVersion": "detailed-v1",
+      "promptSha256": "a05b68290e21b922e511ba0adc0601f998ade62e09cc98b5759a1b84ed3812c0",
+      "status": "complete",
+      "startedAt": "2026-10-04T18:20:04.033Z",
+      "generationMs": 7824,
+      "usage": {
+        "input_tokens": 582,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 582
+        },
+        "output_tokens": 272,
+        "output_tokens_details": {
+          "image_tokens": 272,
+          "text_tokens": 0
+        },
+        "total_tokens": 854
+      },
+      "tokenRateEstimateUsd": 0.00334,
+      "publishedRateEstimateUsd": 0.006164,
+      "runningEstimateUsd": 0.11766399999999999,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "uncertain",
+        "durationMs": 26
+      },
+      "sha256": "f52a9733c24c3cda8bb137ae30bc8ff3e3a226b90d3b42fb87a349b83f94ee5a",
+      "originalSha256": "f52a9733c24c3cda8bb137ae30bc8ff3e3a226b90d3b42fb87a349b83f94ee5a"
+    },
+    {
+      "detailLevel": "detailed",
+      "quality": "medium",
+      "promptVersion": "detailed-v1",
+      "promptSha256": "a05b68290e21b922e511ba0adc0601f998ade62e09cc98b5759a1b84ed3812c0",
+      "status": "complete",
+      "startedAt": "2026-10-04T18:20:11.894Z",
+      "generationMs": 12410,
+      "usage": {
+        "input_tokens": 582,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 582
+        },
+        "output_tokens": 1056,
+        "output_tokens_details": {
+          "image_tokens": 1056,
+          "text_tokens": 0
+        },
+        "total_tokens": 1638
+      },
+      "tokenRateEstimateUsd": 0.009612,
+      "publishedRateEstimateUsd": 0.012164,
+      "runningEstimateUsd": 0.129828,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 133
+      },
+      "sha256": "6acfb5808871797bc3eba76db1ba801d3fc61f921c6a09115e9df5f099b88d6a",
+      "originalSha256": "46ac73a55c54bd45811121c6703f2f0ec5aa018a600ba5ee8153f6bcd7e0c307"
+    },
+    {
+      "detailLevel": "detailed",
+      "quality": "high",
+      "promptVersion": "detailed-v1",
+      "promptSha256": "a05b68290e21b922e511ba0adc0601f998ade62e09cc98b5759a1b84ed3812c0",
+      "status": "complete",
+      "startedAt": "2026-10-04T18:20:24.444Z",
+      "generationMs": 28254,
+      "usage": {
+        "input_tokens": 582,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 582
+        },
+        "output_tokens": 4160,
+        "output_tokens_details": {
+          "image_tokens": 4160,
+          "text_tokens": 0
+        },
+        "total_tokens": 4742
+      },
+      "tokenRateEstimateUsd": 0.034444,
+      "publishedRateEstimateUsd": 0.037163999999999996,
+      "runningEstimateUsd": 0.166992,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 119
+      },
+      "sha256": "389f3b7c17ef5dbc7079b8e876fcc94d3caebd276ff43fd274f3e6ce51db21a1",
+      "originalSha256": "5aa440a6060337d7de5c2dad5ad73f32bef0d4059868e6756addb14b0056e132"
+    }
+  ]
+}

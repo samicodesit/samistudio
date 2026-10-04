@@ -1,0 +1,45 @@
+{
+  "verifiedAt": "2026-10-04T19:29:02.842Z",
+  "url": "https://doodle-layout-review-brjvxbths-codenamez.vercel.app/flare-medium.html",
+  "files": [
+    {
+      "name": "flare-medium/simple.png",
+      "sha256": "a83ddc2db12e80926a4b7bc359eab92c409783a9f7c01113862c7ec6174f8ba4"
+    },
+    {
+      "name": "flare-medium/simple-original.png",
+      "sha256": "7a6d1207400a8a45c8961304106a4e16937e12cb282e57ff6a1fbd51d9023799"
+    },
+    {
+      "name": "detail-render-matrix/simple-medium.png",
+      "sha256": "2e093f605c74032f0f02f6b0266cfa750dc3019724ad327dc54f03d407c0235d"
+    },
+    {
+      "name": "detail-render-matrix/simple-medium-original.png",
+      "sha256": "5a6a4328206c913e2bd22d8dc693f592831a0b4616b5aa21656ac3e1e2dad7cf"
+    },
+    {
+      "name": "flare-medium/detailed.png",
+      "sha256": "9cff60d25006c37eba6c25a9316e4992e44f598334a6df312b965b3197ca70d9"
+    },
+    {
+      "name": "flare-medium/detailed-original.png",
+      "sha256": "a497727c9788a7e2cc9782d1c5ac0f64e6eef3fc9eb3988d3dbe236645ab0d99"
+    },
+    {
+      "name": "detail-render-matrix/detailed-medium.png",
+      "sha256": "6acfb5808871797bc3eba76db1ba801d3fc61f921c6a09115e9df5f099b88d6a"
+    },
+    {
+      "name": "detail-render-matrix/detailed-medium-original.png",
+      "sha256": "46ac73a55c54bd45811121c6703f2f0ec5aa018a600ba5ee8153f6bcd7e0c307"
+    }
+  ],
+  "visualInspection": [
+    "Desktop side by side",
+    "320px side by side, all four images loaded, no horizontal overflow",
+    "Single Flare view",
+    "Original and corrected toggles and full PNG links"
+  ],
+  "fixtureAppVerification": false
+}

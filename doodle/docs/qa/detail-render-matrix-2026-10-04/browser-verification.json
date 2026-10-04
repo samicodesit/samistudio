@@ -1,0 +1,97 @@
+{
+  "verifiedAt": "2026-10-04T18:44:42.040Z",
+  "url": "https://doodle-layout-review-bpx2vzi0r-codenamez.vercel.app/detail-render-matrix.html",
+  "check": "All 18 public PNGs match the experiment manifest. Visual responsive inspection recorded separately.",
+  "files": [
+    {
+      "name": "simple-low.png",
+      "sha256": "b32e802756adc0d0e0b791e7184cedfe25e2232cf62a22faa632ede197e7b620",
+      "bytes": 1635235
+    },
+    {
+      "name": "simple-low-original.png",
+      "sha256": "a20f35688c95c129f6d2c803b698261183d18f5ec3f787a10d8ef02d3caeb761",
+      "bytes": 1484194
+    },
+    {
+      "name": "simple-medium.png",
+      "sha256": "2e093f605c74032f0f02f6b0266cfa750dc3019724ad327dc54f03d407c0235d",
+      "bytes": 1744666
+    },
+    {
+      "name": "simple-medium-original.png",
+      "sha256": "5a6a4328206c913e2bd22d8dc693f592831a0b4616b5aa21656ac3e1e2dad7cf",
+      "bytes": 1640849
+    },
+    {
+      "name": "simple-high.png",
+      "sha256": "a2d3d4879e1c50fd311058c9e97e95df2bde15ec1887ebaea5dfc0c7ddc75e50",
+      "bytes": 2000359
+    },
+    {
+      "name": "simple-high-original.png",
+      "sha256": "8ed31a998e86769f4797cf82822c43de2c08a2ce6772eb427626d2a4f364f2d5",
+      "bytes": 1857743
+    },
+    {
+      "name": "medium-low.png",
+      "sha256": "9c70a4e88da39e7e39571334112cc315f46de11c94dbc85f11b08977b4b2c080",
+      "bytes": 1872381
+    },
+    {
+      "name": "medium-low-original.png",
+      "sha256": "6e82671e04ee800797ab99cc18bcd5f11b46be5fbd7fac8057b2900486d7ee2d",
+      "bytes": 1707263
+    },
+    {
+      "name": "medium-medium.png",
+      "sha256": "26142b65ffb37c09146c6bdb45fd44be08829fb0eaa2173948d180cf2afca868",
+      "bytes": 2456404
+    },
+    {
+      "name": "medium-medium-original.png",
+      "sha256": "d940415033ccc11fb42ec0fdb37e4f1efd377ced451bba1c58b3ebb4099ee971",
+      "bytes": 2528481
+    },
+    {
+      "name": "medium-high.png",
+      "sha256": "ffbfdef2b6d96c1900036c18c8b94c884f740e7d92bfe52ebfe6e2ace89d3349",
+      "bytes": 2326664
+    },
+    {
+      "name": "medium-high-original.png",
+      "sha256": "446ceb304ec0ad734959b4bffa50a962a2e6054a24e1ebd7bbef24ec8e4ee677",
+      "bytes": 2194725
+    },
+    {
+      "name": "detailed-low.png",
+      "sha256": "f52a9733c24c3cda8bb137ae30bc8ff3e3a226b90d3b42fb87a349b83f94ee5a",
+      "bytes": 1942608
+    },
+    {
+      "name": "detailed-low-original.png",
+      "sha256": "f52a9733c24c3cda8bb137ae30bc8ff3e3a226b90d3b42fb87a349b83f94ee5a",
+      "bytes": 1942608
+    },
+    {
+      "name": "detailed-medium.png",
+      "sha256": "6acfb5808871797bc3eba76db1ba801d3fc61f921c6a09115e9df5f099b88d6a",
+      "bytes": 2457662
+    },
+    {
+      "name": "detailed-medium-original.png",
+      "sha256": "46ac73a55c54bd45811121c6703f2f0ec5aa018a600ba5ee8153f6bcd7e0c307",
+      "bytes": 2372355
+    },
+    {
+      "name": "detailed-high.png",
+      "sha256": "389f3b7c17ef5dbc7079b8e876fcc94d3caebd276ff43fd274f3e6ce51db21a1",
+      "bytes": 2711928
+    },
+    {
+      "name": "detailed-high-original.png",
+      "sha256": "5aa440a6060337d7de5c2dad5ad73f32bef0d4059868e6756addb14b0056e132",
+      "bytes": 2725737
+    }
+  ]
+}

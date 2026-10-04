@@ -1,0 +1,80 @@
+{
+  "approval": "Owner approved up to $0.06 for two Flare MEDIUM outputs, no automatic retries.",
+  "scene": "Two friends making pancakes together in a cozy kitchen",
+  "model": "gpt-image-2.5-flare",
+  "quality": "medium",
+  "size": "1024x1024",
+  "imageCountPerRequest": 1,
+  "budgetUsd": 0.06,
+  "pricing": {
+    "outputEstimateUsd": 0.01317,
+    "textInputUsdPerMillion": 5,
+    "imageOutputUsdPerMillion": 30
+  },
+  "pricingSource": "https://developers.openai.com/api/docs/guides/image-generation#cost-and-latency",
+  "estimateCheckedAt": "2026-10-04",
+  "productionChanged": false,
+  "baseline": "../detail-render-matrix-2026-10-04/generation.json",
+  "attempts": [
+    {
+      "detailLevel": "simple",
+      "promptVersion": "simple-v1",
+      "promptSha256": "bc43b03a749e3fc877489101f0032133510ca5dd762c5b803df5d8e0e576825a",
+      "status": "complete",
+      "startedAt": "2026-10-04T19:19:59.300Z",
+      "generationMs": 10505,
+      "usage": {
+        "input_tokens": 711,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 711
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 1150
+      },
+      "tokenRateEstimateUsd": 0.016725,
+      "runningEstimateUsd": 0.016725,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 322
+      },
+      "originalSha256": "7a6d1207400a8a45c8961304106a4e16937e12cb282e57ff6a1fbd51d9023799",
+      "sha256": "a83ddc2db12e80926a4b7bc359eab92c409783a9f7c01113862c7ec6174f8ba4"
+    },
+    {
+      "detailLevel": "detailed",
+      "promptVersion": "detailed-v1",
+      "promptSha256": "a05b68290e21b922e511ba0adc0601f998ade62e09cc98b5759a1b84ed3812c0",
+      "status": "complete",
+      "startedAt": "2026-10-04T19:20:10.142Z",
+      "generationMs": 11478,
+      "usage": {
+        "input_tokens": 582,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 582
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 1021
+      },
+      "tokenRateEstimateUsd": 0.01608,
+      "runningEstimateUsd": 0.032805,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 155
+      },
+      "originalSha256": "a497727c9788a7e2cc9782d1c5ac0f64e6eef3fc9eb3988d3dbe236645ab0d99",
+      "sha256": "9cff60d25006c37eba6c25a9316e4992e44f598334a6df312b965b3197ca70d9"
+    }
+  ]
+}
