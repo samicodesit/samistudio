@@ -50,7 +50,12 @@ interface NativeModalFrameProps {
 
 const MODAL_SHEET_OFFSET = 44;
 
-function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClose, children, contentKey, dismissible = true, onExitComplete }: NativeModalFrameProps) {
+export const NATIVE_CLOSE_LABELS: Record<NativeLocale, string> = {
+  en: "Close", nl: "Sluiten", de: "Schließen", fr: "Fermer", es: "Cerrar",
+  "pt-br": "Fechar", it: "Chiudi", ja: "閉じる", ko: "닫기", ar: "إغلاق",
+};
+
+export function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClose, children, contentKey, dismissible = true, onExitComplete }: NativeModalFrameProps) {
   const [mounted, setMounted] = useState(false);
   const [scrimOpacity] = useState(() => new Animated.Value(0));
   const [sheetTranslateY] = useState(() => new Animated.Value(MODAL_SHEET_OFFSET));

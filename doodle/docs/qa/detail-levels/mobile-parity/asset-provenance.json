@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-04",
+  "asset": "public/landing/hero-cat-line.png",
+  "nativeAsset": "mobile/assets/hero-cat-line.png",
+  "source": "Built-in ImageGen, references option-1.png and existing flower-cat.webp",
+  "prompt": "Create a transparent-background standalone raster asset for the selected Doodle mobile hero concept. First image is selected UI concept: extract/recreate ONLY its faint flower-holding cat decorative illustration, not the UI. Second image is exact existing brand cat for character shape. Output cat with the same upright pose, small flower at left, curled tail at right, tiny heart above, two restrained pencil rays and a short ground stroke. Monochrome moss #195C47 opaque linework, no filled yellow/cream/sage areas, no paper, no shading, no text, no UI or screenshot background. Keep lines clean but slightly handmade, minimal internal details, both eyes open, matches cute original proportions. Transparent background with generous small even padding, centered fully visible cat. Portrait 512x640. This asset will be displayed small at 44-64 CSS pixels high with application opacity, so use readable restrained medium-width lines. Do not bake fading into artwork: opaque moss strokes on genuine transparent pixels. Preserve exact character identity to best effort.",
+  "export": "Resize to 256px high PNG, identical bytes web and Android. Application opacity 0.24.",
+  "selection": "User chose displayed option 1. Refined smaller to fit existing spaces. Owner final rendered acceptance pending.",
+  "sha256": "89b389e01a3b6a61538659eca26b1740f984429e1b3495300fa7860dc5479332",
+  "bytes": 21116,
+  "renderedSizes": "Web 48 x 60 px; native narrow 64 x 80 dp, wider 72 x 90 dp"
+}

@@ -1,6 +1,7 @@
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 import { getComposerIntro } from "../../../src/lib/composer-intro";
 import { NativeDetailSelector, NATIVE_DETAIL_GEOMETRY } from "./NativeDetailSelector";
+import { NativeArtExamples } from "./NativeArtExamples";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -251,6 +252,7 @@ function NativeComposer({
         ))}
         </Animated.View>
       </View>
+      <NativeArtExamples locale={locale} direction={direction} copy={copy} />
     </View>
   );
 }

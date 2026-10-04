@@ -50,6 +50,15 @@ test("all public translations fit beside the drawer at phone and desktop widths"
     for (const locale of SUPPORTED_LOCALES) {
       await page.goto(localePath(locale));
       await expect(page.locator(".usage-copy")).not.toBeEmpty();
+      const headerControls = await page.locator(".doodle-header .doodle-wordmark, .doodle-header .language-switcher summary, .doodle-header .web-account-slot").evaluateAll(elements => elements.map(element => {
+        const bounds = element.getBoundingClientRect();
+        return { left: bounds.left, right: bounds.right };
+      }).sort((a, b) => a.left - b.left));
+      for (let i = 0; i < headerControls.length; i++) {
+        expect(headerControls[i].left).toBeGreaterThanOrEqual(0);
+        expect(headerControls[i].right).toBeLessThanOrEqual(width);
+        if (i > 0) expect(headerControls[i].left).toBeGreaterThanOrEqual(headerControls[i - 1].right);
+      }
       const input = (await page.locator(".doodle-composer").boundingBox())!;
       const rail = (await page.locator(".detail-drawer").boundingBox())!;
       const hint = (await page.locator(width < 700 ? ".scene-hint" : ".landing-intro p").boundingBox())!;

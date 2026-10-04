@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { AccessibilityInfo, BackHandler, StyleSheet, View } from "react-native";
+import { AccessibilityInfo, BackHandler, StyleSheet, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeAccountSlot } from "./NativeAccountSlot";
 import { NativeBottomTabs } from "./NativeBottomTabs";
 import { NativeCreateView } from "./NativeCreateView";
+import { Image } from "expo-image";
 import { NativeIdeasView } from "./NativeIdeasView";
 import { NativeSettingsView } from "./NativeSettingsView";
 import {
@@ -13,11 +14,13 @@ import {
   NativePurchaseModal,
   NativeReportModal,
 } from "./NativeModals";
-import { NATIVE_COLORS, NATIVE_SPACING } from "./theme";
+import { NATIVE_COLORS, NATIVE_SPACING, nativeRowDirection } from "./theme";
 import type { NativeDoodleUiProps, NativeImageSource } from "./types";
 
 export function DoodleAppView(props: NativeDoodleUiProps) {
   const reducedMotion = useReducedMotion();
+  const { width, fontScale } = useWindowDimensions();
+  const showHeroArt = fontScale <= 1.3 && props.tab === "create" && (props.generation.status === "idle" || props.generation.status === "error");
   const [gridImageUri, setGridImageUri] = useState<NativeImageSource | null>(null);
   const gridEnabled = props.generation.status === "ready" && gridImageUri === props.generation.imageUri;
   const readyImage = props.generation.status === "ready" ? props.generation.imageUri : props.referenceImageUri;
@@ -40,7 +43,13 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
   return (
     <SafeAreaView edges={["top"]} style={styles.safe}>
       <View style={styles.root}>
-        <View style={styles.accountHeader}>
+        <View style={[styles.accountHeader, { flexDirection: nativeRowDirection(props.direction) }, showHeroArt && (props.direction === "rtl" ? { paddingRight: 100 } : { paddingLeft: 100 })]}>
+          {showHeroArt ? (
+            <View pointerEvents="none" accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[styles.heroArt, width >= 360 && styles.heroArtRoomy, props.direction === "rtl" ? { right: NATIVE_SPACING.screen - 6 } : { left: NATIVE_SPACING.screen - 6 }]}>
+              <Image source={require("../../assets/hero-cat-line.png")} contentFit="contain" style={styles.heroArtImage} accessible={false} />
+            </View>
+          ) : null}
+
           <NativeAccountSlot locale={props.locale} copy={props.copy} account={props.account} onPress={props.onOpenAccount} />
         </View>
         <View style={styles.content}>
@@ -108,6 +117,9 @@ function useReducedMotion() {
 const styles = StyleSheet.create({
   safe: { backgroundColor: NATIVE_COLORS.canvas, flex: 1 },
   root: { flex: 1 },
-  accountHeader: { alignItems: "flex-end", minHeight: 58, paddingHorizontal: NATIVE_SPACING.screen, paddingTop: 6 },
+  accountHeader: { alignItems: "center", justifyContent: "flex-end", gap: 8, minHeight: 58, paddingHorizontal: NATIVE_SPACING.screen, paddingTop: 6 },
+  heroArt: { position: "absolute", top: 0, width: 64, height: 80, opacity: 0.24 },
+  heroArtRoomy: { top: 12, width: 72, height: 90 },
+  heroArtImage: { width: "100%", height: "100%" },
   content: { flex: 1 },
 });

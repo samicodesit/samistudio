@@ -1,0 +1,100 @@
+{
+  "date": "2026-10-04",
+  "url": "https://doodle-layout-review-of2om17hy-codenamez.vercel.app/mobile.html",
+  "anonymousHtml": 200,
+  "authoredHtmlMatched": true,
+  "fontsMatched": true,
+  "assets": [
+    {
+      "file": "web-en-390.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-en-390.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "web-en-320.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-en-320.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "web-ar-320.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-ar-320.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "web-en-320-hidden.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-en-320-hidden.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "installed-web-en-390.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-guest-waiting.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-guest-result.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-en-examples.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-ar-examples.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-en-320-large.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-ar-320-large.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "concept.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-examples-modal.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "file": "native-settings-language.png",
+      "status": 200,
+      "matched": true
+    }
+  ],
+  "render": "Local gallery inspected at 320/390/1440 px. Hosted rendering not separately inspected; anonymously fetched image and font bytes match reviewed files."
+}

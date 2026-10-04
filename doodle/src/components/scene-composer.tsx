@@ -52,6 +52,7 @@ export function SceneComposer({
 
   return (
     <section id="composer" className="composer-section" aria-labelledby="scene-title">
+      <span className="composer-hero-art" aria-hidden="true" />
       {onDetailLevelChange ? null : heading}
       <div className="composer-input-wrap">
         {onDetailLevelChange ? <div className="composer-detail-row">

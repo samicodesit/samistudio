@@ -42,11 +42,11 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
   return <details ref={root} className="language-switcher language-switcher-animated" open={state !== "closed"} data-state={state} onBlur={(event) => {
     if (state === "open" && !event.currentTarget.contains(event.relatedTarget as Node)) setState("closing");
   }}>
-    <summary ref={trigger} aria-label={copy.header.languageLabel} aria-expanded={state === "open"} onClick={(event) => {
+    <summary ref={trigger} aria-label={`${copy.header.languageLabel}: ${copy.localeLabel}`} aria-expanded={state === "open"} onClick={(event) => {
       event.preventDefault();
       setState(state === "open" ? "closing" : "open");
     }}>
-      <Flag locale={locale} />{copy.localeLabel}
+      <Flag locale={locale} /><span className="language-current-label">{copy.localeLabel}</span>
     </summary>
     <nav aria-label={copy.header.languageLabel} inert={state !== "open"}>
       {SUPPORTED_LOCALES.filter((item) => item !== locale).map((item) => <Link key={item} href={localePath(item)} hrefLang={htmlLang(item)}>

@@ -2392,6 +2392,11 @@ html[lang="ja"] .editorial-article h1 {
 }
 
 /* One progress value keeps the pull tab joined while the input masks the drawer. */
+.composer-section { position: relative; }
+.composer-hero-art { display: none; }
+@media (max-width: 699px) {
+  .composer-hero-art { display: block; position: absolute; inset-inline-start: -6px; top: -54px; width: 48px; height: 60px; background: url('/landing/hero-cat-line.png') center / contain no-repeat; opacity: .24; pointer-events: none; }
+}
 @property --detail-open { syntax: "<number>"; inherits: true; initial-value: 1; }
 .composer-input-wrap { position: relative; isolation: isolate; min-width: 0; }
 .composer-input-wrap:has(.detail-selector) { margin-top: 0; }

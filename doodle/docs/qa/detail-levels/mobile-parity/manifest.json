@@ -1,0 +1,193 @@
+{
+  "date": "2026-10-04",
+  "status": "Owner selected option 1. Current captures agent reviewed. Owner final visual acceptance and release approval pending.",
+  "captureSource": "Production Webpack build with mocked account responses. Installed nl.samistudio.doodle.fixture package, API 36, 420 dpi, 320/390 dp. Simulated native account/generation.",
+  "checks": {
+    "earlierWebUnitTests": 614,
+    "freshLanguageSwitcherTests": 4,
+    "nativeTests": 101,
+    "skippedWebTests": 1,
+    "typeScript": "Web and native passed",
+    "lint": "Source lint passed, three existing warnings. Excluded inherited .qa-* scratch copies which contain generated build outputs.",
+    "webBuild": "Production Webpack build passed",
+    "fixtureBuild": "Gradle assembleFixture passed after final source changes",
+    "e2e": "Six hero/detail tests passed, covering all ten locales at 320/390/1280 and unchanged drawer/input bounds",
+    "native": "Installed final APK. Signed-out fixture suggestion-to-result flow checked, with waiting animation preserved and hero decoration absent while generating and viewing a result. Input bounds [49,570][791,881] match before and after hiding the drawer.  EN/AR normal and 200% text inspected. Example modal opened and dismissed. Settings language changed from Arabic to English and survived app restart.",
+    "apkSha256": "be919e841b485af0370ba06ae18c0c52e53eb218d5db4fe79c736303a3e0c4df",
+    "gallery": [
+      {
+        "width": 320,
+        "overflow": false,
+        "images": 19,
+        "fonts": [
+          {
+            "family": "Bricolage",
+            "status": "loaded"
+          },
+          {
+            "family": "Plex",
+            "status": "loaded"
+          }
+        ]
+      },
+      {
+        "width": 390,
+        "overflow": false,
+        "images": 19,
+        "fonts": [
+          {
+            "family": "Bricolage",
+            "status": "loaded"
+          },
+          {
+            "family": "Plex",
+            "status": "loaded"
+          }
+        ]
+      },
+      {
+        "width": 1440,
+        "overflow": false,
+        "images": 19,
+        "fonts": [
+          {
+            "family": "Bricolage",
+            "status": "loaded"
+          },
+          {
+            "family": "Plex",
+            "status": "loaded"
+          }
+        ]
+      }
+    ]
+  },
+  "assets": [
+    {
+      "file": "web-en-390.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "ebe93742e8052bbe5fae52f0473ea29abffd7717eb6f1fe557c29468a6059337",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-en-390.png",
+      "width": 1024,
+      "height": 2277,
+      "sha256": "027b2789b04c1c49a3c29272a7e902c635afb2af719075c3fc12b712c5053eae",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "web-en-320.png",
+      "width": 320,
+      "height": 844,
+      "sha256": "13c014605452ec76b82d0796817856c1ac01505a06651612f458f7cbf8d592f5",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-en-320.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "214dbc9d8a0c2550215144e0a886662e46ee980b7ba386799f6455034c90efb6",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "web-ar-320.png",
+      "width": 320,
+      "height": 844,
+      "sha256": "298cbe14b66c6dc4d8377dce27aafc26ebda9cef49839ee5be11bcf50c1b4bf5",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-ar-320.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "d66af25a0ef13d48d9e5c8eb27a32ab31e93d22b5556b42e2d6e3810fa7da1ea",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "web-en-320-hidden.png",
+      "width": 320,
+      "height": 844,
+      "sha256": "bb79e5effac522c592b6e3b57cdf3d3e714fbc179c863d16ce481d2612b058c5",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-en-320-hidden.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "694d965c29cbd46b84078157aaf83e8be26780e59c538963b0b07eefffa04e99",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "installed-web-en-390.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "f09a36a3f988f0077f04e902662a82915d6ea3630d383d9900c6cacbb4771489",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-guest-waiting.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "bf031172ceb02db302d1b45d24005245090090b37ffb5319dff9862282160553",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-guest-result.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "5972f1e7501f4ffd5c00d13663b3c2487dc102e4b20df8d9f89babd49bbd29e8",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-en-examples.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "9718431660f540eb90c32e8915ce6b1d810f4f5ffb847d9ce8d4649639b784a7",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-ar-examples.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "316ead30a4d4e2a7f43e608e2f09e4f44767ab1d92cf36bb72f7f88eb6bb704b",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-en-320-large.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "f263e260bdbf5e5b7bf337acf8140013f282d9c2c7310570958db3bc60ad75e1",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-ar-320-large.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "5ac849886896b68a82e8ba340904354605dc1dbfa66982cee3434112a640a63b",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "concept.png",
+      "width": 841,
+      "height": 1870,
+      "sha256": "341c20207e02273c5859837eebf654b8a89754f18603a4ba15a538f59c2eac5b",
+      "status": "Owner selected concept, illustrative reference"
+    },
+    {
+      "file": "native-examples-modal.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "6a43de77d44b275ce2fb2b4948caae19d1eceee1e372f79b91b3667229ab9a79",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    },
+    {
+      "file": "native-settings-language.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "c66bc903cc238f22b383ebb2e4022a489dd90ce28956bdd87925801f78648144",
+      "status": "Agent visually reviewed current capture. Owner final acceptance pending."
+    }
+  ]
+}

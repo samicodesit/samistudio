@@ -1,0 +1,35 @@
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
+import sharp from 'sharp';
+import { chromium } from 'playwright';
+
+const dir=path.dirname(fileURLToPath(import.meta.url));
+const root=path.resolve(dir,'../../../..');
+const staging=path.join(root,'.qa-phone-review');
+const cases=[
+  ['hero','Mobile web and Android, 390 px / dp','web-en-390.png','native-en-390.png','Mobile web','Android'],
+  ['small','Narrow phones, 320 px / dp','web-en-320.png','native-en-320.png','Mobile web','Android'],
+  ['arabic','Arabic, 320 px / dp','web-ar-320.png','native-ar-320.png','Mobile web','Android'],
+  ['hidden','Drawer hidden, stationary input','web-en-320-hidden.png','native-en-320-hidden.png','Mobile web','Android'],
+  ['installed','Installed web',null,'installed-web-en-390.png',null,'Installed web, 390 px'],
+  ['guest','Guest trial, presentation fixture','native-guest-waiting.png','native-guest-result.png','Waiting without sign-in','Result without sign-in, simulated'],
+  ['examples','Android example cards','native-en-examples.png','native-ar-examples.png','English','Arabic'],
+  ['large','Android at 200% text','native-en-320-large.png','native-ar-320-large.png','English','Arabic'],
+  ['reference','Selected concept and refined Android','concept.png','native-en-390.png','Illustrative option 1','Actual Android fixture'],
+  ['closer','Examples open for a closer look',null,'native-examples-modal.png',null,'Android fixture'],
+  ['settings','Language remains in Android Settings',null,'native-settings-language.png',null,'Android fixture'],
+];
+const css=`@font-face{font-family:Bricolage;src:url(FONTS/BricolageGrotesque-Variable.ttf);font-weight:100 900}@font-face{font-family:Plex;src:url(FONTS/IBMPlexSans-Variable.ttf);font-weight:100 900}*{box-sizing:border-box}body{margin:0;background:#eef1ea;color:#20231f;font:16px/1.5 Plex,sans-serif}main{max-width:900px;padding:24px 16px;margin:auto}h1,h2{font-family:Bricolage;line-height:1.2}h1{font-size:28px;margin:0 0 12px}h2{font-size:22px;margin:0 0 10px}p{max-width:680px;margin:0 0 16px}a{color:#195c47}nav{display:flex;gap:16px;flex-wrap:wrap}.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:start}section{margin-top:32px;scroll-margin-top:16px}figure{margin:0}figcaption{font-size:14px;margin-bottom:8px}img{display:block;width:100%;height:auto;border:1px solid #d7ddd5;border-radius:8px}.single{max-width:390px;margin:auto}.note{color:#657064;font-size:14px}`;
+function render(prefix,fonts){return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Doodle mobile refinements</title><style>${css.replaceAll('FONTS',fonts)}</style></head><body><main><h1>A quiet touch of art</h1><p>Option 1, refined to fit the existing hero space. Android now includes the same three pastel example cards below its suggestions. Language stays in Settings on Android.</p><p class="note">Actual production-build web screenshots with simulated account responses, and installed Android presentation fixture captures. No live generation, payment or Integrity validation. The concept image is illustrative. Tap any screenshot to open it full size.</p><nav><a href="#hero">Hero</a><a href="#small">320 px / dp</a><a href="#arabic">Arabic</a><a href="#examples">Examples</a><a href="#large">Enlarged text</a></nav>${cases.map(([id,title,left,right,ll,rl])=>`<section id="${id}"><h2>${title}</h2><div class="${left?'pair':'single'}">${[[left,ll],[right,rl]].filter(([f])=>f).map(([f,label])=>`<figure><figcaption>${label}</figcaption><a href="${prefix}${f}"><img src="${prefix}${f}" alt="${title}, ${label}" loading="eager"></a></figure>`).join('')}</div></section>`).join('')}</main></body></html>`;}
+await fs.copyFile(path.join(dir,'../hero-art-concepts/option-1.png'),path.join(dir,'concept.png'));
+await fs.mkdir(path.join(staging,'mobile'),{recursive:true});
+const assets=[];
+for(const file of [...new Set(cases.flatMap(c=>[c[2],c[3]]).filter(Boolean))]){const bytes=await fs.readFile(path.join(dir,file));const meta=await sharp(bytes).metadata();assets.push({file,width:meta.width,height:meta.height,sha256:createHash('sha256').update(bytes).digest('hex'),status:file==='concept.png'?'Owner selected concept, illustrative reference':'Agent visually reviewed current capture. Owner final acceptance pending.'});await fs.copyFile(path.join(dir,file),path.join(staging,'mobile',file));}
+await fs.writeFile(path.join(dir,'gallery.html'),render('','../../../../mobile/assets'));
+await fs.writeFile(path.join(staging,'mobile.html'),render('mobile/','implemented'));
+const browser=await chromium.launch();const checks=[];
+try{for(const width of [320,390,1440]){const page=await browser.newPage({viewport:{width,height:900}});await page.goto('file://'+path.join(dir,'gallery.html'));await page.evaluate(()=>document.fonts.ready);await page.waitForFunction(()=>[...document.images].every(img=>img.complete&&img.naturalWidth>0));const check=await page.evaluate(()=>({width:innerWidth,overflow:document.documentElement.scrollWidth>innerWidth,images:document.images.length,fonts:[...document.fonts].map(f=>({family:f.family,status:f.status}))}));if(check.overflow||check.fonts.some(f=>f.status!=='loaded'))throw Error(JSON.stringify(check));checks.push(check);if(width===1440){await page.locator('#reference').scrollIntoViewIfNeeded();await page.screenshot({path:path.join(dir,'comparison-review.png')});}await page.close();}}finally{await browser.close();}
+await fs.writeFile(path.join(dir,'manifest.json'),JSON.stringify({date:'2026-10-04',status:'Owner selected option 1. Current captures agent reviewed. Owner final visual acceptance and release approval pending.',captureSource:'Production Webpack build with mocked account responses. Installed nl.samistudio.doodle.fixture package, API 36, 420 dpi, 320/390 dp. Simulated native account/generation.',checks:{earlierWebUnitTests:614,freshLanguageSwitcherTests:4,nativeTests:101,skippedWebTests:1,typeScript:'Web and native passed',lint:'Source lint passed, three existing warnings. Excluded inherited .qa-* scratch copies which contain generated build outputs.',webBuild:'Production Webpack build passed',fixtureBuild:'Gradle assembleFixture passed after final source changes',e2e:'Six hero/detail tests passed, covering all ten locales at 320/390/1280 and unchanged drawer/input bounds',native:'Installed final APK. Signed-out fixture suggestion-to-result flow checked, with waiting animation preserved and hero decoration absent while generating and viewing a result. Input bounds [49,570][791,881] match before and after hiding the drawer.  EN/AR normal and 200% text inspected. Example modal opened and dismissed. Settings language changed from Arabic to English and survived app restart.',apkSha256:'be919e841b485af0370ba06ae18c0c52e53eb218d5db4fe79c736303a3e0c4df',gallery:checks},assets},null,2)+'\n');
+console.log(JSON.stringify({assets:assets.length,checks}));

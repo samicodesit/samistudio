@@ -29,6 +29,13 @@
   .language-switcher-animated[data-state] nav { animation-duration: 1ms; }
 }
 
+@media (max-width: 379px) {
+  .doodle-landing .doodle-header .doodle-wordmark { font-size: 24px; flex-shrink: 0; }
+  .doodle-landing .language-switcher summary { min-width: 44px; padding-inline: 8px; }
+  .doodle-landing .language-current-label { display: none; }
+  .doodle-landing .web-account-slot { flex-shrink: 0; }
+}
+
 .doodle-landing .doodle-header .account-sign-in-action { min-height: 44px; padding-inline: 22px; border-radius: 999px; font-size: 15px; }
 .doodle-landing .doodle-main { width: min(1120px, calc(100% - 48px)); min-height: 0; padding: 30px 0 0; }
 .doodle-workspace-landing { display: grid; grid-template-columns: minmax(0, 1fr) 280px; column-gap: 48px; row-gap: 0; align-items: end; }
