@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GenerationError } from "@/lib/generation/generate-doodle";
 import { POST } from "./route";
+import sharp from "sharp";
 
 vi.mock("server-only", () => ({}));
 
@@ -104,6 +105,44 @@ describe("generate route", () => {
     mocks.setTrialCookie.mockImplementation((response: NextResponse) => {
       response.cookies.set("doodle_trial", "signed", { httpOnly: true, sameSite: "lax", path: "/" });
     });
+  });
+
+  it.each(["free", "paid"])("delivers the corrected PNG and finalizes one %s credit", async (kind) => {
+    if (kind === "paid") {
+      mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "owner@example.test" });
+      mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
+    }
+    const original = await sharp({ create: { width: 1024, height: 1024, channels: 3, background: "#F5DB90" } }).png().toBuffer();
+    const actual = await vi.importActual<typeof import("@/lib/generation/generate-doodle")>("@/lib/generation/generate-doodle");
+    mocks.generateDoodle.mockImplementation((scene) => actual.generateDoodle(scene, { generate: async () => ({ data: [{ b64_json: original.toString("base64") }] }) }));
+    const response = await POST(request("Two cats hug"));
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toBe("image/png");
+    expect(response.headers.get("cache-control")).toBe("no-store");
+    const pixels = await sharp(Buffer.from(await response.arrayBuffer())).raw().toBuffer();
+    expect([...pixels.subarray(0, 3)]).toEqual([255, 235, 138]);
+    expect(kind === "paid" ? mocks.finalizePaidCredit : mocks.finalizeFreeDoodle).toHaveBeenCalledTimes(1);
+    expect(mocks.releasePaidCredit).not.toHaveBeenCalled();
+    expect(mocks.releaseFreeDoodle).not.toHaveBeenCalled();
+  });
+
+  it.each(["free", "paid"])("delivers the original after correction failure and still finalizes one %s credit", async (kind) => {
+    if (kind === "paid") {
+      mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "owner@example.test" });
+      mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
+    }
+    const original = await sharp({ create: { width: 1024, height: 1024, channels: 3, background: "#F5DB90" } }).png().toBuffer();
+    const actual = await vi.importActual<typeof import("@/lib/generation/generate-doodle")>("@/lib/generation/generate-doodle");
+    mocks.generateDoodle.mockImplementation((scene) => actual.generateDoodle(scene, { generate: async () => ({ data: [{ b64_json: original.toString("base64") }] }) }));
+    vi.spyOn(sharp.prototype, "metadata").mockRejectedValueOnce(new Error("image processor unavailable"));
+    const info = vi.spyOn(console, "info").mockImplementation(() => {});
+    const response = await POST(request("Two cats hug"));
+    expect(response.status).toBe(200);
+    expect(Buffer.from(await response.arrayBuffer()).equals(original)).toBe(true);
+    expect(kind === "paid" ? mocks.finalizePaidCredit : mocks.finalizeFreeDoodle).toHaveBeenCalledTimes(1);
+    expect(mocks.releasePaidCredit).not.toHaveBeenCalled();
+    expect(mocks.releaseFreeDoodle).not.toHaveBeenCalled();
+    expect(JSON.parse(info.mock.calls[0][1] as string)).toMatchObject({ code: "ok", paperCorrection: { status: "error", version: "paper-v1" } });
   });
 
   it("correlates provider failure without exposing scene or exception text", async () => {

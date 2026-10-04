@@ -4,12 +4,14 @@ import type { ProviderFailure } from "./provider";
 import { randomUUID } from "node:crypto";
 import { diagnosticCode, DIAGNOSTIC_UUID, type DiagnosticCode, type DiagnosticOperation, type DiagnosticStage } from "./events";
 import { trackServerDiagnostic, type ServerDiagnostic } from "./store";
+import { PAPER_CORRECTION_STATUSES, PAPER_CORRECTION_VERSION, type PaperCorrectionMetadata } from "../generation/paper-color-metadata";
 
 export interface RequestDiagnostics extends ProviderFailure {
   requestId: string;
   detailLevel?: DetailLevel;
   stage: DiagnosticStage;
   failureCode?: DiagnosticCode;
+  paperCorrection?: PaperCorrectionMetadata;
 }
 
 const logBudget = {
@@ -42,6 +44,9 @@ export async function diagnoseRequest<T extends Response>(
       channel: request.headers.get("x-doodle-client") === "native-android" ? "android" : "web",
       durationMs: Math.min(190000, Math.max(0, Date.now() - startedAt)),
       ...(operation === "generation" && isDetailLevel(diagnostics.detailLevel) ? { detailLevel: diagnostics.detailLevel, promptVersion: PROMPT_VERSIONS[diagnostics.detailLevel] } : {}),
+      ...(operation === "generation" && diagnostics.paperCorrection?.version === PAPER_CORRECTION_VERSION && PAPER_CORRECTION_STATUSES.includes(diagnostics.paperCorrection.status) && Number.isSafeInteger(diagnostics.paperCorrection.durationMs) && diagnostics.paperCorrection.durationMs >= 0 && diagnostics.paperCorrection.durationMs <= 5_000 ? {
+        paperCorrection: { version: PAPER_CORRECTION_VERSION, status: diagnostics.paperCorrection.status, durationMs: diagnostics.paperCorrection.durationMs },
+      } : {}),
       ...(diagnostics.providerStatus !== undefined ? { providerStatus: diagnostics.providerStatus } : {}),
       ...(diagnostics.providerCode ? { providerCode: diagnostics.providerCode } : {}),
       ...(diagnostics.providerRequestId ? { providerRequestId: diagnostics.providerRequestId } : {}),

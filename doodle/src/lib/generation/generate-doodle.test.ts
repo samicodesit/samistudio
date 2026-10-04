@@ -1,7 +1,16 @@
 import { describe, expect, it, vi } from "vitest";
 import { generateDoodle } from "./generate-doodle";
+import sharp from "sharp";
 
 describe("generateDoodle", () => {
+  it("returns a corrected provider PNG with correction metadata", async () => {
+    const original = await sharp({ create: { width: 1024, height: 1024, channels: 3, background: "#F5DB90" } }).png().toBuffer();
+    const result = await generateDoodle("Two cats hug", { generate: async () => ({ data: [{ b64_json: original.toString("base64") }] }) });
+    const pixels = await sharp(result.bytes).raw().toBuffer();
+    expect([...pixels.subarray(0, 3)]).toEqual([255, 235, 138]);
+    expect(result.paperCorrection).toMatchObject({ status: "corrected", version: "paper-v1" });
+    expect(result.mimeType).toBe("image/png");
+  });
   it("requests one medium-quality square and decodes it", async () => {
     const pngBytes = Uint8Array.from([0x89, 0x50, 0x4e, 0x47]);
     const generate = vi.fn().mockResolvedValue({

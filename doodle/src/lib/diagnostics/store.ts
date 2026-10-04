@@ -5,12 +5,14 @@ import { after } from "next/server";
 import { redisCommand } from "@/lib/redis";
 import type { ProviderFailure } from "./provider";
 import type { DiagnosticCode, DiagnosticEvent, DiagnosticOperation, DiagnosticStage } from "./events";
+import type { PaperCorrectionMetadata } from "../generation/paper-color-metadata";
 
 export type ServerDiagnostic = ProviderFailure & {
   source: "server"; timestamp: string; requestId: string; operation: DiagnosticOperation;
   stage: DiagnosticStage; code: DiagnosticCode | "ok"; status: number;
   channel: "android" | "web"; durationMs: number;
   detailLevel?: DetailLevel; promptVersion?: typeof PROMPT_VERSIONS[DetailLevel];
+  paperCorrection?: PaperCorrectionMetadata;
 };
 export const DIAGNOSTIC_RETENTION_SECONDS = 30 * 86_400;
 export type IngestResult = "stored" | "rate_limited" | "unavailable";

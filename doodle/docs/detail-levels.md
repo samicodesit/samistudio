@@ -16,11 +16,13 @@ Android includes non-Simple levels in both challenge and generation bodies. The 
 
 Generation diagnostics record only the validated level and allowlisted prompt version, alongside existing safe correlation fields. Scene content is not added to logs.
 
+An owner-approved [backend paper-color correction](paper-color-correction.md) now runs once after generation for eligible PNGs at every level, before returning the image. It matches the six reviewed corrected outputs and bypasses uncertain images or processing failures. Status, fixed correction version and timing join the existing safe generation diagnostics. No centralized image storage is added.
+
 ## Source and assets
 
 The branch preserves the current native update sources and the deployed diagnostics/privacy baseline before adding this feature. Existing version 0.1.6/versionCode 8 is unchanged. Release versioning and signing remain part of the approved Android publishing step.
 
-`scripts/build-detail-assets.mjs` is the coordinated source for all three flowers. It exports SVGs to `public/detail` and 3x PNGs to `mobile/assets/detail` using the existing Sharp installation. Runtime rendering dependencies and package dependencies are unchanged.
+`scripts/build-detail-assets.mjs` is the coordinated source for all three flowers. It exports SVGs to `public/detail` and 3x PNGs to `mobile/assets/detail` using the existing Sharp installation. The selector adds no runtime rendering dependency. Subsequent backend paper correction explicitly declares that same installed Sharp version as a server dependency.
 
 Current asset hashes, provenance and pending owner review are in [the manifest](qa/detail-levels/asset-manifest.json). QA screenshots are fixture evidence, not marketing assets or promises about generated output.
 

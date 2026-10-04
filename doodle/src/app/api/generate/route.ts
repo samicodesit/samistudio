@@ -278,6 +278,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     infrastructureFailure = false;
     diagnostics.stage = "image_provider";
     const result = await generateDoodle(scene, undefined, detailLevel);
+    diagnostics.paperCorrection = result.paperCorrection;
     infrastructureFailure = true;
     const response = new NextResponse(Buffer.from(result.bytes), {
       status: 200,

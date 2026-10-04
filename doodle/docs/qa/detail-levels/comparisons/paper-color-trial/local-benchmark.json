@@ -1,0 +1,93 @@
+{
+  "measuredAt": "2026-10-04T07:14:04.663Z",
+  "environment": "Local WSL Node 26.9.0. In-memory decode, paper estimate, correction, PNG encoding. Excludes QA assertions, preview generation, file writes and network. Not a production latency measurement.",
+  "meanWallMs": 133,
+  "meanCpuMs": 140,
+  "maxRssMiB": 169,
+  "rows": [
+    {
+      "round": 1,
+      "name": "1-1-simple",
+      "wallMs": 134,
+      "cpuMs": 140,
+      "rssMiB": 98
+    },
+    {
+      "round": 1,
+      "name": "1-1-medium",
+      "wallMs": 137,
+      "cpuMs": 147,
+      "rssMiB": 102
+    },
+    {
+      "round": 1,
+      "name": "1-1-detailed",
+      "wallMs": 116,
+      "cpuMs": 124,
+      "rssMiB": 115
+    },
+    {
+      "round": 1,
+      "name": "2-1-simple",
+      "wallMs": 226,
+      "cpuMs": 236,
+      "rssMiB": 117
+    },
+    {
+      "round": 1,
+      "name": "2-1-medium",
+      "wallMs": 118,
+      "cpuMs": 129,
+      "rssMiB": 123
+    },
+    {
+      "round": 1,
+      "name": "2-1-detailed",
+      "wallMs": 116,
+      "cpuMs": 125,
+      "rssMiB": 135
+    },
+    {
+      "round": 2,
+      "name": "1-1-simple",
+      "wallMs": 136,
+      "cpuMs": 138,
+      "rssMiB": 146
+    },
+    {
+      "round": 2,
+      "name": "1-1-medium",
+      "wallMs": 133,
+      "cpuMs": 156,
+      "rssMiB": 146
+    },
+    {
+      "round": 2,
+      "name": "1-1-detailed",
+      "wallMs": 106,
+      "cpuMs": 107,
+      "rssMiB": 147
+    },
+    {
+      "round": 2,
+      "name": "2-1-simple",
+      "wallMs": 139,
+      "cpuMs": 140,
+      "rssMiB": 151
+    },
+    {
+      "round": 2,
+      "name": "2-1-medium",
+      "wallMs": 120,
+      "cpuMs": 121,
+      "rssMiB": 158
+    },
+    {
+      "round": 2,
+      "name": "2-1-detailed",
+      "wallMs": 110,
+      "cpuMs": 111,
+      "rssMiB": 169
+    }
+  ]
+}

@@ -4,6 +4,8 @@ import { normalizeScene } from "@/lib/scenes/scene";
 import { generationProfile } from "./profile";
 import { isDetailLevel, PROMPT_VERSIONS, type DetailLevel } from "./detail-level";
 import { buildDoodlePrompt } from "./prompt";
+import { correctPaperColor } from "./paper-color";
+import type { PaperCorrectionMetadata } from "./paper-color-metadata";
 
 export interface ImageClient {
   generate(input: {
@@ -18,6 +20,7 @@ export interface ImageClient {
 export interface GeneratedDoodle {
   bytes: Uint8Array;
   mimeType: "image/png";
+  paperCorrection?: PaperCorrectionMetadata;
 }
 
 export type GenerationErrorKind = "refused" | "timeout" | "malformed" | "upstream";
@@ -111,7 +114,8 @@ export async function generateDoodle(scene: string, client: ImageClient | undefi
     if (bytes.length < pngSignature.length || !pngSignature.every((byte, index) => bytes[index] === byte)) {
       throw new Error("invalid PNG");
     }
-    return { bytes, mimeType: "image/png" };
+    const corrected = await correctPaperColor(bytes);
+    return { bytes: corrected.bytes, mimeType: "image/png", paperCorrection: corrected.metadata };
   } catch {
     throw new GenerationError("malformed", "The image response was invalid.");
   }

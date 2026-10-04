@@ -1,0 +1,68 @@
+{
+  "verifiedAt": "2026-10-04T07:34:03.169Z",
+  "runtime": "v26.9.0",
+  "environment": "Local WSL, production helper on six saved HIGH provider PNGs. No provider calls or deployment.",
+  "meanDurationMs": 217,
+  "rows": [
+    {
+      "name": "1-1-simple",
+      "version": "paper-v1",
+      "status": "corrected",
+      "durationMs": 153,
+      "cpuMs": 160,
+      "originalSha256": "db0f4b30c217049d8e1552cec2a4a03dde659f0e9bc98deab87c4e6e3865db4c",
+      "correctedSha256": "b63c35e4be297ed3155b0a1aefed9b321d87a90ef239380db781bf0f272b3eac",
+      "matchesReviewedPixels": true
+    },
+    {
+      "name": "1-1-medium",
+      "version": "paper-v1",
+      "status": "corrected",
+      "durationMs": 147,
+      "cpuMs": 161,
+      "originalSha256": "0306e445556e7e0349764b8aa70449a0a28ab0841b0cbde588c4c6032fe40872",
+      "correctedSha256": "96db075c05a6cbf6ebcaf7e49f183d15de1c1a3700672608fe1d25f3be59606d",
+      "matchesReviewedPixels": true
+    },
+    {
+      "name": "1-1-detailed",
+      "version": "paper-v1",
+      "status": "corrected",
+      "durationMs": 257,
+      "cpuMs": 261,
+      "originalSha256": "aa4d9cfee44a27e8d0dcaa7398206a4b2e01e4811b86e15f92fe1a54e6785481",
+      "correctedSha256": "827e3ecf5215a30bd64a88932493d5ce4ef6f53968410b1271b45795d10e6313",
+      "matchesReviewedPixels": true
+    },
+    {
+      "name": "2-1-simple",
+      "version": "paper-v1",
+      "status": "corrected",
+      "durationMs": 416,
+      "cpuMs": 269,
+      "originalSha256": "777f15540bc93c15e63b3a640867f7a0f96be5a2508f9682953e26bff09e673b",
+      "correctedSha256": "1c00316f99b5383b13e4f56be541c693ac1f205e695d0a753a32886613a7d626",
+      "matchesReviewedPixels": true
+    },
+    {
+      "name": "2-1-medium",
+      "version": "paper-v1",
+      "status": "corrected",
+      "durationMs": 197,
+      "cpuMs": 198,
+      "originalSha256": "5b1b02f0a6a117352d2da63b153f68455eb22b661eb870175475d9a327726b6f",
+      "correctedSha256": "f8f60cf61de1fc6b138e72a9aec11fc9d5cb0c1274bce42e56cace1daf58526b",
+      "matchesReviewedPixels": true
+    },
+    {
+      "name": "2-1-detailed",
+      "version": "paper-v1",
+      "status": "corrected",
+      "durationMs": 129,
+      "cpuMs": 152,
+      "originalSha256": "75bbf1d6ce5ed791b4e89e9bb1d184cacd1298512a3cc2da85d86e5b7ee00cc4",
+      "correctedSha256": "5bb0a1a34192987b03f0d2d676cb801e81026e90905a6a39ef95210dc2e1b5a3",
+      "matchesReviewedPixels": true
+    }
+  ]
+}

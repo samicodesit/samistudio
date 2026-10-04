@@ -9,6 +9,30 @@ const id = "11111111-1111-4111-8111-111111111111";
 function request(reference = id) { return new NextRequest("https://doodle.test/api/generate?secret=private", { headers: { "x-doodle-request-id": reference, "x-doodle-client": "native-android", authorization: "Bearer private-token" } }); }
 
 describe("request failure diagnostics", () => {
+  it("copies only allowlisted correction metadata and excludes arbitrary attached content", async () => {
+    const info = vi.spyOn(console, "info").mockImplementation(() => {});
+    await diagnoseRequest(new Request("https://doodle.test/api/generate", { method: "POST" }), "generation", async (context) => {
+      context.paperCorrection = Object.assign({ status: "uncertain" as const, version: "paper-v1" as const, durationMs: 40 }, { scene: "private-scene", image: "private-image", error: "private-error" });
+      return new Response("png");
+    });
+    const event = JSON.parse(info.mock.calls[0][1] as string);
+    expect(event.paperCorrection).toEqual({ status: "uncertain", version: "paper-v1", durationMs: 40 });
+    expect(JSON.stringify(event)).not.toContain("private");
+  });
+  it("correlates correction status and timing with a successful generation without storing image content", async () => {
+    vi.mocked(trackServerDiagnostic).mockClear();
+    const info = vi.spyOn(console, "info").mockImplementation(() => {});
+    const response = await diagnoseRequest(new Request("https://doodle.test/api/generate", { method: "POST", body: "private-scene" }), "generation", async (context) => {
+      context.paperCorrection = { status: "corrected", version: "paper-v1", durationMs: 133 };
+      return new Response("private-image", { headers: { "content-type": "image/png" } });
+    });
+    expect(await response.text()).toBe("private-image");
+    const event = JSON.parse(info.mock.calls[0][1] as string);
+    expect(event).toMatchObject({ code: "ok", paperCorrection: { status: "corrected", version: "paper-v1", durationMs: 133 } });
+    expect(event.requestId).toBe(response.headers.get("x-doodle-request-id"));
+    expect(JSON.stringify(event)).not.toContain("private");
+    expect(trackServerDiagnostic).not.toHaveBeenCalled();
+  });
   it.each([
     { path: "/api/account", operation: "account", stage: "account_read" },
     { path: "/api/native/config", operation: "integrity", stage: "config_fetch" },
