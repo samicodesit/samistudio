@@ -1,0 +1,60 @@
+{
+  "url": "https://doodle-layout-review.vercel.app",
+  "projectId": "prj_7AiMpG1S9iidLGzd4EcHMAIZhfTi",
+  "teamId": "team_688hx0m9BbPZWH6FzZ8YJVuP",
+  "projectName": "doodle-layout-review",
+  "scope": "codenamez",
+  "plan": "hobby",
+  "deploymentUrl": "https://doodle-layout-review-9lty3nlg4-codenamez.vercel.app",
+  "approval": "Owner approved a publicly accessible image-only browser preview on 2026-10-04.",
+  "content": "Nine unchanged PNG images and descriptive captions. No Doodle app source, backend, credentials or user information.",
+  "verification": "Anonymous Chromium at 320 and 390 px: nine images decoded, no horizontal overflow, no login. Rendered 390 px viewport visually inspected. All nine remote PNGs match local source bytes. Mobile ChatGPT/Safari rendering awaits owner confirmation.",
+  "liveApp": "Separate project and account scope from Doodle production. No app deployment, DNS change or store upload.",
+  "checks": [
+    {
+      "image": 0,
+      "status": 200,
+      "sha256": "d2570419acf55be149b9b0caa88701b1de7ffa927a3114906d6bc5903f3ccc7b"
+    },
+    {
+      "image": 1,
+      "status": 200,
+      "sha256": "209810ddb21088ce8a1855bee03f645f81f79d3026d1817f2b645b3f11d7b138"
+    },
+    {
+      "image": 2,
+      "status": 200,
+      "sha256": "7db45cd146e99d99ab01d4d064c07c6b9f1499144534ff9c4b8eaf024c37a19b"
+    },
+    {
+      "image": 3,
+      "status": 200,
+      "sha256": "a3a021c9f9c1180b488cff0f267cf6b5da95f87d78c69397a500aabdab16a382"
+    },
+    {
+      "image": 4,
+      "status": 200,
+      "sha256": "32f71423151b0fa6ea7725db0a9967a1c8a4d6238f685bb52c245c7a30b5dcc0"
+    },
+    {
+      "image": 5,
+      "status": 200,
+      "sha256": "c46b6ad77ed075a8b9e54c77e0dd138b267a4cd66fd91439ec99ed204891e6a6"
+    },
+    {
+      "image": 6,
+      "status": 200,
+      "sha256": "a6ebcf9e2145f0efed68ba9b131039cc688c36bad9e4555648f255144cacaae2"
+    },
+    {
+      "image": 7,
+      "status": 200,
+      "sha256": "304ff1ef00ff9b04252dcff610beefd56b736cab567fe900ad51a0e973126565"
+    },
+    {
+      "image": 8,
+      "status": 200,
+      "sha256": "2e3233c262aa86cb2739a723bb934271bcb933d3c81fd4e304305f3713811df5"
+    }
+  ]
+}
