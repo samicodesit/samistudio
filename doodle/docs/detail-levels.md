@@ -31,7 +31,7 @@ See [the verification record](qa/detail-levels/verification.json) for commands a
 ## Release gates
 
 1. Obtain owner visual acceptance of the flower assets and web/native layouts.
-2. Review the six authorized HIGH-quality outputs in [the comparison](qa/detail-levels/comparisons/review.md). Both sets increase clearly in complexity, but Medium/Detailed introduce some hatching or filled areas. Strict no-shading acceptance remains unmet. The owner reduced this run to two rounds of three images; it does not establish the original 36-image quality threshold. Further calls require separate spending approval.
+2. Review the six authorized HIGH-quality outputs in [the comparison](qa/detail-levels/comparisons/review.md). Both sets increase clearly in complexity. On October 4 the owner explicitly preferred the observed hatching and filled areas and accepted slight paper-color drift, superseding the earlier strict no-shading and exact-color acceptance criteria. Do not tighten the prompts to remove that artwork. The owner reduced this run to two rounds of three images; it does not establish the original 36-image quality threshold. Further calls require separate spending approval.
 3. Complete independent code/visual review and resolve findings. Work in this task was inline, as requested.
 4. Verify generation and Integrity on a real Play-installed Android build. Emulator fixture checks do not cover this.
 5. Resolve the six remaining broader browser suite failures recorded in the verification report. Feature-specific browser checks passed; the entire legacy suite is not green.

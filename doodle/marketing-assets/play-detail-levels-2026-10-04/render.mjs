@@ -29,7 +29,7 @@ try {
     return { level, path: `docs/qa/detail-levels/comparisons/2-1-${level}.png`, sha256: createHash('sha256').update(await readFile(path)).digest('hex') };
   }));
   const manifest = {
-    status: 'Draft prepared. Owner visual acceptance and publishing approval pending.',
+    status: 'Draft prepared. Owner permits slight paper-color drift and prefers the observed artwork. Whole-asset visual acceptance and publishing approval pending.',
     intendedSlot: 2,
     replaces: { path: 'marketing-assets/play-gallery-2026-10-02/exports/02-your-words.png', sha256: '07a36a0a43567383ce8d2083fcee7c686d5ae391326fde1d9725327cb076591a', source: 'Current submitted gallery manifest in main checkout, inspected 2026-10-04.' },
     output: '02-detail-levels.png',
@@ -40,8 +40,8 @@ try {
     settings: { model: 'gpt-image-1-mini', quality: 'high', size: '1024x1024' },
     sources,
     qa,
-    visualReview: 'Inspected at 1080x1920 and 390 px width on 2026-10-04. All three drawings distinguishable; subjects and cooking actions visible; labels upright and readable; no text clipping. Owner acceptance pending.',
-    releaseGate: 'Publish alongside the shipped detail-level feature after owner approval. This is a composed feature illustration, not a Play-installed live capture. Medium and Detailed output style acceptance remains pending.',
+    visualReview: 'Inspected at 1080x1920 and 390 px width on 2026-10-04. Drawings distinguishable, subjects visible, labels readable. Measurements confirm paper-color drift; the owner subsequently accepted slight drift and preferred the hatching and filled areas. See docs/qa/detail-levels/comparisons/paper-color-review.json. Whole-asset acceptance remains pending.',
+    releaseGate: 'Publish alongside the shipped detail-level feature after owner approval. This is a composed feature illustration, not a Play-installed live capture. Preserve the artwork the owner likes.',
     guidance: { url: 'https://support.google.com/googleplay/android-developer/answer/9866151?hl=en', checked: '2026-10-04', applied: '1080x1920 opaque PNG; brief heading; no ranking, pricing or install claims; shows actual generated feature content.' },
     alt: 'The same cooking idea shown as Simple, Medium and Detailed Doodle drawings, arranged in a vertical stack.',
   };

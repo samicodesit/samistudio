@@ -14,3 +14,11 @@ Style needs owner review: the cat gains hatched shading, while the cooking image
 | Friends baking pancakes | [Original](2-1-simple.png) | [Original](2-1-medium.png) | [Original](2-1-detailed.png) |
 
 Owner visual acceptance is pending. Deployment and Android publishing require separate approval.
+
+## Paper-color review, October 4
+
+The owner identified inconsistent paper shades in the cooking comparison. The prompt requests the same base color, `#FFEB8A`, for all levels. Median samples from the outer 16 px of the original PNGs estimate Simple at `#FEEA8D`, Medium at `#F7DC82`, and Detailed at `#F6DB91`. Simple is close; Medium and Detailed drift darker and differ from each other. Subtle permitted texture does not explain the base-color difference. The store composition preserves these source colors.
+
+The earlier visual review missed this difference. Method and measurements are recorded in [paper-color-review.json](paper-color-review.json). No images, prompts, production settings or deployments were changed by this check.
+
+Owner clarification: hatching and filled areas in these examples are liked and should remain. Slight paper-color drift is acceptable. These preferences supersede the strict no-shading and exact-color criteria above. A paper correction is only a proposed optional safeguard, not an implemented or required change. Whole-asset visual approval and publishing approval remain pending.

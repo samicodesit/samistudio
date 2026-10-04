@@ -1,0 +1,86 @@
+{
+  "expectedPaperColor": "#FFEB8A",
+  "method": "Median sRGB channels across the outer 16 px border of each original cooking PNG, excluding dark pixels. This estimates the base paper shade while allowing texture; it does not require every pixel to equal the hex value.",
+  "composition": "The store draft preserves source image colors. Its surrounding cream backdrop is separate from the paper inside each drawing.",
+  "result": "Generated paper shades differ from the requested base and from each other. The owner subsequently accepted slight drift on October 4. Exact-hex mismatch alone is no longer a release blocker. Preserve the preferred artwork; whole-asset approval remains pending.",
+  "rows": [
+    {
+      "level": "simple",
+      "path": "docs/qa/detail-levels/comparisons/2-1-simple.png",
+      "paperSamples": 64512,
+      "medianRgb": [
+        254,
+        234,
+        141
+      ],
+      "medianHex": "#FEEA8D",
+      "p10Rgb": [
+        251,
+        231,
+        135
+      ],
+      "p90Rgb": [
+        255,
+        237,
+        147
+      ],
+      "differenceFromExpected": [
+        -1,
+        -1,
+        3
+      ]
+    },
+    {
+      "level": "medium",
+      "path": "docs/qa/detail-levels/comparisons/2-1-medium.png",
+      "paperSamples": 64512,
+      "medianRgb": [
+        247,
+        220,
+        130
+      ],
+      "medianHex": "#F7DC82",
+      "p10Rgb": [
+        243,
+        215,
+        124
+      ],
+      "p90Rgb": [
+        251,
+        224,
+        135
+      ],
+      "differenceFromExpected": [
+        -8,
+        -15,
+        -8
+      ]
+    },
+    {
+      "level": "detailed",
+      "path": "docs/qa/detail-levels/comparisons/2-1-detailed.png",
+      "paperSamples": 64512,
+      "medianRgb": [
+        246,
+        219,
+        145
+      ],
+      "medianHex": "#F6DB91",
+      "p10Rgb": [
+        240,
+        213,
+        138
+      ],
+      "p90Rgb": [
+        251,
+        225,
+        151
+      ],
+      "differenceFromExpected": [
+        -9,
+        -16,
+        7
+      ]
+    }
+  ]
+}

@@ -1,0 +1,178 @@
+{
+  "createdAt": "2026-10-04T07:06:03.885Z",
+  "status": "Offline trial. Owner review pending. Not used by app or store asset.",
+  "target": "#FFEB8A",
+  "method": "Full-image yellow-paper median, additive RGB shift with smooth weighting near light ink; dark ink excluded. Adapted from existing marketing script.",
+  "limitations": "Exact sampled median, not every textured paper pixel. Bright red-channel values clip at 255. Light ink transitions can shift slightly. No guarantee for arbitrary future drawings.",
+  "elapsedMs": 6582,
+  "records": [
+    {
+      "name": "1-1-simple",
+      "sourceSha256": "db0f4b30c217049d8e1552cec2a4a03dde659f0e9bc98deab87c4e6e3865db4c",
+      "outputSha256": "b63c35e4be297ed3155b0a1aefed9b321d87a90ef239380db781bf0f272b3eac",
+      "width": 1024,
+      "height": 1024,
+      "before": {
+        "rgb": [
+          253,
+          229,
+          122
+        ],
+        "samples": 976715
+      },
+      "after": {
+        "rgb": [
+          255,
+          235,
+          138
+        ],
+        "samples": 976744
+      },
+      "changedPixels": 978186,
+      "darkInkPixelsUnchanged": 66384,
+      "alphaUnchanged": true,
+      "redChannelClippedPixels": 414990,
+      "bytes": 1922904
+    },
+    {
+      "name": "1-1-medium",
+      "sourceSha256": "0306e445556e7e0349764b8aa70449a0a28ab0841b0cbde588c4c6032fe40872",
+      "outputSha256": "96db075c05a6cbf6ebcaf7e49f183d15de1c1a3700672608fe1d25f3be59606d",
+      "width": 1024,
+      "height": 1024,
+      "before": {
+        "rgb": [
+          250,
+          217,
+          107
+        ],
+        "samples": 938799
+      },
+      "after": {
+        "rgb": [
+          255,
+          235,
+          138
+        ],
+        "samples": 939957
+      },
+      "changedPixels": 949557,
+      "darkInkPixelsUnchanged": 80592,
+      "alphaUnchanged": true,
+      "redChannelClippedPixels": 379339,
+      "bytes": 2077208
+    },
+    {
+      "name": "1-1-detailed",
+      "sourceSha256": "aa4d9cfee44a27e8d0dcaa7398206a4b2e01e4811b86e15f92fe1a54e6785481",
+      "outputSha256": "827e3ecf5215a30bd64a88932493d5ce4ef6f53968410b1271b45795d10e6313",
+      "width": 1024,
+      "height": 1024,
+      "before": {
+        "rgb": [
+          244,
+          211,
+          94
+        ],
+        "samples": 830750
+      },
+      "after": {
+        "rgb": [
+          255,
+          235,
+          138
+        ],
+        "samples": 834643
+      },
+      "changedPixels": 852061,
+      "darkInkPixelsUnchanged": 155994,
+      "alphaUnchanged": true,
+      "redChannelClippedPixels": 413455,
+      "bytes": 2701426
+    },
+    {
+      "name": "2-1-simple",
+      "sourceSha256": "777f15540bc93c15e63b3a640867f7a0f96be5a2508f9682953e26bff09e673b",
+      "outputSha256": "1c00316f99b5383b13e4f56be541c693ac1f205e695d0a753a32886613a7d626",
+      "width": 1024,
+      "height": 1024,
+      "before": {
+        "rgb": [
+          253,
+          233,
+          139
+        ],
+        "samples": 967982
+      },
+      "after": {
+        "rgb": [
+          255,
+          235,
+          138
+        ],
+        "samples": 968099
+      },
+      "changedPixels": 966845,
+      "darkInkPixelsUnchanged": 32109,
+      "alphaUnchanged": true,
+      "redChannelClippedPixels": 410445,
+      "bytes": 1898499
+    },
+    {
+      "name": "2-1-medium",
+      "sourceSha256": "5b1b02f0a6a117352d2da63b153f68455eb22b661eb870175475d9a327726b6f",
+      "outputSha256": "f8f60cf61de1fc6b138e72a9aec11fc9d5cb0c1274bce42e56cace1daf58526b",
+      "width": 1024,
+      "height": 1024,
+      "before": {
+        "rgb": [
+          245,
+          217,
+          128
+        ],
+        "samples": 902243
+      },
+      "after": {
+        "rgb": [
+          255,
+          235,
+          138
+        ],
+        "samples": 904049
+      },
+      "changedPixels": 929544,
+      "darkInkPixelsUnchanged": 80158,
+      "alphaUnchanged": true,
+      "redChannelClippedPixels": 417467,
+      "bytes": 2217218
+    },
+    {
+      "name": "2-1-detailed",
+      "sourceSha256": "75bbf1d6ce5ed791b4e89e9bb1d184cacd1298512a3cc2da85d86e5b7ee00cc4",
+      "outputSha256": "5bb0a1a34192987b03f0d2d676cb801e81026e90905a6a39ef95210dc2e1b5a3",
+      "width": 1024,
+      "height": 1024,
+      "before": {
+        "rgb": [
+          245,
+          219,
+          144
+        ],
+        "samples": 735821
+      },
+      "after": {
+        "rgb": [
+          255,
+          235,
+          138
+        ],
+        "samples": 738284
+      },
+      "changedPixels": 755615,
+      "darkInkPixelsUnchanged": 227315,
+      "alphaUnchanged": true,
+      "redChannelClippedPixels": 334060,
+      "bytes": 2631223
+    }
+  ]
+}

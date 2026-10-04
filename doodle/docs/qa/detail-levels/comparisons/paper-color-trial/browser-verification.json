@@ -1,0 +1,21 @@
+{
+  "verifiedAt": "2026-10-04T07:09:20.143Z",
+  "url": "https://doodle-layout-review-93zm997hb-codenamez.vercel.app/colors.html",
+  "checks": [
+    {
+      "width": 320,
+      "anonymousHttp": 200,
+      "sixImagesDecoded": true,
+      "togglesVerified": true,
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 390,
+      "anonymousHttp": 200,
+      "sixImagesDecoded": true,
+      "togglesVerified": true,
+      "noHorizontalOverflow": true
+    }
+  ],
+  "sixFullResolutionRemoteHashesMatch": true
+}
