@@ -1,0 +1,137 @@
+[
+  {
+    "width": 320,
+    "overflow": false,
+    "images": 15,
+    "pairs": [
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Bricolage",
+        "status": "loaded"
+      },
+      {
+        "family": "Plex",
+        "status": "loaded"
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "overflow": false,
+    "images": 15,
+    "pairs": [
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Bricolage",
+        "status": "loaded"
+      },
+      {
+        "family": "Plex",
+        "status": "loaded"
+      }
+    ]
+  },
+  {
+    "width": 1440,
+    "overflow": false,
+    "images": 15,
+    "pairs": [
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      },
+      {
+        "aligned": true,
+        "sideBySide": true
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Bricolage",
+        "status": "loaded"
+      },
+      {
+        "family": "Plex",
+        "status": "loaded"
+      }
+    ]
+  }
+]

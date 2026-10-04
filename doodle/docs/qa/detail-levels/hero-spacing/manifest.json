@@ -1,0 +1,292 @@
+{
+  "status": "Agent reviewed installed native fixture at 320/360/390 dp, English and Arabic at 200%, and longer Portuguese wording at 320 dp. Owner visual acceptance and release approval pending.",
+  "captureSource": "Installed nl.samistudio.doodle.fixture APK, API 36 emulator. Simulated account and generation. Not live generation or Play Integrity verification.",
+  "changes": "Normal text headings use the leading part of the dock upper space. Enlarged text gets a full-width heading. Footer stacking is separate from heading position.",
+  "images": [
+    {
+      "file": "before-native-ar-320-large.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "2d3154205af1b6e08afcb6244801c0eca08b9fc881d72f9689e3a58b35b0e4f6",
+      "source": "Prior capture from commit 86836c6, before this spacing refinement",
+      "reviewStatus": "Historical comparison only"
+    },
+    {
+      "file": "before-native-ar-320.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "24e8b26f540ccff7b24c722b3f78e8e980a330bfde26bd8374a441da40788675",
+      "source": "Prior capture from commit 86836c6, before this spacing refinement",
+      "reviewStatus": "Historical comparison only"
+    },
+    {
+      "file": "before-native-en-320-collapsed.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "fddfd0091dcd3b9cd112fef9f7c855ff1841f992336f74be4d5ef88e78969f54",
+      "source": "Prior capture from commit 86836c6, before this spacing refinement",
+      "reviewStatus": "Historical comparison only"
+    },
+    {
+      "file": "before-native-en-320-large.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "7d6873b3d82b330a941670f46e6d787c6d31d088bf5c338ddf9881ebb5ef493e",
+      "source": "Prior capture from commit 86836c6, before this spacing refinement",
+      "reviewStatus": "Historical comparison only"
+    },
+    {
+      "file": "before-native-en-320.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "fd029201e043dfcc2886939f654dfade4acdfab3d36fbb7aaeede9a348797474",
+      "source": "Prior capture from commit 86836c6, before this spacing refinement",
+      "reviewStatus": "Historical comparison only"
+    },
+    {
+      "file": "gallery-phone.png",
+      "width": 390,
+      "height": 900,
+      "sha256": "c074a9499b451177336caf92e4fef6490f5790819ed0d5736b4a8933810ed00d",
+      "source": "Local rendered comparison gallery",
+      "reviewStatus": "QA evidence only"
+    },
+    {
+      "file": "native-ar-320-large.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "41eea3b69bd12e19bb6fee3da1714afccade88643c336365af9ee2a2d06ad8b3",
+      "source": "Installed updated Android presentation fixture",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending."
+    },
+    {
+      "file": "native-ar-320.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "9eb6d67dc6481aa6be213e6f8bb84c0d4b2c3499174ce26152e606cc44312802",
+      "source": "Installed updated Android presentation fixture",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending."
+    },
+    {
+      "file": "native-en-320-collapsed.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "ee5c35c6c5dc68457a4ca60def08294433eca89e0e9f8be10b09212f7ba1b792",
+      "source": "Installed updated Android presentation fixture",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending."
+    },
+    {
+      "file": "native-en-320-large.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "7e8ad93655b33df35f4d0068b83dbcfd6b7f1b4fa78c1c67a664310a3e8664eb",
+      "source": "Installed updated Android presentation fixture",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending."
+    },
+    {
+      "file": "native-en-320.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "9d9c57d9d91233f1f11485ed04801e6dc370886163091eef3dcacdd906325bea",
+      "source": "Installed updated Android presentation fixture",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending."
+    },
+    {
+      "file": "native-en-360.png",
+      "width": 945,
+      "height": 2102,
+      "sha256": "4b7891b457dd6c2bc1d2475c7dcbfedbfa8637fa3b7d05f41edfb5cc4441d9d0",
+      "source": "Installed updated Android presentation fixture",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending."
+    },
+    {
+      "file": "native-en-390.png",
+      "width": 1024,
+      "height": 2277,
+      "sha256": "77ca741ec2c7641f0daf3bfeaaa0c9345fce1cb043445081b3371163e0f95480",
+      "source": "Installed updated Android presentation fixture",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending."
+    },
+    {
+      "file": "native-pt-320.png",
+      "width": 840,
+      "height": 1868,
+      "sha256": "b648235c93db6cbe21054156b4528be84c114749803023346a26ac814f119908",
+      "source": "Installed updated Android presentation fixture",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending."
+    },
+    {
+      "file": "web-reference.png",
+      "width": 390,
+      "height": 844,
+      "sha256": "e49e575cbf7c7a4c7f7dd9b5cdcb3d7197f45667ee3a1caf6f610e3208d053d9",
+      "source": "docs/qa/detail-levels/hero/app-en-390.png",
+      "reviewStatus": "Agent visually reviewed. Owner final acceptance pending."
+    }
+  ],
+  "checks": {
+    "nativeTests": 101,
+    "typeScript": "Passed",
+    "fixtureBuild": "Gradle assembleFixture passed, exit 0, 38 seconds. Installed isolated fixture only.",
+    "drawer": {
+      "speechVerification": "TalkBack output not verified",
+      "inputAfter": "[49,570][791,881]",
+      "toggleDp": 48,
+      "hiddenRadiosInteractive": 0,
+      "inputBefore": "[49,570][791,881]",
+      "density": 420,
+      "hiddenLabelsRemainInUncompressedHierarchy": 3
+    },
+    "fontSource": "Existing Bricolage Grotesque, IBM Plex Sans and Alexandria assets, loaded before app render.",
+    "talkBack": "Spoken output not verified. Uncompressed UI hierarchy retains disabled labels on hidden radios; none are enabled, clickable or focusable."
+  },
+  "apkSha256": "042e2e0ba6d7985c1566016e852dc91b23766e0d90053ffa6189e5b6944a7941",
+  "sourceHashes": [
+    {
+      "file": "mobile/src/ui/NativeCreateView.tsx",
+      "sha256": "298b47cd8651eb1245a7c0ef435afd9f1b772a2c8c74f08e34f7fc091180a733"
+    },
+    {
+      "file": "mobile/src/ui/NativeDetailSelector.tsx",
+      "sha256": "02abb0abcccc0babc692e81be9467a3581c3c7332484a1b55b3399a8dcdac5b2"
+    }
+  ],
+  "galleryChecks": [
+    {
+      "width": 320,
+      "overflow": false,
+      "images": 15,
+      "pairs": [
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        }
+      ],
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "images": 15,
+      "pairs": [
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        }
+      ],
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "images": 15,
+      "pairs": [
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        }
+      ],
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ]
+    }
+  ],
+  "previewUrl": "https://doodle-layout-review-k0z48mnf3-codenamez.vercel.app/spacing.html"
+}

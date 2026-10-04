@@ -68,40 +68,40 @@
       "width": 840,
       "height": 1868,
       "format": "png",
-      "bytes": 160546,
-      "sha256": "fd029201e043dfcc2886939f654dfade4acdfab3d36fbb7aaeede9a348797474",
+      "bytes": 158971,
+      "sha256": "9d9c57d9d91233f1f11485ed04801e6dc370886163091eef3dcacdd906325bea",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Installed isolated Android fixture. Account and generation simulated."
+      "source": "Updated installed isolated Android fixture, API 36 at 320 dp. Account and generation simulated. Compact heading uses the dock upper space without reducing the pull target."
     },
     {
       "file": "native-en-320-collapsed.png",
       "width": 840,
       "height": 1868,
       "format": "png",
-      "bytes": 124827,
-      "sha256": "fddfd0091dcd3b9cd112fef9f7c855ff1841f992336f74be4d5ef88e78969f54",
+      "bytes": 125452,
+      "sha256": "ee5c35c6c5dc68457a4ca60def08294433eca89e0e9f8be10b09212f7ba1b792",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Installed isolated Android fixture. Account and generation simulated."
+      "source": "Updated installed isolated Android fixture, API 36 at 320 dp. Account and generation simulated. Compact heading uses the dock upper space without reducing the pull target."
     },
     {
       "file": "native-en-320-large.png",
       "width": 840,
       "height": 1868,
       "format": "png",
-      "bytes": 168333,
-      "sha256": "7d6873b3d82b330a941670f46e6d787c6d31d088bf5c338ddf9881ebb5ef493e",
+      "bytes": 168431,
+      "sha256": "7e8ad93655b33df35f4d0068b83dbcfd6b7f1b4fa78c1c67a664310a3e8664eb",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Installed isolated Android fixture. Account and generation simulated."
+      "source": "Updated installed isolated Android fixture, API 36 at 320 dp. Account and generation simulated. Compact heading uses the dock upper space without reducing the pull target."
     },
     {
       "file": "native-ar-320-large.png",
       "width": 840,
       "height": 1868,
       "format": "png",
-      "bytes": 147865,
-      "sha256": "2d3154205af1b6e08afcb6244801c0eca08b9fc881d72f9689e3a58b35b0e4f6",
+      "bytes": 149125,
+      "sha256": "41eea3b69bd12e19bb6fee3da1714afccade88643c336365af9ee2a2d06ad8b3",
       "reviewStatus": "Agent visually reviewed. Owner final acceptance pending.",
-      "source": "Installed isolated Android fixture. Account and generation simulated."
+      "source": "Updated installed isolated Android fixture, API 36 at 320 dp. Account and generation simulated. Compact heading uses the dock upper space without reducing the pull target."
     },
     {
       "file": "native-ar-320.png",
@@ -109,9 +109,9 @@
       "width": 840,
       "height": 1868,
       "format": "png",
-      "bytes": 141523,
-      "sha256": "24e8b26f540ccff7b24c722b3f78e8e980a330bfde26bd8374a441da40788675",
-      "source": "Installed isolated Android fixture. Account and generation simulated."
+      "bytes": 140244,
+      "sha256": "9eb6d67dc6481aa6be213e6f8bb84c0d4b2c3499174ce26152e606cc44312802",
+      "source": "Updated installed isolated Android fixture, API 36 at 320 dp. Account and generation simulated. Compact heading uses the dock upper space without reducing the pull target."
     },
     {
       "file": "desktop-afterword.jpg",
@@ -135,6 +135,6 @@
     }
   ],
   "finalCopy": "What’s your idea?, with equivalents in all ten languages.",
-  "latestChanges": "Removed the afterword guide block and duplicate phone divider. Native narrow headings share the drawer upper space without wrapping unnecessarily. Arabic heading uses the owner-requested casual phrase with sufficient line height.",
-  "updatedAt": "2026-10-04T11:41:38.441Z"
+  "latestChanges": "Native hero now groups heading and helper beside the drawer without negative margins. Footer stacks for narrow width or enlarged text. Full 48 dp pull target and stationary input retained.",
+  "updatedAt": "2026-10-04T13:47:25.800Z"
 }

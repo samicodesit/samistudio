@@ -1,6 +1,6 @@
 {
   "purpose": "Owner-requested side-by-side historical versus current UI review. Historical assets are not approved current marketing images.",
-  "status": "Agent reviewed comparison layout at 320, 390 and 1440 CSS px. Owner acceptance and publishing approval pending.",
+  "status": "Agent reviewed refreshed native captures and comparison layout. Owner final acceptance and release approval pending.",
   "records": [
     {
       "id": "desktop",
@@ -182,8 +182,8 @@
           "side": "after",
           "file": "android-after.png",
           "source": "docs/qa/detail-levels/hero/native-en-320.png",
-          "sourceSha256": "fd029201e043dfcc2886939f654dfade4acdfab3d36fbb7aaeede9a348797474",
-          "sha256": "fd029201e043dfcc2886939f654dfade4acdfab3d36fbb7aaeede9a348797474",
+          "sourceSha256": "9d9c57d9d91233f1f11485ed04801e6dc370886163091eef3dcacdd906325bea",
+          "sha256": "9d9c57d9d91233f1f11485ed04801e6dc370886163091eef3dcacdd906325bea",
           "width": 840,
           "height": 1868,
           "crop": null,
@@ -211,8 +211,8 @@
           "side": "after",
           "file": "hidden-after.png",
           "source": "docs/qa/detail-levels/hero/native-en-320-collapsed.png",
-          "sourceSha256": "fddfd0091dcd3b9cd112fef9f7c855ff1841f992336f74be4d5ef88e78969f54",
-          "sha256": "fddfd0091dcd3b9cd112fef9f7c855ff1841f992336f74be4d5ef88e78969f54",
+          "sourceSha256": "ee5c35c6c5dc68457a4ca60def08294433eca89e0e9f8be10b09212f7ba1b792",
+          "sha256": "ee5c35c6c5dc68457a4ca60def08294433eca89e0e9f8be10b09212f7ba1b792",
           "width": 840,
           "height": 1868,
           "crop": null,
@@ -240,8 +240,8 @@
           "side": "after",
           "file": "large-after.png",
           "source": "docs/qa/detail-levels/hero/native-en-320-large.png",
-          "sourceSha256": "7d6873b3d82b330a941670f46e6d787c6d31d088bf5c338ddf9881ebb5ef493e",
-          "sha256": "7d6873b3d82b330a941670f46e6d787c6d31d088bf5c338ddf9881ebb5ef493e",
+          "sourceSha256": "7e8ad93655b33df35f4d0068b83dbcfd6b7f1b4fa78c1c67a664310a3e8664eb",
+          "sha256": "7e8ad93655b33df35f4d0068b83dbcfd6b7f1b4fa78c1c67a664310a3e8664eb",
           "width": 840,
           "height": 1868,
           "crop": null,
@@ -269,8 +269,8 @@
           "side": "after",
           "file": "rtl-large-after.png",
           "source": "docs/qa/detail-levels/hero/native-ar-320-large.png",
-          "sourceSha256": "2d3154205af1b6e08afcb6244801c0eca08b9fc881d72f9689e3a58b35b0e4f6",
-          "sha256": "2d3154205af1b6e08afcb6244801c0eca08b9fc881d72f9689e3a58b35b0e4f6",
+          "sourceSha256": "41eea3b69bd12e19bb6fee3da1714afccade88643c336365af9ee2a2d06ad8b3",
+          "sha256": "41eea3b69bd12e19bb6fee3da1714afccade88643c336365af9ee2a2d06ad8b3",
           "width": 840,
           "height": 1868,
           "crop": null,
@@ -783,6 +783,5 @@
         }
       ]
     }
-  ],
-  "visualReview": "Reviewed full desktop composition, phone side-by-side layout, Arabic enlarged Android comparison, and store screenshot comparison. All 20 images decoded, fonts loaded, no horizontal overflow, and all pairs stayed side-by-side with aligned labels. This is historical image review, not new app functional validation."
+  ]
 }

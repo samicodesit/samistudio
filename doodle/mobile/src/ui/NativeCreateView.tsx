@@ -1,6 +1,6 @@
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 import { getComposerIntro } from "../../../src/lib/composer-intro";
-import { NativeDetailSelector } from "./NativeDetailSelector";
+import { NativeDetailSelector, NATIVE_DETAIL_GEOMETRY } from "./NativeDetailSelector";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -145,7 +145,10 @@ function NativeComposer({
   const { width, fontScale } = useWindowDimensions();
   const compact = width < 360;
   const intro = getComposerIntro(locale);
-  const stackedHeading = width < 380 || fontScale > 1.3;
+  const stackedHeading = fontScale > 1.3;
+  const stackedFooter = width < 360 || fontScale > 1.3;
+  // The heading can use the dock's empty upper space, stopping before its pull target.
+  const inlineTitleWidth = width - 2 * NATIVE_SPACING.screen - NATIVE_DETAIL_GEOMETRY.toggleInset - NATIVE_DETAIL_GEOMETRY.toggleSize - 8;
   const disabled = !detailReady || !canSubmitScene(draft.scene, draft.maxLength);
   return (
     <View style={[styles.composerScreen, compact && styles.compactComposerScreen]}>
@@ -165,11 +168,11 @@ function NativeComposer({
       ) : null}
 
       <View style={[styles.composerBlock, compact && styles.compactComposerBlock]}>
-        {stackedHeading ? <Text accessibilityRole="header" style={[styles.composerTitle, locale === "ar" && styles.arabicComposerTitle, fontScale <= 1.3 && styles.compactStackedTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text> : null}
+        {stackedHeading ? <Text accessibilityRole="header" style={[styles.composerTitle, locale === "ar" && styles.arabicComposerTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text> : null}
         <View style={styles.inputStack}>
           <View style={[styles.detailRow, { flexDirection: nativeRowDirection(direction) }]}>
             <View style={styles.sceneHeading}>
-              {stackedHeading ? null : <Text accessibilityRole="header" style={[styles.composerTitle, locale === "ar" && styles.arabicComposerTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text>}
+              {stackedHeading ? null : <Text accessibilityRole="header" style={[styles.composerTitle, locale === "ar" && styles.arabicComposerTitle, { width: inlineTitleWidth, alignSelf: direction === "rtl" ? "flex-end" : "flex-start", fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text>}
               <Text style={[styles.composerHint, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{intro.hint}</Text>
             </View>
             <NativeDetailSelector locale={locale} direction={direction} value={detailLevel} reducedMotion={reducedMotion} disabled={!detailReady} onChange={onDetailLevelChange} onFocusVisible={onDetailFocus} />
@@ -190,8 +193,8 @@ function NativeComposer({
             style={[styles.sceneInput, compact && styles.compactSceneInput, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}
             value={draft.scene}
           />
-        <View style={[styles.composerFooter, { flexDirection: stackedHeading ? "column" : nativeRowDirection(direction) }, stackedHeading && styles.composerFooterStacked]}>
-          <View style={[styles.characterCountSlot, stackedHeading && styles.characterCountSlotStacked]}>
+        <View style={[styles.composerFooter, { flexDirection: stackedFooter ? "column" : nativeRowDirection(direction) }, stackedFooter && styles.composerFooterStacked]}>
+          <View style={[styles.characterCountSlot, stackedFooter && styles.characterCountSlotStacked]}>
             <Text accessibilityLiveRegion="polite" style={[styles.composerUsage, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{usage.status === "ready" ? usage.label : ""}</Text>
             {shouldShowCharacterCount(draft.usedLength) ? (
               <Text style={[styles.characterCount, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>
@@ -205,7 +208,7 @@ function NativeComposer({
             accessibilityState={{ disabled }}
             disabled={disabled}
             onPress={onCreate}
-            style={({ pressed }) => [styles.createButton, stackedHeading && styles.createButtonStacked, disabled && styles.disabledButton, pressed && !disabled && styles.pressed]}
+            style={({ pressed }) => [styles.createButton, stackedFooter && styles.createButtonStacked, disabled && styles.disabledButton, pressed && !disabled && styles.pressed]}
           >
             <Text style={[styles.createButtonText, { fontFamily: nativeFontFamily(locale, "body") }]}>{copy.composer.create}</Text>
           </Pressable>
@@ -375,8 +378,6 @@ const styles = StyleSheet.create({
   compactComposerBlock: { gap: 9 },
   composerTitle: { color: NATIVE_COLORS.graphite, fontSize: 25, fontWeight: "600", lineHeight: 29 },
   arabicComposerTitle: { lineHeight: 34 },
-  // Use the selector's empty upper area to keep the single-line title connected.
-  compactStackedTitle: { marginBottom: -24 },
   composerHint: { color: NATIVE_COLORS.muted, fontSize: 16, lineHeight: 22 },
   inputStack: {},
   detailRow: { alignItems: "flex-end", gap: 8 },

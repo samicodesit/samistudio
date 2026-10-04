@@ -13,6 +13,7 @@ const FLOWERS: Record<DetailLevel, number> = {
   medium: require("../../assets/detail/medium.png"),
   detailed: require("../../assets/detail/detailed.png"),
 };
+export const NATIVE_DETAIL_GEOMETRY = { width: 174, height: 104, toggleSize: 48, toggleInset: 65 } as const;
 
 export function NativeDetailSelector({ locale, direction, value, disabled, reducedMotion, onChange, onFocusVisible }: {
   locale: NativeLocale; direction: NativeDirection; value: DetailLevel;
@@ -61,7 +62,7 @@ export function NativeDetailSelector({ locale, direction, value, disabled, reduc
         </Pressable>)}
       </View>
     </Animated.View>
-    <Animated.View {...gestures.panHandlers} style={[styles.toggleWrap, direction === "rtl" ? { left: 65 } : { right: 65 }, { transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [56, 0] }) }] }]}>
+    <Animated.View {...gestures.panHandlers} style={[styles.toggleWrap, direction === "rtl" ? { left: NATIVE_DETAIL_GEOMETRY.toggleInset } : { right: NATIVE_DETAIL_GEOMETRY.toggleInset }, { transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [56, 0] }) }] }]}>
       <Pressable ref={toggle} accessibilityRole="button" accessibilityLabel={(expanded ? copy.hide : copy.show) + " (" + copy.levels[value] + ")"}
         accessibilityState={{ expanded, disabled }} disabled={disabled}
         onPressIn={() => Keyboard.dismiss()} onPress={() => { setFocused(null); setExpanded(!expanded); }}
@@ -73,7 +74,7 @@ export function NativeDetailSelector({ locale, direction, value, disabled, reduc
   </View>;
 }
 const styles = StyleSheet.create({
-  group: { overflow: "visible", width: 174, height: 104, flexShrink: 0 },
+  group: { overflow: "visible", width: NATIVE_DETAIL_GEOMETRY.width, height: NATIVE_DETAIL_GEOMETRY.height, flexShrink: 0 },
   drawer: { position: "absolute", top: 48, width: 170, height: 70, borderWidth: 1, borderColor: NATIVE_COLORS.line, borderTopLeftRadius: 6, borderTopRightRadius: 6, backgroundColor: NATIVE_COLORS.sticky },
   tiles: {},
   tile: { width: 56, height: 56 },
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   roundRight: { borderTopRightRadius: 5 },
   check: { position: "absolute", top: 3, width: 13, height: 13, borderRadius: 7, backgroundColor: NATIVE_COLORS.moss, alignItems: "center", justifyContent: "center" },
   toggleWrap: { position: "absolute", top: 0, zIndex: 1 },
-  toggle: { width: 48, height: 48, alignItems: "center", justifyContent: "flex-end" },
+  toggle: { width: NATIVE_DETAIL_GEOMETRY.toggleSize, height: NATIVE_DETAIL_GEOMETRY.toggleSize, alignItems: "center", justifyContent: "flex-end" },
   handle: { bottom: -1, width: 40, height: 24, alignItems: "center", justifyContent: "center", backgroundColor: NATIVE_COLORS.sticky, borderWidth: 1, borderBottomWidth: 0, borderColor: NATIVE_COLORS.line, borderTopLeftRadius: 14, borderTopRightRadius: 14 },
   disabled: { opacity: 0.65 },
   pressed: { opacity: 0.85 },

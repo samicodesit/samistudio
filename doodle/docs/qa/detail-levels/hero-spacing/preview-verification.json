@@ -1,0 +1,81 @@
+{
+  "url": "https://doodle-layout-review-k0z48mnf3-codenamez.vercel.app/spacing.html",
+  "allComparisons": "https://doodle-layout-review-k0z48mnf3-codenamez.vercel.app/implemented.html",
+  "verifiedAt": "2026-10-04T13:58:23.890Z",
+  "publicChecks": [
+    {
+      "file": "before-native-ar-320-large.png",
+      "status": 200,
+      "sha256": "2d3154205af1b6e08afcb6244801c0eca08b9fc881d72f9689e3a58b35b0e4f6"
+    },
+    {
+      "file": "before-native-ar-320.png",
+      "status": 200,
+      "sha256": "24e8b26f540ccff7b24c722b3f78e8e980a330bfde26bd8374a441da40788675"
+    },
+    {
+      "file": "before-native-en-320-collapsed.png",
+      "status": 200,
+      "sha256": "fddfd0091dcd3b9cd112fef9f7c855ff1841f992336f74be4d5ef88e78969f54"
+    },
+    {
+      "file": "before-native-en-320-large.png",
+      "status": 200,
+      "sha256": "7d6873b3d82b330a941670f46e6d787c6d31d088bf5c338ddf9881ebb5ef493e"
+    },
+    {
+      "file": "before-native-en-320.png",
+      "status": 200,
+      "sha256": "fd029201e043dfcc2886939f654dfade4acdfab3d36fbb7aaeede9a348797474"
+    },
+    {
+      "file": "native-ar-320-large.png",
+      "status": 200,
+      "sha256": "41eea3b69bd12e19bb6fee3da1714afccade88643c336365af9ee2a2d06ad8b3"
+    },
+    {
+      "file": "native-ar-320.png",
+      "status": 200,
+      "sha256": "9eb6d67dc6481aa6be213e6f8bb84c0d4b2c3499174ce26152e606cc44312802"
+    },
+    {
+      "file": "native-en-320-collapsed.png",
+      "status": 200,
+      "sha256": "ee5c35c6c5dc68457a4ca60def08294433eca89e0e9f8be10b09212f7ba1b792"
+    },
+    {
+      "file": "native-en-320-large.png",
+      "status": 200,
+      "sha256": "7e8ad93655b33df35f4d0068b83dbcfd6b7f1b4fa78c1c67a664310a3e8664eb"
+    },
+    {
+      "file": "native-en-320.png",
+      "status": 200,
+      "sha256": "9d9c57d9d91233f1f11485ed04801e6dc370886163091eef3dcacdd906325bea"
+    },
+    {
+      "file": "native-en-360.png",
+      "status": 200,
+      "sha256": "4b7891b457dd6c2bc1d2475c7dcbfedbfa8637fa3b7d05f41edfb5cc4441d9d0"
+    },
+    {
+      "file": "native-en-390.png",
+      "status": 200,
+      "sha256": "77ca741ec2c7641f0daf3bfeaaa0c9345fce1cb043445081b3371163e0f95480"
+    },
+    {
+      "file": "native-pt-320.png",
+      "status": 200,
+      "sha256": "b648235c93db6cbe21054156b4528be84c114749803023346a26ac814f119908"
+    },
+    {
+      "file": "web-reference.png",
+      "status": 200,
+      "sha256": "e49e575cbf7c7a4c7f7dd9b5cdcb3d7197f45667ee3a1caf6f610e3208d053d9"
+    }
+  ],
+  "authoredHtmlMatches": true,
+  "hostingAppendix": "<script async data-explicit-opt-in=\"true\" data-deployment-id=\"dpl_HWodHdJYz51fNjnTTP1AoiGrLivD\" src=\"https://vercel.live/_next-live/feedback/feedback.js\"></script>",
+  "verification": "Local gallery visually inspected at phone size. 320, 390 and 1440 px checks verify loaded fonts, decoded images, aligned pairs and no overflow. All authored hosted HTML is byte-identical; Vercel appends its standard feedback script. Hosted image hashes match reviewed files. Hosted browser rendering was not separately checked because browser controls were unavailable.",
+  "publication": "Static preview only. No live Doodle deploy or Play publication."
+}
