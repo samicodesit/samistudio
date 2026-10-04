@@ -1,110 +1,32 @@
 {
-  "base": "https://doodle-layout-review-9atjkigyb-codenamez.vercel.app",
-  "project": "doodle-layout-review",
-  "plan": "Hobby",
-  "staticOnly": true,
-  "liveAppChanged": false,
-  "verifiedAt": "2026-10-04T11:43:56.459Z",
-  "pages": [
-    {
-      "path": "/implemented.html",
-      "http": 200
-    },
-    {
-      "path": "/store.html",
-      "http": 200
-    }
-  ],
+  "url": "https://doodle-layout-review-fift5vzw4-codenamez.vercel.app/store.html#screenshot-3",
+  "appLayoutUrl": "https://doodle-layout-review-fift5vzw4-codenamez.vercel.app/implemented.html",
+  "verifiedAt": "2026-10-04T12:35:33.779Z",
   "checks": [
     {
-      "path": "/implemented/web-en-desktop.png",
-      "http": 200,
-      "matchingSha256": true
+      "slot": 1,
+      "url": "https://doodle-layout-review-fift5vzw4-codenamez.vercel.app/store-current/01-idea-to-doodle.png",
+      "status": 200,
+      "sha256": "b05e41d75138f6c79cb81b2af41406ef15ffbf6b0c785822cfeba8d0df427412"
     },
     {
-      "path": "/implemented/web-en-390.png",
-      "http": 200,
-      "matchingSha256": true
+      "slot": 2,
+      "url": "https://doodle-layout-review-fift5vzw4-codenamez.vercel.app/store-current/02-detail-levels.png",
+      "status": 200,
+      "sha256": "78d3b02f0a5fbc5f48a81e91b6176a2a07a4a23605ed69477d5f833863a20a6e"
     },
     {
-      "path": "/implemented/web-en-320.png",
-      "http": 200,
-      "matchingSha256": true
+      "slot": 3,
+      "url": "https://doodle-layout-review-fift5vzw4-codenamez.vercel.app/store-current/03-find-an-idea.png",
+      "status": 200,
+      "sha256": "7d415a46f8e4e71a2dcc31ae086de769d8e5798fac8519ff48f1376a79f3afb2"
     },
     {
-      "path": "/implemented/web-ar-390.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/implemented/app-en-390.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/implemented/app-ar-320.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/implemented/native-en-320.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/implemented/native-en-320-collapsed.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/implemented/native-en-320-large.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/implemented/native-ar-320-large.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/implemented/native-ar-320.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/implemented/desktop-afterword.jpg",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/implemented/phone-afterword.jpg",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/store-current/01-idea-to-doodle.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/store-current/02-detail-levels.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/store-current/03-find-an-idea.png",
-      "http": 200,
-      "matchingSha256": true
-    },
-    {
-      "path": "/store-current/04-save-share.png",
-      "http": 200,
-      "matchingSha256": true
+      "slot": 4,
+      "url": "https://doodle-layout-review-fift5vzw4-codenamez.vercel.app/store-current/04-save-share.png",
+      "status": 200,
+      "sha256": "c0b6be6fcce46c421bbb492072e6b95040bf1cfe32982d457c9a64d3ba9efdfe"
     }
   ],
-  "storeVisualReview": {
-    "viewport": "390x844",
-    "allFourImagesDecoded": true,
-    "horizontalOverflow": false
-  }
+  "review": "Export visually inspected at full resolution and 390px. Public anonymous HTTP responses and hashes match current manifest. Browser UI automation unavailable in this session, so public browser rendering not re-inspected. Static preview only. No live app or Play publication."
 }

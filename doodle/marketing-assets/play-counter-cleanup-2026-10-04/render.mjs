@@ -3,8 +3,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createHash } from "node:crypto";
 import sharp from "sharp";
+import { renderIdeasScreenshot } from "./render-ideas.mjs";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
+const previous = JSON.parse(await fs.readFile(path.join(root, "manifest.json"), "utf8"));
 const exportsDir = path.join(root, "exports");
 await fs.mkdir(exportsDir, { recursive: true });
 const region = { left: 115, top: 1710, width: 450, height: 90 };
@@ -45,18 +47,19 @@ for (const [id, filename] of [["01", "01-idea-to-doodle.png"], ["04", "04-save-s
 
 for (const [slot, source, filename] of [
   [2, path.join(root, "../play-detail-levels-2026-10-04/02-detail-levels.png"), "02-detail-levels.png"],
-  [3, path.join(root, "03-original.png"), "03-find-an-idea.png"],
 ]) {
   const bytes = await fs.readFile(source);
   await fs.writeFile(path.join(exportsDir, filename), bytes);
   records.push({ slot, file: `exports/${filename}`, source: path.relative(root, source), sha256: hash(bytes), changedOutside: 0, unchanged: true });
 }
+records.push(await renderIdeasScreenshot());
 records.sort((a, b) => a.slot - b.slot);
 await fs.writeFile(path.join(root, "manifest.json"), JSON.stringify({
   status: "Current counter-free release candidates. Owner visual acceptance and publishing approval pending.",
+  imageGenInstructions: previous.imageGenInstructions,
   dimensions: { width: 1080, height: 1920, alpha: false },
   method: "Built-in Image Gen removes counter text. Only the local blank-panel region is used, color-matched to the original panel and feathered at its edges. All other decoded pixels are verified identical. Originals are retained.",
-  scope: "Marketing-only counter cleanup in screenshots 1 and 4. Screenshots 2 and 3 retained unchanged. No app behavior or pricing changes.",
+  scope: "Marketing-only counter cleanup in screenshots 1 and 4. Screenshot 2 retained unchanged. Screenshot 3 simplified with larger original artwork and short labels. No app behavior or pricing changes.",
   review: "Inspect full-size and phone-size exports before publication. These are composed marketing assets, not new functional verification.",
   records,
 }, null, 2) + "\n");
