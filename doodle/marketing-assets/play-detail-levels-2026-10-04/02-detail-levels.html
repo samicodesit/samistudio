@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Doodle detail levels, store draft</title>
+  <style>
+    @font-face { font-family: Bricolage; src: url('../../mobile/assets/BricolageGrotesque-Bold.ttf'); font-weight: 700; }
+    @font-face { font-family: Plex; src: url('../../mobile/assets/IBMPlexSans-Regular.ttf'); font-weight: 400; }
+    @font-face { font-family: Plex; src: url('../../mobile/assets/IBMPlexSans-SemiBold.ttf'); font-weight: 600; }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; width: 1080px; height: 1920px; }
+    body { background: #F2E6C2; color: #22251F; font-family: Plex, sans-serif; }
+    main { width: 1080px; height: 1920px; position: relative; overflow: hidden; }
+    header { position: absolute; top: 42px; left: 66px; right: 66px; }
+    h1 { margin: 0; font-family: Bricolage, sans-serif; font-size: 96px; line-height: 1.06; letter-spacing: -2px; font-weight: 700; }
+    header p { margin: 18px 0 0; color: #526152; font-size: 36px; line-height: 1.25; }
+    figure { position: absolute; margin: 0; width: 540px; height: 540px; }
+    figure img { display: block; width: 540px; height: 540px; border-radius: 18px; box-shadow: 0 9px 26px #40391A12; }
+    figcaption { position: absolute; top: 235px; color: #195D48; font-weight: 600; font-size: 48px; line-height: 1.2; white-space: nowrap; }
+    .simple { left: 100px; top: 338px; z-index: 1; }
+    .medium { left: 440px; top: 828px; z-index: 2; }
+    .detailed { left: 100px; top: 1318px; z-index: 3; }
+    .simple figcaption, .detailed figcaption { left: 610px; }
+    .medium figcaption { right: 610px; }
+  </style>
+</head>
+<body>
+  <main aria-label="Three real Doodle examples of two friends cooking, from Simple to Detailed">
+    <header><h1>Choose your<br>level of detail.</h1><p>One idea, three ways to doodle.</p></header>
+    <figure class="simple"><img src="../../docs/qa/detail-levels/comparisons/2-1-simple.png" alt="Two friends making pancakes, with simple rounded outlines"><figcaption>Simple</figcaption></figure>
+    <figure class="medium"><img src="../../docs/qa/detail-levels/comparisons/2-1-medium.png" alt="Two friends making pancakes, with developed poses, clothes and cooking details"><figcaption>Medium</figcaption></figure>
+    <figure class="detailed"><img src="../../docs/qa/detail-levels/comparisons/2-1-detailed.png" alt="Two friends making pancakes, with patterned clothes and a detailed kitchen"><figcaption>Detailed</figcaption></figure>
+  </main>
+</body>
+</html>
