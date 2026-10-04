@@ -23,6 +23,8 @@ export type NativeIconName =
   | "support"
   | "language"
   | "chevronForward"
+  | "chevronUp"
+  | "chevronDown"
   | "expand";
 
 const ICONS: { [key in NativeIconName]: IoniconName } = {
@@ -45,6 +47,8 @@ const ICONS: { [key in NativeIconName]: IoniconName } = {
   support: "help-circle-outline",
   language: "globe-outline",
   chevronForward: "chevron-forward",
+  chevronUp: "chevron-up",
+  chevronDown: "chevron-down",
   expand: "expand-outline",
 };
 

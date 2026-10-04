@@ -29,5 +29,31 @@ describe("NativeSessionStore", () => {
     await expect(store.getInstallId()).resolves.toBe("11111111-1111-4111-8111-111111111111");
     expect(storeData.values.get("doodle.native.install")).toBe("11111111-1111-4111-8111-111111111111");
   });
+
+  it("persists a validated detail preference and defaults corrupt storage to Simple", async () => {
+    const values = new Map<string, string>();
+    const storage = { getItem: async (key: string) => values.get(key) ?? null, setItem: async (key: string, value: string) => { values.set(key, value); }, deleteItem: async (key: string) => { values.delete(key); } };
+    const store = new NativeSessionStore(storage);
+    expect(await store.getDetailLevel()).toBe("simple");
+    await store.setDetailLevel("detailed");
+    expect(await new NativeSessionStore(storage).getDetailLevel()).toBe("detailed");
+    values.set("doodle.detail-level", "hard");
+    expect(await store.getDetailLevel()).toBe("simple");
+  });
+
+  it("falls back to Simple when device storage cannot be read", async () => {
+    const data = storage();
+    data.getItem = async () => { throw new Error("Storage unavailable"); };
+    expect(await new NativeSessionStore(data).getDetailLevel()).toBe("simple");
+  });
+  it("retains the level when account and trial credentials are cleared", async () => {
+    const data = storage();
+    const store = new NativeSessionStore(data);
+    await store.setDetailLevel("medium");
+    await store.clearAccessToken();
+    await store.clearTrialToken();
+    expect(await store.getDetailLevel()).toBe("medium");
+  });
+
 });
 

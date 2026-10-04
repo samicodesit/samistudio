@@ -1,3 +1,4 @@
+import { DETAIL_STORAGE_KEY, storedDetailLevel, isDetailLevel, type DetailLevel } from "../../../src/lib/generation/detail-level";
 import type { NativeGoogleResponse } from "../contracts/native";
 
 export interface NativeSecureStorage {
@@ -93,6 +94,14 @@ export class NativeSessionStore {
     if (!UUID_PATTERN.test(installId)) throw new Error("Could not create a native installation id");
     await this.storage.setItem(NATIVE_STORAGE_KEYS.install, installId);
     return installId;
+  }
+
+  async getDetailLevel(): Promise<DetailLevel> {
+    try { return storedDetailLevel(await this.storage.getItem(DETAIL_STORAGE_KEY)); } catch { return "simple"; }
+  }
+  async setDetailLevel(level: DetailLevel): Promise<void> {
+    if (!isDetailLevel(level)) return;
+    await this.storage.setItem(DETAIL_STORAGE_KEY, level);
   }
 
   async getLocale(): Promise<string | null> {

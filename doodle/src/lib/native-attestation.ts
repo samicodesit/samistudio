@@ -1,4 +1,5 @@
 import "server-only";
+import { isDetailLevel, storedDetailLevel, type DetailLevel } from "./generation/detail-level";
 
 import { createHash, randomBytes } from "node:crypto";
 import { GoogleAuth } from "google-auth-library";
@@ -70,6 +71,7 @@ type ChallengeRecord = {
   operation: NativeAttestationOperation;
   installId: string;
   sceneHash: string | null;
+  detailLevel?: DetailLevel;
   principal: string;
   requestHash: string;
 };
@@ -183,6 +185,7 @@ function stableRequestHash(record: {
   operation: NativeAttestationOperation;
   installId: string;
   sceneHash: string | null;
+  detailLevel?: DetailLevel;
   principal: string;
 }) {
   return createHash("sha256")
@@ -208,6 +211,7 @@ export function createNativeRequestHash(input: {
   operation: NativeAttestationOperation;
   installId: string;
   sceneHash: string | null;
+  detailLevel?: DetailLevel;
   principal: string;
 }) {
   return stableRequestHash({
@@ -216,6 +220,7 @@ export function createNativeRequestHash(input: {
     installId: input.installId,
     sceneHash: input.sceneHash,
     principal: input.principal,
+    ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}),
   });
 }
 
@@ -223,6 +228,7 @@ export async function createNativeChallenge(input: {
   operation: NativeAttestationOperation;
   installId: string;
   sceneHash: string | null;
+  detailLevel?: DetailLevel;
   principal: string;
 }): Promise<NativeChallenge> {
   if (!getNativeAttestationConfig()) throw new NativeAttestationUnavailableError();
@@ -230,6 +236,8 @@ export async function createNativeChallenge(input: {
   if (
     !install ||
     !validOperation(input.operation) ||
+    (input.detailLevel !== undefined && !isDetailLevel(input.detailLevel)) ||
+    (input.operation === "guest" && input.detailLevel !== undefined) ||
     !validSceneHash(input.sceneHash) ||
     !PRINCIPAL_PATTERN.test(input.principal) ||
     (input.operation === "guest" && input.sceneHash !== null) ||
@@ -247,6 +255,7 @@ export async function createNativeChallenge(input: {
     installId: install,
     sceneHash: input.sceneHash,
     principal: input.principal.toLowerCase(),
+    ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}),
   };
   const requestHash = createNativeRequestHash(recordWithoutHash);
   const record: ChallengeRecord = {
@@ -255,6 +264,7 @@ export async function createNativeChallenge(input: {
     sceneHash: input.sceneHash,
     principal: input.principal.toLowerCase(),
     requestHash,
+    ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}),
   };
   const result = await redisCommand([
     "SET",
@@ -279,6 +289,8 @@ function parsedChallenge(value: string): ChallengeRecord | null {
     const record = parsed as Partial<ChallengeRecord>;
     if (
       !validOperation(record.operation) ||
+      (record.detailLevel !== undefined && !isDetailLevel(record.detailLevel)) ||
+      (record.operation === "guest" && record.detailLevel !== undefined) ||
       typeof record.installId !== "string" ||
       !UUID_PATTERN.test(record.installId) ||
       (record.sceneHash !== null && (typeof record.sceneHash !== "string" || !SHA256_HEX_PATTERN.test(record.sceneHash))) ||
@@ -295,6 +307,7 @@ function parsedChallenge(value: string): ChallengeRecord | null {
       sceneHash: record.sceneHash,
       principal: record.principal.toLowerCase(),
       requestHash: record.requestHash,
+      ...(record.detailLevel && record.detailLevel !== "simple" ? { detailLevel: record.detailLevel } : {}),
     };
   } catch {
     return null;
@@ -396,6 +409,7 @@ export async function consumeNativeAttestation(input: {
   operation: NativeAttestationOperation;
   installId: string;
   sceneHash: string | null;
+  detailLevel?: DetailLevel;
   principal: string;
   challenge: string;
   integrityToken: string;
@@ -412,6 +426,8 @@ export async function consumeNativeAttestation(input: {
   if (
     !install ||
     !validOperation(input.operation) ||
+    (input.detailLevel !== undefined && !isDetailLevel(input.detailLevel)) ||
+    (input.operation === "guest" && input.detailLevel !== undefined) ||
     !validSceneHash(input.sceneHash) ||
     !PRINCIPAL_PATTERN.test(input.principal) ||
     !CHALLENGE_PATTERN.test(input.challenge) ||
@@ -434,6 +450,7 @@ export async function consumeNativeAttestation(input: {
     record.operation !== input.operation ||
     record.installId !== install ||
     record.sceneHash !== input.sceneHash ||
+    storedDetailLevel(record.detailLevel) !== storedDetailLevel(input.detailLevel) ||
     record.principal !== input.principal.toLowerCase() ||
     record.requestHash !== createNativeRequestHash({
       challenge: input.challenge,
@@ -441,6 +458,7 @@ export async function consumeNativeAttestation(input: {
       installId: install,
       sceneHash: input.sceneHash,
       principal: input.principal.toLowerCase(),
+      ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}),
     })
   ) {
     return "invalid";

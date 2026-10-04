@@ -617,4 +617,49 @@ describe("generate route", () => {
     expect(response.headers.get("cache-control")).toBe("no-store");
     expect(Buffer.from(await response.arrayBuffer()).toString()).toBe("png");
   });
+
+  it.each(["medium", "detailed"])("passes the selected %s detail level to generation", async (detailLevel) => {
+    const req = new NextRequest("http://localhost:3000/api/generate", {
+      method: "POST", headers: { origin: "http://localhost:3000", "content-type": "application/json" },
+      body: JSON.stringify({ scene: "Two cats hug", detailLevel }),
+    });
+    const response = await POST(req);
+    expect(response.status).toBe(200);
+    expect(mocks.generateDoodle).toHaveBeenCalledWith("Two cats hug", undefined, detailLevel);
+    expect(mocks.reserveFreeDoodle).toHaveBeenCalledTimes(1);
+    expect(mocks.finalizeFreeDoodle).toHaveBeenCalledTimes(1);
+    expect(mocks.releaseFreeDoodle).not.toHaveBeenCalled();
+  });
+
+  it.each([null, "hard", "", 1, {}, ["medium"]])("rejects invalid detail before reserving credits: %j", async (detailLevel) => {
+    const req = new NextRequest("http://localhost:3000/api/generate", {
+      method: "POST", headers: { origin: "http://localhost:3000", "content-type": "application/json" },
+      body: JSON.stringify({ scene: "Two cats hug", detailLevel }),
+    });
+    const response = await POST(req);
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({ error: "invalid_request" });
+    expectNoReservation();
+    expect(mocks.generateDoodle).not.toHaveBeenCalled();
+  });
+
+
+  it("carries native detail into both proof verification and generation", async () => {
+    const result = await POST(new NextRequest("http://localhost:3000/api/generate", {
+      method: "POST",
+      headers: { origin: "http://localhost:3000", "content-type": "application/json", "x-doodle-client": "native-android", "x-doodle-trial-token": "signed-trial-token", "x-doodle-install-id": "11111111-1111-4111-8111-111111111111", "x-doodle-attestation-challenge": "c".repeat(43), "x-doodle-attestation-token": "t".repeat(16) },
+      body: JSON.stringify({ scene: "Two cats hug", detailLevel: "detailed" }),
+    }));
+    expect(result.status).toBe(200);
+    expect(mocks.consumeNativeAttestation).toHaveBeenCalledWith(expect.objectContaining({ detailLevel: "detailed" }));
+    expect(mocks.generateDoodle).toHaveBeenCalledWith("Two cats hug", undefined, "detailed");
+  });
+  it("returns an existing generation failure and releases the selected-level credit", async () => {
+    mocks.generateDoodle.mockRejectedValue(new GenerationError("timeout", "timeout"));
+    const req = new NextRequest("http://localhost:3000/api/generate", { method: "POST", headers: { origin: "http://localhost:3000", "content-type": "application/json" }, body: JSON.stringify({ scene: "Two cats hug", detailLevel: "medium" }) });
+    expect((await POST(req)).status).toBe(504);
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledTimes(1);
+    expect(mocks.finalizeFreeDoodle).not.toHaveBeenCalled();
+  });
+
 });

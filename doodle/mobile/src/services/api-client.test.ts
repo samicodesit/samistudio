@@ -466,4 +466,25 @@ describe("NativeApiClient", () => {
     expect(JSON.stringify(diagnostics.record.mock.calls)).not.toContain("secure store details");
   });
 
+
+  it.each(["medium", "detailed"] as const)("sends the same %s level for the challenge and image request", async (detailLevel) => {
+    const fetchImpl = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(response({ enabled: true, packageName: "nl.samistudio.doodle", minimumVersionCode: 2, attestation: "play_integrity", guestEnabled: true, cloudProjectNumber: "123" }))
+      .mockResolvedValueOnce(response({ challenge: "c".repeat(43), requestHash: "h".repeat(43), expiresAt: Date.now() + 1000 }))
+      .mockResolvedValueOnce(new Response(new Uint8Array([137,80,78,71]), { headers: { "Content-Type": "image/png" } }));
+    const requestIntegrity = vi.fn().mockResolvedValue("integrity-token-123");
+    const client = new NativeApiClient({ baseUrl: "https://doodle.samistudio.nl", fetchImpl, requestIntegrity, getInstallId: async () => "11111111-1111-4111-8111-111111111111", getAccessToken: async () => "a".repeat(43), hashScene: async () => "b".repeat(64), stagePng: async () => "file:///doodle.png" });
+    await client.generate(" Two cats hug ", detailLevel);
+    expect(JSON.parse(String(fetchImpl.mock.calls[1][1]?.body))).toEqual({ operation: "generate", installId: "11111111-1111-4111-8111-111111111111", sceneHash: "b".repeat(64), detailLevel });
+    expect(JSON.parse(String(fetchImpl.mock.calls[2][1]?.body))).toEqual({ scene: "Two cats hug", detailLevel });
+    expect(requestIntegrity).toHaveBeenCalledWith("h".repeat(43));
+  });
+  it("rejects an invalid level before reading a session or making requests", async () => {
+    const fetchImpl = vi.fn(), getAccessToken = vi.fn();
+    const client = new NativeApiClient({ baseUrl: "https://doodle.samistudio.nl", fetchImpl, getAccessToken });
+    await expect(client.generate("A cat", "hard" as never)).rejects.toMatchObject({ code: "invalid_request" });
+    expect(fetchImpl).not.toHaveBeenCalled();
+    expect(getAccessToken).not.toHaveBeenCalled();
+  });
+
 });

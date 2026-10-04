@@ -188,4 +188,20 @@ describe("native attestation challenge route", () => {
     expect(response.status).toBe(413);
     expect(mocks.createNativeChallenge).not.toHaveBeenCalled();
   });
+
+  it.each(["medium", "detailed"])("binds a %s challenge to the trial principal", async (detailLevel) => {
+    const result = await POST(request({ operation: "generate", installId, sceneHash: "a".repeat(64), detailLevel }, undefined, { "x-doodle-trial-token": "signed-trial-token" }));
+    expect(result.status).toBe(200);
+    expect(mocks.createNativeChallenge).toHaveBeenCalledWith(expect.objectContaining({ detailLevel, principal: "trial:22222222-2222-4222-8222-222222222222" }));
+  });
+  it.each([null, "hard", 4])("rejects an invalid challenge detail before allocating: %j", async (detailLevel) => {
+    const result = await POST(request({ operation: "generate", installId, sceneHash: "a".repeat(64), detailLevel }));
+    expect(result.status).toBe(400);
+    expect(mocks.createNativeChallenge).not.toHaveBeenCalled();
+    expect(mocks.checkNativeChallengeLimit).not.toHaveBeenCalled();
+  });
+  it("rejects detail on a guest challenge", async () => {
+    expect((await POST(request({ operation: "guest", installId, detailLevel: "simple" }))).status).toBe(400);
+  });
+
 });

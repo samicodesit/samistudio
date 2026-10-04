@@ -1,3 +1,4 @@
+import { isDetailLevel, type DetailLevel } from "../../../src/lib/generation/detail-level";
 import {
   isNativeConfig,
   MAX_SCENE_LENGTH,
@@ -40,7 +41,7 @@ export interface NativeApiClientOptions {
   clearTrialToken?: () => Promise<void>;
   getInstallId?: () => Promise<string>;
   stagePng?: (bytes: ArrayBuffer) => Promise<string>;
-  createChallenge?: (input: { operation: "guest" | "generate"; installId: string; sceneHash?: string }) => Promise<NativeChallengeResponse>;
+  createChallenge?: (input: { operation: "guest" | "generate"; installId: string; sceneHash?: string; detailLevel?: DetailLevel }) => Promise<NativeChallengeResponse>;
   requestIntegrity?: (requestHash: string) => Promise<string>;
   hashScene?: (scene: string) => Promise<string>;
   submitReport?: (payload: { locale: string; report: { reason: string; details: string; includeContent: boolean }; scene?: string; imageBase64?: string }) => Promise<{ id: string }>;
@@ -543,7 +544,7 @@ export class NativeApiClient implements NativeApi {
     this.trialFreeRemaining = null;
   }
 
-  private async requestChallenge(input: { operation: "guest" | "generate"; installId: string; sceneHash?: string }, auth: AuthMode = "none"): Promise<NativeChallengeResponse> {
+  private async requestChallenge(input: { operation: "guest" | "generate"; installId: string; sceneHash?: string; detailLevel?: DetailLevel }, auth: AuthMode = "none"): Promise<NativeChallengeResponse> {
     if (!UUID_PATTERN.test(input.installId)) throw new NativeServiceError("invalid_request");
     if (input.operation === "generate" && !HASH_PATTERN.test(input.sceneHash ?? "")) throw new NativeServiceError("invalid_request");
     if (this.createChallengeOverride) {
@@ -556,7 +557,7 @@ export class NativeApiClient implements NativeApi {
     }
     const body = input.operation === "guest"
       ? { operation: input.operation, installId: input.installId }
-      : { operation: input.operation, installId: input.installId, sceneHash: input.sceneHash };
+      : { operation: input.operation, installId: input.installId, sceneHash: input.sceneHash, ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}) };
     const response = await this.request("/api/native/attestation/challenge", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -602,8 +603,9 @@ export class NativeApiClient implements NativeApi {
     return body;
   }
 
-  async generate(scene: string): Promise<NativeGenerationResult> {
+  async generate(scene: string, detailLevel: DetailLevel = "simple"): Promise<NativeGenerationResult> {
     if (this.platform !== "android") throw new NativeServiceError("native_generation_unavailable");
+    if (!isDetailLevel(detailLevel)) throw new NativeServiceError("invalid_request");
     const normalizedScene = normalizeScene(scene);
     const installId = await this.getInstallId();
     const accessToken = await this.getAccessToken();
@@ -628,7 +630,7 @@ export class NativeApiClient implements NativeApi {
     if (auth === "trial" && !isValidTrialToken(trialToken)) throw new NativeServiceError("native_generation_unavailable");
 
     const sceneHash = await this.hashScene(normalizedScene);
-    const challenge = await this.requestChallenge({ operation: "generate", installId, sceneHash }, auth);
+    const challenge = await this.requestChallenge({ operation: "generate", installId, sceneHash, ...(detailLevel !== "simple" ? { detailLevel } : {}) }, auth);
     if (!this.requestIntegrity) throw new NativeServiceError("native_generation_unavailable");
     const integrityToken = await this.requestIntegrity(challenge.requestHash);
     if (!INTEGRITY_TOKEN_PATTERN.test(integrityToken)) {
@@ -643,7 +645,7 @@ export class NativeApiClient implements NativeApi {
         "X-Doodle-Attestation-Challenge": challenge.challenge,
         "X-Doodle-Attestation-Token": integrityToken,
       },
-      body: JSON.stringify({ scene: normalizedScene }),
+      body: JSON.stringify({ scene: normalizedScene, ...(detailLevel !== "simple" ? { detailLevel } : {}) }),
       includeTrial: auth === "trial",
       auth,
       timeoutMs: this.generationTimeoutMs,

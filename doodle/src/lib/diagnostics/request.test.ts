@@ -47,11 +47,12 @@ describe("request failure diagnostics", () => {
     const requestId = "df9c4bb8-4ab8-49d6-a938-e0ed35616729";
     const response = await diagnoseRequest(new Request("https://doodle.samistudio.nl/api/generate", { headers: { "x-doodle-request-id": requestId } }), "generation", async (context) => {
       context.stage = "credit_finalize";
+      context.detailLevel = "detailed";
       return new Response("image", { headers: { "content-type": "image/png" } });
     });
     expect(await response.text()).toBe("image");
     expect(info).toHaveBeenCalledWith("[doodle-diagnostics]", expect.any(String));
-    expect(JSON.parse(info.mock.calls[0][1] as string)).toMatchObject({ requestId, code: "ok", status: 200, stage: "credit_finalize" });
+    expect(JSON.parse(info.mock.calls[0][1] as string)).toMatchObject({ requestId, code: "ok", status: 200, stage: "credit_finalize", detailLevel: "detailed", promptVersion: "detailed-v1" });
     expect(trackServerDiagnostic).not.toHaveBeenCalled();
   });
 

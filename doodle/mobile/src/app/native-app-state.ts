@@ -1,3 +1,4 @@
+import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 import type {
   NativeAccountModalState,
   NativeAccountUi,
@@ -12,6 +13,8 @@ import type { AccountSummary } from "../contracts/native";
 
 export interface NativeAppState {
   locale: NativeLocale;
+  detailLevel: DetailLevel;
+  detailReady: boolean;
   tab: NativeTab;
   scene: string;
   sceneSource: NativeSceneSource;
@@ -28,6 +31,8 @@ export interface NativeAppState {
 
 export const initialAppState: NativeAppState = {
   locale: "en",
+  detailLevel: "simple",
+  detailReady: false,
   tab: "create",
   scene: "",
   sceneSource: "empty",
@@ -42,6 +47,8 @@ export const initialAppState: NativeAppState = {
 };
 
 export type NativeAppAction =
+  | { type: "detailLevelLoaded"; detailLevel: DetailLevel }
+  | { type: "detailLevelChanged"; detailLevel: DetailLevel }
   | { type: "sceneChanged"; scene: string }
   | { type: "generationStarted"; loadingMessages: readonly string[]; statusLabel: string }
   | { type: "generationIdle" }
@@ -62,6 +69,10 @@ export type NativeAppAction =
 
 export function appReducer(state: NativeAppState, action: NativeAppAction): NativeAppState {
   switch (action.type) {
+    case "detailLevelLoaded":
+      return { ...state, detailLevel: action.detailLevel, detailReady: true };
+    case "detailLevelChanged":
+      return state.generation.status === "waiting" ? state : { ...state, detailLevel: action.detailLevel };
     case "sceneChanged": {
       const sceneSource: NativeSceneSource = state.sceneSource === "idea" || state.sceneSource === "result"
         ? state.sceneSource

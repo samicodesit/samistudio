@@ -119,4 +119,13 @@ describe("native app state", () => {
 
     expect(attempted).toEqual(waiting);
   });
+
+  it("keeps selected detail when switching ideas, scenes, tabs and locale", () => {
+    let state = appReducer(initialAppState, { type: "detailLevelChanged", detailLevel: "detailed" });
+    for (const action of [{ type: "ideaSelected", scene: "A cat" }, { type: "newScene" }, { type: "tabChanged", tab: "ideas" }, { type: "localeChanged", locale: "ar" }] as const) {
+      state = appReducer(state, action);
+      expect(state.detailLevel).toBe("detailed");
+    }
+  });
+
 });

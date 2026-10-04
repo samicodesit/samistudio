@@ -1,0 +1,72 @@
+{
+  "scenes": [
+    "A cat holding a small flower",
+    "Two friends baking pancakes"
+  ],
+  "expectedImages": 6,
+  "settings": {
+    "id": "simple",
+    "model": "gpt-image-1-mini",
+    "quality": "high",
+    "size": "1024x1024"
+  },
+  "outputs": [
+    {
+      "sceneIndex": 0,
+      "repeat": 1,
+      "level": "simple",
+      "promptVersion": "simple-v1",
+      "filename": "1-1-simple.png",
+      "durationMs": 28515
+    },
+    {
+      "sceneIndex": 0,
+      "repeat": 1,
+      "level": "medium",
+      "promptVersion": "medium-v1",
+      "filename": "1-1-medium.png",
+      "durationMs": 25796
+    },
+    {
+      "sceneIndex": 0,
+      "repeat": 1,
+      "level": "detailed",
+      "promptVersion": "detailed-v1",
+      "filename": "1-1-detailed.png",
+      "durationMs": 26564
+    },
+    {
+      "sceneIndex": 1,
+      "repeat": 1,
+      "level": "simple",
+      "promptVersion": "simple-v1",
+      "filename": "2-1-simple.png",
+      "durationMs": 25771
+    },
+    {
+      "sceneIndex": 1,
+      "repeat": 1,
+      "level": "medium",
+      "promptVersion": "medium-v1",
+      "filename": "2-1-medium.png",
+      "durationMs": 26128
+    },
+    {
+      "sceneIndex": 1,
+      "repeat": 1,
+      "level": "detailed",
+      "promptVersion": "detailed-v1",
+      "filename": "2-1-detailed.png",
+      "durationMs": 26920
+    }
+  ],
+  "review": {
+    "increasingComplexitySets": 2,
+    "totalSets": 2,
+    "subjectFidelity": "Both requested subjects/actions remain recognizable",
+    "readability": "Readable at phone size; Detailed scenes are substantially busier",
+    "style": "Medium and Detailed introduce hatching or dark fills in some areas despite instructions. Strict no-shading acceptance is not met.",
+    "ownerAcceptance": "Pending",
+    "coverage": "Two scenes, one image per level each. Six approved paid generations, no retries or automated grading."
+  }
+}

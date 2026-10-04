@@ -523,7 +523,7 @@ test.describe("Doodle desktop and accessibility", () => {
     await page.getByRole("textbox").fill("Two cats hug");
 
     await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
-    const focusableSelector = ".doodle-wordmark, .language-switcher summary, .account-sign-in-action, textarea, .composer-footer button, .suggestions-list button";
+    const focusableSelector = ".doodle-wordmark, .language-switcher summary, .account-sign-in-action, textarea, .detail-tile[tabindex=\"0\"], .detail-toggle, .composer-footer button, .suggestions-list button";
     const controls = page.locator(focusableSelector);
     for (let index = 0; index < await controls.count(); index += 1) {
       await page.keyboard.press("Tab");

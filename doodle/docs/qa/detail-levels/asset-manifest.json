@@ -1,0 +1,110 @@
+{
+  "purpose": "Illustrative selector symbols, not generated-output promises",
+  "current": [
+    {
+      "level": "simple",
+      "source": "scripts/build-detail-assets.mjs",
+      "files": [
+        {
+          "path": "public/detail/simple.svg",
+          "sha256": "6a05fc5ba956b497fcacf87cc787401408ea8a4b7792033a376727383f8a9cef"
+        },
+        {
+          "path": "mobile/assets/detail/simple.png",
+          "sha256": "3fb79f29028e2956f68ac9856cb9d3d1cb73028a3862f2af71f1dc6ee0f3a9e9"
+        }
+      ],
+      "technicalReview": "Rendered at 56 CSS px on web and 56 dp in the Android fixture APK. Consistent flower, scale and composition; distinguishable increasing detail.",
+      "ownerReview": "Pending"
+    },
+    {
+      "level": "medium",
+      "source": "scripts/build-detail-assets.mjs",
+      "files": [
+        {
+          "path": "public/detail/medium.svg",
+          "sha256": "e5877c9e0018dafa3d832599d6dd444b1e8c63344884abc724f7ade28a279545"
+        },
+        {
+          "path": "mobile/assets/detail/medium.png",
+          "sha256": "bcf40855cf5c6556d7728575c8826398e95c201a0ea09267f874c4b97b976a23"
+        }
+      ],
+      "technicalReview": "Rendered at 56 CSS px on web and 56 dp in the Android fixture APK. Consistent flower, scale and composition; distinguishable increasing detail.",
+      "ownerReview": "Pending"
+    },
+    {
+      "level": "detailed",
+      "source": "scripts/build-detail-assets.mjs",
+      "files": [
+        {
+          "path": "public/detail/detailed.svg",
+          "sha256": "53f588c8c0d714d50646683a66f8e06d4b47bb9c5c4ff7b4bd8f02c84bd1c506"
+        },
+        {
+          "path": "mobile/assets/detail/detailed.png",
+          "sha256": "735790a0af8aca492c4815a804218d1d71fe3fd457faea898b195c34b15adbf3"
+        }
+      ],
+      "technicalReview": "Rendered at 56 CSS px on web and 56 dp in the Android fixture APK. Consistent flower, scale and composition; distinguishable increasing detail.",
+      "ownerReview": "Pending"
+    }
+  ],
+  "qaCaptures": {
+    "source": "Production Next.js build with mocked account and image responses",
+    "usage": "Technical UI evidence only. Owner visual approval pending.",
+    "files": [
+      "app-ar-320-2.png",
+      "app-ar-320-collapsed.png",
+      "app-en-390-2.png",
+      "app-en-390-collapsed.png",
+      "app-en-390-transition.png",
+      "web-ar-390-focus.png",
+      "web-en-1280-1.png",
+      "web-en-320-2.png",
+      "web-en-390-0.png",
+      "web-en-390-1.png",
+      "web-en-390-2.png",
+      "app-en-320-2.png",
+      "app-en-320-collapsed.png"
+    ]
+  },
+  "nativeQaCaptures": {
+    "source": "Agent-only Android fixture APK on API 36 emulator; reference image, account and generation are simulated",
+    "usage": "Technical UI evidence only. Owner visual approval pending. Does not verify live generation or Play Integrity.",
+    "files": [
+      "android-ar-200-percent.png",
+      "android-en-200-percent.png",
+      "android-en-collapsed.png",
+      "android-en-detailed.png",
+      "android-en-keyboard-focus.png",
+      "android-en-simple.png",
+      "android-ar-detailed.png",
+      "android-ar-collapsed.png"
+    ]
+  },
+  "realComparisons": {
+    "source": "Six owner-authorized calls through generateDoodle, quality high, gpt-image-1-mini, 1024 square",
+    "files": [
+      "1-1-detailed.png",
+      "1-1-medium.png",
+      "1-1-simple.png",
+      "2-1-detailed.png",
+      "2-1-medium.png",
+      "2-1-simple.png",
+      "comparison.png"
+    ],
+    "review": "Clear increasing complexity in both sets; hatching/fills require owner style acceptance. Original outputs preserved.",
+    "ownerReview": "Pending"
+  },
+  "designTarget": {
+    "file": "design-target.png",
+    "provenance": "Built-in Image Gen, second displayed result exec-f77f2dff-c685-4952-8d8f-1302fde9203a",
+    "ownerSelection": "Option 2 selected 2026-10-04. Latest corrections: 4 px/dp trailing inset, mirrored RTL placement, hint beside selector and fixed input during open/close.",
+    "implementationReview": "Pending owner review; technical visual comparison complete",
+    "evidence": [
+      "design-comparison.png",
+      "design-comparison-detail.png"
+    ]
+  }
+}

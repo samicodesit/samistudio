@@ -51,4 +51,14 @@ describe("generateDoodle", () => {
       }),
     ).rejects.toMatchObject({ kind: "upstream" });
   });
+
+  it("keeps provider settings identical while selecting the detail prompt", async () => {
+    const generate = vi.fn().mockResolvedValue({ data: [{ b64_json: Buffer.from([0x89, 0x50, 0x4e, 0x47]).toString("base64") }] });
+    for (const level of ["simple", "medium", "detailed"] as const) await generateDoodle("Two cats hug", { generate }, level);
+    const settings = generate.mock.calls.map(([input]) => { const config = { ...input }; delete config.prompt; return config; });
+    expect(settings[1]).toEqual(settings[0]);
+    expect(settings[2]).toEqual(settings[0]);
+    expect(new Set(generate.mock.calls.map(([input]) => input.prompt)).size).toBe(3);
+  });
+
 });

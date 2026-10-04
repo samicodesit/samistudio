@@ -1,3 +1,4 @@
+import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 export const NATIVE_ORIGIN = "https://doodle.samistudio.nl" as const;
 export const NATIVE_CLIENT = "native-android" as const;
 export const NATIVE_PACKAGE_NAME = "nl.samistudio.doodle" as const;
@@ -67,7 +68,7 @@ export interface NativeApi {
   getTrialAccount(): Promise<AccountSummary>;
   deleteAccount(): Promise<void>;
   createGuestSession(installId: string): Promise<NativeGuestSessionResponse>;
-  generate(scene: string): Promise<NativeGenerationResult>;
+  generate(scene: string, detailLevel?: DetailLevel): Promise<NativeGenerationResult>;
 }
 
 export interface NativePurchaseApi {

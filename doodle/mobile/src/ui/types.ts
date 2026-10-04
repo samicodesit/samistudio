@@ -1,3 +1,4 @@
+import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 export type NativeLocale = "en" | "nl" | "de" | "fr" | "es" | "pt-br" | "it" | "ja" | "ko" | "ar";
 export type NativeDirection = "ltr" | "rtl";
 export type NativeTab = "create" | "ideas" | "settings";
@@ -188,6 +189,9 @@ export const NATIVE_REPORT_DETAILS_MAX_LENGTH = 500;
 export type NativeContentModal = "none" | "more" | "image" | "purchase" | "report";
 
 export interface NativeDoodleUiProps {
+  detailLevel: DetailLevel;
+  detailReady: boolean;
+  onDetailLevelChange(level: DetailLevel): void;
   locale: NativeLocale;
   direction: NativeDirection;
   tab: NativeTab;

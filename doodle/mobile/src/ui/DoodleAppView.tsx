@@ -46,6 +46,9 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
         <View style={styles.content}>
           {props.tab === "create" ? (
             <NativeCreateView
+              detailLevel={props.detailLevel}
+              detailReady={props.detailReady}
+              onDetailLevelChange={props.onDetailLevelChange}
               locale={props.locale}
               direction={props.direction}
               copy={props.copy}

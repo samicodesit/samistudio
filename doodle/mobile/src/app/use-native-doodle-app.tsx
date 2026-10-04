@@ -1,3 +1,4 @@
+import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { Alert, AppState, Linking } from "react-native";
 import type { NativeDoodleUiProps, NativeLocale, NativeReportSubmission } from "../ui/types";
@@ -26,6 +27,9 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
   const [state, dispatch] = useReducer(appReducer, initialAppState);
   const [reportState, setReportState] = useState<{ pending: boolean; error?: string }>({ pending: false });
   const reportInFlight = useRef(false);
+  const generationInFlight = useRef(false);
+  const lastResultInput = useRef<{ scene: string; detailLevel: DetailLevel } | null>(null);
+  const preferenceWrite = useRef<Promise<void>>(Promise.resolve());
   const accountSummary = useRef<AccountSummary | null>(null);
   const baseCopy = useMemo(() => getNativeCopy(state.locale), [state.locale]);
   const [suggestionIds, setSuggestionIds] = useState<readonly SceneIdeaId[]>(() => pickNativeSuggestionIds(baseCopy.suggestions.items));
@@ -94,6 +98,21 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
 
   useEffect(() => {
     let active = true;
+    void runtime.session.getDetailLevel().catch(() => "simple" as DetailLevel).then(detailLevel => {
+      if (active) dispatch({ type: "detailLevelLoaded", detailLevel });
+    });
+    return () => { active = false; };
+  }, [runtime]);
+
+  const onDetailLevelChange = useCallback((detailLevel: DetailLevel) => {
+    if (!state.detailReady || generationInFlight.current) return;
+    dispatch({ type: "detailLevelChanged", detailLevel });
+    preferenceWrite.current = preferenceWrite.current.catch(() => undefined)
+      .then(() => runtime.session.setDetailLevel(detailLevel)).catch(() => undefined);
+  }, [runtime, state.detailReady]);
+
+  useEffect(() => {
+    let active = true;
     void (async () => {
       const persisted = await runtime.session.getLocale().catch(() => null);
       const deviceLocale = localeFromDevice(getDeviceLocales());
@@ -138,14 +157,16 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     });
   }, [copy, recoverPendingPurchases, runtime, state.locale]);
 
-  const runGeneration = useCallback(async (scene: string) => {
+  const runGeneration = useCallback(async (scene: string, detailLevel: DetailLevel = state.detailLevel) => {
+    if (!state.detailReady || generationInFlight.current) return;
     if (!canSubmitScene(scene, 180)) {
       dispatch({ type: "generationFailed", message: copy.errors.general, retryLabel: copy.actions.tryAgain });
       return;
     }
+    generationInFlight.current = true;
     dispatch({ type: "generationStarted", loadingMessages: getNativeLoadingMessages(state.locale), statusLabel: copy.stage.loadingSr });
     try {
-      const result = await runtime.api.generate(scene);
+      const result = await runtime.api.generate(scene, detailLevel);
       if (typeof result.paidRemaining === "number" || typeof result.freeRemaining === "number") {
         const summary = accountSummary.current;
         if (summary) {
@@ -162,6 +183,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
           paidRemaining: result.paidRemaining,
         });
       }
+      lastResultInput.current = { scene, detailLevel };
       dispatch({ type: "generationReady", imageUri: result.imageUri, imageAlt: copy.stage.generatedAlt, freeRemaining: result.freeRemaining, paidRemaining: result.paidRemaining });
     } catch (error) {
       const code = serviceErrorCode(error);
@@ -184,12 +206,14 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
             ? copy.auth.authError
               : copy.errors.general;
       dispatch({ type: "generationFailed", message, retryLabel: copy.actions.tryAgain });
+    } finally {
+      generationInFlight.current = false;
     }
-  }, [copy, prepareOffer, runtime, state.account.status, state.freeRemaining, state.locale, state.paidRemaining]);
+  }, [copy, prepareOffer, runtime, state.account.status, state.freeRemaining, state.locale, state.paidRemaining, state.detailLevel, state.detailReady]);
 
   const onCreate = useCallback(() => { void runGeneration(state.scene); }, [runGeneration, state.scene]);
   const onRetry = useCallback(() => { void runGeneration(state.scene); }, [runGeneration, state.scene]);
-  const onRedraw = useCallback(() => { dispatch({ type: "modalChanged", modal: "none" }); void runGeneration(state.scene); }, [runGeneration, state.scene]);
+  const onRedraw = useCallback(() => { dispatch({ type: "modalChanged", modal: "none" }); const input = lastResultInput.current; if (input) void runGeneration(input.scene, input.detailLevel); }, [runGeneration]);
 
   const onSceneChange = useCallback((scene: string) => dispatch({ type: "sceneChanged", scene }), []);
   const refreshSuggestions = useCallback(() => {
@@ -353,6 +377,9 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
   }) : undefined;
   const draftCount = characterCountLabel(state.scene, 180);
   return {
+    detailLevel: state.detailLevel,
+    detailReady: state.detailReady,
+    onDetailLevelChange,
     locale: state.locale,
     direction: nativeDirection(state.locale),
     tab: state.tab,

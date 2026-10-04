@@ -318,4 +318,38 @@ describe("native Integrity challenges", () => {
       })).resolves.toBe("invalid");
     }
   });
+
+  it("binds non-simple detail while keeping the legacy Simple hash", () => {
+    const input = { challenge: "b".repeat(43), operation: "generate" as const, installId, sceneHash: "c".repeat(64), principal: accountPrincipal };
+    const legacy = createNativeRequestHash(input);
+    // Fixed canonical hash from the pre-feature request format.
+    expect(legacy).toBe("Rr3PZU5m8dcIZHJffCNCKdRANJ8MWpnXT6puAPp8UfY");
+    expect(createNativeRequestHash({ ...input, detailLevel: "simple" })).toBe(legacy);
+    expect(createNativeRequestHash({ ...input, detailLevel: "medium" })).not.toBe(legacy);
+    expect(createNativeRequestHash({ ...input, detailLevel: "detailed" })).not.toBe(createNativeRequestHash({ ...input, detailLevel: "medium" }));
+  });
+
+
+  it("rejects a detail mismatch before decoding and accepts the matching challenge once", async () => {
+    const challenge = "b".repeat(43), sceneHash = "c".repeat(64);
+    const input = { operation: "generate" as const, installId, sceneHash, principal: accountPrincipal, detailLevel: "detailed" as const };
+    const requestHash = createNativeRequestHash({ ...input, challenge });
+    const stored = JSON.stringify({ ...input, requestHash });
+    mocks.redisCommand.mockResolvedValueOnce(stored);
+    await expect(consumeNativeAttestation({ ...input, detailLevel: "medium", challenge, integrityToken: "t".repeat(16) })).resolves.toBe("invalid");
+    expect(mocks.request).not.toHaveBeenCalled();
+    mocks.redisCommand.mockResolvedValueOnce(stored).mockResolvedValueOnce(1);
+    mocks.request.mockResolvedValue({ data: { tokenPayloadExternal: validPayload(requestHash) } });
+    mocks.getClient.mockResolvedValue({ request: mocks.request });
+    mocks.GoogleAuth.mockImplementation(() => ({ getClient: mocks.getClient }));
+    await expect(consumeNativeAttestation({ ...input, challenge, integrityToken: "t".repeat(16) })).resolves.toBe("verified");
+  });
+  it("stores the selected detail in the request-bound challenge", async () => {
+    const result = await createNativeChallenge({ operation: "generate", installId, sceneHash: "c".repeat(64), principal: accountPrincipal, detailLevel: "medium" });
+    const stored = JSON.parse(String(mocks.redisCommand.mock.calls[0][0][2]));
+    expect(stored.detailLevel).toBe("medium");
+    expect(stored.requestHash).toBe(result.requestHash);
+    expect(result.requestHash).not.toBe(createNativeRequestHash({ challenge: result.challenge, operation: "generate", installId, sceneHash: "c".repeat(64), principal: accountPrincipal }));
+  });
+
 });

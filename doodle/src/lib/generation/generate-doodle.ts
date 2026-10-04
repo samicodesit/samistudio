@@ -1,7 +1,8 @@
 import OpenAI from "openai";
 import { providerFailure, type ProviderFailure } from "@/lib/diagnostics/provider";
 import { normalizeScene } from "@/lib/scenes/scene";
-import { SIMPLE_PROFILE } from "./profile";
+import { generationProfile } from "./profile";
+import { isDetailLevel, PROMPT_VERSIONS, type DetailLevel } from "./detail-level";
 import { buildDoodlePrompt } from "./prompt";
 
 export interface ImageClient {
@@ -67,25 +68,30 @@ function productionClient(): ImageClient {
   };
 }
 
-export async function generateDoodle(scene: string, client: ImageClient = productionClient()): Promise<GeneratedDoodle> {
+export async function generateDoodle(scene: string, client: ImageClient | undefined = undefined, detailLevel: DetailLevel = "simple"): Promise<GeneratedDoodle> {
+  if (!isDetailLevel(detailLevel)) throw new Error("Invalid detail level");
   const normalizedScene = normalizeScene(scene);
+  const profile = generationProfile(detailLevel);
+  const imageClient = client ?? productionClient();
 
   if (process.env.NODE_ENV === "production") {
     console.info("[doodle-generation-profile]", {
-      model: SIMPLE_PROFILE.model,
-      quality: SIMPLE_PROFILE.quality,
-      size: SIMPLE_PROFILE.size,
+      detailLevel,
+      promptVersion: PROMPT_VERSIONS[detailLevel],
+      model: profile.model,
+      quality: profile.quality,
+      size: profile.size,
     });
   }
 
   let response: { data: Array<{ b64_json?: string | null }> };
   try {
-    response = await client.generate({
-      model: SIMPLE_PROFILE.model,
-      prompt: buildDoodlePrompt(normalizedScene, SIMPLE_PROFILE),
+    response = await imageClient.generate({
+      model: profile.model,
+      prompt: buildDoodlePrompt(normalizedScene, profile),
       n: 1,
-      size: SIMPLE_PROFILE.size,
-      quality: SIMPLE_PROFILE.quality,
+      size: profile.size,
+      quality: profile.quality,
     });
   } catch (error) {
     const diagnostics = providerFailure(error);

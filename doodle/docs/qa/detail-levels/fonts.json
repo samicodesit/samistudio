@@ -1,0 +1,63 @@
+{
+  "ar-320-fonts": {
+    "body": "Alexandria, \"Alexandria Fallback\"",
+    "heading": "Alexandria, \"Alexandria Fallback\"",
+    "loaded": [
+      "Alexandria",
+      "Alexandria",
+      "Alexandria",
+      "Alexandria",
+      "Alexandria",
+      "Alexandria",
+      "Alexandria",
+      "Alexandria"
+    ]
+  },
+  "ar-390-fonts": {
+    "body": "Alexandria, \"Alexandria Fallback\"",
+    "heading": "Alexandria, \"Alexandria Fallback\"",
+    "loaded": [
+      "Alexandria",
+      "Alexandria",
+      "Alexandria",
+      "Alexandria",
+      "Alexandria",
+      "Alexandria",
+      "Alexandria",
+      "Alexandria"
+    ]
+  },
+  "en-1280-fonts": {
+    "body": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+    "heading": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "loaded": [
+      "Bricolage Grotesque",
+      "Bricolage Grotesque",
+      "IBM Plex Sans",
+      "IBM Plex Sans",
+      "IBM Plex Sans"
+    ]
+  },
+  "en-320-fonts": {
+    "body": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+    "heading": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "loaded": [
+      "Bricolage Grotesque",
+      "Bricolage Grotesque",
+      "IBM Plex Sans",
+      "IBM Plex Sans",
+      "IBM Plex Sans"
+    ]
+  },
+  "en-390-fonts": {
+    "body": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+    "heading": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "loaded": [
+      "Bricolage Grotesque",
+      "Bricolage Grotesque",
+      "IBM Plex Sans",
+      "IBM Plex Sans",
+      "IBM Plex Sans"
+    ]
+  }
+}

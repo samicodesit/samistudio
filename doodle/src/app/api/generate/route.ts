@@ -1,6 +1,7 @@
 import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { createHash, randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
+import { isDetailLevel } from "@/lib/generation/detail-level";
 import { generateDoodle, GenerationError } from "@/lib/generation/generate-doodle";
 import { normalizeScene, SceneValidationError } from "@/lib/scenes/scene";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
@@ -77,15 +78,23 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     }
     return NextResponse.json({ error: "invalid_scene" }, { status: 400 });
   }
-  if (nativeClient && (typeof body !== "object" || body === null || Array.isArray(body) || !hasExactKeys(body as Record<string, unknown>, ["scene"]))) {
+  if (nativeClient && (typeof body !== "object" || body === null || Array.isArray(body) || !hasExactKeys(body as Record<string, unknown>, "detailLevel" in body ? ["scene", "detailLevel"] : ["scene"]))) {
     return nativeError("invalid_request", 400);
   }
+
+  const detailValue = typeof body === "object" && body !== null && "detailLevel" in body
+    ? (body as { detailLevel?: unknown }).detailLevel : "simple";
+  if (!isDetailLevel(detailValue)) {
+    return nativeClient ? nativeError("invalid_request", 400) : NextResponse.json({ error: "invalid_request" }, { status: 400 });
+  }
+  const detailLevel = detailValue;
 
   const sceneValue =
     typeof body === "object" && body !== null && "scene" in body
       ? (body as { scene?: unknown }).scene
       : undefined;
 
+  diagnostics.detailLevel = detailLevel;
   let scene: string;
   try {
     scene = normalizeScene(sceneValue);
@@ -142,6 +151,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     try {
       integrity = await consumeNativeAttestation({
         operation: "generate",
+        ...(detailLevel !== "simple" ? { detailLevel } : {}),
         installId,
         sceneHash: createHash("sha256").update(scene).digest("hex"),
         principal: nativePrincipalValue,
@@ -267,7 +277,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
 
     infrastructureFailure = false;
     diagnostics.stage = "image_provider";
-    const result = await generateDoodle(scene);
+    const result = await generateDoodle(scene, undefined, detailLevel);
     infrastructureFailure = true;
     const response = new NextResponse(Buffer.from(result.bytes), {
       status: 200,

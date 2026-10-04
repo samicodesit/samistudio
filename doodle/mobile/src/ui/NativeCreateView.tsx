@@ -1,10 +1,14 @@
+import type { DetailLevel } from "../../../src/lib/generation/detail-level";
+import { NativeDetailSelector } from "./NativeDetailSelector";
 import { Image } from "expo-image";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffect, useMemo, useRef, useState } from "react";
 import LottieView from "lottie-react-native";
 import {
   Animated,
   Easing,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
   Pressable,
   ScrollView,
@@ -28,6 +32,9 @@ import type {
 } from "./types";
 
 interface NativeCreateViewProps {
+  detailLevel: DetailLevel;
+  detailReady: boolean;
+  onDetailLevelChange(level: DetailLevel): void;
   locale: NativeLocale;
   direction: NativeDirection;
   copy: NativeDoodleUiCopy;
@@ -55,9 +62,19 @@ const PEN_DRAW_ANIMATION = require("../../assets/pen-draw.json");
 
 export function NativeCreateView(props: NativeCreateViewProps) {
   const { generation } = props;
+  const scrollView = useRef<ScrollView | null>(null);
+  const insets = useSafeAreaInsets();
+  const showFocusedDetail = (tile: View) => {
+    if (!Keyboard.isVisible()) return;
+    scrollView.current?.getNativeScrollRef()?.measureInWindow((_x, scrollTop) => {
+      // Include system insets so Android's IME cannot cover the focus ring.
+      scrollView.current?.scrollResponderScrollNativeHandleToKeyboard(tile, scrollTop + insets.top + insets.bottom + 8, true);
+    });
+  };
   return (
     <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === "ios" ? "padding" : "height"}>
       <ScrollView
+        ref={scrollView}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={[styles.scrollContent, generation.status === "waiting" && styles.waitingScrollContent]}
         showsVerticalScrollIndicator={false}
@@ -65,7 +82,7 @@ export function NativeCreateView(props: NativeCreateViewProps) {
         {generation.status === "waiting" ? <NativeWaitingCard {...props} state={generation} /> : null}
         {generation.status === "ready" ? <NativeResultCard key={generation.imageUri} {...props} state={generation} /> : null}
         {generation.status === "idle" || generation.status === "error" ? (
-          <NativeComposer {...props} error={generation.status === "error" ? generation.message : undefined} />
+          <NativeComposer {...props} onDetailFocus={showFocusedDetail} error={generation.status === "error" ? generation.message : undefined} />
         ) : null}
       </ScrollView>
     </KeyboardAvoidingView>
@@ -73,6 +90,10 @@ export function NativeCreateView(props: NativeCreateViewProps) {
 }
 
 function NativeComposer({
+  detailLevel,
+  detailReady,
+  onDetailLevelChange,
+  onDetailFocus,
   locale,
   direction,
   copy,
@@ -86,7 +107,7 @@ function NativeComposer({
   reducedMotion,
   referenceImageUri,
   onOpenLarger,
-}: NativeCreateViewProps & { error?: string }) {
+}: NativeCreateViewProps & { error?: string; onDetailFocus(tile: View): void }) {
   const [focused, setFocused] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const refreshInFlight = useRef(false);
@@ -123,7 +144,7 @@ function NativeComposer({
   };
   const { width } = useWindowDimensions();
   const compact = width < 360;
-  const disabled = !canSubmitScene(draft.scene, draft.maxLength);
+  const disabled = !detailReady || !canSubmitScene(draft.scene, draft.maxLength);
   return (
     <View style={[styles.composerScreen, compact && styles.compactComposerScreen]}>
       {error ? (
@@ -156,24 +177,29 @@ function NativeComposer({
         <Text accessibilityRole="header" style={[styles.composerTitle, compact && styles.compactComposerTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}> 
           {copy.composer.title}
         </Text>
-        <Text style={[styles.composerHint, compact && styles.compactComposerHint, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}> 
-          {copy.composer.hint}
-        </Text>
-        <TextInput
-          accessibilityLabel={copy.composer.label}
-          accessibilityHint={copy.composer.hint}
-          autoCapitalize="sentences"
-          multiline
-          maxLength={draft.maxLength}
-          onChangeText={onSceneChange}
-          onBlur={() => setFocused(false)}
-          onFocus={() => setFocused(true)}
-          placeholder={copy.composer.placeholder}
-          placeholderTextColor={NATIVE_COLORS.muted}
-          selectionColor={NATIVE_COLORS.moss}
-          style={[styles.sceneInput, compact && styles.compactSceneInput, focused && styles.sceneInputFocused, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}
-          value={draft.scene}
-        />
+        <View style={styles.inputStack}>
+          <View style={[styles.detailRow, { flexDirection: nativeRowDirection(direction) }]}>
+            <Text style={[styles.composerHint, styles.detailHint, compact && styles.compactComposerHint, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>
+              {copy.composer.hint}
+            </Text>
+            <NativeDetailSelector locale={locale} direction={direction} value={detailLevel} reducedMotion={reducedMotion} disabled={!detailReady} onChange={onDetailLevelChange} onFocusVisible={onDetailFocus} />
+          </View>
+          <TextInput
+            accessibilityLabel={copy.composer.label}
+            accessibilityHint={copy.composer.hint}
+            autoCapitalize="sentences"
+            multiline
+            maxLength={draft.maxLength}
+            onChangeText={onSceneChange}
+            onBlur={() => setFocused(false)}
+            onFocus={() => setFocused(true)}
+            placeholder={copy.composer.placeholder}
+            placeholderTextColor={NATIVE_COLORS.muted}
+            selectionColor={NATIVE_COLORS.moss}
+            style={[styles.sceneInput, compact && styles.compactSceneInput, focused && styles.sceneInputFocused, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}
+            value={draft.scene}
+          />
+        </View>
         <View style={[styles.composerFooter, { flexDirection: nativeRowDirection(direction) }]}>
           <View style={styles.characterCountSlot}>
             {shouldShowCharacterCount(draft.usedLength) ? (
@@ -360,7 +386,10 @@ const styles = StyleSheet.create({
   compactComposerTitle: { fontSize: 28, lineHeight: 32 },
   composerHint: { color: NATIVE_COLORS.muted, fontSize: 16, lineHeight: 22 },
   compactComposerHint: { fontSize: 15, lineHeight: 20 },
-  sceneInput: { backgroundColor: NATIVE_COLORS.paper, borderColor: NATIVE_COLORS.line, borderRadius: 16, borderWidth: 1, color: NATIVE_COLORS.graphite, fontSize: 17, lineHeight: 24, minHeight: 104, paddingHorizontal: 16, paddingVertical: 14, textAlignVertical: "top" },
+  inputStack: { marginTop: -24 },
+  detailRow: { alignItems: "flex-end", gap: 8 },
+  detailHint: { flex: 1, paddingTop: 24, paddingBottom: 12 },
+  sceneInput: { zIndex: 1, backgroundColor: NATIVE_COLORS.paper, borderColor: NATIVE_COLORS.line, borderRadius: 16, borderWidth: 1, color: NATIVE_COLORS.graphite, fontSize: 17, lineHeight: 24, minHeight: 104, paddingHorizontal: 16, paddingVertical: 14, textAlignVertical: "top" },
   compactSceneInput: { fontSize: 16, lineHeight: 22 },
   sceneInputFocused: { borderColor: NATIVE_COLORS.moss },
   composerFooter: { alignItems: "center", gap: 12, justifyContent: "space-between" },

@@ -1,0 +1,128 @@
+{
+  "date": "2026-10-04",
+  "branch": "codex/visual-detail-levels",
+  "sourceBaseline": "dcf3529",
+  "sourcePreservation": "Current native update plus deployed diagnostics/privacy, preserved before feature edits",
+  "checks": [
+    {
+      "command": "npm test",
+      "result": "584 passed, 1 paid real-image test skipped"
+    },
+    {
+      "command": "npm run typecheck",
+      "result": "Passed"
+    },
+    {
+      "command": "npm run lint",
+      "result": "Passed; two existing no-img-element warnings in card-composer.tsx"
+    },
+    {
+      "command": "npm run build -- --webpack",
+      "result": "Passed production Next.js build"
+    },
+    {
+      "command": "npm run test:e2e -- --config .qa-playwright.config.ts (production build, detail-levels and app-workspace)",
+      "result": "6 passed after option 2 revision; includes contiguous 56 px choices, 4 px edge inset, zero input gap, masking, transient capture and reduced motion"
+    },
+    {
+      "command": "npm run test:e2e -- --config .qa-playwright.config.ts (entire production browser suite)",
+      "result": "72 passed, 7 failed; see browserFailures"
+    },
+    {
+      "command": "mobile: npm test",
+      "result": "101 passed"
+    },
+    {
+      "command": "mobile: npm run typecheck",
+      "result": "Passed"
+    },
+    {
+      "command": "Expo export --platform android (fixture mode false)",
+      "result": "Passed; production package nl.samistudio.doodle and fixture flag false verified"
+    },
+    {
+      "command": "Gradle :app:assembleFixture (local x86_64 QA APK)",
+      "result": "Passed; installed separate agent-only fixture package on API 36 emulator"
+    },
+    {
+      "command": "Production Playwright delete-account.spec.ts with test Google client ID at build time",
+      "result": "1 passed; resolves the Google stub failure from the broader run"
+    },
+    {
+      "command": "Selector unit tests after drawer revision",
+      "result": "5 passed; native TypeScript and web lint passed; updated production web and fixture APK builds passed"
+    },
+    {
+      "command": "RTL and spacing correction: complete web/backend unit suite, production web build, lint, production detail/workspace browser tests, native TypeScript and fixture APK",
+      "result": "584 passed, 1 paid test skipped; web build passed; lint 0 errors with 2 existing warnings; 6 browser tests passed. Native rendering and enlarged text recorded separately below."
+    },
+    {
+      "command": "Final native unit suite and TypeScript; API 36 fixture render",
+      "result": "101 tests passed; TypeScript passed; fixture APK built. English/Arabic plus enlarged text, fixed input bounds and hidden radio suppression verified."
+    }
+  ],
+  "browserFailures": [
+    {
+      "test": "delete-account: safe deletion",
+      "failure": "Google stub button absent; public Google client ID was not supplied at production build time",
+      "resolved": "Passed targeted rerun with required build-time test client ID"
+    },
+    {
+      "test": "doodle: creates/downloads/retries/new scene",
+      "failure": "Old test expects suggestion list on public landing composer"
+    },
+    {
+      "test": "doodle: refusal/timeout/errors",
+      "failure": "Old test expects 220 px error stage; landing stage renders 350 px"
+    },
+    {
+      "test": "doodle: cancelled checkout",
+      "failure": "Hardcoded port 3100 expectation; isolated test server used 3120"
+    },
+    {
+      "test": "doodle: desktop keyboard and reduced motion",
+      "failure": "Old test expects 1180 px main width; landing renders 1100 px"
+    },
+    {
+      "test": "mobile-polish: composer/result reach",
+      "failure": "Old test expects removed landing copy First 2 doodles free"
+    },
+    {
+      "test": "suggestion-refresh: before hydration",
+      "failure": "JS-disabled test expects installed suggestions on public landing runtime URL"
+    }
+  ],
+  "browserFailureAssessment": "The broader run returned 72 passed and 7 failed. One auth harness failure passed after providing the required build-time test Google client ID. Six other landing/layout or test-server failures remain unresolved. Baseline suite was not rerun, so they are not claimed proven pre-existing. Feature-specific production browser checks passed.",
+  "visualQa": {
+    "web": "Production Next.js build with mocked account/image responses. Owner-selected option 2: contiguous yellow drawer, two thin dividers, 4 px trailing inset, centered pull tab and input masking. All selections at 1280, 390 and 320 px, Arabic RTL, focus/tooltips, collapsed/open and a closing frame inspected. Shared animation progress prevents detached-tab gaps. Existing brand fonts actually loaded. Latest correction puts the hint beside the selector, mirrors the whole strip and check in RTL, and keeps input coordinates unchanged through collapse/reveal. English and Arabic installed layout also checked at 320 px.",
+    "native": "Actual fixture APK on API 36 emulator. Joined 56 dp choices and 48 dp pull-tab touch target verified from hierarchy at density 420. English/Arabic at 200% text reviewed. Tap to hide, down/up handle swipes and selected-state retention exercised. Hidden radios absent from hierarchy after explicit accessibility/focus suppression. Keyboard focus above IME checked. Font scale restored to 1.0. Latest drawer mirrors to the left in RTL. Fixed input coordinates verified by native hierarchy before/after collapse; full 48 dp handle target preserved. Hint shares the row with the selector. Final fixture APK built successfully after the enlarged-text guard. English and Arabic at font scale 2.0 inspected; Arabic hint no longer crowds heading. Input bounds remain identical after collapse at both font sizes. Emulator font scale restored to 1.0.",
+    "accessibility": "Web radio-group, checked states, one tab stop and arrow/Home/End behavior tested. Android radio roles, localized labels, checked/focusable states inspected in native hierarchy; hardware Tab and Enter exercised.",
+    "speechLimitation": "Actual spoken TalkBack output not verified",
+    "provenance": "All UI captures use fixture account/generation responses. They are not live provider or Play Integrity validation."
+  },
+  "promptAndApiQa": "Exact Simple prompt hash, unchanged provider settings, invalid level rejection before reservation/provider, credit success/failure handling, native level binding/mismatch and legacy hash/body compatibility covered by tests.",
+  "pendingReleaseGates": [
+    "Owner visual and generated-style acceptance",
+    "Any further paid comparison requires separate spending approval",
+    "Independent code and visual review",
+    "Real Play-installed Android generation and Integrity",
+    "Resolve six remaining broader browser harness failures",
+    "Separate deployment and publishing approval"
+  ],
+  "externalActions": {
+    "paidGenerations": 6,
+    "productionDeployment": false,
+    "storePublishing": false
+  },
+  "realComparisons": {
+    "images": 6,
+    "quality": "high",
+    "model": "gpt-image-1-mini",
+    "size": "1024x1024",
+    "increasingComplexity": "2 of 2 sets clearly increase in detail",
+    "styleFinding": "Some hatching and filled areas at Medium/Detailed. Strict no-shading acceptance not met. Owner style acceptance pending.",
+    "evidence": "comparisons/manifest.json",
+    "coverage": "Two scenes, one image per level per scene. This is a limited pilot, not the original 36-image quality gate."
+  },
+  "designQa": "Owner chose image-generation option 2. Compared normalized source and rendered web together, full screen and selector crop. Fixed spacing and detached pull tab during the slide. Final design-qa.md records scoped acceptance; release gates remain separate."
+}

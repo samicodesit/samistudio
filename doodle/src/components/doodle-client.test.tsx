@@ -149,6 +149,13 @@ describe("DoodleClient", () => {
       throw new Error(`Unexpected fetch: ${String(input)}`);
     });
     sessionStorage.clear();
+    const preferences = new Map<string, string>();
+    Object.defineProperty(window, "localStorage", { configurable: true, value: {
+      getItem: (key: string) => preferences.get(key) ?? null,
+      setItem: (key: string, value: string) => preferences.set(key, value),
+      removeItem: (key: string) => preferences.delete(key),
+      clear: () => preferences.clear(),
+    } });
     history.replaceState({}, "", "/");
   });
 
@@ -715,5 +722,21 @@ describe("DoodleClient", () => {
     expect(vi.mocked(fetch).mock.calls.some(([input]) => input === "/api/checkout")).toBe(false);
     expect(sessionStorage.getItem("doodle:return")).toBeNull();
     expect(location.search).toBe("");
+  });
+
+  it("selects a visual detail level without generating, remembers it and submits it", async () => {
+    mockGeneration(new Response(new Blob(["png"], { type: "image/png" }), { status: 200 }));
+    const view = renderClient("en", "Two cats hug");
+    const medium = await screen.findByRole("radio", { name: "Medium" });
+    await waitFor(() => expect(medium).toBeEnabled());
+    fireEvent.click(medium);
+    expect(medium).toHaveAttribute("aria-checked", "true");
+    expect(window.localStorage.getItem("doodle.detail-level")).toBe("medium");
+    expect(vi.mocked(fetch).mock.calls.filter(([path]) => path === "/api/generate")).toHaveLength(0);
+    view.unmount();
+    renderClient("en", "Two cats hug");
+    await waitFor(() => expect(screen.getByRole("radio", { name: "Medium" })).toHaveAttribute("aria-checked", "true"));
+    fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+    await waitFor(() => expect(fetch).toHaveBeenCalledWith("/api/generate", expect.objectContaining({ body: JSON.stringify({ scene: "Two cats hug", detailLevel: "medium" }) })));
   });
 });

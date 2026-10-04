@@ -2390,3 +2390,37 @@ html[lang="ja"] .editorial-article h1 {
     font-size: clamp(31px, 9.2vw, 44px);
   }
 }
+
+/* One progress value keeps the pull tab joined while the input masks the drawer. */
+@property --detail-open { syntax: "<number>"; inherits: true; initial-value: 1; }
+.composer-input-wrap { position: relative; isolation: isolate; min-width: 0; }
+.composer-input-wrap:has(.detail-selector) { margin-top: 10px; }
+.composer-detail-row { display: grid; grid-template-columns: minmax(0, 1fr) 174px; gap: 8px; align-items: end; min-height: 80px; }
+.composer-detail-row .scene-hint { margin: 0; max-width: none; padding-bottom: 12px; }
+.composer-detail-row .detail-selector { grid-column: 2; }
+.composer-input-wrap .doodle-composer { position: relative; z-index: 1; }
+.composer-input-wrap .doodle-composer:focus-within { transform: none; }
+.detail-selector { position: relative; --detail-open: 1; height: 80px; overflow: visible; transition: --detail-open 180ms ease-out; touch-action: pan-x; }
+.detail-selector[data-expanded="false"] { --detail-open: 0; }
+.detail-drawer { position: absolute; top: 24px; inset-inline-end: 4px; width: 170px; height: 70px; border: 1px solid var(--line); border-radius: 6px 6px 0 0; background: #ffeb8a; transform: translateY(calc((1 - var(--detail-open)) * 56px)); transition: visibility 0ms; visibility: visible; }
+.detail-selector[data-expanded="false"] .detail-drawer { pointer-events: none; visibility: hidden; transition: visibility 0ms 180ms; }
+.detail-toggle { position: absolute; top: calc((1 - var(--detail-open)) * 56px - 20px); inset-inline-end: 67px; z-index: 1; width: 44px; height: 44px; min-height: 44px; padding: 0; display: flex; align-items: flex-end; justify-content: center; border: 0; background: transparent; color: var(--graphite); cursor: pointer; }
+.detail-handle { position: relative; bottom: -1px; width: 40px; height: 24px; display: grid; place-items: center; border: 1px solid var(--line); border-bottom: 0; border-radius: 14px 14px 0 0; background: #ffeb8a; }
+.detail-toggle:hover .detail-handle { color: var(--moss); }
+.detail-toggle:focus-visible { outline: none; }
+.detail-toggle:focus-visible .detail-handle { outline: 2px solid var(--moss); outline-offset: -3px; }
+.detail-toggle:disabled { cursor: wait; opacity: .65; }
+@media (prefers-reduced-motion: reduce) { .detail-selector, .detail-selector .detail-drawer, .detail-selector[data-expanded="false"] .detail-drawer { transition: none; } }
+.detail-tiles { display: flex; gap: 0; }
+.detail-tile { position: relative; width: 56px; height: 56px; flex: 0 0 56px; border: 0; padding: 0; background: transparent; cursor: pointer; }
+.detail-tile + .detail-tile { border-inline-start: 1px solid rgba(32, 35, 31, .2); }
+.detail-tile img { width: 100%; height: 100%; display: block; }
+.detail-tile:first-child img { border-start-start-radius: 5px; }
+.detail-tile:last-child img { border-start-end-radius: 5px; }
+.detail-tile:focus-visible { outline: 2px solid var(--moss); outline-offset: -3px; }
+.detail-tile:disabled { cursor: wait; opacity: .65; }
+.detail-check { position: absolute; top: 3px; inset-inline-end: 3px; width: 13px; height: 13px; display: grid; place-items: center; border-radius: 50%; }
+.detail-tile[aria-checked="true"] .detail-check { background: var(--moss); color: var(--paper); }
+.detail-tooltip { position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%); z-index: 3; pointer-events: none; white-space: nowrap; padding: 4px 7px; border-radius: 6px; background: var(--graphite); color: var(--paper); font-size: 12px; line-height: 1.3; opacity: 0; }
+.detail-tile:focus-visible .detail-tooltip { opacity: 1; }
+@media (hover: hover) { .detail-tile:hover:not(:disabled) .detail-tooltip { opacity: 1; } }

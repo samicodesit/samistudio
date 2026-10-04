@@ -8,6 +8,8 @@ import type { AccountSummary } from "@/app/api/account/route";
 import { formatCount, localePath, SUPPORTED_LOCALES, type DoodleCopy, type Locale } from "@/lib/i18n";
 import { DEFAULT_SUGGESTION_IDS, localizeSceneIdeas, pickSceneIdeas, type SceneIdeaId } from "@/lib/scenes/suggestions";
 import { AccountMenu } from "./account-menu";
+import { useDetailLevel } from "./use-detail-level";
+import type { DetailLevel } from "@/lib/generation/detail-level";
 import { SceneComposer } from "./scene-composer";
 import { DoodleStage } from "./doodle-stage";
 import { PurchaseDialog } from "./purchase-dialog";
@@ -19,7 +21,7 @@ import { LANDING_EXAMPLE, type LandingCopy } from "@/lib/landing-copy";
 type GenerationState =
   | { status: "idle"; imageUrl: null; error: null }
   | { status: "generating"; imageUrl: null; error: null }
-  | { status: "ready"; imageUrl: string; imageFile: File; error: null }
+  | { status: "ready"; imageUrl: string; imageFile: File; error: null; input: { scene: string; detailLevel: DetailLevel } }
   | { status: "error"; imageUrl: null; error: string };
 type PurchaseReturnFocus =
   | { kind: "element"; element: HTMLElement }
@@ -77,6 +79,7 @@ function messageForStatus(status: number, copy: DoodleCopy["errors"]): string {
 
 export function DoodleClient({ locale, copy, initialScene = "", initialSuggestionIds, accountHost = "web", landing }: DoodleClientProps) {
   const [scene, setScene] = useState(initialScene);
+  const { detailLevel, detailReady, selectDetailLevel } = useDetailLevel();
   const initialIds = initialSuggestionIds ?? DEFAULT_SUGGESTION_IDS;
   const [suggestionIds, setSuggestionIds] = useState<readonly SceneIdeaId[]>(initialIds);
   const [suggestionRefreshPhase, setSuggestionRefreshPhase] = useState<"idle" | "entering">("idle");
@@ -302,8 +305,8 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
     }
   }
 
-  async function createDoodle() {
-    if (!scene.trim() || generation.status === "generating") return;
+  async function createDoodle(input = { scene, detailLevel }) {
+    if (!detailReady || !input.scene.trim() || generation.status === "generating") return;
 
     if (document.activeElement instanceof HTMLTextAreaElement) {
       document.activeElement.blur();
@@ -314,7 +317,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ scene }),
+        body: JSON.stringify(input),
       });
 
       updateRemaining(response);
@@ -337,7 +340,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
       const imageFile = new File([imageBlob], "doodle.png", { type: imageBlob.type || "image/png" });
       const imageUrl = URL.createObjectURL(imageBlob);
       currentObjectUrl.current = imageUrl;
-      setGeneration({ status: "ready", imageUrl, imageFile, error: null });
+      setGeneration({ status: "ready", imageUrl, imageFile, error: null, input });
       track("Doodle Created");
       if (response.headers.get("X-Doodle-Balance-Uncertain") === "1") {
         const identity = identityRevision.current;
@@ -440,7 +443,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
         {generation.status === "generating" ? null : generation.status === "ready" ? (
           <section className="state-copy" aria-labelledby="ready-title">
             <h1 id="ready-title">{copy.status.readyTitle}</h1>
-            <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} scene={scene} locale={locale} onTryAgain={createDoodle} onNewScene={handleNewScene} copy={copy.actions} />
+            <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} scene={scene} locale={locale} onTryAgain={() => createDoodle(generation.input)} onNewScene={handleNewScene} copy={copy.actions} />
             <div className="workspace-usage">
               {usage === null
                 ? <span className="usage-loading" role="status" aria-label={copy.account.label} />
@@ -452,7 +455,11 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
             scene={scene}
             isGenerating={false}
             onSceneChange={setScene}
-            onCreate={createDoodle}
+            onCreate={() => createDoodle()}
+            locale={locale}
+            detailLevel={detailLevel}
+            detailReady={detailReady}
+            onDetailLevelChange={selectDetailLevel}
             copy={landing ? { ...copy.composer, placeholder: landing.examplePrompt } : copy.composer}
             usage={usage}
             usageLoadingLabel={copy.account.label}

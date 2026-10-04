@@ -1,4 +1,5 @@
 import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
+import { isDetailLevel } from "@/lib/generation/detail-level";
 import { getNativeBearer } from "@/lib/native-session";
 import { getCurrentUser } from "@/lib/auth/session";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
@@ -39,13 +40,15 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
   const operation = body.operation;
   const installId = body.installId;
   const sceneHash = body.sceneHash;
+  const detailLevel = "detailLevel" in body ? body.detailLevel : "simple";
   if (
     (operation !== "guest" && operation !== "generate") ||
     typeof installId !== "string" ||
     !hasExactKeys(
       body,
-      operation === "guest" ? ["operation", "installId"] : ["operation", "installId", "sceneHash"],
+      operation === "guest" ? ["operation", "installId"] : "detailLevel" in body ? ["operation", "installId", "sceneHash", "detailLevel"] : ["operation", "installId", "sceneHash"],
     ) ||
+    !isDetailLevel(detailLevel) ||
     (operation === "guest" && sceneHash !== undefined) ||
     (operation === "generate" && typeof sceneHash !== "string")
   ) {
@@ -103,6 +106,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
       operation: operation as NativeAttestationOperation,
       installId,
       sceneHash: operation === "generate" ? sceneHash as string : null,
+      ...(detailLevel !== "simple" ? { detailLevel } : {}),
       principal,
     });
     return NextResponse.json(challenge, { headers: { "Cache-Control": "no-store" } });

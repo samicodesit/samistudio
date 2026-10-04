@@ -1,4 +1,5 @@
 import "server-only";
+import type { DetailLevel, PROMPT_VERSIONS } from "../generation/detail-level";
 import { createHmac } from "node:crypto";
 import { after } from "next/server";
 import { redisCommand } from "@/lib/redis";
@@ -9,6 +10,7 @@ export type ServerDiagnostic = ProviderFailure & {
   source: "server"; timestamp: string; requestId: string; operation: DiagnosticOperation;
   stage: DiagnosticStage; code: DiagnosticCode | "ok"; status: number;
   channel: "android" | "web"; durationMs: number;
+  detailLevel?: DetailLevel; promptVersion?: typeof PROMPT_VERSIONS[DetailLevel];
 };
 export const DIAGNOSTIC_RETENTION_SECONDS = 30 * 86_400;
 export type IngestResult = "stored" | "rate_limited" | "unavailable";

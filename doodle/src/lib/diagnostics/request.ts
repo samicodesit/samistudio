@@ -1,4 +1,5 @@
 import "server-only";
+import { isDetailLevel, PROMPT_VERSIONS, type DetailLevel } from "../generation/detail-level";
 import type { ProviderFailure } from "./provider";
 import { randomUUID } from "node:crypto";
 import { diagnosticCode, DIAGNOSTIC_UUID, type DiagnosticCode, type DiagnosticOperation, type DiagnosticStage } from "./events";
@@ -6,6 +7,7 @@ import { trackServerDiagnostic, type ServerDiagnostic } from "./store";
 
 export interface RequestDiagnostics extends ProviderFailure {
   requestId: string;
+  detailLevel?: DetailLevel;
   stage: DiagnosticStage;
   failureCode?: DiagnosticCode;
 }
@@ -39,6 +41,7 @@ export async function diagnoseRequest<T extends Response>(
       operation, stage: diagnostics.stage, code, status,
       channel: request.headers.get("x-doodle-client") === "native-android" ? "android" : "web",
       durationMs: Math.min(190000, Math.max(0, Date.now() - startedAt)),
+      ...(operation === "generation" && isDetailLevel(diagnostics.detailLevel) ? { detailLevel: diagnostics.detailLevel, promptVersion: PROMPT_VERSIONS[diagnostics.detailLevel] } : {}),
       ...(diagnostics.providerStatus !== undefined ? { providerStatus: diagnostics.providerStatus } : {}),
       ...(diagnostics.providerCode ? { providerCode: diagnostics.providerCode } : {}),
       ...(diagnostics.providerRequestId ? { providerRequestId: diagnostics.providerRequestId } : {}),
