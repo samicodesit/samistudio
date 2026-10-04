@@ -1,0 +1,41 @@
+{
+  "url": "https://doodle-layout-review-1s279uabv-codenamez.vercel.app/hero-art.html",
+  "records": [
+    {
+      "file": "hero-art.html",
+      "status": 200,
+      "bytes": 2470,
+      "sha256": "14d41e7502802a9f51ef34cda644f95c0d89d8b818ebac5d94d06a1f9e0f21b7"
+    },
+    {
+      "file": "hero-art/option-1.png",
+      "status": 200,
+      "bytes": 1024704,
+      "sha256": "341c20207e02273c5859837eebf654b8a89754f18603a4ba15a538f59c2eac5b"
+    },
+    {
+      "file": "hero-art/option-2.png",
+      "status": 200,
+      "bytes": 1046437,
+      "sha256": "e6a7045effed209a0aa391de3eec62c2de4ec421d2a3738ba6bc6b3baa4551a6"
+    },
+    {
+      "file": "hero-art/option-3.png",
+      "status": 200,
+      "bytes": 1023945,
+      "sha256": "59f777c3eff3a14a1cbb0baa88ffad5231a8d1bdc914ca0e7c2003950d32d7b0"
+    },
+    {
+      "file": "implemented/BricolageGrotesque-Variable.ttf",
+      "status": 200,
+      "bytes": 408496,
+      "sha256": "413e7357809ddd12fd80a96a8a396de0e401638d4acd3cb3e37532f0472ac682"
+    },
+    {
+      "file": "implemented/IBMPlexSans-Variable.ttf",
+      "status": 200,
+      "bytes": 537244,
+      "sha256": "3b031aa4216174205bd8471f88a49b91f093169e9e87bd5262242bc5967fe2e3"
+    }
+  ]
+}

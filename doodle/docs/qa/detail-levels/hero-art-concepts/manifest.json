@@ -1,0 +1,130 @@
+{
+  "date": "2026-10-04",
+  "status": "Three independent concepts displayed in numerical order. Owner selection pending. No app implementation or release.",
+  "sourceScreenshot": "../hero-spacing/native-en-390.png",
+  "sourceArtwork": "../../../../public/landing/flower-cat.webp",
+  "sourceCommit": "61c24af",
+  "generator": "Built-in ImageGen",
+  "prompts": "prompts.json",
+  "assets": [
+    {
+      "option": 1,
+      "file": "option-1.png",
+      "sha256": "341c20207e02273c5859837eebf654b8a89754f18603a4ba15a538f59c2eac5b",
+      "width": 841,
+      "height": 1870,
+      "provenance": "Built-in ImageGen edit grounded in current native-en-390 capture and existing flower-cat artwork",
+      "reviewStatus": "Agent inspected at phone size. Owner choice pending. Illustrative concept only."
+    },
+    {
+      "option": 2,
+      "file": "option-2.png",
+      "sha256": "e6a7045effed209a0aa391de3eec62c2de4ec421d2a3738ba6bc6b3baa4551a6",
+      "width": 841,
+      "height": 1870,
+      "provenance": "Built-in ImageGen edit grounded in current native-en-390 capture and existing flower-cat artwork",
+      "reviewStatus": "Agent inspected at phone size. Owner choice pending. Illustrative concept only."
+    },
+    {
+      "option": 3,
+      "file": "option-3.png",
+      "sha256": "59f777c3eff3a14a1cbb0baa88ffad5231a8d1bdc914ca0e7c2003950d32d7b0",
+      "width": 841,
+      "height": 1870,
+      "provenance": "Built-in ImageGen edit grounded in current native-en-390 capture and existing flower-cat artwork",
+      "reviewStatus": "Agent inspected at phone size. Owner choice pending. Illustrative concept only."
+    }
+  ],
+  "checks": [
+    {
+      "width": 320,
+      "overflow": false,
+      "images": [
+        {
+          "width": 288,
+          "naturalWidth": 841
+        },
+        {
+          "width": 288,
+          "naturalWidth": 841
+        },
+        {
+          "width": 288,
+          "naturalWidth": 841
+        }
+      ],
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "images": [
+        {
+          "width": 358,
+          "naturalWidth": 841
+        },
+        {
+          "width": 358,
+          "naturalWidth": 841
+        },
+        {
+          "width": 358,
+          "naturalWidth": 841
+        }
+      ],
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "images": [
+        {
+          "width": 380,
+          "naturalWidth": 841
+        },
+        {
+          "width": 380,
+          "naturalWidth": 841
+        },
+        {
+          "width": 380,
+          "naturalWidth": 841
+        }
+      ],
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ]
+    }
+  ],
+  "previewUrl": "https://doodle-layout-review-1s279uabv-codenamez.vercel.app/hero-art.html",
+  "review": {
+    "agent": "Inspected generated concepts and locally rendered gallery at 390 CSS px. Gallery checked at 320/390/1440. Public HTML and all image/font bytes verified anonymously.",
+    "judgement": "First concept has the least visual competition. Second has a stronger paper cue. Third crowds the drawer pull tab visually and would need more separation if selected.",
+    "limitations": "ImageGen redraws are approximate concepts. Actual Android responsive behavior, RTL and enlarged text for the chosen artwork remain to be implemented and tested."
+  }
+}
