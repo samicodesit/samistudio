@@ -1,0 +1,15 @@
+{
+    "date":  "2026-10-04",
+    "baseline":  "dcf3529",
+    "scope":  "Six originally reported failures plus all ten 320px locale checks",
+    "command":  "PLAYWRIGHT_PRODUCTION=1 npm run test:e2e -- --config .qa-playwright.config.ts --workers=2",
+    "stats":  {
+                  "startTime":  "2026-10-04T08:43:09.211Z",
+                  "duration":  51593.979,
+                  "expected":  10,
+                  "skipped":  0,
+                  "unexpected":  6,
+                  "flaky":  0
+              },
+    "note":  "All six reported failures reproduced on the source baseline. The ten narrow-locale checks passed on that baseline; eight failed on the feature before hints were shortened."
+}

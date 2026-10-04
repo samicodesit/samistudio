@@ -59,6 +59,18 @@
     {
       "command": "Final native unit suite and TypeScript; API 36 fixture render",
       "result": "101 tests passed; TypeScript passed; fixture APK built. English/Arabic plus enlarged text, fixed input bounds and hidden radio suppression verified."
+    },
+    {
+      "command": "October 4 browser resolution: npm test, production Webpack build, TypeScript and lint",
+      "result": "613 passed, 1 paid provider test skipped; production build and TypeScript passed; lint zero errors, two existing image-element warnings. Temporary baseline excluded from lint/typecheck after automatic cleanup approval was rejected."
+    },
+    {
+      "command": "PLAYWRIGHT_PRODUCTION=1 PLAYWRIGHT_PORT=3122 npm run test:e2e -- --workers=2",
+      "result": "81 passed, zero failures, zero retries; full production browser suite. All ten languages at 320/390/1280 px, initial installed rendering without JavaScript in all ten languages, public and installed mobile result reach, fixture workflows and existing preview/grid/card/account/billing checks passed."
+    },
+    {
+      "command": "October 4 after shared localized hint fixes: mobile npm test and npm run typecheck",
+      "result": "101 native unit tests passed; native TypeScript passed. No new native render or Play-installed end-to-end validation in this pass."
     }
   ],
   "browserFailures": [
@@ -69,30 +81,36 @@
     },
     {
       "test": "doodle: creates/downloads/retries/new scene",
-      "failure": "Old test expects suggestion list on public landing composer"
+      "failure": "Old test expects suggestion list on public landing composer",
+      "resolved": "Resolved in the full 81-test production browser run. See browser-resolution.md for baseline proof and fixes."
     },
     {
       "test": "doodle: refusal/timeout/errors",
-      "failure": "Old test expects 220 px error stage; landing stage renders 350 px"
+      "failure": "Old test expects 220 px error stage; landing stage renders 350 px",
+      "resolved": "Resolved in the full 81-test production browser run. See browser-resolution.md for baseline proof and fixes."
     },
     {
       "test": "doodle: cancelled checkout",
-      "failure": "Hardcoded port 3100 expectation; isolated test server used 3120"
+      "failure": "Hardcoded port 3100 expectation; isolated test server used 3120",
+      "resolved": "Resolved in the full 81-test production browser run. See browser-resolution.md for baseline proof and fixes."
     },
     {
       "test": "doodle: desktop keyboard and reduced motion",
-      "failure": "Old test expects 1180 px main width; landing renders 1100 px"
+      "failure": "Old test expects 1180 px main width; landing renders 1100 px",
+      "resolved": "Resolved in the full 81-test production browser run. See browser-resolution.md for baseline proof and fixes."
     },
     {
       "test": "mobile-polish: composer/result reach",
-      "failure": "Old test expects removed landing copy First 2 doodles free"
+      "failure": "Old test expects removed landing copy First 2 doodles free",
+      "resolved": "Resolved in the full 81-test production browser run. See browser-resolution.md for baseline proof and fixes."
     },
     {
       "test": "suggestion-refresh: before hydration",
-      "failure": "JS-disabled test expects installed suggestions on public landing runtime URL"
+      "failure": "JS-disabled test expects installed suggestions on public landing runtime URL",
+      "resolved": "Resolved in the full 81-test production browser run. See browser-resolution.md for baseline proof and fixes."
     }
   ],
-  "browserFailureAssessment": "The broader run returned 72 passed and 7 failed. One auth harness failure passed after providing the required build-time test Google client ID. Six other landing/layout or test-server failures remain unresolved. Baseline suite was not rerun, so they are not claimed proven pre-existing. Feature-specific production browser checks passed.",
+  "browserFailureAssessment": "All six originally unresolved failures reproduced on source baseline dcf3529. Fixes cover stale public-landing assertions, a port-dependent checkout assertion and the genuine initial installed-layout flash. Eight additional narrow-locale hint regressions were found and fixed without changing drawer geometry. Complete final suite: 81 passed, zero failures. See browser-resolution.md and browser-baseline.json.",
   "visualQa": {
     "web": "Production Next.js build with mocked account/image responses. Owner-selected option 2: contiguous yellow drawer, two thin dividers, 4 px trailing inset, centered pull tab and input masking. All selections at 1280, 390 and 320 px, Arabic RTL, focus/tooltips, collapsed/open and a closing frame inspected. Shared animation progress prevents detached-tab gaps. Existing brand fonts actually loaded. Latest correction puts the hint beside the selector, mirrors the whole strip and check in RTL, and keeps input coordinates unchanged through collapse/reveal. English and Arabic installed layout also checked at 320 px.",
     "native": "Actual fixture APK on API 36 emulator. Joined 56 dp choices and 48 dp pull-tab touch target verified from hierarchy at density 420. English/Arabic at 200% text reviewed. Tap to hide, down/up handle swipes and selected-state retention exercised. Hidden radios absent from hierarchy after explicit accessibility/focus suppression. Keyboard focus above IME checked. Font scale restored to 1.0. Latest drawer mirrors to the left in RTL. Fixed input coordinates verified by native hierarchy before/after collapse; full 48 dp handle target preserved. Hint shares the row with the selector. Final fixture APK built successfully after the enlarged-text guard. English and Arabic at font scale 2.0 inspected; Arabic hint no longer crowds heading. Input bounds remain identical after collapse at both font sizes. Emulator font scale restored to 1.0.",
@@ -106,7 +124,6 @@
     "Any further paid comparison requires separate spending approval",
     "Independent code and visual review",
     "Real Play-installed Android generation and Integrity",
-    "Resolve six remaining broader browser harness failures",
     "Separate deployment and publishing approval"
   ],
   "externalActions": {

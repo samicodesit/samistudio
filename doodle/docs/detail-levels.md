@@ -36,7 +36,7 @@ See [the verification record](qa/detail-levels/verification.json) for commands a
 2. Review the six authorized HIGH-quality outputs in [the comparison](qa/detail-levels/comparisons/review.md). Both sets increase clearly in complexity. On October 4 the owner explicitly preferred the observed hatching and filled areas and accepted slight paper-color drift, superseding the earlier strict no-shading and exact-color acceptance criteria. Do not tighten the prompts to remove that artwork. The owner reduced this run to two rounds of three images; it does not establish the original 36-image quality threshold. Further calls require separate spending approval.
 3. Complete independent code/visual review and resolve findings. Work in this task was inline, as requested.
 4. Verify generation and Integrity on a real Play-installed Android build. Emulator fixture checks do not cover this.
-5. Resolve the six remaining broader browser suite failures recorded in the verification report. Feature-specific browser checks passed; the entire legacy suite is not green.
+5. Browser failures resolved on October 4. The complete production browser suite passed all 81 tests. See [baseline evidence and fixes](qa/detail-levels/browser-resolution.md). Web/backend tests passed 613 cases, with one paid provider test skipped.
 6. Obtain separate production deployment and Android publishing approval. Deploy the compatible backend and web first, then publish Android. Older Android clients continue generating Simple.
 
 Six paid generations were completed with explicit owner approval. No production deployment or store publishing was performed.

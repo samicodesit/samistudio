@@ -19,10 +19,12 @@ export function DoodlePage({
   locale,
   initialScene = "",
   initialSuggestionIds = DEFAULT_SUGGESTION_IDS,
+  initialInstalled = false,
 }: {
   locale: Locale;
   initialScene?: string;
   initialSuggestionIds?: readonly SceneIdeaId[];
+  initialInstalled?: boolean;
 }) {
   const copy = getCopy(locale);
   const ideasCopy = getDoodleIdeas(locale);
@@ -65,7 +67,7 @@ export function DoodlePage({
       </header>
       <main>
         <section className="doodle-main" aria-label={copy.seo.title}>
-          <MobileAppWorkspace locale={locale} copy={copy} initialScene={initialScene} initialSuggestionIds={initialSuggestionIds} />
+          <MobileAppWorkspace locale={locale} copy={copy} initialScene={initialScene} initialSuggestionIds={initialSuggestionIds} initialInstalled={initialInstalled} />
         </section>
         <section className="landing-afterword">
           <div>

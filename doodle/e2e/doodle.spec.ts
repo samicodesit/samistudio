@@ -35,7 +35,7 @@ async function expectFullyInViewport(page: Page, locator: Locator) {
 }
 
 async function expectSuggestionsFit(page: Page) {
-  const suggestions = page.locator(".suggestions-list");
+  const suggestions = page.locator(".suggestions-list, .landing-suggestions");
   const fits = await suggestions.evaluate((element) => element.scrollWidth <= element.clientWidth);
   expect(fits).toBe(true);
 }
@@ -105,24 +105,29 @@ test.describe("Doodle mobile workflow", () => {
     await expectNoOverflow(page);
     await expectSuggestionsFit(page);
 
-    await page.getByRole("button", { name: "View example doodle larger" }).click();
+    const reference = page.locator(".doodle-stage-reference img");
+    const referenceSource = await reference.getAttribute("src");
+    await page.locator(".doodle-stage-reference").click();
     await expect(page.getByRole("dialog")).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(page.getByRole("dialog")).toBeHidden();
 
     const createButton = page.getByRole("button", { name: /Create doodle/ });
     await expect(createButton).toBeDisabled();
-    const suggestion = page.locator(".suggestions-list button").first();
-    const suggestionText = await suggestion.locator("span").first().innerText();
+    const suggestion = page.locator(".landing-suggestions button").first();
+    await expect(suggestion).toHaveText("Birthday card");
+    const suggestionText = "A happy dog holding a birthday balloon";
     await suggestion.click();
     await expect(page.getByRole("textbox")).toHaveValue(suggestionText);
     await expect(createButton).toBeEnabled();
     await testInfo.attach("create.png", { body: await page.screenshot(), contentType: "image/png" });
 
     let generationCount = 0;
+    let finishFirstGeneration!: () => void;
+    const firstGeneration = new Promise<void>((resolve) => { finishFirstGeneration = resolve; });
     await page.route("**/api/generate", async (route) => {
       generationCount += 1;
-      await new Promise((resolve) => setTimeout(resolve, 120));
+      if (generationCount === 1) await firstGeneration;
       await fulfillImage(route);
     });
 
@@ -130,6 +135,7 @@ test.describe("Doodle mobile workflow", () => {
     await expect(page.getByRole("status")).toContainText("Drawing your doodle...");
     await testInfo.attach("loading.png", { body: await page.screenshot(), contentType: "image/png" });
     await expectNoOverflow(page);
+    finishFirstGeneration();
     await expect(page.getByAltText("Generated sticky-note doodle")).toBeVisible();
     await expectNoOverflow(page);
     await testInfo.attach("result.png", { body: await page.screenshot(), contentType: "image/png" });
@@ -160,7 +166,8 @@ test.describe("Doodle mobile workflow", () => {
     await page.getByRole("button", { name: /Draw something else/ }).click();
     await expect(page.getByRole("textbox")).toHaveValue("");
     await expect(page.getByRole("textbox")).toBeFocused();
-    await expect(page.getByAltText(/two cats kissing upside down/)).toBeVisible();
+    await expect(reference).toBeVisible();
+    await expect(reference).toHaveAttribute("src", referenceSource!);
     await expectNoOverflow(page);
   });
 
@@ -183,7 +190,10 @@ test.describe("Doodle mobile workflow", () => {
       await expect(page.getByRole("textbox")).toHaveValue(scene);
       await expectNoOverflow(page);
       if (scenario.status === 422) {
-        await expect(page.locator(".doodle-stage-error")).toHaveCSS("width", "220px");
+        await expect(page.locator(".doodle-stage-error")).toBeInViewport();
+        const error = await page.locator(".doodle-stage-error").boundingBox();
+        expect(error!.x).toBeGreaterThanOrEqual(0);
+        expect(error!.x + error!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
         await testInfo.attach("error.png", { body: await page.screenshot(), contentType: "image/png" });
       }
       await page.unroute("**/api/generate");
@@ -377,7 +387,7 @@ test.describe("Task 8 monetized workflow", () => {
     await testInfo.attach("task-8-mobile-gate.png", { body: await page.screenshot(), contentType: "image/png" });
   });
 
-  test("restores a cancelled Checkout scene and spends confirmed paid credit", async ({ page }, testInfo) => {
+  test("restores a cancelled Checkout scene and spends confirmed paid credit", async ({ page, baseURL }, testInfo) => {
     await page.route("**/api/account", (route) => route.fulfill({
       status: 200,
       contentType: "application/json",
@@ -401,7 +411,7 @@ test.describe("Task 8 monetized workflow", () => {
       page.waitForURL((url) => url.searchParams.get("checkout") === "cancelled", { waitUntil: "commit" }),
       page.getByRole("button", { name: "Get 10 doodles" }).click(),
     ]);
-    await expect(page).toHaveURL("http://127.0.0.1:3100/");
+    await expect(page).toHaveURL(new URL("/", baseURL).href);
     await expect(page.getByRole("textbox")).toHaveValue("A kite above the sea");
 
     await page.addInitScript(() => {
@@ -517,16 +527,19 @@ test.describe("Doodle desktop and accessibility", () => {
     await openTool(page);
     await page.reload();
     const main = page.locator(".doodle-main");
-    await expect(main).toHaveCSS("width", "1180px");
+    const mainBox = await main.boundingBox();
+    expect(mainBox!.width).toBeLessThan(page.viewportSize()!.width);
+    expect(Math.abs(mainBox!.x - (page.viewportSize()!.width - mainBox!.width) / 2)).toBeLessThanOrEqual(1);
+    await expect(page.locator(".doodle-workspace")).toHaveCSS("flex-direction", "column");
     await expect(page.getByRole("heading", { name: "What should we doodle?" })).toBeVisible();
     await expectNoOverflow(page);
     await page.getByRole("textbox").fill("Two cats hug");
 
-    await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
-    const focusableSelector = ".doodle-wordmark, .language-switcher summary, .account-sign-in-action, textarea, .detail-tile[tabindex=\"0\"], .detail-toggle, .composer-footer button, .suggestions-list button";
+    const focusableSelector = ".doodle-header .doodle-wordmark, .landing-examples-link, .language-switcher summary, .account-sign-in-action, textarea, .detail-tile[tabindex=\"0\"], .detail-toggle, .composer-footer button, .landing-suggestions button, .doodle-stage-reference";
     const controls = page.locator(focusableSelector);
+    await controls.first().focus();
     for (let index = 0; index < await controls.count(); index += 1) {
-      await page.keyboard.press("Tab");
+      if (index > 0) await page.keyboard.press("Tab");
       await expect(page.locator(":focus-visible")).toHaveCount(1);
       const focusedIndex = await page.evaluate((selector) => {
         const activeElement = document.activeElement;

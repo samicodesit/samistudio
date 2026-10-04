@@ -33,8 +33,8 @@ const IDEAS_HINT: Record<Locale, string> = {
   ko: "아이디어를 골라 나만의 그림을 만들어 보세요.", ar: "اختر فكرة وأضف إليها لمستك.",
 };
 
-export function MobileAppWorkspace({ locale, copy, initialScene = "", initialSuggestionIds }: { locale: Locale; copy: DoodleCopy; initialScene?: string; initialSuggestionIds?: readonly SceneIdeaId[] }) {
-  const [installed, setInstalled] = useState(false);
+export function MobileAppWorkspace({ locale, copy, initialScene = "", initialSuggestionIds, initialInstalled = false }: { locale: Locale; copy: DoodleCopy; initialScene?: string; initialSuggestionIds?: readonly SceneIdeaId[]; initialInstalled?: boolean }) {
+  const [installed, setInstalled] = useState(initialInstalled);
   const [tab, setTab] = useState<Tab>("create");
   const [draft, setDraft] = useState({ scene: initialScene, revision: 0 });
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);

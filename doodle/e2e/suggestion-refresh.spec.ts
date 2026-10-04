@@ -127,11 +127,17 @@ test.describe("initial heading before hydration", () => {
   test.use({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
 
   test("does not flash the old uppercase monospace heading", async ({ page }) => {
-    await page.goto("/?runtime=play");
-    const title = page.getByRole("heading", { name: "Or try one", exact: true });
-    await expect(title).toHaveCSS("text-transform", "none");
-    await expect(title).toHaveCSS("letter-spacing", "normal");
-    await expect(title).toHaveCSS("font-size", "22px");
-    await expect(title).toHaveCSS("font-weight", "600");
+    for (const locale of SUPPORTED_LOCALES) {
+      for (const runtime of ["play", "app"]) {
+        await page.goto(`${localePath(locale)}?runtime=${runtime}`);
+        await expect(page.locator(".mobile-app-workspace")).toHaveAttribute("data-installed", "true");
+        await expect(page.locator(".landing-intro")).toHaveCount(0);
+        const title = page.getByRole("heading", { name: getCopy(locale).suggestions.title, exact: true });
+        await expect(title).toHaveCSS("text-transform", "none");
+        await expect(title).toHaveCSS("letter-spacing", "normal");
+        await expect(title).toHaveCSS("font-size", "22px");
+        await expect(title).toHaveCSS("font-weight", "600");
+      }
+    }
   });
 });

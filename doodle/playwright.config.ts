@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const useProductionServer = process.env.PLAYWRIGHT_PRODUCTION === "1";
+const port = process.env.PLAYWRIGHT_PORT || "3100";
+const baseURL = `http://127.0.0.1:${port}`;
 
 export default defineConfig({
   testDir: "./e2e",
@@ -9,15 +11,15 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   reporter: "list",
   use: {
-    baseURL: "http://127.0.0.1:3100",
+    baseURL,
     trace: "on-first-retry",
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
   ],
   webServer: {
-    command: useProductionServer ? "npm run start -- --port 3100" : "npm run dev -- --port 3100",
-    url: "http://127.0.0.1:3100",
+    command: useProductionServer ? `npm run start -- --port ${port}` : `npm run dev -- --port ${port}`,
+    url: baseURL,
     reuseExistingServer: !process.env.CI && !useProductionServer,
     timeout: 120_000,
     env: {

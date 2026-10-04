@@ -5,11 +5,11 @@ import { MAX_SCENE_LENGTH } from "@/lib/app-config";
 import { hasLocale } from "@/lib/i18n";
 import { pickSceneIdeas } from "@/lib/scenes/suggestions";
 
-export default async function LocalizedPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ scene?: string | string[] }> }) {
+export default async function LocalizedPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ scene?: string | string[]; runtime?: string | string[] }> }) {
   const { locale } = await params;
   if (!hasLocale(locale) || locale === "en") notFound();
-  const scene = (await searchParams).scene;
+  const { scene, runtime } = await searchParams;
   await connection();
   const initialSuggestionIds = pickSceneIdeas().map((idea) => idea.id);
-  return <DoodlePage locale={locale} initialScene={typeof scene === "string" ? scene.trim().slice(0, MAX_SCENE_LENGTH) : ""} initialSuggestionIds={initialSuggestionIds} />;
+  return <DoodlePage locale={locale} initialScene={typeof scene === "string" ? scene.trim().slice(0, MAX_SCENE_LENGTH) : ""} initialSuggestionIds={initialSuggestionIds} initialInstalled={runtime === "play" || runtime === "app"} />;
 }

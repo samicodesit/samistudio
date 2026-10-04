@@ -1,0 +1,42 @@
+{
+  "date": "2026-10-04",
+  "source": "Current production Webpack build, in-app browser. Local account unavailable, generic balance fallback. No real generation or payments.",
+  "usage": "Layout debugging and proposed hero review. Not approved for marketing or the public gallery.",
+  "assets": [
+    {
+      "file": "app-ar-320.png",
+      "width": 65536,
+      "height": 4292542531,
+      "sha256": "716aa35a6bcb0c0f475818635ba0c6ee136895874ce4114519291027c0c9fbf8",
+      "reviewStatus": "Agent visually inspected. Owner approval pending. QA evidence only."
+    },
+    {
+      "file": "app-en-320.png",
+      "width": 65536,
+      "height": 4292542531,
+      "sha256": "5f8177c2965a74ac1203d0c7230f3c08f755787bd0ce3abe6119ef4083e45ad8",
+      "reviewStatus": "Agent visually inspected. Owner approval pending. QA evidence only."
+    },
+    {
+      "file": "app-fr-320.png",
+      "width": 65536,
+      "height": 4292542531,
+      "sha256": "f3e7a1732e092ba79fc484a09785a51228942e9bc9d258a700e115b2bb2e9fce",
+      "reviewStatus": "Agent visually inspected. Owner approval pending. QA evidence only."
+    },
+    {
+      "file": "web-en-1280.png",
+      "width": 65536,
+      "height": 4292542531,
+      "sha256": "c3590308f82a16fb1417d35257640134213ded841d4aff4d7e3ad399bf9725d9",
+      "reviewStatus": "Agent visually inspected. Owner approval pending. QA evidence only."
+    },
+    {
+      "file": "web-en-390.png",
+      "width": 65536,
+      "height": 4292542531,
+      "sha256": "55d7603750518b7ebf2f32ae81708545303d3885a3bdcea3fe128327ff10969a",
+      "reviewStatus": "Agent visually inspected. Owner approval pending. QA evidence only."
+    }
+  ]
+}

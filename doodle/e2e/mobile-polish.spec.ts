@@ -1,33 +1,36 @@
 import { expect, test } from '@playwright/test';
 import fs from 'node:fs';
 
-test('mobile compose and result actions stay in reach after generation', async ({ page }) => {
-  await page.route('**/api/account', route => route.fulfill({ json: { authenticated: false, email: null, balance: 0, freeRemaining: 2 } }));
-  await page.route('**/api/generate', route => route.fulfill({ contentType: 'image/png', body: fs.readFileSync('public/references/doodle-reference-kiss.png') }));
-  for (const viewport of [{width:320,height:700}, {width:360,height:800}, {width:390,height:844}]) {
-    await page.setViewportSize(viewport);
-    await page.goto('/');
-    await expect(page.getByText('First 2 doodles free')).toBeVisible();
-    await page.evaluate(() => document.fonts.ready);
-    await page.screenshot({path:`test-results/polish-idle-${viewport.width}.png`});
-    const heading = await page.locator('#scene-title').boundingBox();
-    expect(heading!.y).toBeLessThan(120);
-    await page.getByRole('textbox').fill('A little love note');
-    await page.locator('.composer-footer > button').click();
-    await expect(page.locator('.doodle-workspace-ready')).toBeVisible();
-    await page.screenshot({path:`test-results/polish-ready-${viewport.width}.png`});
-    const stage = await page.locator('.doodle-stage').boundingBox();
-    expect(stage!.y).toBeGreaterThanOrEqual(0);
-    for (const selector of ['.result-save-actions', '.new-scene-action', '.result-more-button']) {
-      const box = await page.locator(selector).boundingBox();
-      expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
-      expect(box!.height).toBeGreaterThanOrEqual(48);
+for (const runtime of ['web', 'app']) {
+  test(`${runtime} mobile compose and result actions stay in reach after generation`, async ({ page }) => {
+    await page.route('**/api/account', route => route.fulfill({ json: { authenticated: false, email: null, balance: 0, freeRemaining: 2 } }));
+    await page.route('**/api/generate', route => route.fulfill({ contentType: 'image/png', body: fs.readFileSync('public/references/doodle-reference-kiss.png') }));
+    for (const viewport of [{width:320,height:700}, {width:360,height:800}, {width:390,height:844}]) {
+      await page.setViewportSize(viewport);
+      await page.goto(runtime === 'app' ? '/?runtime=app' : '/');
+      await expect(page.locator('.usage-copy')).toHaveText('2 free doodles left');
+      await page.evaluate(() => document.fonts.ready);
+      await page.screenshot({path:`test-results/polish-${runtime}-idle-${viewport.width}.png`});
+      const heading = await page.locator('#scene-title').boundingBox();
+      if (runtime === 'app') expect(heading!.y).toBeLessThan(120);
+      else expect(heading!.y).toBeGreaterThanOrEqual(0);
+      await page.getByRole('textbox').fill('A little love note');
+      await page.locator('.composer-footer > button').click();
+      await expect(page.locator('.doodle-workspace-ready')).toBeVisible();
+      await page.screenshot({path:`test-results/polish-${runtime}-ready-${viewport.width}.png`});
+      const stage = await page.locator('.doodle-stage').boundingBox();
+      expect(stage!.y).toBeGreaterThanOrEqual(0);
+      for (const selector of ['.result-save-actions', '.new-scene-action', '.result-more-button']) {
+        const box = await page.locator(selector).boundingBox();
+        expect(box!.y + box!.height).toBeLessThanOrEqual(viewport.height);
+        expect(box!.height).toBeGreaterThanOrEqual(48);
+      }
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
+      await page.locator('.new-scene-action').click();
+      await expect(page.getByRole('textbox')).toBeFocused();
     }
-    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(viewport.width);
-    await page.locator('.new-scene-action').click();
-    await expect(page.getByRole('textbox')).toBeFocused();
-  }
-});
+  });
+}
 
 test('mobile dialogs remain scrollable in a keyboard-sized viewport and restore focus', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
