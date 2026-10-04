@@ -20,5 +20,8 @@
   ],
   "blockedPermissionsAbsent": true,
   "aabSha256": "a911970a251f2fe1af23d6014578b610a874cf873e1703ca7c21298d82d6f4a0",
-  "installedEndToEndVerified": false
+  "installedEndToEndVerified": false,
+  "installedVersionVerified": true,
+  "installerPackageName": "com.android.vending",
+  "installedVerificationRecord": "release-verification-2026-10-04.json"
 }

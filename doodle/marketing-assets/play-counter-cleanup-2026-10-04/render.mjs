@@ -46,7 +46,7 @@ for (const [id, filename] of [["01", "01-idea-to-doodle.png"], ["04", "04-save-s
 }
 
 for (const [slot, source, filename] of [
-  [2, path.join(root, "../play-detail-levels-2026-10-04/02-detail-levels.png"), "02-detail-levels.png"],
+  [2, path.join(root, "../play-detail-medium-2026-10-04/02-detail-levels.png"), "02-detail-levels.png"],
 ]) {
   const bytes = await fs.readFile(source);
   await fs.writeFile(path.join(exportsDir, filename), bytes);
@@ -59,7 +59,7 @@ await fs.writeFile(path.join(root, "manifest.json"), JSON.stringify({
   imageGenInstructions: previous.imageGenInstructions,
   dimensions: { width: 1080, height: 1920, alpha: false },
   method: "Built-in Image Gen removes counter text. Only the local blank-panel region is used, color-matched to the original panel and feathered at its edges. All other decoded pixels are verified identical. Originals are retained.",
-  scope: "Marketing-only counter cleanup in screenshots 1 and 4. Screenshot 2 retained unchanged. Screenshot 3 simplified with larger original artwork and short labels. No app behavior or pricing changes.",
+  scope: "Counter cleanup in screenshots 1 and 4. Screenshot 2 retains the owner-selected original Medium-detail drawing between genuine MEDIUM-rendered Simple and Detailed examples. Its overlap contact treatment is recorded in its source manifest. Screenshot 3 uses larger original artwork and short labels. No app behavior or pricing changes.",
   review: "Inspect full-size and phone-size exports before publication. These are composed marketing assets, not new functional verification.",
   records,
 }, null, 2) + "\n");

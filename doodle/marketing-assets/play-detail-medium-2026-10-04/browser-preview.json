@@ -1,0 +1,7 @@
+{
+  "status": "Current screenshot 2 export, updated in the release asset manifest. Not published to Play.",
+  "url": "https://doodle-layout-review-lxzlo7njf-codenamez.vercel.app/paper-overlap-final.html",
+  "imageUrl": "https://doodle-layout-review-lxzlo7njf-codenamez.vercel.app/paper-overlap-final.png",
+  "sha256": "2e50e9f76b84448807cf9fff61be8dc1d8c368399e201fd7e7c4218d287796b7",
+  "verification": "Full local export and 390px image inspected. Public browser image finished rendering at 390px with fonts loaded. Public PNG SHA256 matches the local export. Pixel comparison: 3998 changed pixels at overlap seams, zero outside."
+}

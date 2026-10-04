@@ -1,5 +1,5 @@
 {
-  "status": "Current counter-free release candidates. Owner visual acceptance and publishing approval pending.",
+  "status": "Current release assets. Owner authorized release publication and selected the original Medium-detail middle drawing. Slot 2 now includes contact shadows at its overlap seams, visually checked by root.",
   "imageGenInstructions": {
     "slot1": "Remove ONLY the small gray '3 free doodles left' text near the bottom of the inner app panel, below Draw something else. Fill that exact area seamlessly with the existing pale sage panel background. Leave the space blank. Preserve every other feature, aspect ratio, artwork, typography, controls, colors and spacing. No new text, icons, repositioning, redraw or cropping.",
     "slot4": "Remove ONLY the small gray '1 free doodle left' text near the bottom of the inner app panel, below Draw something else. Fill that exact area seamlessly with the existing pale sage panel background. Leave the space blank. Preserve every other feature, aspect ratio, artwork, typography, controls, colors and spacing. No new text, icons, repositioning, redraw or cropping."
@@ -10,7 +10,7 @@
     "alpha": false
   },
   "method": "Built-in Image Gen removes counter text. Only the local blank-panel region is used, color-matched to the original panel and feathered at its edges. All other decoded pixels are verified identical. Originals are retained.",
-  "scope": "Marketing-only counter cleanup in screenshots 1 and 4. Screenshot 2 retained unchanged. Screenshot 3 simplified with larger original artwork and short labels. No app behavior or pricing changes.",
+  "scope": "Counter cleanup in slots 1 and 4, original owner-selected Medium-detail example in slot 2 between genuine MEDIUM-rendered Simple and Detailed drawings, and shorter labels in slot 3. No app behavior or pricing changes.",
   "review": "Inspect full-size and phone-size exports before publication. These are composed marketing assets, not new functional verification.",
   "records": [
     {
@@ -34,10 +34,32 @@
     {
       "slot": 2,
       "file": "exports/02-detail-levels.png",
-      "source": "../play-detail-levels-2026-10-04/02-detail-levels.png",
-      "sha256": "78d3b02f0a5fbc5f48a81e91b6176a2a07a4a23605ed69477d5f833863a20a6e",
+      "source": "../play-detail-medium-2026-10-04/02-detail-levels.png",
+      "sha256": "2e50e9f76b84448807cf9fff61be8dc1d8c368399e201fd7e7c4218d287796b7",
       "changedOutside": 0,
-      "unchanged": true
+      "unchanged": false,
+      "provenance": "Simple and Detailed: MEDIUM rendering. Medium-detail middle: genuine unedited original HIGH-rendered illustration selected by owner, visibly less complex than the newer Medium-rendered middle alternative. See replacement manifest.",
+      "reviewStatus": "Root inspected the full export and actual 390px image. The two front sheet edges cast graduated contact shadows only on the underlying sheet. No arrows, corner shapes, colored rims or layout changes. Automated comparison confirms zero changed pixels outside the two overlap regions.",
+      "qa": {
+        "changedOutsideNoteAndShadowRectangles": 0,
+        "baselineSha256": "fe8452eb5e579103e13570856d8f87d2b552186681185bbe7ded3e2818683333",
+        "contactRegions": [
+          {
+            "left": 432,
+            "top": 820,
+            "width": 208,
+            "height": 58
+          },
+          {
+            "left": 440,
+            "top": 1310,
+            "width": 208,
+            "height": 58
+          }
+        ],
+        "changedAtOverlap": 3998,
+        "changedOutsideOverlap": 0
+      }
     },
     {
       "slot": 3,
@@ -93,7 +115,7 @@
           }
         ]
       },
-      "reviewStatus": "Agent reviewed at full size and phone size. Owner visual acceptance and publishing approval pending."
+      "reviewStatus": "Root and independent reviewer inspected. Approved as composed Ideas marketing presentation under owner release publishing authorization."
     },
     {
       "slot": 4,
@@ -114,5 +136,20 @@
       "darkCounterPixels": 0
     }
   ],
-  "agentReview": "Screenshot 3 inspected at 1080x1920 export resolution and 390px phone size. Repeated introduction removed, labels shortened, original artwork enlarged. IBM Plex Sans loaded. Outer caption and backdrop pixels unchanged. Slots 1, 2 and 4 retain their previous hashes. This is composed marketing presentation, not functional app validation. Owner acceptance remains pending."
+  "agentReview": "All four inspected. Slot 2 uses original middle artwork at owner request, with distinct increasing complexity and no generative retouching. Other three hashes unchanged. Render source refreshed; earlier public HIGH preview is marked superseded.",
+  "playSubmission": {
+    "version": "0.1.7",
+    "generatedArtDeclared": true,
+    "screenshotOrder": [
+      "01-idea-to-doodle.png",
+      "02-detail-levels-overlap-v9.png",
+      "03-find-an-idea.png",
+      "04-save-share.png"
+    ],
+    "versionCode": 9,
+    "date": "2026-10-04",
+    "status": "In review. Google automatic checks completed successfully; public availability is pending approval.",
+    "automatedChecks": "completed",
+    "confirmedAtUtc": "2026-10-04T21:31:03.059Z"
+  }
 }

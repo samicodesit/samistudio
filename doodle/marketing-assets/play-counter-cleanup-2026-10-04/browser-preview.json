@@ -28,5 +28,6 @@
       "sha256": "c0b6be6fcce46c421bbb492072e6b95040bf1cfe32982d457c9a64d3ba9efdfe"
     }
   ],
-  "review": "Export visually inspected at full resolution and 390px. Public anonymous HTTP responses and hashes match current manifest. Browser UI automation unavailable in this session, so public browser rendering not re-inspected. Static preview only. No live app or Play publication."
+  "review": "Export visually inspected at full resolution and 390px. Public anonymous HTTP responses and hashes match current manifest. Browser UI automation unavailable in this session, so public browser rendering not re-inspected. Static preview only. No live app or Play publication.",
+  "status": "Superseded historical preview. Slot 2 is HIGH. Do not use this URL or evidence for current publication. Current exports and play-detail-medium replacement manifest are authoritative."
 }

@@ -1,0 +1,86 @@
+{
+  "verifiedAtUtc": "2026-10-04T21:20:48.4958294Z",
+  "deploymentId": "dpl_94xaVdn7f4FSRjPcyeren3PjYM1o",
+  "production": "https://doodle.samistudio.nl",
+  "web": {
+    "liveGeneration": true,
+    "requestId": "7ea5e292-7c4b-4052-82ad-3726835599b9",
+    "completedAtUtc": "2026-10-04T21:13:50.304Z",
+    "status": 200,
+    "detailLevel": "detailed",
+    "promptVersion": "detailed-v1",
+    "model": "gpt-image-1-mini",
+    "quality": "medium",
+    "size": "1024x1024",
+    "durationMs": 12715,
+    "paperCorrection": {
+      "status": "corrected",
+      "version": "paper-v1",
+      "durationMs": 458
+    },
+    "creditsBefore": 19,
+    "creditsAfter": 18,
+    "output": "live-release-detailed-2026-10-04.png",
+    "sha256": "b7291c07662f501b6e1120046dd17fbf84010978646f978c7ad455f51938b190",
+    "paperBorderMedianRGB": [
+      255,
+      236,
+      139
+    ],
+    "retries": 0,
+    "visualReview": "Two people cooking, readable dark lines, developed kitchen details, yellow paper and intact texture. Generated content varies. PNG opened and inspected."
+  },
+  "android": {
+    "version": "0.1.7",
+    "versionCode": 9,
+    "installer": "com.android.vending",
+    "nativeFixtureMode": false,
+    "environment": "Official Google Play API 36 headless emulator",
+    "challengeStatus": 200,
+    "generationRequestId": "2844ba09-a93c-4dd6-a1c5-979914d52815",
+    "generationAtUtc": "2026-10-04T20:52:51.386Z",
+    "generationStatus": 403,
+    "stage": "attestation_verify",
+    "requestPackage": true,
+    "requestHash": true,
+    "timestamp": true,
+    "appRecognition": false,
+    "appPackage": false,
+    "certificate": false,
+    "licensed": false,
+    "deviceIntegrity": false,
+    "providerCalled": false,
+    "creditsBefore": 19,
+    "creditsAfter": 19,
+    "retryCount": 0,
+    "trustedHardwareEndToEndVerified": false,
+    "securityPolicyChanged": false,
+    "assessment": "Observed verdict pattern is consistent with an untrusted emulator. Google token decode, package, timestamp and the new detail-bound request hash passed. Full native success on trusted hardware remains unverified."
+  },
+  "spending": {
+    "approvalCapUsd": 0.02,
+    "providerCalls": 1,
+    "nativeProviderCalls": 0,
+    "automaticRetries": 0,
+    "billingInvoiceReconciled": false
+  },
+  "acceptance": "Proceed with owner-authorized release after installed-build verification, unchanged Integrity verdict policy, successful new detail hash binding, regression and independent source review, prior real prompt comparisons and successful live shared-backend generation. Retain explicit trusted-hardware test limitation.",
+  "playSubmission": {
+    "changes": [
+      "Production build 9",
+      "English full description",
+      "Four phone screenshots"
+    ],
+    "publicAvailabilityVerified": false,
+    "rolloutPercent": 100,
+    "version": "0.1.7",
+    "releaseId": "5",
+    "deviceSupportChanged": false,
+    "productionTrack": "4697324659013761943",
+    "status": "In review. Google automatic checks completed successfully; public availability is pending approval.",
+    "managedPublishing": false,
+    "versionCode": 9,
+    "automatedChecks": "completed",
+    "confirmedAtUtc": "2026-10-04T21:31:03.057Z"
+  }
+}

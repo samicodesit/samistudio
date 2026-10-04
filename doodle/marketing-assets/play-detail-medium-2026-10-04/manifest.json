@@ -1,0 +1,128 @@
+{
+  "status": "Current screenshot 2 export, visually reviewed by root at 1080px and 390px. Ready for the release asset set; not published to Play.",
+  "intendedSlot": 2,
+  "output": "02-detail-levels.png",
+  "sha256": "2e50e9f76b84448807cf9fff61be8dc1d8c368399e201fd7e7c4218d287796b7",
+  "dimensions": {
+    "width": 1080,
+    "height": 1920,
+    "alpha": false
+  },
+  "supersedes": {
+    "path": "marketing-assets/play-detail-levels-2026-10-04/02-detail-levels.png",
+    "sha256": "78d3b02f0a5fbc5f48a81e91b6176a2a07a4a23605ed69477d5f833863a20a6e",
+    "reason": "Previous HIGH examples do not match the owner-selected MEDIUM production setting."
+  },
+  "scene": "Two friends making pancakes together in a cozy kitchen",
+  "model": "gpt-image-1-mini",
+  "productionQuality": "medium",
+  "sources": [
+    {
+      "level": "simple",
+      "path": "docs/qa/detail-render-matrix-2026-10-04/simple-medium.png",
+      "sha256": "2e093f605c74032f0f02f6b0266cfa750dc3019724ad327dc54f03d407c0235d",
+      "quality": "medium",
+      "scene": "Two friends making pancakes together in a cozy kitchen",
+      "promptVersion": "simple-v1",
+      "promptSha256": "bc43b03a749e3fc877489101f0032133510ca5dd762c5b803df5d8e0e576825a",
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 192
+      },
+      "drawingEdits": false
+    },
+    {
+      "level": "medium",
+      "path": "marketing-assets/play-detail-levels-2026-10-04/drawings/2-1-medium.png",
+      "sha256": "f8f60cf61de1fc6b138e72a9aec11fc9d5cb0c1274bce42e56cace1daf58526b",
+      "quality": "high",
+      "scene": "Two friends baking pancakes",
+      "promptVersion": "medium-v1",
+      "originalPath": "docs/qa/detail-levels/comparisons/2-1-medium.png",
+      "originalSha256": "5b1b02f0a6a117352d2da63b153f68455eb22b661eb870175475d9a327726b6f",
+      "ownerPreference": "Owner explicitly requested this original Medium-detail illustration on October 4. The rendering-quality distinction was subsequently explained; the owner then requested clearer paper separation.",
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 259
+      },
+      "drawingEdits": false
+    },
+    {
+      "level": "detailed",
+      "path": "docs/qa/detail-render-matrix-2026-10-04/detailed-medium.png",
+      "sha256": "6acfb5808871797bc3eba76db1ba801d3fc61f921c6a09115e9df5f099b88d6a",
+      "quality": "medium",
+      "scene": "Two friends making pancakes together in a cozy kitchen",
+      "promptVersion": "detailed-v1",
+      "promptSha256": "a05b68290e21b922e511ba0adc0601f998ade62e09cc98b5759a1b84ed3812c0",
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 133
+      },
+      "drawingEdits": false
+    }
+  ],
+  "method": "Equal-size yellow-paper composition with directional contact shadows, a fine lower edge, plus narrow graduated contact shadows clipped to the underlying sheet at the two overlaps. No colored rims or corner shapes. Simple and Detailed use genuine MEDIUM-rendered outputs. The owner-selected original Medium-detail output was rendered at HIGH. All use the shared paper correction. Drawing interiors retained. Paper-edge overlays are marketing treatments only. Existing typography, backdrop and labels retained.",
+  "qa": {
+    "changedOutsideNoteAndShadowRectangles": 0,
+    "baselineSha256": "fe8452eb5e579103e13570856d8f87d2b552186681185bbe7ded3e2818683333",
+    "contactRegions": [
+      {
+        "left": 432,
+        "top": 820,
+        "width": 208,
+        "height": 58
+      },
+      {
+        "left": 440,
+        "top": 1310,
+        "width": 208,
+        "height": 58
+      }
+    ],
+    "changedAtOverlap": 3998,
+    "changedOutsideOverlap": 0
+  },
+  "noteTreatment": [
+    {
+      "level": "simple",
+      "coloredRim": false,
+      "cornerTurnPixels": 0,
+      "directionalShadow": true
+    },
+    {
+      "level": "medium",
+      "coloredRim": false,
+      "cornerTurnPixels": 0,
+      "directionalShadow": true
+    },
+    {
+      "level": "detailed",
+      "coloredRim": false,
+      "cornerTurnPixels": 0,
+      "directionalShadow": true
+    }
+  ],
+  "visualReview": "Root inspected the full export and actual 390px image. The two front sheet edges cast graduated contact shadows only on the underlying sheet. No arrows, corner shapes, colored rims or layout changes. Automated comparison confirms zero changed pixels outside the two overlap regions.",
+  "publishingAuthorization": "Owner authorized deployment and publication of this release; this replacement addresses the independent reviewer store-representation finding.",
+  "limitation": "Composed illustration of the detail feature, not a Play-installed screen capture or guarantee of identical characters across independent generations.",
+  "storeSuitability": "The retained Medium-detail HIGH sample is visibly less complex than the newer MEDIUM-rendered Medium sample, and less detailed than the unedited MEDIUM-rendered Detailed sample. It preserves the level progression without showing a richer kitchen or more intricate drawing than the shipped pipeline. Rendering quality alone does not determine drawing complexity. Root accepts this specific genuine example, not arbitrary HIGH examples or generative retouching.",
+  "playSubmission": {
+    "version": "0.1.7",
+    "generatedArtDeclared": true,
+    "screenshotOrder": [
+      "01-idea-to-doodle.png",
+      "02-detail-levels-overlap-v9.png",
+      "03-find-an-idea.png",
+      "04-save-share.png"
+    ],
+    "versionCode": 9,
+    "date": "2026-10-04",
+    "status": "In review. Google automatic checks completed successfully; public availability is pending approval.",
+    "automatedChecks": "completed",
+    "confirmedAtUtc": "2026-10-04T21:31:03.060Z"
+  }
+}
