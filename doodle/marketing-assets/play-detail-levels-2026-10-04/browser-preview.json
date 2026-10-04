@@ -1,0 +1,32 @@
+{
+  "verifiedAt": "2026-10-04T08:06:13.295Z",
+  "url": "https://doodle-layout-review-joflopuev-codenamez.vercel.app/release.html",
+  "imageUrl": "https://doodle-layout-review-joflopuev-codenamez.vercel.app/release/2.png",
+  "outputSha256": "18395d41eb9dd068147669e5f0657740e0b03b8b803a723673f3e71f927bff45",
+  "allFourRemoteExportsMatch": true,
+  "originalSourcesUnchanged": true,
+  "checks": [
+    {
+      "width": 320,
+      "anonymousHttp": 200,
+      "allImagesDecoded": true,
+      "noHorizontalOverflow": true,
+      "imageCount": 12
+    },
+    {
+      "width": 390,
+      "anonymousHttp": 200,
+      "allImagesDecoded": true,
+      "noHorizontalOverflow": true,
+      "imageCount": 12
+    },
+    {
+      "width": 1280,
+      "anonymousHttp": 200,
+      "allImagesDecoded": true,
+      "noHorizontalOverflow": true,
+      "imageCount": 12
+    }
+  ],
+  "ownerMobileReview": "Pending"
+}

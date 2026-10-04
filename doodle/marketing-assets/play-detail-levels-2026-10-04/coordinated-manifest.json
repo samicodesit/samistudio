@@ -1,0 +1,126 @@
+{
+  "status": "Coordinated marketing examples. Owner visual acceptance pending.",
+  "originalEvaluation": "The original six production-model outputs remain unmodified under docs/qa/detail-levels/comparisons. Edited artwork is not evidence of production identity consistency.",
+  "order": [
+    "Simple",
+    "Medium",
+    "Detailed"
+  ],
+  "rows": [
+    "Cat holding a flower",
+    "Friends baking pancakes"
+  ],
+  "sources": [
+    {
+      "id": "1-1-simple",
+      "scene": 1,
+      "level": "simple",
+      "originalPath": "docs/qa/detail-levels/comparisons/1-1-simple.png",
+      "originalSha256": "db0f4b30c217049d8e1552cec2a4a03dde659f0e9bc98deab87c4e6e3865db4c",
+      "edit": {
+        "id": "1-1-simple",
+        "path": "edits/cat-simple.png",
+        "sha256": "8513b2dd148f6033d42d857404500863f52d9b2cd64d676ecf557ccc8a560084",
+        "target": "docs/qa/detail-levels/comparisons/1-1-simple.png",
+        "reference": "docs/qa/detail-levels/comparisons/1-1-medium.png",
+        "prompt": "Use case: identity-preserve. Edit target image 1: the Simple cat holding a flower. Image 2: Medium same-cat identity and pose reference. Output ONE square 1024x1024 illustration, no grid, no text or captions. Adjust image 1's simple cat to depict the SAME cat in the SAME seated front-facing pose as image 2: flower in paw at viewer RIGHT, upward-curving tail at viewer LEFT, both eyes open, little curved smile, triangular ears, round cheeks. Match image 2's pose, outline proportions and flower position as closely as possible, but draw at the SIMPLE complexity of image 1: thick slightly imperfect dark graphite outline, dot eyes, minimal interior marks, plain flower with five round petals and a stem, no leaf veins, no decorative ground, no hatching or fur texture, no forehead stripes or ear shading. Keep the subject centered with generous paper margins. Do not add complexity or scenery. Yellow subtly textured paper target base #FFEB8A. Keep original image 1's friendly minimal doodle aesthetic and graphite color. No realism, no additional objects or cats, no watermarks. This is a coordinated marketing edit that should read as the Simple version of the same medium cat."
+      },
+      "path": "drawings/1-1-simple.png",
+      "sha256": "1d85260268f1b9f849d48e974009eb4a74098b9aada7bc1ab92e937a6c0b1bea",
+      "correction": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 168
+      }
+    },
+    {
+      "id": "1-1-medium",
+      "scene": 1,
+      "level": "medium",
+      "originalPath": "docs/qa/detail-levels/comparisons/1-1-medium.png",
+      "originalSha256": "0306e445556e7e0349764b8aa70449a0a28ab0841b0cbde588c4c6032fe40872",
+      "edit": null,
+      "path": "drawings/1-1-medium.png",
+      "sha256": "96db075c05a6cbf6ebcaf7e49f183d15de1c1a3700672608fe1d25f3be59606d",
+      "correction": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 150
+      }
+    },
+    {
+      "id": "1-1-detailed",
+      "scene": 1,
+      "level": "detailed",
+      "originalPath": "docs/qa/detail-levels/comparisons/1-1-detailed.png",
+      "originalSha256": "aa4d9cfee44a27e8d0dcaa7398206a4b2e01e4811b86e15f92fe1a54e6785481",
+      "edit": {
+        "id": "1-1-detailed",
+        "path": "edits/cat-detailed.png",
+        "sha256": "75d104ee61a20fecb6cc9d25ac6eae671abf106fbea51080a367292dcd748d90",
+        "target": "docs/qa/detail-levels/comparisons/1-1-detailed.png",
+        "reference": "docs/qa/detail-levels/comparisons/1-1-medium.png",
+        "prompt": "Use case: identity-preserve. Image 1 is the edit target: Detailed cat holding a flower. Image 2 is the same-cat identity, pose and proportions reference from the Medium drawing. Output one square illustration, no panels or captions. Adjust the cat in image 1 to look like the SAME cat as image 2: same front-facing seated pose, round cheek/head outline, triangular ears, two OPEN oval eyes and little curved smile, one front paw resting down, other paw holds flower at viewer RIGHT, curled upward tail at viewer LEFT rather than sprawling toward the right. Match image 2's simple facial identity and pose as closely as possible. Keep image 1's DETAILED level: fine fur marks, hatching in ears and around contours, forehead stripes, expressive paws, intricate flower petals and leaf veins, delicate grass and rich surrounding stems/flowers. Preserve those dense decorative surroundings, but leave the cat clearly readable and approximately the same central scale as image 2. One cat, ONE held flower, no extra arms, no additional subjects. Dark slightly imperfect graphite line art with original hatching aesthetic on subtly textured yellow paper target #FFEB8A. Do not add realism, color fills other than dark graphite ink, captions, text or watermarks. This is a coordinated marketing edit, the detailed version of the same cat rather than a different cat."
+      },
+      "path": "drawings/1-1-detailed.png",
+      "sha256": "c7f883329129e0195f7edcfe34eea6f45ac9e5fd44343b528b0e451a42359982",
+      "correction": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 118
+      }
+    },
+    {
+      "id": "2-1-simple",
+      "scene": 2,
+      "level": "simple",
+      "originalPath": "docs/qa/detail-levels/comparisons/2-1-simple.png",
+      "originalSha256": "777f15540bc93c15e63b3a640867f7a0f96be5a2508f9682953e26bff09e673b",
+      "edit": null,
+      "path": "drawings/2-1-simple.png",
+      "sha256": "1c00316f99b5383b13e4f56be541c693ac1f205e695d0a753a32886613a7d626",
+      "correction": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 200
+      }
+    },
+    {
+      "id": "2-1-medium",
+      "scene": 2,
+      "level": "medium",
+      "originalPath": "docs/qa/detail-levels/comparisons/2-1-medium.png",
+      "originalSha256": "5b1b02f0a6a117352d2da63b153f68455eb22b661eb870175475d9a327726b6f",
+      "edit": null,
+      "path": "drawings/2-1-medium.png",
+      "sha256": "f8f60cf61de1fc6b138e72a9aec11fc9d5cb0c1274bce42e56cace1daf58526b",
+      "correction": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 261
+      }
+    },
+    {
+      "id": "2-1-detailed",
+      "scene": 2,
+      "level": "detailed",
+      "originalPath": "docs/qa/detail-levels/comparisons/2-1-detailed.png",
+      "originalSha256": "75bbf1d6ce5ed791b4e89e9bb1d184cacd1298512a3cc2da85d86e5b7ee00cc4",
+      "edit": {
+        "id": "2-1-detailed",
+        "path": "edits/cooking-detailed.png",
+        "sha256": "d1c1cdb5ae3616c664af3961465d7684e0e91a3163d8c9a2bd4dfc0279546fad",
+        "target": "docs/qa/detail-levels/comparisons/2-1-detailed.png",
+        "reference": "docs/qa/detail-levels/comparisons/2-1-medium.png",
+        "prompt": "Use case: precise-object-edit, identity-preserve. Image 1 is the edit target: original Detailed two friends cooking doodle. Image 2 is a reference ONLY for the man on the right's haircut and face. Output one square illustration only. STRICT localized edit: change ONLY the character at viewer RIGHT in image 1 so he is recognizably the short-haired young adult man from image 2. Replace his shoulder-length curly bob with SHORT tousled cropped hair like image 2, expose the ears, retain friendly rounded face and smile. KEEP HIS ORIGINAL ACTION: stirring the patterned mixing bowl, same hands, same patterned leafy shirt and shirt shape. Keep EVERYTHING ELSE in image 1 unchanged to best effort: woman at LEFT, her exact hair, apron, face, pose and spatula; pan and pancakes, countertop, bowls, bottles, plants, cupboards, brickwork, all object positions, detailed border and framing. Do NOT swap cooking roles, utensils, bowls or clothes. Do NOT redraw the woman or rearrange the kitchen. Preserve detailed dark imperfect graphite lines, hatching and filled hair, on subtly textured yellow paper. Target paper #FFEB8A. No new objects, realism, text, watermarks, panels or captions. This is a small marketing character correction. Preserve image 1 composition very closely."
+      },
+      "path": "drawings/2-1-detailed.png",
+      "sha256": "c02ddbf37ddb9db3e65599d29ff40b01a4981d17d1d3edfe2cc2008210ca420f",
+      "correction": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 163
+      }
+    }
+  ]
+}

@@ -1,19 +1,24 @@
 # Detail-level store draft
 
-Draft replacement for phone screenshot 2 for the upcoming detail-level release. The owner identified paper-color drift, then clarified that slight drift is acceptable. A correction is optional and has not been implemented. Not uploaded to Play Console or approved for publication.
+Draft replacement for phone screenshot 2 for the upcoming detail-level release. Updated at the owner's request with shared backend paper-color correction, a lavender pastel backdrop, and a short-haired man in the Detailed cooking drawing. Not uploaded to Play Console or approved for publication.
 
-The 1080 x 1920 opaque PNG uses the three actual HIGH cooking outputs from the approved six-generation comparison. The images retain their colors and square proportions, with a small vertical corner overlap. Labels stay upright. There were no further provider calls.
+The 1080 x 1920 opaque PNG retains the genuine HIGH Simple and Medium cooking artwork. Detailed includes the owner's requested built-in Image Gen edit of the person on the right, keeping the original cooking roles and kitchen composition to best effort. The renderer applies the shared `paper-v1` backend helper to all copies before composition. Original provider images are untouched. Square proportions, overlap, labels, fonts and layout are preserved.
 
-The headline and palette match the current submitted four-image gallery. Bricolage Grotesque and IBM Plex Sans are loaded from the native app's font assets. `manifest.json` records source and output hashes, the existing screenshot being replaced, dimensions, and review status. Screenshots 1, 3 and 4 remain the current submitted assets recorded in `marketing-assets/play-gallery-2026-10-02/manifest.json` in the main checkout.
+The lavender `#EEE7F2` backdrop complements the submitted mint, blue and blush backgrounds while separating the yellow paper from the surrounding surface. Bricolage Grotesque and IBM Plex Sans are loaded from the same native font assets. The heading uses the existing 96 px scale and 42/66 px top/left offsets, with the same 36 px subtitle, charcoal text and moss accents. `manifest.json` records provenance, hashes, dimensions and review status. Screenshots 1, 3 and 4 remain byte-identical to the submitted assets recorded in `marketing-assets/play-gallery-2026-10-02/manifest.json` in the main checkout. `gallery-review.png` shows the four together; `gallery-manifest.json` verifies the unchanged exports.
+
+`coordinated-comparison.png` is the separately requested six-image marketing comparison. The Simple and Detailed cats were edited against the unchanged Medium reference to align open eyes, pose, flower on the right and tail on the left. Detailed keeps its fur marks and surrounding foliage. The cooking row uses the same artwork as screenshot 2. `edits/manifest.json` stores exact prompts, references and raw edit hashes; `coordinated-manifest.json` records processed copies. These edits are marketing artwork, not new production prompt-evaluation evidence. The original six HIGH outputs and evaluation records remain intact.
 
 This is a composed illustration of actual generation results, not an installed-app screen capture. The owner explicitly liked the visible hatching and dark fills in these outputs. Preserve that artwork. Do not publish before the feature ships and the owner approves the whole asset and store update.
 
 Reproduce from the project root with the existing dependencies:
 
 ```sh
-node marketing-assets/play-detail-levels-2026-10-04/render.mjs
+node --import tsx marketing-assets/play-detail-levels-2026-10-04/render.mjs
+node marketing-assets/play-detail-levels-2026-10-04/build-review.mjs /home/mests/projects/samistudio/doodle/marketing-assets/play-gallery-2026-10-02
 ```
 
-Visual review on October 4 checked the export and its 390 px preview. The levels are distinguishable, labels are readable, the cooking actions remain visible, and no text is clipped. The draft was uploaded as a native PNG image to the owner's private review Page alongside the eight selector captures. File access and Page insertion were confirmed. ChatGPT mobile rendering is still awaiting confirmation from the owner.
+The revised export, 390 px preview, six-image comparison and four-screenshot contact sheet were visually inspected on October 4. Paper colors appear consistent while retaining grain. Subjects, hatching and filled areas remain visible. The short-haired man matches the Medium reference; cooking roles remain as originally drawn. Headings and labels are readable and unclipped. Use the public browser preview for owner review, since the private Page image attachments did not display in ChatGPT mobile. Whole-asset owner acceptance remains pending.
+
+[Current browser review](https://doodle-layout-review-joflopuev-codenamez.vercel.app/release.html) contains screenshot 2, the four screenshots together and the coordinated comparison. `browser-preview.json` records anonymous image decoding and no horizontal overflow at 320, 390 and 1280 px, plus exact remote PNG hashes. The 390 px live page was inspected visually. It runs on the existing isolated static review project. No live app deployment or Play Console change occurred.
 
 Dimensions and content were checked against [Google Play's asset guidance](https://support.google.com/googleplay/android-developer/answer/9866151?hl=en) on October 4. This comparison emphasizes actual output content. Retain app UI in the surrounding gallery, as Google recommends prioritizing it in the first three images.

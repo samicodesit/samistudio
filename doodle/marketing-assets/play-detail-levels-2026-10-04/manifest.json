@@ -1,5 +1,5 @@
 {
-  "status": "Draft prepared. Owner permits slight paper-color drift and prefers the observed artwork. Whole-asset visual acceptance and publishing approval pending.",
+  "status": "Updated draft with lavender backdrop and owner-requested Detailed character edit. Whole-asset visual acceptance and publishing approval pending.",
   "intendedSlot": 2,
   "replaces": {
     "path": "marketing-assets/play-gallery-2026-10-02/exports/02-your-words.png",
@@ -7,34 +7,86 @@
     "source": "Current submitted gallery manifest in main checkout, inspected 2026-10-04."
   },
   "output": "02-detail-levels.png",
-  "sha256": "d2570419acf55be149b9b0caa88701b1de7ffa927a3114906d6bc5903f3ccc7b",
+  "sha256": "18395d41eb9dd068147669e5f0657740e0b03b8b803a723673f3e71f927bff45",
   "dimensions": {
     "width": 1080,
     "height": 1920,
     "alpha": false
   },
   "scene": "Two friends baking pancakes",
-  "provenance": "Three saved genuine HIGH outputs. No additional generations, no recoloring, cropping, rotations or alterations to the source drawings. Upright square images scaled equally and staggered vertically with a 50 px corner overlap.",
-  "settings": {
+  "provenance": "Simple and Medium retain saved genuine HIGH artwork. Detailed has an owner-requested built-in Image Gen character edit. All three copies use the shared backend paper-color correction, paper-v1. Original evaluation outputs remain intact. Upright square images scaled equally and staggered vertically with a 50 px corner overlap.",
+  "originalGenerationSettings": {
     "model": "gpt-image-1-mini",
     "quality": "high",
     "size": "1024x1024"
   },
+  "marketingEdits": "edits/manifest.json",
+  "brand": {
+    "background": "#EEE7F2",
+    "paper": "#FFEB8A",
+    "heading": "Bricolage Grotesque 700",
+    "body": "IBM Plex Sans",
+    "color": "#22251F",
+    "headingSize": 96,
+    "subtitleSize": 36,
+    "headerOffset": {
+      "top": 42,
+      "left": 66
+    },
+    "matches": "Existing screenshot 1, 3 and 4 font files, type scale, header offsets, charcoal text, moss accents and restrained pastel treatment."
+  },
   "sources": [
     {
+      "id": "2-1-simple",
+      "scene": 2,
       "level": "simple",
-      "path": "docs/qa/detail-levels/comparisons/2-1-simple.png",
-      "sha256": "777f15540bc93c15e63b3a640867f7a0f96be5a2508f9682953e26bff09e673b"
+      "originalPath": "docs/qa/detail-levels/comparisons/2-1-simple.png",
+      "originalSha256": "777f15540bc93c15e63b3a640867f7a0f96be5a2508f9682953e26bff09e673b",
+      "edit": null,
+      "path": "drawings/2-1-simple.png",
+      "sha256": "1c00316f99b5383b13e4f56be541c693ac1f205e695d0a753a32886613a7d626",
+      "correction": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 200
+      }
     },
     {
+      "id": "2-1-medium",
+      "scene": 2,
       "level": "medium",
-      "path": "docs/qa/detail-levels/comparisons/2-1-medium.png",
-      "sha256": "5b1b02f0a6a117352d2da63b153f68455eb22b661eb870175475d9a327726b6f"
+      "originalPath": "docs/qa/detail-levels/comparisons/2-1-medium.png",
+      "originalSha256": "5b1b02f0a6a117352d2da63b153f68455eb22b661eb870175475d9a327726b6f",
+      "edit": null,
+      "path": "drawings/2-1-medium.png",
+      "sha256": "f8f60cf61de1fc6b138e72a9aec11fc9d5cb0c1274bce42e56cace1daf58526b",
+      "correction": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 261
+      }
     },
     {
+      "id": "2-1-detailed",
+      "scene": 2,
       "level": "detailed",
-      "path": "docs/qa/detail-levels/comparisons/2-1-detailed.png",
-      "sha256": "75bbf1d6ce5ed791b4e89e9bb1d184cacd1298512a3cc2da85d86e5b7ee00cc4"
+      "originalPath": "docs/qa/detail-levels/comparisons/2-1-detailed.png",
+      "originalSha256": "75bbf1d6ce5ed791b4e89e9bb1d184cacd1298512a3cc2da85d86e5b7ee00cc4",
+      "edit": {
+        "id": "2-1-detailed",
+        "path": "edits/cooking-detailed.png",
+        "sha256": "d1c1cdb5ae3616c664af3961465d7684e0e91a3163d8c9a2bd4dfc0279546fad",
+        "target": "docs/qa/detail-levels/comparisons/2-1-detailed.png",
+        "reference": "docs/qa/detail-levels/comparisons/2-1-medium.png",
+        "prompt": "Use case: precise-object-edit, identity-preserve. Image 1 is the edit target: original Detailed two friends cooking doodle. Image 2 is a reference ONLY for the man on the right's haircut and face. Output one square illustration only. STRICT localized edit: change ONLY the character at viewer RIGHT in image 1 so he is recognizably the short-haired young adult man from image 2. Replace his shoulder-length curly bob with SHORT tousled cropped hair like image 2, expose the ears, retain friendly rounded face and smile. KEEP HIS ORIGINAL ACTION: stirring the patterned mixing bowl, same hands, same patterned leafy shirt and shirt shape. Keep EVERYTHING ELSE in image 1 unchanged to best effort: woman at LEFT, her exact hair, apron, face, pose and spatula; pan and pancakes, countertop, bowls, bottles, plants, cupboards, brickwork, all object positions, detailed border and framing. Do NOT swap cooking roles, utensils, bowls or clothes. Do NOT redraw the woman or rearrange the kitchen. Preserve detailed dark imperfect graphite lines, hatching and filled hair, on subtly textured yellow paper. Target paper #FFEB8A. No new objects, realism, text, watermarks, panels or captions. This is a small marketing character correction. Preserve image 1 composition very closely."
+      },
+      "path": "drawings/2-1-detailed.png",
+      "sha256": "c02ddbf37ddb9db3e65599d29ff40b01a4981d17d1d3edfe2cc2008210ca420f",
+      "correction": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 163
+      }
     }
   ],
   "qa": {
@@ -80,12 +132,12 @@
       }
     ]
   },
-  "visualReview": "Inspected at 1080x1920 and 390 px width on 2026-10-04. Drawings distinguishable, subjects visible, labels readable. Measurements confirm paper-color drift; the owner subsequently accepted slight drift and preferred the hatching and filled areas. See docs/qa/detail-levels/comparisons/paper-color-review.json. Whole-asset acceptance remains pending.",
+  "visualReview": "Author inspected the full 1080x1920 export, 390 px export preview, six-image comparison, four-screenshot gallery, and live 390 px review page on 2026-10-04. Lavender matches the restrained pastel gallery treatment. Shared fonts and header measurements match submitted assets. Short-haired man in Detailed retains original cooking roles and kitchen composition to best effort; Medium artwork is unedited. Cat pose, eyes, flower side and tail side are coordinated. Paper grain and detailed hatching remain visible. All 12 live images decoded anonymously at 320, 390 and 1280 px with no horizontal overflow. All four remote store PNGs match local hashes. Owner acceptance pending.",
   "releaseGate": "Publish alongside the shipped detail-level feature after owner approval. This is a composed feature illustration, not a Play-installed live capture. Preserve the artwork the owner likes.",
   "guidance": {
     "url": "https://support.google.com/googleplay/android-developer/answer/9866151?hl=en",
     "checked": "2026-10-04",
-    "applied": "1080x1920 opaque PNG; brief heading; no ranking, pricing or install claims; shows actual generated feature content."
+    "applied": "1080x1920 opaque PNG; brief heading; no ranking, pricing or install claims; drawing examples include owner-requested marketing edits."
   },
   "alt": "The same cooking idea shown as Simple, Medium and Detailed Doodle drawings, arranged in a vertical stack."
 }
