@@ -30,7 +30,7 @@
       "correction": {
         "version": "paper-v1",
         "status": "corrected",
-        "durationMs": 168
+        "durationMs": 172
       }
     },
     {
@@ -45,7 +45,7 @@
       "correction": {
         "version": "paper-v1",
         "status": "corrected",
-        "durationMs": 150
+        "durationMs": 191
       }
     },
     {
@@ -67,7 +67,7 @@
       "correction": {
         "version": "paper-v1",
         "status": "corrected",
-        "durationMs": 118
+        "durationMs": 150
       }
     },
     {
@@ -82,7 +82,7 @@
       "correction": {
         "version": "paper-v1",
         "status": "corrected",
-        "durationMs": 200
+        "durationMs": 163
       }
     },
     {
@@ -97,7 +97,7 @@
       "correction": {
         "version": "paper-v1",
         "status": "corrected",
-        "durationMs": 261
+        "durationMs": 259
       }
     },
     {
@@ -108,18 +108,26 @@
       "originalSha256": "75bbf1d6ce5ed791b4e89e9bb1d184cacd1298512a3cc2da85d86e5b7ee00cc4",
       "edit": {
         "id": "2-1-detailed",
-        "path": "edits/cooking-detailed.png",
-        "sha256": "d1c1cdb5ae3616c664af3961465d7684e0e91a3163d8c9a2bd4dfc0279546fad",
-        "target": "docs/qa/detail-levels/comparisons/2-1-detailed.png",
-        "reference": "docs/qa/detail-levels/comparisons/2-1-medium.png",
-        "prompt": "Use case: precise-object-edit, identity-preserve. Image 1 is the edit target: original Detailed two friends cooking doodle. Image 2 is a reference ONLY for the man on the right's haircut and face. Output one square illustration only. STRICT localized edit: change ONLY the character at viewer RIGHT in image 1 so he is recognizably the short-haired young adult man from image 2. Replace his shoulder-length curly bob with SHORT tousled cropped hair like image 2, expose the ears, retain friendly rounded face and smile. KEEP HIS ORIGINAL ACTION: stirring the patterned mixing bowl, same hands, same patterned leafy shirt and shirt shape. Keep EVERYTHING ELSE in image 1 unchanged to best effort: woman at LEFT, her exact hair, apron, face, pose and spatula; pan and pancakes, countertop, bowls, bottles, plants, cupboards, brickwork, all object positions, detailed border and framing. Do NOT swap cooking roles, utensils, bowls or clothes. Do NOT redraw the woman or rearrange the kitchen. Preserve detailed dark imperfect graphite lines, hatching and filled hair, on subtly textured yellow paper. Target paper #FFEB8A. No new objects, realism, text, watermarks, panels or captions. This is a small marketing character correction. Preserve image 1 composition very closely."
+        "path": "edits/cooking-detailed-open-eyes.png",
+        "sha256": "9c0543441bc5761e0d84ae60bafe320a4557434c58d9a192148060d6a6776945",
+        "target": "marketing-assets/play-detail-levels-2026-10-04/edits/cooking-detailed.png",
+        "prompt": "Use case: precise-object-edit. Edit this existing Detailed cooking marketing illustration. Make ONLY ONE tiny localized change: the woman on the LEFT currently has her viewer-left eye drawn as a closed U-shaped wink. Replace that wink with an OPEN small dark vertical oval eye, matching the shape, size, line texture and expression of her other open eye. She should have two open eyes and the same existing happy smile. Preserve the rest of the illustration as exactly as possible: her eyebrows, face outline, nose, smile, hair, apron, hands and pose; the man on the right and his short hair, face, shirt, hands and mixing bowl; kitchen, pan, pancakes, plants, jars, all objects and their positions; graphite pencil strokes, hatching, textured yellow paper, square dimensions and composition. Do not change anything besides that one closed eye. No captions, text, new objects, recoloring or style changes. Output the same square image with the eye corrected. This is only a marketing asset correction.",
+        "previousEdit": {
+          "id": "2-1-detailed",
+          "path": "edits/cooking-detailed.png",
+          "sha256": "d1c1cdb5ae3616c664af3961465d7684e0e91a3163d8c9a2bd4dfc0279546fad",
+          "target": "docs/qa/detail-levels/comparisons/2-1-detailed.png",
+          "reference": "docs/qa/detail-levels/comparisons/2-1-medium.png",
+          "prompt": "Use case: precise-object-edit, identity-preserve. Image 1 is the edit target: original Detailed two friends cooking doodle. Image 2 is a reference ONLY for the man on the right's haircut and face. Output one square illustration only. STRICT localized edit: change ONLY the character at viewer RIGHT in image 1 so he is recognizably the short-haired young adult man from image 2. Replace his shoulder-length curly bob with SHORT tousled cropped hair like image 2, expose the ears, retain friendly rounded face and smile. KEEP HIS ORIGINAL ACTION: stirring the patterned mixing bowl, same hands, same patterned leafy shirt and shirt shape. Keep EVERYTHING ELSE in image 1 unchanged to best effort: woman at LEFT, her exact hair, apron, face, pose and spatula; pan and pancakes, countertop, bowls, bottles, plants, cupboards, brickwork, all object positions, detailed border and framing. Do NOT swap cooking roles, utensils, bowls or clothes. Do NOT redraw the woman or rearrange the kitchen. Preserve detailed dark imperfect graphite lines, hatching and filled hair, on subtly textured yellow paper. Target paper #FFEB8A. No new objects, realism, text, watermarks, panels or captions. This is a small marketing character correction. Preserve image 1 composition very closely."
+        },
+        "review": "Both eyes open. Marketing-only eye correction; prior source retained as the exact edit input."
       },
       "path": "drawings/2-1-detailed.png",
-      "sha256": "c02ddbf37ddb9db3e65599d29ff40b01a4981d17d1d3edfe2cc2008210ca420f",
+      "sha256": "ff528b1e7b577dd4db9073b78a2d4cf3651abb9f0923481eec0a88296a3e6ad1",
       "correction": {
         "version": "paper-v1",
         "status": "corrected",
-        "durationMs": 163
+        "durationMs": 180
       }
     }
   ]
