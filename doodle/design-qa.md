@@ -1,43 +1,46 @@
-# Joined detail drawer design QA
+# Combined hero design QA
 
-Source visual truth: [Owner-selected option 2](docs/qa/detail-levels/design-target.png). Generated source 853 x 1844 pixels, normalized to a 390 x 844 viewport for comparison. Latest owner correction places the strip as close to the trailing edge as reasonable (right in LTR, left in RTL); implementation uses 4 px/dp.
-
-Implementation: [Installed web, expanded](docs/qa/detail-levels/web/app-en-390-2.png), 390 x 844 CSS pixels, device scale factor 1, fixture account/image responses. Source and implementation are shown together in [the full comparison](docs/qa/detail-levels/design-comparison.png) and [the selector comparison](docs/qa/detail-levels/design-comparison-detail.png).
-
-Scope: the selector and its integration with the existing prompt input. Existing web/native layout, reference image, suggestions and Create placement were preserved. This is real component rendering with fixture service responses, not provider or Play Integrity verification.
-
-## Comparison history
-
-1. Earlier implementation had three separate tiles, an external chevron and space above the input. Replaced with a single yellow strip, two thin dividers and the centered tab. Removed the visible heading and heavy selected border. Preserved radio semantics and a small corner check.
-2. First joined render placed the control too far inward and added extra space above it. Set 4 px/dp trailing inset and tightened its integration with the hint/input.
-3. A closing-frame capture showed the handle separating from the moving strip. Fixed with one shared progress value: the tab remains attached to the visible strip or input edge throughout the slide. [Post-fix transient evidence](docs/qa/detail-levels/web/app-en-390-transition.png).
-4. Native inspection showed the compact visible handle clipping its touch target. Preserved the same visible geometry using a full 48 dp target in the input stack. Explicitly removed hidden native radio semantics/focus. Final hierarchy shows zero hidden radio controls.
-
-## Required surfaces
-
-- Typography: actual Bricolage Grotesque, IBM Plex Sans and Alexandria loaded on web; existing embedded brand fonts retained on native. No new visible level labels. Tooltip and screen-reader names remain localized.
-- Spacing/layout: zero gap between drawer and input, joined choices, restrained 6 px upper corners, 4 px/dp edge inset. Checked 1280, 390 and 320 px plus native 200% text. Input provides the foreground mask; no extra drawer shadow.
-- Colors: Doodle yellow #FFEB8A, graphite lines, moss selection check and existing sage/paper surfaces retained. No gradients added.
-- Artwork: reused coordinated vector-source flowers and matching native PNGs. Same subject/composition, distinguishable detail at actual control size. Source mockup's approximate flowers intentionally replaced by the established source assets.
-- Copy/content: existing scene and app copy preserved. Suggestion wording varies because the app samples ideas. Native has its existing reference image and footer arrangement, outside this scoped selector change.
-- Interaction: click/tap and up/down handle swipes, radio arrows/Home/End on web, focus/tooltips, persistence, hidden choices, retry/redraw and loading covered. Reduced motion is effectively immediate. Native hardware focus and accessibility hierarchy inspected; actual spoken TalkBack remains unverified.
-
-## Verification
-
-Production web build, native fixture APK build, both TypeScript checks, lint and selector tests passed. Six production browser tests passed. English/Arabic native 200% captures reviewed. The broader release browser failures and real Play-installed Integrity verification remain separate gates recorded in [verification.json](docs/qa/detail-levels/verification.json).
-
-No actionable P0/P1/P2 visual differences remain in this scoped selector comparison. Remaining P3: the generated mock uses approximate typography and a slightly flared tab join; implementation retains exact brand fonts and a conventional rounded control. Owner approval of rendered output, independent release review and deployment/publishing approval remain pending.
+Date: 2026-10-04.
 
 final result: passed
 
-## RTL edge correction
+Owner direction: combine option 1's desktop composition with option 2's compact spacing. Retain the flower cat and three pastel paper examples as closely as practical. Phones use the compact title/helper beside the joined drawer. Latest owner correction: "What's your idea?", with equivalent wording in all ten languages.
 
-The drawer, centered tab and selection check mirror to the left in RTL. The inset remains 4 px/dp and the slide, foreground mask and joined dividers are unchanged.
+## Source and rendered comparison
 
-Prior landing review preserved in [the October 2 report](docs/qa/landing-october-2-design-qa.md).
+The [hybrid target](docs/qa/detail-levels/hero/hybrid-target.png) is an illustrative 1090 x 1443 Image Gen board. Its desktop region was cropped to 1001 x 642 and compared with the 1440 x 900 CSS pixel production browser capture, normalized to 1000 px wide. [Combined desktop comparison](docs/qa/detail-levels/hero/desktop-comparison.png). The [phone comparison](docs/qa/detail-levels/hero/phone-comparison.png) normalizes the source phone region to 390 px wide beside the matching implementation region. Both comparison inputs were visually inspected.
 
-## Compact hint row and stable input
+These references establish composition, not exact copy or pixel specifications. The implementation retains existing localized desktop copy, substantive SEO content and suggestion behavior. The source's invented guides, gradients and redundant native wordmark were not adopted. Artwork was extracted with Image Gen and exported proportionally with transparency; small drawing differences remain. [Artwork provenance](docs/qa/detail-levels/hero-assets.json).
 
-The hint now shares the row beside the flowers, with a 12 px/dp gap above the input. At 320 px it wraps within its available width. Removed the separate full-width hint band. The drawer and tab translate 56 px/dp behind the stationary input instead of resizing the composer. Production browser regression compares input coordinates before and after collapse/reveal in LTR and RTL. Native hierarchy verifies identical input bounds after collapse; full 48 dp handle target retained.
+Web captures use the production Webpack app with fixture account/generation responses. Native captures use the isolated presentation package on the Play API 36 emulator, at 320 dp and 100%/200% text. This is UI verification, not live provider, payment or Integrity validation. [Current screenshot manifest](docs/qa/detail-levels/hero/manifest.json).
 
-Final compact-row verification: 584 web/backend tests passed (1 paid test skipped), 101 native tests passed, 6 production browser tests passed, web production build and native fixture APK build passed. Enlarged Arabic hint spacing corrected and inspected. Two unrelated existing lint warnings remain. UI captures use fixture services. No deployment or publishing.
+## Findings and corrections
+
+1. P2: the first desktop render clipped the cat's feet. Set explicit frame/image height and object-fit contain. Revised desktop and tablet captures show the entire drawing; regression checks cover 768, 1280 and 1440 px.
+2. P2: inherited header margins split utility links across the header. Removed the extra automatic language margin. Examples, language and sign-in now form one group.
+3. P2: at 320 dp and 200% Android text, the credit label broke into fragments beside Create. Stack credit text and Create at enlarged text sizes. Revised English and Arabic captures are readable.
+4. P2: enlarged Arabic suggestion-heading descenders were clipped. Increased its line height for Alexandria and inspected the installed fixture again; the full heading is visible.
+5. Drawer and tab stay joined to the input, with thin dividers and a 4 px/dp trailing inset. Native input bounds were identical before and after collapse: [49,612][791,922]. Browser checks cover the stationary input, all selections, RTL, focus and reduced motion.
+6. Inspected phone, installed web, tablet and desktop captures, Arabic direction and native enlarged text. No unresolved P0/P1/P2 presentation findings. Very large text remains scrollable; narrow headings and navigation labels can wrap.
+
+## Verification
+
+- Full production browser suite: 83 passed. Covers all ten public and installed translations, drawer states, keyboard, storage failures, loading/error/retry/redraw, checkout returns, downloads, sharing fallback, grids and example navigation.
+- After the final idea wording: rebuilt production web and Android fixture; reran 47 component tests and six production browser tests, including all public translations at 320, 390 and 1280 px. All passed.
+- Web/backend suite: 614 passed; one paid provider test intentionally skipped. Android logic suite: 101 passed.
+- Web and native TypeScript passed. Web production build passed with 84 static pages. Lint: zero errors, two existing image warnings in card-composer.tsx.
+- Android fixture built and installed. Separately inspected 320 dp, normal/enlarged text and collapse geometry. Production signing is unchanged. Fixture uses the existing debug signing configuration.
+- Shared native source inputs now participate in Gradle's bundle cache, preventing an incremental APK from retaining stale shared copy. Metro watches shared dependency symlink targets in worktrees.
+- Browser font loading checks and Chromium platform font inspection verify brand fonts. Native uses existing bundled Bricolage Grotesque, IBM Plex Sans and Alexandria assets.
+- Canonicals, hreflang, structured data and localized guide content remain. Metadata assertions passed.
+- Animated hints retain typing/backspacing, focus suppression and reduced motion. Native's existing placeholder remains. The generous yellow loading card, animation and rotating in-card messages are unchanged.
+
+Initial browser failures expected the old heading, fixed font size and visible phone hero image. Tests now exercise the approved layout and reachable examples. A revised test initially read the decorative plus into its expected scene; it now reads only the scene text. The final full suite passes without skipping those workflows.
+
+## Delivery and release boundaries
+
+[Phone-accessible image gallery](https://doodle-layout-review-8ar7krqzp-codenamez.vercel.app/implemented.html). Only current manifest-listed captures are included. Anonymous requests returned HTTP 200 for the gallery and all ten images with matching hashes. All images decoded, with no gallery overflow at 390 CSS px. The isolated Hobby preview is static, with no app functions. [Delivery verification](docs/qa/detail-levels/hero/preview-verification.json).
+
+Owner final visual acceptance, independent release review, separate production deployment/publishing approval and real Play-installed generation/Integrity verification remain release gates. No live Doodle deployment or Android publication occurred.
+
+Previous selector-specific QA is preserved in [the joined-drawer record](docs/qa/detail-levels/joined-drawer-design-qa.md).

@@ -108,7 +108,7 @@ test.describe("PWA foundation", () => {
 
     await page.context().setOffline(false);
     await page.getByRole("button", { name: "Erneut versuchen" }).click();
-    await expect(page.getByRole("heading", { name: "Was sollen wir zeichnen?" })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Beschreibe eine Szene" })).toBeVisible();
     await expect(page).toHaveURL(/\/de\?scene=private-value$/);
 
     await page.setViewportSize({ width: 1440, height: 1000 });

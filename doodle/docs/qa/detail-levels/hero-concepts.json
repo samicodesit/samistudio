@@ -1,0 +1,58 @@
+{
+  "date": "2026-10-04",
+  "source": "Three independent built-in Image Gen layout studies using current Doodle browser and native QA references.",
+  "usage": "Concept exploration only. No product implementation, deployment or functional validation.",
+  "reviewStatus": "Owner selected hybrid desktop composition and option 2 phone direction on 2026-10-04. Implementation and automated/visual QA prepared; final owner render acceptance pending.",
+  "assets": [
+    {
+      "displayOrder": 1,
+      "direction": "Compact drawing desk",
+      "path": "C:/Users/Sami/.codex/generated_images/01a0fba5-eb2f-7521-bf5c-dd96bb45f819/exec-820e3bbe-e27d-4fdf-abb6-b3b8a9d7ea86.png",
+      "reviewNotes": "Remove invented hand-drawn claim and filler. Restore mobile web heading. Improve compact phone header and remove redundant native controls."
+    },
+    {
+      "displayOrder": 2,
+      "direction": "Words beside the drawing",
+      "path": "C:/Users/Sami/.codex/generated_images/01a0fba5-eb2f-7521-bf5c-dd96bb45f819/exec-feddbb17-fdc5-4ded-8f1b-411d6d66ffff.png",
+      "reviewNotes": "Preferred layout direction. Remove nested composer wrapper and redundant native header. Keep one compact heading/helper band adjoining drawer and input. Use approved production artwork."
+    },
+    {
+      "displayOrder": 3,
+      "direction": "Example led entry",
+      "path": "C:/Users/Sami/.codex/generated_images/01a0fba5-eb2f-7521-bf5c-dd96bb45f819/exec-bc22d323-d9f7-4eed-ad96-d45da4548c48.png",
+      "reviewNotes": "Starter ribbon adds content and an extra choice. Remove nested composer wrapper and redundant native header. Retain substantive web SEO content below creation area."
+    }
+  ],
+  "acceptancePending": [
+    "Owner visual acceptance of final rendering",
+    "Separate production deployment and Android publishing approval",
+    "Real Play-installed generation and Integrity release verification"
+  ],
+  "browserPreview": {
+    "url": "https://doodle-layout-review-5jmxgt3xl-codenamez.vercel.app/hero.html",
+    "project": "doodle-layout-review",
+    "scope": "codenamez",
+    "plan": "hobby",
+    "verifiedAt": "2026-10-04T09:31:19.351Z",
+    "anonymousGalleryHttp": 200,
+    "checks": [
+      {
+        "option": 1,
+        "httpStatus": 200,
+        "sha256": "3add55dba6c1f61d97518702a55e032ee18be794201bccdeeb4841c66dc5fca2"
+      },
+      {
+        "option": 2,
+        "httpStatus": 200,
+        "sha256": "150cd785587beb1c365adf4cba4532e85b71f044b1fdc416112d5808990d5592"
+      },
+      {
+        "option": 3,
+        "httpStatus": 200,
+        "sha256": "f0cc6d42d6f52cef1160479886da48d6cdf621fd602db096dab304ca013134be"
+      }
+    ],
+    "visualReview": "All three rendered gallery images visually inspected in in-app browser. All three decoded and no horizontal overflow at actual 325 CSS px viewport. Owner iPhone display confirmation pending.",
+    "liveAppChanged": false
+  }
+}

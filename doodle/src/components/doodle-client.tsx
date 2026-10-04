@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { track } from "@vercel/analytics";
 import { RefreshCw } from "lucide-react";
@@ -16,7 +16,8 @@ import { PurchaseDialog } from "./purchase-dialog";
 import { ResultActions } from "./result-actions";
 import { DoodlePreviewDialog } from "./doodle-preview-dialog";
 import { isPlayRuntime } from "@/lib/billing/play-client";
-import { LANDING_EXAMPLE, type LandingCopy } from "@/lib/landing-copy";
+import { getLandingCopy, LANDING_EXAMPLE, type LandingCopy } from "@/lib/landing-copy";
+import { getComposerIntro } from "@/lib/composer-intro";
 
 type GenerationState =
   | { status: "idle"; imageUrl: null; error: null }
@@ -78,6 +79,7 @@ function messageForStatus(status: number, copy: DoodleCopy["errors"]): string {
 }
 
 export function DoodleClient({ locale, copy, initialScene = "", initialSuggestionIds, accountHost = "web", landing }: DoodleClientProps) {
+  const composerHints = useMemo(() => getLandingCopy(locale).placeholderPrompts, [locale]);
   const [scene, setScene] = useState(initialScene);
   const { detailLevel, detailReady, selectDetailLevel } = useDetailLevel();
   const initialIds = initialSuggestionIds ?? DEFAULT_SUGGESTION_IDS;
@@ -460,20 +462,22 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
             detailLevel={detailLevel}
             detailReady={detailReady}
             onDetailLevelChange={selectDetailLevel}
-            copy={landing ? { ...copy.composer, placeholder: landing.examplePrompt } : copy.composer}
+            copy={{ ...copy.composer, ...getComposerIntro(locale), ...(landing ? { placeholder: landing.examplePrompt } : {}) }}
             usage={usage}
             usageLoadingLabel={copy.account.label}
             createButtonRef={createButtonRef}
             sceneInputRef={sceneInputRef}
             compactHeading={Boolean(landing)}
-            placeholderPrompts={landing?.placeholderPrompts}
+            placeholderPrompts={composerHints}
           />
         )}
         {generation.status !== "generating" && generation.status !== "ready" ? (
-        landing ? <section className="landing-suggestions" aria-label={landing.tryIdea}>
+        <>
+        {landing ? <section className="landing-suggestions" aria-label={landing.tryIdea}>
           <span>{landing.tryIdea}</span>
           {landing.suggestions.map(({ label, prompt }) => <button key={label} type="button" onClick={() => handleSuggestion(prompt)}>{label}</button>)}
-        </section> : <section className="suggestions-section" aria-labelledby="suggestions-title">
+        </section> : null}
+        <section className="suggestions-section" aria-labelledby="suggestions-title">
           <div className="suggestions-heading">
             <h2 id="suggestions-title">{copy.suggestions.title}</h2>
             <button
@@ -499,6 +503,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
             ))}
           </div>
         </section>
+        </>
         ) : null}
       </div>
       {accountPortal}
@@ -515,11 +520,11 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
           gridEnabled={generation.imageUrl !== null && gridImageUrl === generation.imageUrl}
           onToggleGrid={() => setGridImageUrl(current => current === generation.imageUrl ? null : generation.imageUrl)}
           referenceImage={landing ? LANDING_EXAMPLE : undefined}
-          referenceAlt={landing ? `${landing.exampleLabel}: ${landing.examplePrompt}` : undefined}
+          referenceAlt={landing ? `${landing.exampleLabel}: ${landing.heroPrompt}` : undefined}
         />
         {landing && generation.status === "idle" ? <div className="landing-example-caption" id="examples">
           <span>{landing.exampleLabel}</span>
-          <p>{landing.examplePrompt}</p>
+          <p>{landing.heroPrompt}</p>
         </div> : null}
         </div>
       </div>
@@ -530,7 +535,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
           open={isResultOpen}
           onClose={() => setIsResultOpen(false)}
           copy={copy.dialog}
-          imageAlt={generation.status === "ready" ? copy.stage.generatedAlt : landing ? `${landing.exampleLabel}: ${landing.examplePrompt}` : copy.stage.referenceAlt}
+          imageAlt={generation.status === "ready" ? copy.stage.generatedAlt : landing ? `${landing.exampleLabel}: ${landing.heroPrompt}` : copy.stage.referenceAlt}
           locale={locale}
           gridEnabled={generation.status === "ready" ? gridImageUrl === generation.imageUrl : undefined}
           onToggleGrid={generation.status === "ready" ? () => setGridImageUrl(current => current === generation.imageUrl ? null : generation.imageUrl) : undefined}

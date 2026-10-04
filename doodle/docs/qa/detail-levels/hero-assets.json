@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-04",
+  "reference": "exec-820e3bbe-e27d-4fdf-abb6-b3b8a9d7ea86.png",
+  "hybridTarget": "exec-93c0bad9-806d-454f-98e9-d2d47a4b4c90.png",
+  "assets": [
+    {
+      "source": "/mnt/c/Users/Sami/.codex/generated_images/01a0fba5-eb2f-7521-bf5c-dd96bb45f819/exec-86ddf099-861f-45b1-a0ac-859668732c32.png",
+      "file": "public/landing/flower-cat.webp",
+      "width": 640,
+      "height": 907,
+      "hasAlpha": true,
+      "bytes": 542978,
+      "sha256": "730ce6b528588498b4486a2880b4302c2a40d518d1cdeea143678ff720bb514a",
+      "provenance": "Built-in Image Gen extraction from selected option 1. Transparent trim and proportional resize, lossless WebP export.",
+      "ownerDirection": "Approved source composition and best-effort asset retention on 2026-10-04. Final rendered review pending.",
+      "generationInstruction": "Extract the freestanding yellow kitten holding a flower from selected option 1. Preserve pose, dark imperfect outlines, yellow pencil texture, raised flower, tail, heart, rays and ground scribble. Transparent background, no UI, no unrelated additions."
+    },
+    {
+      "source": "/mnt/c/Users/Sami/.codex/generated_images/01a0fba5-eb2f-7521-bf5c-dd96bb45f819/exec-0c34f146-b27b-4a5c-b025-1eb822478e3d.png",
+      "file": "public/landing/pastel-examples.webp",
+      "width": 1400,
+      "height": 527,
+      "hasAlpha": true,
+      "bytes": 856344,
+      "sha256": "6f1cccf0f387e62f173c80eb31887453503e58f824094748b1c2cb63b412034e",
+      "provenance": "Built-in Image Gen extraction from selected option 1. Transparent trim and proportional resize, lossless WebP export.",
+      "ownerDirection": "Approved source composition and best-effort asset retention on 2026-10-04. Final rendered review pending.",
+      "generationInstruction": "Extract the coordinated three slightly tilted paper examples from selected option 1: yellow kitten holding flower, cream mug with Good day and hearts, pale sage house with trees and sun. Preserve composition and restrained dark lines. Transparent surroundings, no UI."
+    }
+  ],
+  "reviewStatus": "Agent inspected assets and their actual desktop/mobile rendering. Owner selected composition; final render acceptance pending."
+}

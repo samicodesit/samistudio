@@ -8,7 +8,7 @@ describe("DoodlePage", () => {
 
     fireEvent.click(container.querySelector(".language-switcher summary")!);
     fireEvent.click(container.querySelector(".landing-resources summary")!);
-    expect(screen.getByRole("heading", { level: 2, name: "Was sollen wir zeichnen?" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "Zeichnen wir." })).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 2, name: "So funktioniert es" })).toBeInTheDocument();
     expect(screen.getByText("Deutsch")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Nederlands" })).toHaveAttribute("href", "/nl");
@@ -37,7 +37,7 @@ describe("DoodlePage", () => {
     const { container } = render(<DoodlePage locale="ar" />);
     fireEvent.click(container.querySelector(".language-switcher summary")!);
 
-    expect(screen.getByRole("heading", { level: 2, name: "ماذا نرسم؟" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2, name: "لنرسم." })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "أنشئ رسمة" })).toBeDisabled();
     expect(screen.getByRole("link", { name: "English" })).toHaveAttribute("hrefLang", "en");
     for (const link of screen.getAllByRole("link", { name: "الصفحة الرئيسية لـ Doodle" })) expect(link).toHaveAttribute("dir", "ltr");

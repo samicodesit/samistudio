@@ -2394,12 +2394,16 @@ html[lang="ja"] .editorial-article h1 {
 /* One progress value keeps the pull tab joined while the input masks the drawer. */
 @property --detail-open { syntax: "<number>"; inherits: true; initial-value: 1; }
 .composer-input-wrap { position: relative; isolation: isolate; min-width: 0; }
-.composer-input-wrap:has(.detail-selector) { margin-top: 10px; }
+.composer-input-wrap:has(.detail-selector) { margin-top: 0; }
 .composer-detail-row { display: grid; grid-template-columns: minmax(0, 1fr) 174px; gap: 8px; align-items: end; min-height: 80px; }
-.composer-detail-row .scene-hint { margin: 0; max-width: none; padding-bottom: 12px; }
+.composer-detail-row .scene-heading { min-width: 0; padding-bottom: 12px; }
+.composer-detail-row .scene-heading h1, .composer-detail-row .scene-heading h2 { margin: 0; font-size: clamp(24px, 6.8vw, 30px); line-height: 1.12; letter-spacing: -.035em; overflow-wrap: anywhere; }
+.composer-detail-row .scene-hint { margin: 5px 0 0; max-width: none; font-size: 14px; line-height: 1.4; overflow-wrap: anywhere; }
+html[dir="rtl"] .composer-detail-row .scene-heading h1, html[dir="rtl"] .composer-detail-row .scene-heading h2 { letter-spacing: normal; }
 .composer-detail-row .detail-selector { grid-column: 2; }
 .composer-input-wrap .doodle-composer { position: relative; z-index: 1; }
 .composer-input-wrap .doodle-composer:focus-within { transform: none; }
+.doodle-composer:has(.animated-prompt-hint) textarea::placeholder { opacity: 0; }
 .detail-selector { position: relative; --detail-open: 1; height: 80px; overflow: visible; transition: --detail-open 180ms ease-out; touch-action: pan-x; }
 .detail-selector[data-expanded="false"] { --detail-open: 0; }
 .detail-drawer { position: absolute; top: 24px; inset-inline-end: 4px; width: 170px; height: 70px; border: 1px solid var(--line); border-radius: 6px 6px 0 0; background: #ffeb8a; transform: translateY(calc((1 - var(--detail-open)) * 56px)); transition: visibility 0ms; visibility: visible; }

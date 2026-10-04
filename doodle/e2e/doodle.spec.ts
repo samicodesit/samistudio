@@ -6,7 +6,7 @@ const referencePng = fs.readFileSync(path.join(process.cwd(), "public/references
 
 async function openTool(page: Page, path = "/") {
   await page.goto(path);
-  await expect(page.getByRole("heading", { name: "What should we doodle?" })).toBeVisible();
+  await expect(page.locator(".composer-section")).toBeVisible();
 }
 
 async function fulfillImage(route: Route) {
@@ -35,7 +35,7 @@ async function expectFullyInViewport(page: Page, locator: Locator) {
 }
 
 async function expectSuggestionsFit(page: Page) {
-  const suggestions = page.locator(".suggestions-list, .landing-suggestions");
+  const suggestions = page.locator(".suggestions-list:visible, .landing-suggestions:visible");
   const fits = await suggestions.evaluate((element) => element.scrollWidth <= element.clientWidth);
   expect(fits).toBe(true);
 }
@@ -101,22 +101,18 @@ test.describe("Doodle mobile workflow", () => {
   test("creates, downloads, retries, and starts a new scene", async ({ page }, testInfo) => {
     await openTool(page);
     await page.reload();
-    await expect(page.getByRole("heading", { name: "What should we doodle?" })).toBeVisible();
+    await expect(page.locator(".composer-section")).toBeVisible();
     await expectNoOverflow(page);
     await expectSuggestionsFit(page);
 
     const reference = page.locator(".doodle-stage-reference img");
-    const referenceSource = await reference.getAttribute("src");
-    await page.locator(".doodle-stage-reference").click();
-    await expect(page.getByRole("dialog")).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(page.getByRole("dialog")).toBeHidden();
+    await expect(reference).toBeHidden();
+    await expect(page.locator(".landing-example-papers img")).toBeVisible();
 
     const createButton = page.getByRole("button", { name: /Create doodle/ });
     await expect(createButton).toBeDisabled();
-    const suggestion = page.locator(".landing-suggestions button").first();
-    await expect(suggestion).toHaveText("Birthday card");
-    const suggestionText = "A happy dog holding a birthday balloon";
+    const suggestion = page.locator(".suggestions-list button").first();
+    const suggestionText = (await suggestion.locator("span").first().textContent())!.trim();
     await suggestion.click();
     await expect(page.getByRole("textbox")).toHaveValue(suggestionText);
     await expect(createButton).toBeEnabled();
@@ -166,8 +162,8 @@ test.describe("Doodle mobile workflow", () => {
     await page.getByRole("button", { name: /Draw something else/ }).click();
     await expect(page.getByRole("textbox")).toHaveValue("");
     await expect(page.getByRole("textbox")).toBeFocused();
-    await expect(reference).toBeVisible();
-    await expect(reference).toHaveAttribute("src", referenceSource!);
+    await expect(reference).toBeHidden();
+    await expect(page.locator(".suggestions-list")).toBeVisible();
     await expectNoOverflow(page);
   });
 
@@ -213,13 +209,13 @@ test.describe("Doodle mobile workflow", () => {
 
   test("serves localized pages with matching discovery metadata", async ({ page }) => {
     await page.goto("/de");
-    await expect(page.getByRole("heading", { name: "Was sollen wir zeichnen?" })).toBeVisible();
+    await expect(page.getByRole("textbox", { name: "Beschreibe eine Szene" })).toBeVisible();
     await expect(page.locator("html")).toHaveAttribute("lang", "de");
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://doodle.samistudio.nl/de");
     await expect(page.locator('link[hreflang="nl"]')).toHaveAttribute("href", "https://doodle.samistudio.nl/nl");
 
     await page.goto("/ar");
-    await expect(page.getByRole("heading", { name: "ماذا نرسم؟" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "لنرسم." })).toBeVisible();
     await expect(page.locator("html")).toHaveAttribute("lang", "ar");
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", "https://doodle.samistudio.nl/ar");
@@ -454,7 +450,7 @@ test.describe("Task 8 monetized workflow", () => {
       body: JSON.stringify({ error: "payment_required" }),
     }));
     await page.goto("/ar");
-    await expect(page.getByRole("heading", { name: "ماذا نرسم؟" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "لنرسم." })).toBeVisible();
     await page.getByRole("textbox").fill("قطة تحت مظلة");
     await page.getByRole("button", { name: "أنشئ رسمة" }).click();
     const dialog = page.getByRole("dialog", { name: "واصل الرسم" });
@@ -522,7 +518,7 @@ test.describe("Doodle desktop and accessibility", () => {
     }
   });
 
-  test("stays centered, one-column, keyboard reachable, and works with reduced motion", async ({ page }, testInfo) => {
+  test("stays centered, keyboard reachable, and works with reduced motion", async ({ page }, testInfo) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await openTool(page);
     await page.reload();
@@ -530,8 +526,8 @@ test.describe("Doodle desktop and accessibility", () => {
     const mainBox = await main.boundingBox();
     expect(mainBox!.width).toBeLessThan(page.viewportSize()!.width);
     expect(Math.abs(mainBox!.x - (page.viewportSize()!.width - mainBox!.width) / 2)).toBeLessThanOrEqual(1);
-    await expect(page.locator(".doodle-workspace")).toHaveCSS("flex-direction", "column");
-    await expect(page.getByRole("heading", { name: "What should we doodle?" })).toBeVisible();
+    await expect(page.locator(".doodle-workspace")).toHaveCSS("display", "grid");
+    await expect(page.locator(".composer-section")).toBeVisible();
     await expectNoOverflow(page);
     await page.getByRole("textbox").fill("Two cats hug");
 

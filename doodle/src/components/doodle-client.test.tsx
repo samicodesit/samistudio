@@ -53,6 +53,21 @@ function deferred<T>() {
 }
 
 describe("DoodleClient", () => {
+  it("keeps landing ideas refreshable without spending credits or replacing the selected detail or draft", async () => {
+    renderClient("en", "A cat holding a flower", true);
+    await screen.findByText("2 free doodles left");
+    fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
+    const previous = suggestionLabels();
+    expect(previous).toHaveLength(3);
+    const calls = vi.mocked(fetch).mock.calls.length;
+    fireEvent.click(screen.getByRole("button", { name: "Refresh ideas" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Refresh ideas" })).toBeEnabled());
+    expect(suggestionLabels().every(idea => !previous.includes(idea))).toBe(true);
+    expect(screen.getByRole("textbox")).toHaveValue("A cat holding a flower");
+    expect(screen.getByRole("radio", { name: "Medium" })).toHaveAttribute("aria-checked", "true");
+    expect(fetch).toHaveBeenCalledTimes(calls);
+  });
+
   it("refreshes three ideas without changing the draft or calling generation", async () => {
     renderClient("en", "A mug beside my journal");
     await screen.findByText("2 free doodles left");
@@ -296,7 +311,7 @@ describe("DoodleClient", () => {
   it("keeps the visual surface focused and the suggestions keyboard accessible", () => {
     renderClient();
     expect(screen.getByAltText(/two cats kissing upside down/)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1, name: "What should we doodle?" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Let’s doodle." })).toBeInTheDocument();
     expect(screen.queryByText(/One tiny moment|Private space|private little space|Your prompts/)).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /warm scarf/ })).toBeVisible();
     expect(screen.getByRole("button", { name: /Create doodle/ })).toBeVisible();
@@ -305,7 +320,7 @@ describe("DoodleClient", () => {
   it("renders localized controls and suggestions", () => {
     renderClient("de");
 
-    expect(screen.getByRole("heading", { name: "Was sollen wir zeichnen?" })).toBeVisible();
+    expect(screen.getByRole("heading", { name: "Zeichnen wir." })).toBeVisible();
     expect(screen.getByRole("button", { name: "Doodle erstellen" })).toBeVisible();
     expect(screen.getByRole("button", { name: /warmen Schal/ })).toBeVisible();
   });

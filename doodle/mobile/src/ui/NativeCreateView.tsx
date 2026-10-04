@@ -1,4 +1,5 @@
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
+import { getComposerIntro } from "../../../src/lib/composer-intro";
 import { NativeDetailSelector } from "./NativeDetailSelector";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -105,8 +106,7 @@ function NativeComposer({
   onSelectSuggestion,
   onRefreshSuggestions,
   reducedMotion,
-  referenceImageUri,
-  onOpenLarger,
+  usage,
 }: NativeCreateViewProps & { error?: string; onDetailFocus(tile: View): void }) {
   const [focused, setFocused] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -142,8 +142,10 @@ function NativeComposer({
       setRefreshing(false);
     });
   };
-  const { width } = useWindowDimensions();
+  const { width, fontScale } = useWindowDimensions();
   const compact = width < 360;
+  const intro = getComposerIntro(locale);
+  const stackedHeading = fontScale > 1.3;
   const disabled = !detailReady || !canSubmitScene(draft.scene, draft.maxLength);
   return (
     <View style={[styles.composerScreen, compact && styles.compactComposerScreen]}>
@@ -162,28 +164,17 @@ function NativeComposer({
         </View>
       ) : null}
 
-      {draft.sceneSource === "idea" || draft.sceneSource === "result" ? null : (
-        <Pressable
-          accessibilityRole="imagebutton"
-          accessibilityLabel={copy.stage.referenceAria}
-          onPress={onOpenLarger}
-          style={({ pressed }) => [styles.referenceFrame, pressed && styles.pressed]}
-        >
-          <Image source={referenceImageUri} contentFit="contain" style={styles.referenceImage} accessibilityLabel={copy.stage.referenceAlt} />
-        </Pressable>
-      )}
-
       <View style={[styles.composerBlock, compact && styles.compactComposerBlock]}>
-        <Text accessibilityRole="header" style={[styles.composerTitle, compact && styles.compactComposerTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}> 
-          {copy.composer.title}
-        </Text>
+        {stackedHeading ? <Text accessibilityRole="header" style={[styles.composerTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text> : null}
         <View style={styles.inputStack}>
           <View style={[styles.detailRow, { flexDirection: nativeRowDirection(direction) }]}>
-            <Text style={[styles.composerHint, styles.detailHint, compact && styles.compactComposerHint, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>
-              {copy.composer.hint}
-            </Text>
+            <View style={styles.sceneHeading}>
+              {stackedHeading ? null : <Text accessibilityRole="header" style={[styles.composerTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text>}
+              <Text style={[styles.composerHint, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{intro.hint}</Text>
+            </View>
             <NativeDetailSelector locale={locale} direction={direction} value={detailLevel} reducedMotion={reducedMotion} disabled={!detailReady} onChange={onDetailLevelChange} onFocusVisible={onDetailFocus} />
           </View>
+          <View style={[styles.scenePaper, focused && styles.sceneInputFocused]}>
           <TextInput
             accessibilityLabel={copy.composer.label}
             accessibilityHint={copy.composer.hint}
@@ -196,12 +187,12 @@ function NativeComposer({
             placeholder={copy.composer.placeholder}
             placeholderTextColor={NATIVE_COLORS.muted}
             selectionColor={NATIVE_COLORS.moss}
-            style={[styles.sceneInput, compact && styles.compactSceneInput, focused && styles.sceneInputFocused, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}
+            style={[styles.sceneInput, compact && styles.compactSceneInput, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}
             value={draft.scene}
           />
-        </View>
-        <View style={[styles.composerFooter, { flexDirection: nativeRowDirection(direction) }]}>
-          <View style={styles.characterCountSlot}>
+        <View style={[styles.composerFooter, { flexDirection: stackedHeading ? "column" : nativeRowDirection(direction) }, stackedHeading && styles.composerFooterStacked]}>
+          <View style={[styles.characterCountSlot, stackedHeading && styles.characterCountSlotStacked]}>
+            <Text accessibilityLiveRegion="polite" style={[styles.composerUsage, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{usage.status === "ready" ? usage.label : ""}</Text>
             {shouldShowCharacterCount(draft.usedLength) ? (
               <Text style={[styles.characterCount, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>
                 {draft.characterCountLabel}
@@ -214,16 +205,18 @@ function NativeComposer({
             accessibilityState={{ disabled }}
             disabled={disabled}
             onPress={onCreate}
-            style={({ pressed }) => [styles.createButton, disabled && styles.disabledButton, pressed && !disabled && styles.pressed]}
+            style={({ pressed }) => [styles.createButton, stackedHeading && styles.createButtonStacked, disabled && styles.disabledButton, pressed && !disabled && styles.pressed]}
           >
             <Text style={[styles.createButtonText, { fontFamily: nativeFontFamily(locale, "body") }]}>{copy.composer.create}</Text>
           </Pressable>
+        </View>
+          </View>
         </View>
       </View>
 
       <View style={styles.suggestionsBlock}>
         <View style={[styles.suggestionsHeading, { flexDirection: nativeRowDirection(direction) }]}>
-          <Text accessibilityRole="header" style={[styles.suggestionsTitle, compact && styles.compactSuggestionsTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>
+          <Text accessibilityRole="header" style={[styles.suggestionsTitle, compact && styles.compactSuggestionsTitle, locale === "ar" && styles.arabicSuggestionsTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>
             {copy.suggestions.title}
           </Text>
           <Pressable
@@ -378,24 +371,25 @@ const styles = StyleSheet.create({
   waitingScrollContent: { flexGrow: 1, justifyContent: "center" },
   composerScreen: { gap: 24 },
   compactComposerScreen: { gap: 20 },
-  referenceFrame: { alignSelf: "center", backgroundColor: NATIVE_COLORS.sticky, borderRadius: 16, height: 148, overflow: "hidden", width: 148 },
-  referenceImage: { height: "100%", width: "100%" },
   composerBlock: { gap: 11 },
   compactComposerBlock: { gap: 9 },
-  composerTitle: { color: NATIVE_COLORS.graphite, fontSize: 32, fontWeight: "600", lineHeight: 36 },
-  compactComposerTitle: { fontSize: 28, lineHeight: 32 },
+  composerTitle: { color: NATIVE_COLORS.graphite, fontSize: 25, fontWeight: "600", lineHeight: 29 },
   composerHint: { color: NATIVE_COLORS.muted, fontSize: 16, lineHeight: 22 },
-  compactComposerHint: { fontSize: 15, lineHeight: 20 },
-  inputStack: { marginTop: -24 },
+  inputStack: {},
   detailRow: { alignItems: "flex-end", gap: 8 },
-  detailHint: { flex: 1, paddingTop: 24, paddingBottom: 12 },
-  sceneInput: { zIndex: 1, backgroundColor: NATIVE_COLORS.paper, borderColor: NATIVE_COLORS.line, borderRadius: 16, borderWidth: 1, color: NATIVE_COLORS.graphite, fontSize: 17, lineHeight: 24, minHeight: 104, paddingHorizontal: 16, paddingVertical: 14, textAlignVertical: "top" },
+  sceneHeading: { flex: 1, minWidth: 0, gap: 5, paddingBottom: 12 },
+  scenePaper: { zIndex: 1, backgroundColor: NATIVE_COLORS.paper, borderColor: NATIVE_COLORS.line, borderRadius: 16, borderWidth: 1 },
+  sceneInput: { color: NATIVE_COLORS.graphite, fontSize: 17, lineHeight: 24, minHeight: 118, paddingHorizontal: 16, paddingVertical: 16, textAlignVertical: "top" },
   compactSceneInput: { fontSize: 16, lineHeight: 22 },
   sceneInputFocused: { borderColor: NATIVE_COLORS.moss },
-  composerFooter: { alignItems: "center", gap: 12, justifyContent: "space-between" },
+  composerFooter: { alignItems: "center", gap: 12, justifyContent: "space-between", paddingHorizontal: 12, paddingBottom: 12 },
+  composerFooterStacked: { alignItems: "stretch" },
+  composerUsage: { color: NATIVE_COLORS.muted, fontSize: 13, lineHeight: 19 },
   characterCountSlot: { flex: 1, justifyContent: "center", minHeight: 18 },
+  characterCountSlotStacked: { flex: 0 },
   characterCount: { color: NATIVE_COLORS.muted, fontSize: 12, lineHeight: 18 },
   createButton: { alignItems: "center", backgroundColor: NATIVE_COLORS.moss, borderRadius: 12, justifyContent: "center", minHeight: NATIVE_SPACING.control, paddingHorizontal: 18 },
+  createButtonStacked: { width: "100%" },
   createButtonText: { color: NATIVE_COLORS.white, fontSize: 15, fontWeight: "700" },
   disabledButton: { opacity: 0.4 },
   suggestionsBlock: { gap: 4 },
@@ -404,6 +398,7 @@ const styles = StyleSheet.create({
   suggestionsRefresh: { alignItems: "center", borderRadius: 8, height: NATIVE_SPACING.control, justifyContent: "center", width: NATIVE_SPACING.control, flexShrink: 0 },
   suggestionsTitle: { color: NATIVE_COLORS.graphite, flex: 1, fontSize: 22, fontWeight: "600", lineHeight: 28 },
   compactSuggestionsTitle: { fontSize: 20, lineHeight: 24 },
+  arabicSuggestionsTitle: { lineHeight: 34 },
   suggestion: { alignItems: "center", backgroundColor: NATIVE_COLORS.paper, borderColor: NATIVE_COLORS.softLine, borderRadius: 12, borderWidth: 1, gap: 10, justifyContent: "space-between", minHeight: NATIVE_SPACING.control, paddingHorizontal: 14, paddingVertical: 10 },
   suggestionText: { color: NATIVE_COLORS.graphite, flex: 1, fontSize: 14, lineHeight: 20 },
   errorBanner: { alignItems: "center", backgroundColor: NATIVE_COLORS.dangerSurface, borderColor: "rgba(182, 82, 72, 0.24)", borderRadius: 12, borderWidth: 1, flexDirection: "row", gap: 9, padding: 12 },

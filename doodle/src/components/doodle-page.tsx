@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MobileAppWorkspace } from "./mobile-app-workspace";
 import { AndroidAppLink, DrawingGuides } from "./discovery-links";
 import {
@@ -9,7 +10,7 @@ import {
   localePath,
 } from "@/lib/i18n";
 import { getDoodleIdeas, ideasPath } from "@/lib/doodle-ideas";
-import { getEditorialCopy, getEditorialPath } from "@/lib/editorial";
+import { ARTICLE_SLUGS, getEditorialCopy, getEditorialPath, getLocalizedArticle } from "@/lib/editorial";
 import { DEFAULT_SUGGESTION_IDS, type SceneIdeaId } from "@/lib/scenes/suggestions";
 import { getLandingCopy } from "@/lib/landing-copy";
 import { LanguageSwitcher } from "./language-switcher";
@@ -74,9 +75,12 @@ export function DoodlePage({
             <h2>{landing.momentTitle}</h2>
             <p>{landing.momentBody}</p>
           </div>
-          <div>
-            <h2>{landing.phoneTitle}</h2>
-            <AndroidAppLink locale={locale} />
+          <div className="landing-example-papers">
+            <Link href={ideasPath(locale)}><Image src="/landing/pastel-examples.webp" alt={landing.examples} width={1400} height={527} sizes="(max-width: 699px) calc(100vw - 40px), 480px" /></Link>
+          </div>
+          <div className="landing-quick-guides">
+            <h2>{editorialCopy.nav.blog}</h2>
+            <nav aria-label={editorialCopy.nav.blog}>{ARTICLE_SLUGS.map(slug => <Link key={slug} href={getEditorialPath(locale, "blog", slug)}>{getLocalizedArticle(locale, slug).title}</Link>)}</nav>
           </div>
         </section>
         <details className="landing-resources">
@@ -103,6 +107,7 @@ export function DoodlePage({
           </div>
           </section>
           <DrawingGuides locale={locale} />
+          <AndroidAppLink locale={locale} />
         </details>
       </main>
       <footer className="site-footer">

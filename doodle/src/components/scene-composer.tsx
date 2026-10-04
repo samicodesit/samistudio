@@ -45,14 +45,17 @@ export function SceneComposer({
 }: SceneComposerProps) {
   const showCounter = scene.length >= 150;
   const [focused, setFocused] = useState(false);
+  const heading = <div className="scene-heading">
+    {compactHeading ? <h2 id="scene-title">{copy.title}</h2> : <h1 id="scene-title">{copy.title}</h1>}
+    <p className="scene-hint">{copy.hint}</p>
+  </div>;
 
   return (
     <section id="composer" className="composer-section" aria-labelledby="scene-title">
-      {compactHeading ? <h2 id="scene-title">{copy.title}</h2> : <h1 id="scene-title">{copy.title}</h1>}
-      {compactHeading || onDetailLevelChange ? null : <p className="scene-hint">{copy.hint}</p>}
+      {onDetailLevelChange ? null : heading}
       <div className="composer-input-wrap">
         {onDetailLevelChange ? <div className="composer-detail-row">
-          {compactHeading ? null : <p className="scene-hint">{copy.hint}</p>}
+          {heading}
           <DetailLevelSelector locale={locale} value={detailLevel} onChange={onDetailLevelChange} disabled={isGenerating || !detailReady} />
         </div> : null}
         <div className="doodle-composer">

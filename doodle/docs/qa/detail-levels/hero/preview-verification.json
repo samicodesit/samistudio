@@ -1,0 +1,67 @@
+{
+  "url": "https://doodle-layout-review-8ar7krqzp-codenamez.vercel.app/implemented.html",
+  "project": "doodle-layout-review",
+  "plan": "Hobby",
+  "staticOnly": true,
+  "liveAppChanged": false,
+  "verifiedAt": "2026-10-04T10:53:28.027Z",
+  "galleryHttp": 200,
+  "checks": [
+    {
+      "file": "web-en-desktop.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "file": "web-en-390.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "file": "web-en-320.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "file": "web-ar-390.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "file": "app-en-390.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "file": "app-ar-320.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "file": "native-en-320.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "file": "native-en-320-collapsed.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "file": "native-en-320-large.png",
+      "http": 200,
+      "matchingSha256": true
+    },
+    {
+      "file": "native-ar-320-large.png",
+      "http": 200,
+      "matchingSha256": true
+    }
+  ],
+  "visualReview": {
+    "viewport": "390x844 CSS px",
+    "allTenImagesDecoded": true,
+    "horizontalOverflow": false,
+    "reviewedAt": "2026-10-04T10:54:30.673Z"
+  }
+}

@@ -35,11 +35,11 @@ The final run had no browser failures or retries. A local account endpoint witho
 
 Current browser captures were saved and inspected using the in-app browser. They are UI layout evidence, not marketing deliverables. Their [manifest](browser-resolution/manifest.json) records provenance, hashes and review status. The local account endpoint was unavailable, so these captures show the existing generic free-trial fallback rather than a verified balance.
 
-- [Installed English, 320 px](browser-resolution/app-en-320.png)
-- [Installed French, 320 px](browser-resolution/app-fr-320.png)
-- [Installed Arabic, 320 px](browser-resolution/app-ar-320.png)
-- [Public web, 1280 px](browser-resolution/web-en-1280.png)
-- [Public web, 390 px](browser-resolution/web-en-390.png)
+- [Installed English, 320 px](browser-resolution/app-en-320.jpg)
+- [Installed French, 320 px](browser-resolution/app-fr-320.jpg)
+- [Installed Arabic, 320 px](browser-resolution/app-ar-320.jpg)
+- [Public web, 1280 px](browser-resolution/web-en-1280.jpg)
+- [Public web, 390 px](browser-resolution/web-en-390.jpg)
 
 The owner requested a cleaner hero across languages and explicitly wants the new drawer retained. Current public web has a large introductory headline, a second composer question, and an empty column beside the drawer. The installed layout gives its helper copy very little width. A proposed next pass should simplify that hierarchy, keep helper wording compatible with all three detail levels, and preserve fixed input coordinates during drawer motion. A new hero layout has not been implemented or approved in this debugging pass. Native Android hero changes and fresh native rendering remain outside these web test fixes.
 

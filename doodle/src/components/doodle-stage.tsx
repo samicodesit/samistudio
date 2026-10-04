@@ -95,6 +95,7 @@ export function DoodleStage({ status, imageUrl, error, onInspect, copy, referenc
         alt={referenceAlt ?? copy.referenceAlt}
         width={1024}
         height={1024}
+        sizes={referenceImage ? "(max-width: 699px) calc(100vw - 40px), 280px" : undefined}
         priority
       />
       <span className="stage-inspect-label" aria-hidden="true"><Maximize2 size={20} /></span>

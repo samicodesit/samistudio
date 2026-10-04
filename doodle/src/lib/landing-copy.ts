@@ -19,8 +19,13 @@ export function getLandingCopy(locale: Locale) {
   const [title, titleEnd, subtitle, examples, tryIdea, birthday, lunchbox, journal, exampleLabel, momentTitle, momentBody, phoneTitle] = LABELS[locale];
   const ideas = getDoodleIdeas(locale);
   const examplePrompt = locale === "en" ? "A happy dog holding a birthday balloon" : ideas.featured[2];
+  const heroPrompt = {
+    en: "A cat holding a small flower", nl: "Een kat met een kleine bloem", de: "Eine Katze mit einer kleinen Blume",
+    fr: "Un chat tenant une petite fleur", es: "Un gato con una pequeña flor", "pt-br": "Um gato segurando uma pequena flor",
+    it: "Un gatto con un piccolo fiore", ja: "小さな花を持つ猫", ko: "작은 꽃을 든 고양이", ar: "قطة تحمل زهرة صغيرة",
+  }[locale];
   return {
-    title, titleEnd, subtitle, examples, tryIdea, exampleLabel, momentTitle, momentBody, phoneTitle, examplePrompt,
+    title, titleEnd, subtitle, examples, tryIdea, exampleLabel, momentTitle, momentBody, phoneTitle, examplePrompt, heroPrompt,
     placeholderPrompts: [examplePrompt, ideas.quickIdeas[2], ideas.featured[5], ideas.quickIdeas[0], ideas.quickIdeas[13]],
     suggestions: [
       { label: birthday, prompt: examplePrompt },
@@ -31,4 +36,4 @@ export function getLandingCopy(locale: Locale) {
 }
 
 export type LandingCopy = ReturnType<typeof getLandingCopy>;
-export const LANDING_EXAMPLE = "/landing/birthday-dog.webp";
+export const LANDING_EXAMPLE = "/landing/flower-cat.webp";

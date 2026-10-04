@@ -22,7 +22,7 @@ test("detail tiles stay compact at every selection, width and Arabic direction",
       await expect(tiles.nth(index)).toHaveAttribute("aria-checked", "true");
       boxes.push(await tiles.nth(index).boundingBox());
       await page.mouse.move(1, 1);
-      await page.locator("h1").click();
+      await page.locator(".usage-copy").click();
       await expect(page.locator(".detail-tooltip").nth(index)).toHaveCSS("opacity", "0");
       await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
       await page.screenshot({ path: path.join(folder, `${item.installed ? "app" : "web"}-${item.locale}-${item.width}-${index}.png`), fullPage: true });
