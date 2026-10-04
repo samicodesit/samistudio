@@ -13,6 +13,7 @@ const FLOWERS: Record<DetailLevel, number> = {
   medium: require("../../assets/detail/medium.png"),
   detailed: require("../../assets/detail/detailed.png"),
 };
+// Bundled artwork uses memory caching because Android resource IDs can change between builds.
 export const NATIVE_DETAIL_GEOMETRY = { width: 174, height: 104, toggleSize: 48, toggleInset: 65 } as const;
 
 export function NativeDetailSelector({ locale, direction, value, disabled, reducedMotion, onChange, onFocusVisible }: {
@@ -57,7 +58,7 @@ export function NativeDetailSelector({ locale, direction, value, disabled, reduc
           disabled={disabled || !expanded} onPressIn={() => Keyboard.dismiss()} onPress={() => onChange(level)}
           onFocus={() => { setFocused(level); const tile = tiles.current[index]; if (tile) onFocusVisible(tile); }} onBlur={() => setFocused(null)}
           style={({ pressed }) => [styles.tile, index > 0 && (direction === "rtl" ? styles.dividedRtl : styles.divided), focused === level && styles.focused, disabled && styles.disabled, pressed && !disabled && styles.pressed]}>
-          <Image source={FLOWERS[level]} accessible={false} contentFit="contain" style={[styles.flower, index === 0 && (direction === "rtl" ? styles.roundRight : styles.roundLeft), index === 2 && (direction === "rtl" ? styles.roundLeft : styles.roundRight)]} />
+          <Image source={FLOWERS[level]} cachePolicy="memory" accessible={false} contentFit="contain" style={[styles.flower, index === 0 && (direction === "rtl" ? styles.roundRight : styles.roundLeft), index === 2 && (direction === "rtl" ? styles.roundLeft : styles.roundRight)]} />
           {value === level ? <View pointerEvents="none" style={[styles.check, direction === "rtl" ? { left: 3 } : { right: 3 }]}><NativeIcon name="check" size={10} color={NATIVE_COLORS.paper} /></View> : null}
         </Pressable>)}
       </View>

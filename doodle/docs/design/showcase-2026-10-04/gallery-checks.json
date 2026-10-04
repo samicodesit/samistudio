@@ -1,0 +1,50 @@
+{
+  "base": "https://doodle-layout-review-6ohux6eb6-codenamez.vercel.app",
+  "checks": [
+    {
+      "width": 320,
+      "overflow": false,
+      "images": 19,
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "width": 390,
+      "overflow": false,
+      "images": 19,
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "images": 19,
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ]
+    }
+  ]
+}

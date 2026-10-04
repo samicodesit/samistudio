@@ -42,7 +42,7 @@ describe("search engine routes", () => {
       `${SITE_URL}/contact`,
     ]);
     for (const entry of entries.slice(SUPPORTED_LOCALES.length, SUPPORTED_LOCALES.length * 2)) {
-      expect(entry.images).toHaveLength(8);
+      expect(entry.images).toHaveLength(10);
     }
   });
 });

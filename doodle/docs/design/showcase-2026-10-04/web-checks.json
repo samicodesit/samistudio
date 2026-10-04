@@ -1,0 +1,39 @@
+{
+  "checks": [
+    {
+      "locale": "en",
+      "width": 1280,
+      "overflow": false,
+      "artLoaded": true,
+      "opensIdeas": true,
+      "heroFacesInward": false
+    },
+    {
+      "locale": "en",
+      "width": 390,
+      "overflow": false,
+      "artLoaded": true,
+      "opensIdeas": true,
+      "heroFacesInward": true
+    },
+    {
+      "locale": "en",
+      "width": 320,
+      "overflow": false,
+      "artLoaded": true,
+      "opensIdeas": true,
+      "heroFacesInward": true
+    },
+    {
+      "locale": "ar",
+      "width": 320,
+      "overflow": false,
+      "artLoaded": true,
+      "opensIdeas": true,
+      "heroFacesInward": true
+    }
+  ],
+  "bookshopPrefill": true,
+  "detailRetained": true,
+  "automaticGeneration": false
+}

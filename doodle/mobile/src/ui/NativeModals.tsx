@@ -50,12 +50,7 @@ interface NativeModalFrameProps {
 
 const MODAL_SHEET_OFFSET = 44;
 
-export const NATIVE_CLOSE_LABELS: Record<NativeLocale, string> = {
-  en: "Close", nl: "Sluiten", de: "Schließen", fr: "Fermer", es: "Cerrar",
-  "pt-br": "Fechar", it: "Chiudi", ja: "閉じる", ko: "닫기", ar: "إغلاق",
-};
-
-export function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClose, children, contentKey, dismissible = true, onExitComplete }: NativeModalFrameProps) {
+function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClose, children, contentKey, dismissible = true, onExitComplete }: NativeModalFrameProps) {
   const [mounted, setMounted] = useState(false);
   const [scrimOpacity] = useState(() => new Animated.Value(0));
   const [sheetTranslateY] = useState(() => new Animated.Value(MODAL_SHEET_OFFSET));
@@ -523,7 +518,7 @@ export function NativeImageModal({ locale, copy, direction, visible, imageUri, i
         </View>
         <View style={styles.viewerImageFrame} onLayout={event => setImageSize(Math.min(event.nativeEvent.layout.width, event.nativeEvent.layout.height - 24))}>
           <NativeDoodleGridFrame key={String(imageUri)} locale={locale} direction={direction} reducedMotion={reducedMotion} enabled={gridEnabled} onToggle={onToggleGrid} style={{ width: imageSize, height: imageSize }}>
-          <Image accessibilityLabel={imageAlt} contentFit="contain" source={imageUri} style={styles.viewerImage} />
+          <Image accessibilityLabel={imageAlt} cachePolicy={typeof imageUri === "number" ? "memory" : "disk"} contentFit="contain" source={imageUri} style={styles.viewerImage} />
           </NativeDoodleGridFrame>
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel={actionLabel} onPress={onAction} style={({ pressed }) => [styles.viewerDownload, pressed && styles.pressed]}>

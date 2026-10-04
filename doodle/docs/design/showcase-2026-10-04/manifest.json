@@ -1,0 +1,44 @@
+{
+  "date": "2026-10-04",
+  "status": "Owner approved subjects and range. Rendered visual acceptance pending.",
+  "sources": [
+    {
+      "id": "birthday-dog",
+      "level": "simple",
+      "path": "docs/design/showcase-2026-10-04/birthday-dog.png",
+      "mat": "#E3EABD",
+      "rotation": -4,
+      "sha256": "ec96a83deb5292ba50bb799b8db0f1dcb1a139b3aebdf3a8f2bff9f185bf8aae",
+      "provenance": "Genuine production generator output, HIGH quality and shared paper-v1 correction"
+    },
+    {
+      "id": "cooking-friends",
+      "level": "medium",
+      "path": "marketing-assets/play-detail-levels-2026-10-04/drawings/2-1-medium.png",
+      "mat": "#F0E6D0",
+      "rotation": 1,
+      "sha256": "f8f60cf61de1fc6b138e72a9aec11fc9d5cb0c1274bce42e56cace1daf58526b",
+      "provenance": "Unedited genuine HIGH evaluation output, with shared paper-v1 correction"
+    },
+    {
+      "id": "bookshop",
+      "level": "detailed",
+      "path": "docs/design/showcase-2026-10-04/bookshop.png",
+      "mat": "#E7E2F0",
+      "rotation": 3,
+      "sha256": "15ed24f60d5db52ef0e513e7722217523f0d8114fcc7cecb9ae38bd382f0e534",
+      "provenance": "Genuine production generator output, HIGH quality and shared paper-v1 correction"
+    }
+  ],
+  "composition": "Full uncropped app outputs on restrained pastel backing cards. Artwork color and drawing retained; no ImageGen edits. Decorative rotations only, no text in export.",
+  "output": "public/landing/detail-examples.webp",
+  "nativeOutput": "mobile/assets/pastel-examples.webp",
+  "dimensions": [
+    1400,
+    527
+  ],
+  "bytes": 138464,
+  "sha256": "42947b17f91629f243b7a6cd1d8681aa7feec02264f0f1bbf68d330bc95c1e9f",
+  "review": "QA.md",
+  "fixtureApkSha256": "f85bb3c38a6fbbfd61aa402c932f22cd9b1e3a0604d9fbea5e6a16d799b821b5"
+}

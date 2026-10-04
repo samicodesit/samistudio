@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-04",
+  "ownerAcceptance": "Pending",
+  "assets": [
+    {
+      "name": "birthday-dog.png",
+      "sha256": "ec96a83deb5292ba50bb799b8db0f1dcb1a139b3aebdf3a8f2bff9f185bf8aae",
+      "bytes": 1852263,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Genuine HIGH generator output"
+    },
+    {
+      "name": "cooking-friends.png",
+      "sha256": "f8f60cf61de1fc6b138e72a9aec11fc9d5cb0c1274bce42e56cace1daf58526b",
+      "bytes": 2217218,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Genuine HIGH generator output"
+    },
+    {
+      "name": "bookshop.png",
+      "sha256": "15ed24f60d5db52ef0e513e7722217523f0d8114fcc7cecb9ae38bd382f0e534",
+      "bytes": 2742316,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Genuine HIGH generator output"
+    },
+    {
+      "name": "triptych.png",
+      "sha256": "4614270b9e285d4b9d8a121635dbfe70c60cc8e9d9ac8f56bb4f07dc3d5d60f3",
+      "bytes": 909046,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Shared artwork export"
+    },
+    {
+      "name": "web-en-390.png",
+      "sha256": "0c3b46c4a4fb878659a7c8746f6b08df03a333c416031a2cc8a0320c4b88de01",
+      "bytes": 96705,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "native-en-390.png",
+      "sha256": "878be93b7014040c94fbd4137a865fe851728f9138853d502af734716e64f781",
+      "bytes": 228358,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "web-en-320.png",
+      "sha256": "ef05eb2cd849353c9055101e50ff532e2173090dc5ef315c54e4c0ce8aa4a49c",
+      "bytes": 65400,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "native-en-320.png",
+      "sha256": "7ce872d21ce6c8be6c89296650db026a352450a92cebd7d91bdd3e18000fdeb6",
+      "bytes": 170564,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "web-ar-320.png",
+      "sha256": "92ee8bef0348108df1ef96fb7129a1f17f97b6b630887f21fcf8a79ab8b4cd58",
+      "bytes": 79370,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "native-ar-320.png",
+      "sha256": "26b00520441ff4bf87ab3ecb2fa4c08d525560e59a683d2557327e8f5f502e92",
+      "bytes": 153248,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "web-en-390-examples.png",
+      "sha256": "0d8ba725048658713a9600cbdba4db92a92e41a3763f14989b79517bfd658b1c",
+      "bytes": 97043,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "native-examples-390.png",
+      "sha256": "b6d823875ac9a72434091a289d4f0966e2362abefea8bd3fba1197605a782b28",
+      "bytes": 519553,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "web-ar-320-examples.png",
+      "sha256": "5d22e5d2005a8f0867980fa680d15eaf28ef9ba8527cc6a2bbc6e3f4e02d0fd9",
+      "bytes": 81878,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "native-examples-ar.png",
+      "sha256": "fc18f09347556388cbaf62c9e15e84ec0f18900f190d0c7b4f889e5182290f75",
+      "bytes": 378718,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "web-ideas-bookshop.png",
+      "sha256": "ad85a9178594739b04909464e4d82e3c77bc33b46d32d1c7ecd5f3e6b32a1054",
+      "bytes": 97239,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "native-ideas-bookshop.png",
+      "sha256": "7d691cc34836a951899482e8c56823dac381da6306fe83d8367b2e6cee32dd83",
+      "bytes": 826941,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "native-examples-large.png",
+      "sha256": "c2be87154fe64019b05707e816de94d3248ba75de2d3ce0e0a82a6ffe886f791",
+      "bytes": 384525,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "native-examples-ar-large.png",
+      "sha256": "2c6cbc3791687d055c296242bcfc506389be204021b5934637233ec262f939b9",
+      "bytes": 374762,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    },
+    {
+      "name": "web-en-1280-examples.png",
+      "sha256": "9c7d42932f3caacd49129476bb671212980bfa1a3d265ce235abd6b4fab13f46",
+      "bytes": 265190,
+      "status": "Agent inspected. Owner final visual acceptance pending.",
+      "type": "Rendered UI with simulated account/generation services"
+    }
+  ]
+}

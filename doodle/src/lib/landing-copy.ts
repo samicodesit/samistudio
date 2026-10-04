@@ -26,6 +26,7 @@ export function getLandingCopy(locale: Locale) {
   }[locale];
   return {
     title, titleEnd, subtitle, examples, tryIdea, exampleLabel, momentTitle, momentBody, phoneTitle, examplePrompt, heroPrompt,
+    showcaseAlt: [ideas.featured[2], ...ideas.featured.slice(-2)].join(". "),
     placeholderPrompts: [examplePrompt, ideas.quickIdeas[2], ideas.featured[5], ideas.quickIdeas[0], ideas.quickIdeas[13]],
     suggestions: [
       { label: birthday, prompt: examplePrompt },

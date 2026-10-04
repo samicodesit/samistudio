@@ -19,7 +19,7 @@ describe("native localization adapter", () => {
     expect(SUPPORTED_LOCALES.filter((locale) => locale !== "ar").every((locale) => nativeDirection(locale) === "ltr")).toBe(true);
   });
 
-  it("keeps the eight idea assets in the contract order", () => {
+  it("keeps the idea assets matched to their localized prompts", () => {
     const ideas = getNativeIdeas("en", [
       ["thank-you-mug", "thank-you-mug"],
       ["cat-note", "cat-note"],
@@ -29,8 +29,10 @@ describe("native localization adapter", () => {
       ["lunch-high-five", "lunch-high-five"],
       ["pencil-helps-eraser", "pencil-helps-eraser"],
       ["school-snail", "school-snail"],
+      ["cooking-friends", "cooking-friends"],
+      ["bookshop", "bookshop"],
     ]);
-    expect(ideas).toHaveLength(8);
+    expect(ideas).toHaveLength(10);
     expect(ideas.map((idea) => idea.id)).toEqual([
       "thank-you-mug",
       "cat-note",
@@ -40,8 +42,12 @@ describe("native localization adapter", () => {
       "lunch-high-five",
       "pencil-helps-eraser",
       "school-snail",
+      "cooking-friends",
+      "bookshop",
     ]);
     expect(ideas.every((idea) => idea.prompt.length > 0 && idea.actionLabel.length > 0)).toBe(true);
+    expect(ideas[8].prompt).toBe("Two friends baking pancakes");
+    expect(ideas[9].prompt).toContain("bookshop");
   });
 
   it("projects localized language and support choices", () => {

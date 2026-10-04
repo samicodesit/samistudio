@@ -37,7 +37,7 @@ export function NativeIdeasView({ locale, direction, copy, ideas, isGenerating, 
             style={[styles.card, compact && styles.compactCard, compact && { flexDirection: nativeRowDirection(direction) }, isGenerating && styles.disabledCard]}
           >
             <Pressable accessibilityRole="imagebutton" accessibilityLabel={`${copy.stage.viewLarger}: ${idea.prompt}`} onPress={() => setPreview(idea)} style={({ pressed }) => [compact ? styles.compactImage : styles.image, pressed && styles.pressed]}>
-            <Image source={idea.imageUri} contentFit="cover" style={[styles.image, compact && styles.compactImage]} accessibilityLabel="" />
+            <Image source={idea.imageUri} cachePolicy={typeof idea.imageUri === "number" ? "memory" : "disk"} contentFit="cover" style={[styles.image, compact && styles.compactImage]} accessibilityLabel="" />
             <View pointerEvents="none" style={[styles.expandCue, direction === "rtl" ? { left: 8 } : { right: 8 }]}><NativeIcon name="expand" size={16} color={NATIVE_COLORS.paper} /></View>
             </Pressable>
             <Pressable accessibilityRole="button" accessibilityLabel={`${idea.actionLabel}: ${idea.prompt}`} accessibilityState={{ disabled: isGenerating }} disabled={isGenerating} onPress={() => onSelectIdea(idea.id)} style={({ pressed }) => [styles.cardBody, pressed && !isGenerating && styles.pressed]}>

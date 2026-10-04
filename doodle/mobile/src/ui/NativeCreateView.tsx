@@ -56,6 +56,7 @@ interface NativeCreateViewProps {
   onResultBack(): void;
   onOpenMore(): void;
   onOpenLarger(): void;
+  onOpenIdeas(): void;
   gridEnabled?: boolean;
   onToggleGrid?(): void;
 }
@@ -106,6 +107,7 @@ function NativeComposer({
   onRetry,
   onSelectSuggestion,
   onRefreshSuggestions,
+  onOpenIdeas,
   reducedMotion,
   usage,
 }: NativeCreateViewProps & { error?: string; onDetailFocus(tile: View): void }) {
@@ -252,7 +254,7 @@ function NativeComposer({
         ))}
         </Animated.View>
       </View>
-      <NativeArtExamples locale={locale} direction={direction} copy={copy} />
+      <NativeArtExamples locale={locale} direction={direction} copy={copy} onOpenIdeas={onOpenIdeas} />
     </View>
   );
 }
@@ -325,7 +327,7 @@ function NativeResultCard({ locale, direction, copy, state, usage, reducedMotion
         onPress={onOpenLarger}
         style={({ pressed }) => [styles.resultImageFrame, pressed && styles.pressed]}
       >
-        <Image source={state.imageUri} contentFit="contain" style={styles.resultImage} accessibilityLabel={state.imageAlt} />
+        <Image source={state.imageUri} cachePolicy={typeof state.imageUri === "number" ? "memory" : "disk"} contentFit="contain" style={styles.resultImage} accessibilityLabel={state.imageAlt} />
       </Pressable>
       </NativeDoodleGridFrame>
 

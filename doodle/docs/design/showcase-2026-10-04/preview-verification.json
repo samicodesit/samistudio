@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-04",
+  "url": "https://doodle-layout-review-6ohux6eb6-codenamez.vercel.app/showcase.html",
+  "anonymousHtml": 200,
+  "authoredHtmlMatched": true,
+  "fontsMatched": true,
+  "assets": [
+    {
+      "name": "birthday-dog.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "cooking-friends.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "bookshop.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "triptych.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "web-en-390.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "native-en-390.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "web-en-320.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "native-en-320.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "web-ar-320.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "native-ar-320.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "web-en-390-examples.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "native-examples-390.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "web-ar-320-examples.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "native-examples-ar.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "web-ideas-bookshop.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "native-ideas-bookshop.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "native-examples-large.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "native-examples-ar-large.png",
+      "status": 200,
+      "matched": true
+    },
+    {
+      "name": "web-en-1280-examples.png",
+      "status": 200,
+      "matched": true
+    }
+  ],
+  "hostedBrowser": "See gallery-checks.json"
+}

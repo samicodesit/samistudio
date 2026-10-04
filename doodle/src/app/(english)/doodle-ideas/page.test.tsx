@@ -8,11 +8,13 @@ afterEach(() => {
 });
 
 describe("DoodleIdeasPage", () => {
-  it("offers eight real examples that lead back to a prefilled generator", () => {
+  it("offers ten examples that lead back to a prefilled generator", () => {
     render(<DoodleIdeasRoute />);
 
-    expect(screen.getAllByRole("img")).toHaveLength(8);
-    expect(screen.getAllByRole("link", { name: "Try this idea" })).toHaveLength(8);
+    expect(screen.getAllByRole("img")).toHaveLength(10);
+    expect(screen.getAllByRole("link", { name: "Try this idea" })).toHaveLength(10);
+    expect(screen.getAllByRole("link", { name: "Try this idea" })[8]).toHaveAttribute("href", "/?scene=Two%20friends%20baking%20pancakes#composer");
+    expect(screen.getAllByRole("link", { name: "Try this idea" })[9]).toHaveAttribute("href", "/?scene=A%20cozy%20bookshop%20with%20plants%20and%20a%20bicycle%20outside#composer");
     expect(screen.getAllByRole("link", { name: "Try this idea" })[0]).toHaveAttribute(
       "href",
       "/?scene=A%20steaming%20mug%20beside%20a%20folded%20thank-you%20note%20with%20a%20tiny%20heart%20on%20it#composer",

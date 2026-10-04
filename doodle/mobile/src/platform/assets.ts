@@ -9,6 +9,8 @@ export const NATIVE_IDEA_ASSETS: readonly [string, NativeImageSource][] = [
   ["lunch-high-five", require("../../assets/lunch-high-five.webp")],
   ["pencil-helps-eraser", require("../../assets/pencil-helps-eraser.webp")],
   ["school-snail", require("../../assets/school-snail.webp")],
+  ["cooking-friends", require("../../assets/cooking-friends.webp")],
+  ["bookshop", require("../../assets/bookshop.webp")],
 ];
 
 export const NATIVE_REFERENCE_IMAGE: NativeImageSource = require("../../assets/doodle-reference-kiss.png");

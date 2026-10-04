@@ -46,7 +46,7 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
         <View style={[styles.accountHeader, { flexDirection: nativeRowDirection(props.direction) }, showHeroArt && (props.direction === "rtl" ? { paddingRight: 100 } : { paddingLeft: 100 })]}>
           {showHeroArt ? (
             <View pointerEvents="none" accessible={false} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" style={[styles.heroArt, width >= 360 && styles.heroArtRoomy, props.direction === "rtl" ? { right: NATIVE_SPACING.screen - 6 } : { left: NATIVE_SPACING.screen - 6 }]}>
-              <Image source={require("../../assets/hero-cat-line.png")} contentFit="contain" style={styles.heroArtImage} accessible={false} />
+              <Image source={require("../../assets/hero-cat-line.png")} cachePolicy="memory" contentFit="contain" style={[styles.heroArtImage, props.direction === "ltr" && { transform: [{ scaleX: -1 }] }]} accessible={false} />
             </View>
           ) : null}
 
@@ -77,6 +77,7 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
               onResultBack={props.onResultBack}
               onOpenMore={props.onOpenMore}
               onOpenLarger={props.onOpenLarger}
+              onOpenIdeas={() => props.onTabChange("ideas")}
               gridEnabled={gridEnabled}
               onToggleGrid={() => setGridImageUri(current => props.generation.status === "ready" && current !== props.generation.imageUri ? props.generation.imageUri : null)}
             />

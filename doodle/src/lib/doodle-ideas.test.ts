@@ -7,12 +7,12 @@ describe("localized doodle ideas", () => {
     const arabic = getDoodleIdeas("ar");
 
     expect(arabic.title).toBe("أفكار رسومات بسيطة لكل مناسبة");
-    expect(arabic.featured).toHaveLength(8);
+    expect(arabic.featured).toHaveLength(10);
     expect(arabic.quickIdeas).toHaveLength(20);
     expect(arabic.featured.join(" ")).not.toMatch(/birthday|note|doodle/i);
 
     for (const locale of SUPPORTED_LOCALES) {
-      expect(getDoodleIdeas(locale).featured).toHaveLength(8);
+      expect(getDoodleIdeas(locale).featured).toHaveLength(10);
       expect(getDoodleIdeas(locale).quickIdeas).toHaveLength(20);
     }
   });

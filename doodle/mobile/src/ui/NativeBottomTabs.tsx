@@ -45,7 +45,7 @@ export function NativeBottomTabs({ locale, direction, copy, tab, onTabChange }: 
               style={({ pressed }) => [styles.item, selected && styles.itemSelected, pressed && styles.itemPressed]}
             >
               <NativeIcon name={TAB_ICONS[item.id]} size={21} color={selected ? NATIVE_COLORS.moss : NATIVE_COLORS.muted} />
-              <Text style={[styles.label, { color: selected ? NATIVE_COLORS.moss : NATIVE_COLORS.muted, fontFamily: nativeFontFamily(locale, "body") }]}>
+              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.label, { color: selected ? NATIVE_COLORS.moss : NATIVE_COLORS.muted, fontFamily: nativeFontFamily(locale, "body") }]}>
                 {item.label}
               </Text>
             </Pressable>
@@ -75,5 +75,5 @@ const styles = StyleSheet.create({
   },
   itemSelected: { backgroundColor: NATIVE_COLORS.selected },
   itemPressed: { opacity: 0.72 },
-  label: { fontSize: 12, fontWeight: "600", lineHeight: 16 },
+  label: { fontSize: 12, fontWeight: "600", lineHeight: 16, maxWidth: "100%" },
 });

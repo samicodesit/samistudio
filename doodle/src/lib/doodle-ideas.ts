@@ -4,12 +4,14 @@ import { SITE_URL, SUPPORTED_LOCALES, type Locale, htmlLang, localePath, openGra
 export const IDEA_IMAGES = [
   "/ideas/thank-you-mug.webp",
   "/ideas/cat-note.webp",
-  "/ideas/birthday-dog.webp",
+  "/ideas/birthday-balloon-dog.webp",
   "/ideas/warm-hug.webp",
   "/ideas/super-banana.webp",
   "/ideas/lunch-high-five.webp",
   "/ideas/pencil-helps-eraser.webp",
   "/ideas/school-snail.webp",
+  "/ideas/cooking-friends.webp",
+  "/ideas/bookshop.webp",
 ] as const;
 
 export type IdeasCopy = {
@@ -122,8 +124,22 @@ const IDEAS_COPY: Record<Locale, IdeasCopy> = {
   },
 };
 
+const SHOWCASE_PROMPTS: Record<Locale, readonly [string, string]> = {
+  en: ["Two friends baking pancakes", "A cozy bookshop with plants and a bicycle outside"],
+  nl: ["Twee vrienden die pannenkoeken bakken", "Een gezellige boekwinkel met planten en een fiets voor de deur"],
+  de: ["Zwei Freunde backen Pfannkuchen", "Eine gemütliche Buchhandlung mit Pflanzen und einem Fahrrad vor der Tür"],
+  fr: ["Deux amis préparent des pancakes", "Une librairie accueillante avec des plantes et un vélo devant"],
+  es: ["Dos amigos preparando tortitas", "Una librería acogedora con plantas y una bicicleta fuera"],
+  "pt-br": ["Dois amigos fazendo panquecas", "Uma livraria aconchegante com plantas e uma bicicleta na entrada"],
+  it: ["Due amici preparano i pancake", "Una libreria accogliente con piante e una bicicletta fuori"],
+  ja: ["友達二人でパンケーキを作る", "植物と自転車が入口にある居心地のよい本屋"],
+  ko: ["함께 팬케이크를 만드는 두 친구", "입구에 화분과 자전거가 있는 아늑한 서점"],
+  ar: ["صديقان يحضّران الفطائر", "مكتبة دافئة أمامها نباتات ودراجة"],
+};
+
 export function getDoodleIdeas(locale: Locale): IdeasCopy {
-  return IDEAS_COPY[locale];
+  const copy = IDEAS_COPY[locale];
+  return { ...copy, featured: [...copy.featured, ...SHOWCASE_PROMPTS[locale]] };
 }
 
 export function ideasPath(locale: Locale): string {

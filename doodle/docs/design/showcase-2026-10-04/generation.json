@@ -1,0 +1,41 @@
+{
+  "date": "2026-10-04",
+  "approval": "Owner approved at most two requests, $0.10 total. No retries.",
+  "settings": {
+    "id": "simple",
+    "model": "gpt-image-1-mini",
+    "quality": "high",
+    "size": "1024x1024"
+  },
+  "estimatedImageOutputCostUsd": 0.072,
+  "attempts": [
+    {
+      "id": "birthday-dog",
+      "scene": "A cheerful dog holding one birthday balloon",
+      "level": "simple",
+      "promptVersion": "simple-v1",
+      "status": "complete",
+      "durationMs": 27724,
+      "sha256": "ec96a83deb5292ba50bb799b8db0f1dcb1a139b3aebdf3a8f2bff9f185bf8aae",
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 239
+      }
+    },
+    {
+      "id": "bookshop",
+      "scene": "A cozy bookshop with bookshelves visible through its window, potted plants by the doorway, and a bicycle parked outside",
+      "level": "detailed",
+      "promptVersion": "detailed-v1",
+      "status": "complete",
+      "durationMs": 29572,
+      "sha256": "15ed24f60d5db52ef0e513e7722217523f0d8114fcc7cecb9ae38bd382f0e534",
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 127
+      }
+    }
+  ]
+}

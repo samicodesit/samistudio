@@ -76,7 +76,7 @@ export function DoodlePage({
             <p>{landing.momentBody}</p>
           </div>
           <div className="landing-example-papers">
-            <Link href={ideasPath(locale)}><Image src="/landing/pastel-examples.webp" alt={landing.examples} width={1400} height={527} sizes="(max-width: 699px) calc(100vw - 40px), 480px" /></Link>
+            <Link href={ideasPath(locale)}><Image src="/landing/detail-examples.webp" alt={landing.showcaseAlt} width={1400} height={527} sizes="(max-width: 699px) calc(100vw - 40px), 480px" /></Link>
           </div>
         </section>
         <details className="landing-resources">
