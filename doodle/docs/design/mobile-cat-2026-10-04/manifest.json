@@ -1,0 +1,56 @@
+﻿{
+    "date":  "2026-10-04",
+    "status":  "Prepared and visually checked; owner acceptance pending",
+    "source":  "Local production web build, actual browser captures; local account services unavailable",
+    "artwork":  "public/landing/hero-cat-line.png, unchanged",
+    "images":  [
+                   {
+                       "path":  "before-390.jpg",
+                       "sha256":  "30c7c13e109c630e86e2f7a70c4d8fc8e906216504d778219741021791c688fc",
+                       "review":  "Inspected at phone size",
+                       "revision":  "Previous revision, for comparison only"
+                   },
+                   {
+                       "path":  "before-320.jpg",
+                       "sha256":  "4d4dfb95fc9d87bc2aa972e9bb879b12054ca1663afbe30fdcdff7bce78ec8c5",
+                       "review":  "Inspected at phone size",
+                       "revision":  "Previous revision, for comparison only"
+                   },
+                   {
+                       "path":  "after-390.jpg",
+                       "sha256":  "2af5d91bc5eab1b6fa1ac40169567895afa97c64ba2c8125d63388190c25217b",
+                       "review":  "Inspected at phone size",
+                       "revision":  "Current candidate"
+                   },
+                   {
+                       "path":  "after-320.jpg",
+                       "sha256":  "77338dcd81760e8d32164e0514e6952850746ffa34cad4cfa0d289a5139ad73b",
+                       "review":  "Inspected at phone size",
+                       "revision":  "Current candidate"
+                   },
+                   {
+                       "path":  "after-390-hidden.jpg",
+                       "sha256":  "99851a3a9f45469e3afe0f6587000c020f335c4434111c90a6853963bb1ba46c",
+                       "review":  "Inspected at phone size",
+                       "revision":  "Current candidate"
+                   },
+                   {
+                       "path":  "after-320-hidden.jpg",
+                       "sha256":  "e8bdaa44b2e78b2c467a240404284fce01153be17c8b193d4402300db255056f",
+                       "review":  "Inspected at phone size",
+                       "revision":  "Current candidate"
+                   },
+                   {
+                       "path":  "after-ar-390.jpg",
+                       "sha256":  "630807107fbefead97b2c24a537ebe0fc85f89f08eae512b3001803ace3cb3b4",
+                       "review":  "Inspected at phone size",
+                       "revision":  "Current candidate"
+                   },
+                   {
+                       "path":  "after-ar-320.jpg",
+                       "sha256":  "ab1152290342a793893f5cac493608a9917a32452e1ee2a428e58eb75341c29a",
+                       "review":  "Inspected at phone size",
+                       "revision":  "Current candidate"
+                   }
+               ]
+}

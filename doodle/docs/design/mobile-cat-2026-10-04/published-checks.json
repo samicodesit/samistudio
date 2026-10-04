@@ -1,0 +1,34 @@
+﻿[
+    {
+        "path":  "before-390.jpg",
+        "match":  true
+    },
+    {
+        "path":  "before-320.jpg",
+        "match":  true
+    },
+    {
+        "path":  "after-390.jpg",
+        "match":  true
+    },
+    {
+        "path":  "after-320.jpg",
+        "match":  true
+    },
+    {
+        "path":  "after-390-hidden.jpg",
+        "match":  true
+    },
+    {
+        "path":  "after-320-hidden.jpg",
+        "match":  true
+    },
+    {
+        "path":  "after-ar-390.jpg",
+        "match":  true
+    },
+    {
+        "path":  "after-ar-320.jpg",
+        "match":  true
+    }
+]

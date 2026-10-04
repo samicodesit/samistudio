@@ -1,0 +1,422 @@
+[
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 238,
+        "right": 298,
+        "top": 50,
+        "width": 60,
+        "x": 238,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "en",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 293,
+        "right": 353,
+        "top": 50,
+        "width": 60,
+        "x": 293,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "en",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 238,
+        "right": 298,
+        "top": 50,
+        "width": 60,
+        "x": 238,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "nl",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 293,
+        "right": 353,
+        "top": 50,
+        "width": 60,
+        "x": 293,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "nl",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 238,
+        "right": 298,
+        "top": 50,
+        "width": 60,
+        "x": 238,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "de",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 293,
+        "right": 353,
+        "top": 50,
+        "width": 60,
+        "x": 293,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "de",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 238,
+        "right": 298,
+        "top": 50,
+        "width": 60,
+        "x": 238,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "fr",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 293,
+        "right": 353,
+        "top": 50,
+        "width": 60,
+        "x": 293,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "fr",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 238,
+        "right": 298,
+        "top": 50,
+        "width": 60,
+        "x": 238,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "es",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 293,
+        "right": 353,
+        "top": 50,
+        "width": 60,
+        "x": 293,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "es",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 238,
+        "right": 298,
+        "top": 50,
+        "width": 60,
+        "x": 238,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "pt-BR",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 293,
+        "right": 353,
+        "top": 50,
+        "width": 60,
+        "x": 293,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "pt-BR",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 238,
+        "right": 298,
+        "top": 50,
+        "width": 60,
+        "x": 238,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "it",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 293,
+        "right": 353,
+        "top": 50,
+        "width": 60,
+        "x": 293,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "it",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 238,
+        "right": 298,
+        "top": 50,
+        "width": 60,
+        "x": 238,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "ja",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 293,
+        "right": 353,
+        "top": 50,
+        "width": 60,
+        "x": 293,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "ja",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 238,
+        "right": 298,
+        "top": 50,
+        "width": 60,
+        "x": 238,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "ko",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 293,
+        "right": 353,
+        "top": 50,
+        "width": 60,
+        "x": 293,
+        "y": 50
+      },
+      "transform": "none"
+    },
+    "fonts": "loaded",
+    "headingFont": "\"Bricolage Grotesque\", \"Bricolage Grotesque Fallback\"",
+    "locale": "ko",
+    "overflow": false,
+    "width": 390
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 7,
+        "right": 67,
+        "top": 50,
+        "width": 60,
+        "x": 7,
+        "y": 50
+      },
+      "transform": "matrix(-1, 0, 0, 1, 0, 0)"
+    },
+    "fonts": "loaded",
+    "headingFont": "Alexandria, \"Alexandria Fallback\"",
+    "locale": "ar",
+    "overflow": false,
+    "width": 320
+  },
+  {
+    "cat": {
+      "opacity": "0.28",
+      "rect": {
+        "bottom": 125,
+        "height": 75,
+        "left": 22,
+        "right": 82,
+        "top": 50,
+        "width": 60,
+        "x": 22,
+        "y": 50
+      },
+      "transform": "matrix(-1, 0, 0, 1, 0, 0)"
+    },
+    "fonts": "loaded",
+    "headingFont": "Alexandria, \"Alexandria Fallback\"",
+    "locale": "ar",
+    "overflow": false,
+    "width": 390
+  }
+]

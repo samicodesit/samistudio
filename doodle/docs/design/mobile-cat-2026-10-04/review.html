@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Doodle mobile cat placement</title>
+  <style>
+    @font-face { font-family: Bricolage; src: url(implemented/BricolageGrotesque-Variable.ttf); font-weight: 100 900; }
+    @font-face { font-family: Plex; src: url(implemented/IBMPlexSans-Variable.ttf); font-weight: 100 900; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #eef1ea; color: #20231f; font: 16px/1.5 Plex,sans-serif; }
+    main { max-width: 820px; margin: auto; padding: 24px 16px; }
+    h1,h2 { font-family: Bricolage,sans-serif; line-height: 1.2; }
+    h1 { font-size: 28px; margin: 0 0 12px; }
+    h2 { font-size: 22px; margin: 0 0 12px; }
+    p { margin: 0 0 14px; }
+    .note { color: #657064; font-size: 14px; }
+    a { color: #195c47; }
+    section { margin-top: 28px; }
+    .pair { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; align-items: start; }
+    figure { margin: 0; min-width: 0; }
+    figcaption { margin-bottom: 8px; font-size: 14px; }
+    img { display: block; width: 100%; height: auto; border: 1px solid #d7ddd5; border-radius: 8px; }
+  </style>
+</head>
+<body><main>
+  <h1>A better corner for the cat.</h1>
+  <p>The mobile-web cat is larger, sits above the outer flower tile and faces inward. The drawer and input keep their existing layout.</p>
+  <p class="note">Actual screenshots of a local production web build. This is an image-only visual preview. Account services are unavailable locally; generation, sign-in and payment were not tested here. Tap an image for full size.</p>
+  <p><a href="showcase.html">Previous wider example gallery</a></p>
+  <section><h2>390 px</h2><div class="pair">
+    <figure><figcaption>Before</figcaption><a href="mobile-cat/before-390.jpg"><img src="mobile-cat/before-390.jpg" alt="390 px before, small cat below the logo"></a></figure>
+    <figure><figcaption>After</figcaption><a href="mobile-cat/after-390.jpg"><img src="mobile-cat/after-390.jpg" alt="390 px after, cat above the outer flower"></a></figure>
+  </div></section>
+  <section><h2>320 px</h2><div class="pair">
+    <figure><figcaption>Before</figcaption><a href="mobile-cat/before-320.jpg"><img src="mobile-cat/before-320.jpg" alt="320 px before" loading="lazy"></a></figure>
+    <figure><figcaption>After</figcaption><a href="mobile-cat/after-320.jpg"><img src="mobile-cat/after-320.jpg" alt="320 px after" loading="lazy"></a></figure>
+  </div></section>
+  <section><h2>Drawer hidden</h2><div class="pair">
+    <figure><figcaption>390 px</figcaption><a href="mobile-cat/after-390-hidden.jpg"><img src="mobile-cat/after-390-hidden.jpg" alt="390 px with drawer hidden" loading="lazy"></a></figure>
+    <figure><figcaption>320 px</figcaption><a href="mobile-cat/after-320-hidden.jpg"><img src="mobile-cat/after-320-hidden.jpg" alt="320 px with drawer hidden" loading="lazy"></a></figure>
+  </div></section>
+  <section><h2>Arabic</h2><div class="pair">
+    <figure><figcaption>390 px</figcaption><a href="mobile-cat/after-ar-390.jpg"><img src="mobile-cat/after-ar-390.jpg" alt="Arabic 390 px, cat on the left facing inward" loading="lazy"></a></figure>
+    <figure><figcaption>320 px</figcaption><a href="mobile-cat/after-ar-320.jpg"><img src="mobile-cat/after-ar-320.jpg" alt="Arabic 320 px" loading="lazy"></a></figure>
+  </div></section>
+</main></body></html>
