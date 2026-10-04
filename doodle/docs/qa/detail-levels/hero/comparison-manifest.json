@@ -1,0 +1,788 @@
+{
+  "purpose": "Owner-requested side-by-side historical versus current UI review. Historical assets are not approved current marketing images.",
+  "status": "Agent reviewed comparison layout at 320, 390 and 1440 CSS px. Owner acceptance and publishing approval pending.",
+  "records": [
+    {
+      "id": "desktop",
+      "title": "Desktop web",
+      "note": "Before: 1280 px. After: 1440 px. First screen shown.",
+      "sides": [
+        {
+          "side": "before",
+          "file": "desktop-before.png",
+          "source": "docs/qa/detail-levels/web/web-en-1280-1.png",
+          "sourceSha256": "a5781bede5a41b330be93392967781f0c4e4e086f7d197e6b9bc81eb183b2342",
+          "sha256": "789df285e4156cb3d010f9510170023c336c03492587116b45c7f1d0bc7c5a9b",
+          "width": 1280,
+          "height": 900,
+          "crop": {
+            "left": 0,
+            "top": 0,
+            "width": 1280,
+            "height": 900
+          },
+          "reviewStatus": "Historical capture, allowed for before comparison only. Superseded, not a current UI or marketing candidate."
+        },
+        {
+          "side": "after",
+          "file": "desktop-after.png",
+          "source": "docs/qa/detail-levels/hero/web-en-desktop.png",
+          "sourceSha256": "dea4e1419ed5da9b784ad2e09e0ad134e35f064283b70a6a5749cb3f395600bb",
+          "sha256": "dea4e1419ed5da9b784ad2e09e0ad134e35f064283b70a6a5749cb3f395600bb",
+          "width": 1440,
+          "height": 900,
+          "crop": null,
+          "reviewStatus": "Current reviewed candidate. Owner acceptance pending."
+        }
+      ]
+    },
+    {
+      "id": "phone",
+      "title": "Mobile web, 390 px",
+      "note": "Matching width. First screen shown.",
+      "sides": [
+        {
+          "side": "before",
+          "file": "phone-before.png",
+          "source": "docs/qa/detail-levels/web/web-en-390-0.png",
+          "sourceSha256": "0cf76124ce645af96170e235c4f413c32ad7dc67497ee029b6b14cc71c5dc157",
+          "sha256": "e53d95d69b10eee04a120921f68b75c6362232c2525a16685cba325f7370e348",
+          "width": 390,
+          "height": 844,
+          "crop": {
+            "left": 0,
+            "top": 0,
+            "width": 390,
+            "height": 844
+          },
+          "reviewStatus": "Historical capture, allowed for before comparison only. Superseded, not a current UI or marketing candidate."
+        },
+        {
+          "side": "after",
+          "file": "phone-after.png",
+          "source": "docs/qa/detail-levels/hero/web-en-390.png",
+          "sourceSha256": "b888a03694a63d3f374f98493090714c865bdf86a6077c42e5abb6902971193d",
+          "sha256": "b888a03694a63d3f374f98493090714c865bdf86a6077c42e5abb6902971193d",
+          "width": 390,
+          "height": 844,
+          "crop": null,
+          "reviewStatus": "Current reviewed candidate. Owner acceptance pending."
+        }
+      ]
+    },
+    {
+      "id": "small",
+      "title": "Small phone web, 320 px",
+      "note": "Matching width. First screen shown.",
+      "sides": [
+        {
+          "side": "before",
+          "file": "small-before.png",
+          "source": "docs/qa/detail-levels/web/web-en-320-2.png",
+          "sourceSha256": "84a6154167f06248f358b9f76999f2add0e376829113bd403bfc91564f666c76",
+          "sha256": "99802780786a1f935a0f21b877a607a5bf243724ab90b49a2dea5614f96c67f4",
+          "width": 320,
+          "height": 844,
+          "crop": {
+            "left": 0,
+            "top": 0,
+            "width": 320,
+            "height": 844
+          },
+          "reviewStatus": "Historical capture, allowed for before comparison only. Superseded, not a current UI or marketing candidate."
+        },
+        {
+          "side": "after",
+          "file": "small-after.png",
+          "source": "docs/qa/detail-levels/hero/web-en-320.png",
+          "sourceSha256": "99288c927c15fac09d1cfe7e7b8fb531615b53c4593d685b8ed8a23ba0376b3e",
+          "sha256": "99288c927c15fac09d1cfe7e7b8fb531615b53c4593d685b8ed8a23ba0376b3e",
+          "width": 320,
+          "height": 844,
+          "crop": null,
+          "reviewStatus": "Current reviewed candidate. Owner acceptance pending."
+        }
+      ]
+    },
+    {
+      "id": "installed",
+      "title": "Installed web, 390 px",
+      "note": "Matching width.",
+      "sides": [
+        {
+          "side": "before",
+          "file": "installed-before.png",
+          "source": "docs/qa/detail-levels/web/app-en-390-2.png",
+          "sourceSha256": "a3a021c9f9c1180b488cff0f267cf6b5da95f87d78c69397a500aabdab16a382",
+          "sha256": "a3a021c9f9c1180b488cff0f267cf6b5da95f87d78c69397a500aabdab16a382",
+          "width": 390,
+          "height": 844,
+          "crop": null,
+          "reviewStatus": "Historical capture, allowed for before comparison only. Superseded, not a current UI or marketing candidate."
+        },
+        {
+          "side": "after",
+          "file": "installed-after.png",
+          "source": "docs/qa/detail-levels/hero/app-en-390.png",
+          "sourceSha256": "e49e575cbf7c7a4c7f7dd9b5cdcb3d7197f45667ee3a1caf6f610e3208d053d9",
+          "sha256": "e49e575cbf7c7a4c7f7dd9b5cdcb3d7197f45667ee3a1caf6f610e3208d053d9",
+          "width": 390,
+          "height": 844,
+          "crop": null,
+          "reviewStatus": "Current reviewed candidate. Owner acceptance pending."
+        }
+      ]
+    },
+    {
+      "id": "arabic",
+      "title": "Arabic installed web, 320 px",
+      "note": "Matching width. Drawer mirrors to the left.",
+      "sides": [
+        {
+          "side": "before",
+          "file": "arabic-before.png",
+          "source": "docs/qa/detail-levels/web/app-ar-320-2.png",
+          "sourceSha256": "c46b6ad77ed075a8b9e54c77e0dd138b267a4cd66fd91439ec99ed204891e6a6",
+          "sha256": "c46b6ad77ed075a8b9e54c77e0dd138b267a4cd66fd91439ec99ed204891e6a6",
+          "width": 320,
+          "height": 844,
+          "crop": null,
+          "reviewStatus": "Historical capture, allowed for before comparison only. Superseded, not a current UI or marketing candidate."
+        },
+        {
+          "side": "after",
+          "file": "arabic-after.png",
+          "source": "docs/qa/detail-levels/hero/app-ar-320.png",
+          "sourceSha256": "9c652fb3783a54d9ec6ddd1c015394cf70d0ad2edada6f0d190887b7b0e4a89f",
+          "sha256": "9c652fb3783a54d9ec6ddd1c015394cf70d0ad2edada6f0d190887b7b0e4a89f",
+          "width": 320,
+          "height": 844,
+          "crop": null,
+          "reviewStatus": "Current reviewed candidate. Owner acceptance pending."
+        }
+      ]
+    },
+    {
+      "id": "android",
+      "title": "Android, normal text",
+      "note": "Before: about 411 dp. After: 320 dp. Different emulator widths.",
+      "sides": [
+        {
+          "side": "before",
+          "file": "android-before.png",
+          "source": "docs/qa/detail-levels/native/android-en-simple.png",
+          "sourceSha256": "631851187feed479bd9f39342ea7600a02038921f40d1b776a524c1e575d2392",
+          "sha256": "631851187feed479bd9f39342ea7600a02038921f40d1b776a524c1e575d2392",
+          "width": 1080,
+          "height": 2400,
+          "crop": null,
+          "reviewStatus": "Historical capture, allowed for before comparison only. Superseded, not a current UI or marketing candidate."
+        },
+        {
+          "side": "after",
+          "file": "android-after.png",
+          "source": "docs/qa/detail-levels/hero/native-en-320.png",
+          "sourceSha256": "fd029201e043dfcc2886939f654dfade4acdfab3d36fbb7aaeede9a348797474",
+          "sha256": "fd029201e043dfcc2886939f654dfade4acdfab3d36fbb7aaeede9a348797474",
+          "width": 840,
+          "height": 1868,
+          "crop": null,
+          "reviewStatus": "Current reviewed candidate. Owner acceptance pending."
+        }
+      ]
+    },
+    {
+      "id": "hidden",
+      "title": "Android, drawer hidden",
+      "note": "Before: about 411 dp. After: 320 dp. Different emulator widths.",
+      "sides": [
+        {
+          "side": "before",
+          "file": "hidden-before.png",
+          "source": "docs/qa/detail-levels/native/android-en-collapsed.png",
+          "sourceSha256": "db19bf9d1e0e2ff0b8c5e17025db3302d2c8e8efc711858745d47735dad593fb",
+          "sha256": "db19bf9d1e0e2ff0b8c5e17025db3302d2c8e8efc711858745d47735dad593fb",
+          "width": 1080,
+          "height": 2400,
+          "crop": null,
+          "reviewStatus": "Historical capture, allowed for before comparison only. Superseded, not a current UI or marketing candidate."
+        },
+        {
+          "side": "after",
+          "file": "hidden-after.png",
+          "source": "docs/qa/detail-levels/hero/native-en-320-collapsed.png",
+          "sourceSha256": "fddfd0091dcd3b9cd112fef9f7c855ff1841f992336f74be4d5ef88e78969f54",
+          "sha256": "fddfd0091dcd3b9cd112fef9f7c855ff1841f992336f74be4d5ef88e78969f54",
+          "width": 840,
+          "height": 1868,
+          "crop": null,
+          "reviewStatus": "Current reviewed candidate. Owner acceptance pending."
+        }
+      ]
+    },
+    {
+      "id": "large",
+      "title": "Android, 200% text",
+      "note": "Before: about 411 dp. After: 320 dp. Different emulator widths.",
+      "sides": [
+        {
+          "side": "before",
+          "file": "large-before.png",
+          "source": "docs/qa/detail-levels/native/android-en-200-percent.png",
+          "sourceSha256": "304ff1ef00ff9b04252dcff610beefd56b736cab567fe900ad51a0e973126565",
+          "sha256": "304ff1ef00ff9b04252dcff610beefd56b736cab567fe900ad51a0e973126565",
+          "width": 1080,
+          "height": 2400,
+          "crop": null,
+          "reviewStatus": "Historical capture, allowed for before comparison only. Superseded, not a current UI or marketing candidate."
+        },
+        {
+          "side": "after",
+          "file": "large-after.png",
+          "source": "docs/qa/detail-levels/hero/native-en-320-large.png",
+          "sourceSha256": "7d6873b3d82b330a941670f46e6d787c6d31d088bf5c338ddf9881ebb5ef493e",
+          "sha256": "7d6873b3d82b330a941670f46e6d787c6d31d088bf5c338ddf9881ebb5ef493e",
+          "width": 840,
+          "height": 1868,
+          "crop": null,
+          "reviewStatus": "Current reviewed candidate. Owner acceptance pending."
+        }
+      ]
+    },
+    {
+      "id": "rtl-large",
+      "title": "Arabic Android, 200% text",
+      "note": "Before: about 411 dp. After: 320 dp. Different emulator widths.",
+      "sides": [
+        {
+          "side": "before",
+          "file": "rtl-large-before.png",
+          "source": "docs/qa/detail-levels/native/android-ar-200-percent.png",
+          "sourceSha256": "2e3233c262aa86cb2739a723bb934271bcb933d3c81fd4e304305f3713811df5",
+          "sha256": "2e3233c262aa86cb2739a723bb934271bcb933d3c81fd4e304305f3713811df5",
+          "width": 1080,
+          "height": 2400,
+          "crop": null,
+          "reviewStatus": "Historical capture, allowed for before comparison only. Superseded, not a current UI or marketing candidate."
+        },
+        {
+          "side": "after",
+          "file": "rtl-large-after.png",
+          "source": "docs/qa/detail-levels/hero/native-ar-320-large.png",
+          "sourceSha256": "2d3154205af1b6e08afcb6244801c0eca08b9fc881d72f9689e3a58b35b0e4f6",
+          "sha256": "2d3154205af1b6e08afcb6244801c0eca08b9fc881d72f9689e3a58b35b0e4f6",
+          "width": 840,
+          "height": 1868,
+          "crop": null,
+          "reviewStatus": "Current reviewed candidate. Owner acceptance pending."
+        }
+      ]
+    },
+    {
+      "id": "store",
+      "title": "Store screenshot 3",
+      "note": "Marketing composition only. Both exports are 1080 x 1920.",
+      "sides": [
+        {
+          "side": "before",
+          "file": "store-before.png",
+          "source": "marketing-assets/play-counter-cleanup-2026-10-04/03-original.png",
+          "sourceSha256": "da015729de4106b5956cc2fa4ca1eb392d074d01f905aef245ad3064e5599a75",
+          "sha256": "da015729de4106b5956cc2fa4ca1eb392d074d01f905aef245ad3064e5599a75",
+          "width": 1080,
+          "height": 1920,
+          "crop": null,
+          "reviewStatus": "Historical capture, allowed for before comparison only. Superseded, not a current UI or marketing candidate."
+        },
+        {
+          "side": "after",
+          "file": "store-after.png",
+          "source": "marketing-assets/play-counter-cleanup-2026-10-04/exports/03-find-an-idea.png",
+          "sourceSha256": "7d415a46f8e4e71a2dcc31ae086de769d8e5798fac8519ff48f1376a79f3afb2",
+          "sha256": "7d415a46f8e4e71a2dcc31ae086de769d8e5798fac8519ff48f1376a79f3afb2",
+          "width": 1080,
+          "height": 1920,
+          "crop": null,
+          "reviewStatus": "Current reviewed candidate. Owner acceptance pending."
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "width": 390,
+      "overflow": false,
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ],
+      "images": [
+        {
+          "src": "before-after/desktop-before.png",
+          "width": 1280,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/desktop-after.png",
+          "width": 1440,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/phone-before.png",
+          "width": 390,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/phone-after.png",
+          "width": 390,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/small-before.png",
+          "width": 320,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/small-after.png",
+          "width": 320,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/installed-before.png",
+          "width": 390,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/installed-after.png",
+          "width": 390,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/arabic-before.png",
+          "width": 320,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/arabic-after.png",
+          "width": 320,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/android-before.png",
+          "width": 1080,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/android-after.png",
+          "width": 840,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/hidden-before.png",
+          "width": 1080,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/hidden-after.png",
+          "width": 840,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/large-before.png",
+          "width": 1080,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/large-after.png",
+          "width": 840,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/rtl-large-before.png",
+          "width": 1080,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/rtl-large-after.png",
+          "width": 840,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/store-before.png",
+          "width": 1080,
+          "visibleWidth": 173
+        },
+        {
+          "src": "before-after/store-after.png",
+          "width": 1080,
+          "visibleWidth": 173
+        }
+      ],
+      "pairs": [
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "overflow": false,
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ],
+      "images": [
+        {
+          "src": "before-after/desktop-before.png",
+          "width": 1280,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/desktop-after.png",
+          "width": 1440,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/phone-before.png",
+          "width": 390,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/phone-after.png",
+          "width": 390,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/small-before.png",
+          "width": 320,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/small-after.png",
+          "width": 320,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/installed-before.png",
+          "width": 390,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/installed-after.png",
+          "width": 390,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/arabic-before.png",
+          "width": 320,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/arabic-after.png",
+          "width": 320,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/android-before.png",
+          "width": 1080,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/android-after.png",
+          "width": 840,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/hidden-before.png",
+          "width": 1080,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/hidden-after.png",
+          "width": 840,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/large-before.png",
+          "width": 1080,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/large-after.png",
+          "width": 840,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/rtl-large-before.png",
+          "width": 1080,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/rtl-large-after.png",
+          "width": 840,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/store-before.png",
+          "width": 1080,
+          "visibleWidth": 138
+        },
+        {
+          "src": "before-after/store-after.png",
+          "width": 1080,
+          "visibleWidth": 138
+        }
+      ],
+      "pairs": [
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        }
+      ]
+    },
+    {
+      "width": 1440,
+      "overflow": false,
+      "fonts": [
+        {
+          "family": "Bricolage",
+          "status": "loaded"
+        },
+        {
+          "family": "Plex",
+          "status": "loaded"
+        }
+      ],
+      "images": [
+        {
+          "src": "before-after/desktop-before.png",
+          "width": 1280,
+          "visibleWidth": 522
+        },
+        {
+          "src": "before-after/desktop-after.png",
+          "width": 1440,
+          "visibleWidth": 522
+        },
+        {
+          "src": "before-after/phone-before.png",
+          "width": 390,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/phone-after.png",
+          "width": 390,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/small-before.png",
+          "width": 320,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/small-after.png",
+          "width": 320,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/installed-before.png",
+          "width": 390,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/installed-after.png",
+          "width": 390,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/arabic-before.png",
+          "width": 320,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/arabic-after.png",
+          "width": 320,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/android-before.png",
+          "width": 1080,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/android-after.png",
+          "width": 840,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/hidden-before.png",
+          "width": 1080,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/hidden-after.png",
+          "width": 840,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/large-before.png",
+          "width": 1080,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/large-after.png",
+          "width": 840,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/rtl-large-before.png",
+          "width": 1080,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/rtl-large-after.png",
+          "width": 840,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/store-before.png",
+          "width": 1080,
+          "visibleWidth": 390
+        },
+        {
+          "src": "before-after/store-after.png",
+          "width": 1080,
+          "visibleWidth": 390
+        }
+      ],
+      "pairs": [
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        },
+        {
+          "aligned": true,
+          "sideBySide": true
+        }
+      ]
+    }
+  ],
+  "visualReview": "Reviewed full desktop composition, phone side-by-side layout, Arabic enlarged Android comparison, and store screenshot comparison. All 20 images decoded, fonts loaded, no horizontal overflow, and all pairs stayed side-by-side with aligned labels. This is historical image review, not new app functional validation."
+}
