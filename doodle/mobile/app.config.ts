@@ -97,7 +97,7 @@ if (iosGoogleUrlScheme) {
 const config: NativeExpoConfig = {
   name: "Doodle",
   slug: "doodle",
-  version: "0.1.6",
+  version: "0.1.7",
   icon: brandIcon,
   orientation: "portrait",
   splash: {
@@ -111,7 +111,7 @@ const config: NativeExpoConfig = {
   runtimeVersion: { policy: "appVersion" },
   android: {
     package: packageName,
-    versionCode: 8,
+    versionCode: 9,
     // Doodle creates its own PNG and never reads the user's gallery or draws
     // over other apps. Keep legacy storage support for Android <= 12, while
     // preventing modern gallery and overlay permissions from entering the
