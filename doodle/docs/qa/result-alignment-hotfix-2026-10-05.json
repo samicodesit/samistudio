@@ -1,0 +1,34 @@
+{
+  "verifiedAt": "2026-10-05T08:23:15Z",
+  "sourceCommit": "4734a02c22974aaaa4ff2e2012409d849d17fdaf",
+  "productionDeployment": "dpl_7BBmScCGUFTCPPSkUde4ALH9xd4o",
+  "url": "https://doodle.samistudio.nl",
+  "problem": "The desktop result parent was centered, but narrower heading, action and usage children retained start alignment.",
+  "fix": "Center the ready-state heading, actions and usage at widths of 700 CSS pixels and above. Other states and mobile styles remain unchanged.",
+  "verification": {
+    "regressionBeforeFix": "Failed at 768px in English, with a 140px heading center difference.",
+    "productionBrowserTestsPassed": 22,
+    "alignmentCoverage": "All ten supported languages at 768, 1440 and 1920px, including actual text bounds and horizontal overflow.",
+    "otherBrowserCoverage": "Mobile and installed shell, Arabic, retry, purchase, download and result actions with simulated API responses.",
+    "typecheck": "passed",
+    "lint": "passed with zero errors and five existing warnings",
+    "localProductionBuild": "passed",
+    "vercelProductionBuild": "passed",
+    "visualReview": "English desktop, Arabic tablet and 320px mobile fixture captures, plus the real production result.",
+    "review": "Scoped source review performed inline. No delegated or independent review claimed."
+  },
+  "liveCheck": {
+    "fixtureMode": false,
+    "generation": "One real Simple generation completed successfully, with no retries.",
+    "creditsBefore": 99,
+    "creditsAfter": 98,
+    "viewport": { "width": 2560, "height": 1249 },
+    "centersCssPixels": { "image": 1272.5, "heading": 1272.5, "headingText": 1272.5, "actions": 1272.5, "usageText": 1272.5 },
+    "horizontalOverflow": false,
+    "fonts": { "heading": "Bricolage Grotesque", "controls": "IBM Plex Sans" },
+    "screenshot": "result-alignment-live-2026-10-05.jpg",
+    "spending": "Within the remaining owner-approved Simple testing budget. No new paid batch."
+  },
+  "limits": "CSS-only web hotfix. No native Android change or new hardware Integrity verification. Model, quality, prompts and credit rules remain unchanged.",
+  "rollbackDeployment": "dpl_96oFMPhCYxVRsxqTrJ9CDcj7BjeQ"
+}

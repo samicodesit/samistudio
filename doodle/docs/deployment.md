@@ -31,3 +31,11 @@ Verification: 615 unit/integration tests, TypeScript, lint with zero errors and 
 One real Simple generation through the live app returned a corrected downloadable PNG in 9,663 ms. Runtime logs confirmed Flare, MEDIUM and simple-v3; the owner account went from 100 to 99 credits. No automatic retries. See docs/qa/flare-release-2026-10-05.json and its retained PNG. Native Integrity remains enabled; trusted hardware generation was not newly verified. Slow provider outliers remain possible.
 
 Rollback: promote dpl_94xaVdn7f4FSRjPcyeren3PjYM1o, then restore OPENAI_IMAGE_MODEL=gpt-image-1-mini for subsequent builds. Keep MEDIUM quality.
+
+## Desktop result alignment hotfix, October 5, 2026
+
+Current production is dpl_7BBmScCGUFTCPPSkUde4ALH9xd4o, sourced from 4734a02 in the intended detail release checkout. The ready-state heading, action block and remaining-credit text now share the image's horizontal center at desktop and tablet widths. Mobile styles, generation settings and native Android are unchanged.
+
+The regression reproduced the previous failure, then passed for all ten languages at 768, 1440 and 1920px. All 22 targeted production-built browser tests, TypeScript, lint and both production builds passed. Fixture captures cover mobile and Arabic layouts. A separate real production generation succeeded and charged exactly one credit, from 99 to 98. All measured result centers were exactly 1272.5 CSS pixels, with no horizontal overflow. See docs/qa/result-alignment-hotfix-2026-10-05.json and its live screenshot.
+
+Rollback: promote dpl_96oFMPhCYxVRsxqTrJ9CDcj7BjeQ. No environment change is needed.
