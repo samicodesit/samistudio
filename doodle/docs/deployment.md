@@ -21,3 +21,13 @@ Build 7 (0.1.5) and its matching four-free English store description were submit
 Current production is dpl_2YjycmSA5qf6nvptiDbSysvfXXf2, source commit 439c00a, live at https://doodle.samistudio.nl. The approved option 2 landing includes localized copy, typed and backspaced hints, SVG language flags and the final laptop and label spacing. Main was fast-forwarded to that source. Unrelated local changes were preserved and excluded by deploying the clean landing worktree with the same standard Vercel command and production project link.
 
 Vercel returned READY and assigned the public alias. All 46 targeted component checks passed; Vercel production build and TypeScript passed. The published page was visually inspected at actual CSS sizes 1366x768 and 390x844, with no horizontal overflow. All ten SVG flags loaded when the menu opened, four free doodles was shown, and the Google Play destination was confirmed. Evidence: landing-live-desktop.png and landing-live-phone.png in the existing landing evidence directory. Generation, authentication, payment and native APIs are unchanged; live transactions and physical-phone checks were not repeated.
+
+## Flare generation release, October 5, 2026
+
+Production is dpl_96oFMPhCYxVRsxqTrJ9CDcj7BjeQ, sourced from 8d80d11 in the intended detail release checkout. All levels use gpt-image-2.5-flare at MEDIUM quality. Simple uses the owner-reviewed simple-v3 template, with natural scene sizing and the expressive rounded ending. Medium and Detailed templates remain v1. Pricing, one-credit charging, paper correction, output dimensions and Integrity policy are unchanged. This shared backend change requires no Android publishing.
+
+Verification: 615 unit/integration tests, TypeScript, lint with zero errors and five existing warnings, local and Vercel production builds, and all 83 browser cases covered successfully. One local sign-in test first failed because the production build lacked the public test Google client setting, then passed after rebuilding with that setting. Root reviewed the scoped change inline under the owner policy against delegation. The production upload excludes QA galleries, scripts, credentials and test outputs.
+
+One real Simple generation through the live app returned a corrected downloadable PNG in 9,663 ms. Runtime logs confirmed Flare, MEDIUM and simple-v3; the owner account went from 100 to 99 credits. No automatic retries. See docs/qa/flare-release-2026-10-05.json and its retained PNG. Native Integrity remains enabled; trusted hardware generation was not newly verified. Slow provider outliers remain possible.
+
+Rollback: promote dpl_94xaVdn7f4FSRjPcyeren3PjYM1o, then restore OPENAI_IMAGE_MODEL=gpt-image-1-mini for subsequent builds. Keep MEDIUM quality.

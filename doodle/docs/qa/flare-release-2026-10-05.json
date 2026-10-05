@@ -1,0 +1,80 @@
+{
+    "verifiedAtUtc":  "2026-10-05T00:42:38.4703080Z",
+    "production":  "https://doodle.samistudio.nl",
+    "deploymentId":  "dpl_96oFMPhCYxVRsxqTrJ9CDcj7BjeQ",
+    "sourceCommit":  "8d80d11",
+    "previousDeploymentId":  "dpl_94xaVdn7f4FSRjPcyeren3PjYM1o",
+    "ownerApproval":  "Go for it, following explicit model and incremental cost explanation",
+    "scope":  {
+                  "model":  "gpt-image-2.5-flare",
+                  "detailedVersion":  "detailed-v1",
+                  "androidPublishRequired":  false,
+                  "quality":  "medium",
+                  "mediumAndDetailedPromptsUnchanged":  true,
+                  "mediumVersion":  "medium-v1",
+                  "pricingAndCreditRulesUnchanged":  true,
+                  "simpleVersion":  "simple-v3"
+              },
+    "checks":  {
+                   "typecheck":  "passed",
+                   "sourceMismatches":  0,
+                   "paidRealTestSkipped":  1,
+                   "browserCases":  83,
+                   "sourceComparisonFiles":  279,
+                   "lintErrors":  0,
+                   "review":  "Root reviewed scoped six-file change inline; no subagents under owner routing policy.",
+                   "uploadBytes":  8317942,
+                   "qaScriptsCredentialsAndGalleriesExcluded":  true,
+                   "lintExistingWarnings":  5,
+                   "productionBuild":  "passed locally and on Vercel",
+                   "uploadFiles":  295,
+                   "unitIntegrationPassed":  615,
+                   "browserResult":  "82 passed on first production-build run; the sign-in failure passed after rebuilding with NEXT_PUBLIC_GOOGLE_CLIENT_ID=playwright-google-client-id. Both auth cases passed on targeted rerun; no auth product code changed."
+               },
+    "liveGeneration":  {
+                           "output":  "live-flare-simple-2026-10-05.png",
+                           "retries":  0,
+                           "requestId":  "ed494caa-e02b-4c80-8531-f9d9e3651361",
+                           "detailLevel":  "simple",
+                           "completedAtUtc":  "2026-10-05T00:38:00.571Z",
+                           "paperCorrection":  {
+                                                   "status":  "corrected",
+                                                   "version":  "paper-v1",
+                                                   "durationMs":  745
+                                               },
+                           "promptVersion":  "simple-v3",
+                           "status":  200,
+                           "model":  "gpt-image-2.5-flare",
+                           "visualReview":  "Actual PNG opened at full resolution and real result UI inspected. Rounded cat, clear flower, sparse outlines and intact yellow paper texture. Download succeeded.",
+                           "channel":  "web",
+                           "durationMs":  9663,
+                           "quality":  "medium",
+                           "sha256":  "7bbfced6913885035441dea79bd5024a43ec206305b54b18dc807613d384ea4c",
+                           "size":  "1024x1024",
+                           "creditsAfter":  99,
+                           "creditsBefore":  100
+                       },
+    "limitations":  [
+                        "Slow provider outliers remain possible. 9.7 seconds is one measured request, not a latency guarantee.",
+                        "Trusted-device Android success not newly tested. Shared backend model applies to native requests; Integrity policy unchanged.",
+                        "Complex prompts may exceed the intended short drawing time."
+                    ],
+    "spending":  {
+                     "priorEvaluationEstimatedUsd":  0.49233,
+                     "liveEstimateUsd":  0.02,
+                     "automaticRetries":  0,
+                     "currentApprovalUsd":  1,
+                     "invoiceReconciled":  false,
+                     "liveProviderCalls":  1,
+                     "combinedEstimatedUsd":  0.51233
+                 },
+    "operations":  {
+                       "promotion":  "Built with production environment before custom-domain promotion",
+                       "nativeConfigStatus":  200,
+                       "nativeIntegrityEnabled":  true,
+                       "webStatus":  200,
+                       "temporaryCliBypass":  "CLI unexpectedly generated a validation bypass. Only the matching newly created entry was revoked without regeneration; revocation verified.",
+                       "fixtureModeDisabled":  true
+                   },
+    "rollback":  "Promote previous deployment and restore OPENAI_IMAGE_MODEL=gpt-image-1-mini for future builds; retain MEDIUM quality."
+}
