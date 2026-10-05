@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-05",
+  "sourceCommit": "b9605b0",
+  "deployment": "dpl_FHKbbtJG91m8gydibiFp1LZqG1UG",
+  "url": "https://doodle.samistudio.nl",
+  "cause": "The transformed detail drawer traps its tooltip below the separate pull-tab layer. Labels also conflicted when keyboard focus and hover were on different tiles.",
+  "fix": "Position labels 5px above the pull tab, align outer labels to logical tile edges, and give keyboard focus priority over a different hovered tile.",
+  "scope": "CSS-only web and installed web fix. Native Android has no floating labels. Drawer motion, input masking, level selection, prompts, model and credits are unchanged.",
+  "verification": {
+    "red": "Both overlap and simultaneous hover/focus regressions failed before their corresponding fixes.",
+    "unitTests": "615 passed, one opt-in paid-generation test skipped",
+    "browserTests": "31 production-built browser cases passed initially. After the hover/focus follow-up, all eight selector cases passed, including the new regression.",
+    "coverage": "All ten languages at 320, 390 and 1280 CSS pixels, all three hovered labels, keyboard focus, Escape, reopening, screen edges, mobile and installed shell, RTL, persistence and input masking.",
+    "visualReview": "Rendered English 320px, Arabic 390px and Dutch desktop fixtures, plus final real production desktop screenshot.",
+    "typecheck": "passed",
+    "lint": "zero errors, five existing warnings",
+    "localAndVercelBuilds": "passed",
+    "live": "Medium label visible, other labels hidden, 5px clearance above pull tab, no horizontal overflow. Escape dismisses drawer and restores toggle focus. Drawer reopens successfully.",
+    "screenshot": "detail-tooltip-live-2026-10-05.jpg",
+    "spending": "No generation requests or image-provider spending. Credits remained 98.",
+    "review": "Scoped review performed inline, with no independent review claimed."
+  },
+  "deploymentNote": "The first upload returned Not authorized. Existing account membership and project access were verified. The retry succeeded without credential or permission changes.",
+  "rollback": "dpl_7BBmScCGUFTCPPSkUde4ALH9xd4o"
+}

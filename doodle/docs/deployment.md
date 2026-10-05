@@ -39,3 +39,11 @@ Current production is dpl_7BBmScCGUFTCPPSkUde4ALH9xd4o, sourced from 4734a02 in 
 The regression reproduced the previous failure, then passed for all ten languages at 768, 1440 and 1920px. All 22 targeted production-built browser tests, TypeScript, lint and both production builds passed. Fixture captures cover mobile and Arabic layouts. A separate real production generation succeeded and charged exactly one credit, from 99 to 98. All measured result centers were exactly 1272.5 CSS pixels, with no horizontal overflow. See docs/qa/result-alignment-hotfix-2026-10-05.json and its live screenshot.
 
 Rollback: promote dpl_96oFMPhCYxVRsxqTrJ9CDcj7BjeQ. No environment change is needed.
+
+## Detail tooltip hotfix, October 5, 2026
+
+Current production is dpl_FHKbbtJG91m8gydibiFp1LZqG1UG, sourced from b9605b0 in the intended detail release checkout. Web detail labels sit above the pull tab with 5px clearance. Outer labels stay inside the viewport in both directions, and keyboard focus takes priority when another tile is hovered. Native Android has no floating labels and needs no store update for this fix.
+
+Verification includes failing regressions before both fixes, 615 passing unit tests, 31 passing production-built browser cases and eight passing selector cases after the final hover/focus adjustment. TypeScript, lint and local/Vercel production builds passed. The real live label, keyboard dismissal and reopening were inspected. No image generations or credit spending were needed. Evidence: docs/qa/detail-tooltip-hotfix-2026-10-05.json and its live screenshot.
+
+Rollback: promote dpl_7BBmScCGUFTCPPSkUde4ALH9xd4o. No environment change is needed.
