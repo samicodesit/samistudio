@@ -73,6 +73,13 @@
 .doodle-workspace-landing.doodle-workspace-generating .workspace-copy { display: none; }
 .doodle-workspace-landing.doodle-workspace-generating .workspace-visual, .doodle-workspace-landing.doodle-workspace-ready .workspace-visual { order: -1; width: min(100%, 520px); }
 .doodle-workspace-landing.doodle-workspace-ready .workspace-copy { width: min(100%, 640px); }
+@media (min-width: 700px) {
+ .doodle-workspace-landing.doodle-workspace-ready .state-copy { text-align: center; }
+ .doodle-workspace-landing.doodle-workspace-ready .state-copy h1 { margin-inline: auto; }
+ .doodle-workspace-landing.doodle-workspace-ready .result-actions,
+ .doodle-workspace-landing.doodle-workspace-ready .workspace-usage { margin-inline: auto; }
+ .doodle-workspace-landing.doodle-workspace-ready .workspace-usage { justify-content: center; }
+}
 .doodle-workspace-landing .state-copy h1 { font-size: 42px; line-height: 1.1; letter-spacing: -.04em; }
 .doodle-workspace-landing.doodle-workspace-error .workspace-visual { grid-column: 1 / -1; grid-row: 3; margin-top: 20px; }
 .doodle-workspace-landing.doodle-workspace-error .doodle-stage { aspect-ratio: auto; min-height: 100px; padding: 24px; }
