@@ -36,3 +36,16 @@ for (const width of [320, 390, 1280]) {
     }
   });
 }
+
+test("keyboard focus shows one label when the pointer rests on another tile", async ({ page }) => {
+  await page.route("**/api/account", route => route.fulfill({ json: { authenticated: false, email: null, balance: 0, freeRemaining: 2 } }));
+  await page.goto("/");
+  const tiles = page.getByRole("radio");
+  await tiles.nth(2).hover();
+  await tiles.nth(1).focus();
+  await page.keyboard.press("Space");
+  await expect(page.locator(".detail-tooltip").nth(1)).toHaveCSS("opacity", "1");
+  await expect(page.locator(".detail-tooltip").nth(2)).toHaveCSS("opacity", "0");
+  await page.getByRole("textbox").focus();
+  await expect(page.locator(".detail-tooltip").nth(2)).toHaveCSS("opacity", "1");
+});

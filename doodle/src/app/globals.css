@@ -2436,4 +2436,7 @@ html[dir="rtl"] .composer-detail-row .scene-heading h1, html[dir="rtl"] .compose
 .detail-tile:first-child .detail-tooltip { left: auto; inset-inline-start: 0; transform: none; }
 .detail-tile:last-child .detail-tooltip { left: auto; inset-inline-end: 0; transform: none; }
 .detail-tile:focus-visible .detail-tooltip { opacity: 1; }
-@media (hover: hover) { .detail-tile:hover:not(:disabled) .detail-tooltip { opacity: 1; } }
+@media (hover: hover) {
+  .detail-tile:hover:not(:disabled) .detail-tooltip { opacity: 1; }
+  .detail-tiles:has(.detail-tile:focus-visible) .detail-tile:hover:not(:focus-visible) .detail-tooltip { opacity: 0; }
+}
