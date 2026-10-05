@@ -2,10 +2,14 @@ import { createHash } from "node:crypto";
 import { describe, expect, it } from "vitest";
 import { DOODLE_PAPER_COLOR, SIMPLE_PROFILE } from "./profile";
 import { buildDoodlePrompt } from "./prompt";
+import { PROMPT_VERSIONS } from "./detail-level";
 
 describe("buildDoodlePrompt", () => {
-  it("preserves the exact pre-feature Simple prompt", () => {
-    expect(createHash("sha256").update(buildDoodlePrompt("Two cats hug")).digest("hex")).toBe("e2e0c20905e94eb2892aae2a18b62cac81d38c282edab46acc0182293c85f952");
+  it("records the new Simple version while preserving other prompt versions", () => {
+    expect(PROMPT_VERSIONS).toEqual({ simple: "simple-v3", medium: "medium-v1", detailed: "detailed-v1" });
+  });
+  it("locks the owner-approved rounded Simple prompt", () => {
+    expect(createHash("sha256").update(buildDoodlePrompt("Two cats hug")).digest("hex")).toBe("3517a71cdc6b027797e3962b7168f885277b1ca26b86b8b4fec71d81642b5931");
   });
   it("delimits scene content and preserves simple-profile rules", () => {
     const prompt = buildDoodlePrompt("Two cats hug");
@@ -13,7 +17,7 @@ describe("buildDoodlePrompt", () => {
     expect(prompt).toContain("copy by hand in under two minutes");
     expect(prompt).toContain(`sRGB ${DOODLE_PAPER_COLOR}`);
     expect(SIMPLE_PROFILE.id).toBe("simple");
-    expect(SIMPLE_PROFILE.model).toBe("gpt-image-1-mini");
+    expect(SIMPLE_PROFILE.model).toBe("gpt-image-2.5-flare");
   });
 
   it("uses distinct complexity rules without changing the shared paper or subject", () => {

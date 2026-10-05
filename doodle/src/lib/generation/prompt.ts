@@ -27,7 +27,10 @@ Style:
 - cute but not overly detailed
 - few enough details to copy by hand in under two minutes
 - clear and readable at small size
-- generous empty space around one compact scene
+- size the scene naturally for the square so the subject is easy to see,
+  with a modest clear paper margin rather than large areas of empty space
+- simplicity means fewer shapes and details, not a tiny drawing; scale the
+  simple drawing up instead of adding objects or detail to fill the canvas
 - keep the drawing central; do not add titles or captions automatically
 - brief wording is optional, only when explicitly requested or when it adds
   meaning beyond what the drawing already conveys
@@ -65,7 +68,7 @@ Interpreting the subject:
   natural scene over a collection of symbols or an elaborate metaphor
 - do not infer sensitive personal facts about the person who wrote the subject
 
-Draw the resolved subject with the simple style and paper background above.
+Draw the simplest expressive version of the main moment: keep the rounded characters and recognizable props, with a plain paper backdrop. Convey the setting through the action and its essential objects. The whole drawing, including every requested background object, uses only basic silhouettes and a few defining lines. Avoid adding scenery or extra props to decorate the picture.
 
 `;
 

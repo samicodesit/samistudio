@@ -15,3 +15,7 @@ report-review/
 .env*
 store-assets/
 marketing-assets/
+
+.qa*
+*.tsbuildinfo
+release-evidence/

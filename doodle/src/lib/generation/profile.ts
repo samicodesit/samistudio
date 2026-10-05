@@ -18,7 +18,7 @@ if (!( ["low", "medium", "high"] as const).includes(configuredQuality as ImageQu
 
 export const SIMPLE_PROFILE: GenerationProfile = {
   id: "simple",
-  model: process.env.OPENAI_IMAGE_MODEL || "gpt-image-1-mini",
+  model: process.env.OPENAI_IMAGE_MODEL || "gpt-image-2.5-flare",
   quality: configuredQuality as ImageQuality,
   size: "1024x1024",
 };

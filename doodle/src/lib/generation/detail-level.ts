@@ -9,5 +9,5 @@ export function storedDetailLevel(value: unknown): DetailLevel {
   return isDetailLevel(value) ? value : "simple";
 }
 export const PROMPT_VERSIONS = {
-  simple: "simple-v1", medium: "medium-v1", detailed: "detailed-v1",
+  simple: "simple-v3", medium: "medium-v1", detailed: "detailed-v1",
 } as const satisfies Record<DetailLevel, string>;
