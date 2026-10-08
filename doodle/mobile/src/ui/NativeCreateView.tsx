@@ -5,9 +5,10 @@ import { NativeDetailSelector, NATIVE_DETAIL_GEOMETRY } from "./NativeDetailSele
 import { NativeArtExamples } from "./NativeArtExamples";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import LottieView from "lottie-react-native";
 import {
+  AppState,
   Animated,
   Easing,
   KeyboardAvoidingView,
@@ -67,7 +68,7 @@ interface NativeCreateViewProps {
   onToggleGrid?(): void;
 }
 
-const PEN_DRAW_ANIMATION = require("../../assets/pen-draw.json");
+const PENCIL_DRAW_ANIMATION = require("../../assets/pencil-loader.json");
 
 export function NativeCreateView(props: NativeCreateViewProps) {
   const { generation } = props;
@@ -288,34 +289,74 @@ function NativeComposer({
 
 function NativeWaitingCard({ locale, copy, direction, reducedMotion, state }: NativeCreateViewProps & { state: Extract<NativeGenerationUiState, { status: "waiting" }> }) {
   const [messageIndex, setMessageIndex] = useState(() => state.loadingMessageIndex);
+  const [active, setActive] = useState(() => AppState.currentState !== "background" && AppState.currentState !== "inactive");
+  const messageShift = useRef(new Animated.Value(0)).current;
+  const [messageHeight, setMessageHeight] = useState(24);
+  const animation = useRef<LottieView>(null);
   const { width } = useWindowDimensions();
-  const animationSize = Math.min(230, Math.max(170, width - 76));
+  const animationWidth = Math.min(280, Math.max(170, width - 76));
 
   useEffect(() => {
-    if (reducedMotion || state.loadingMessages.length < 2) return;
-    const timer = setInterval(() => {
-      setMessageIndex((current) => (current + 1) % state.loadingMessages.length);
-    }, 4200);
-    return () => clearInterval(timer);
-  }, [reducedMotion, state.loadingMessages]);
+    const subscription = AppState.addEventListener("change", (next) => setActive(next === "active"));
+    return () => subscription.remove();
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion || !active) animation.current?.pause();
+    else animation.current?.play();
+  }, [active, reducedMotion]);
+
+  useLayoutEffect(() => {
+    messageShift.setValue(0);
+  }, [messageIndex, messageShift]);
+
+  useEffect(() => {
+    messageShift.setValue(0);
+    if (reducedMotion || !active || state.loadingMessages.length < 2) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout>;
+    const rotate = () => {
+      Animated.timing(messageShift, { toValue: -messageHeight, duration: 420, easing: (t) => t * t * t * (t * (t * 6 - 15) + 10), useNativeDriver: true }).start(({ finished }) => {
+        if (!finished || cancelled) return;
+        setMessageIndex((current) => (current + 1) % state.loadingMessages.length);
+        timer = setTimeout(rotate, 2580);
+      });
+    };
+    timer = setTimeout(rotate, 2580);
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+      messageShift.stopAnimation();
+    };
+  }, [active, messageHeight, messageShift, reducedMotion, state.loadingMessages]);
 
   const message = loadingMessageAt(state.loadingMessages, messageIndex);
   return (
     <View accessible accessibilityRole="progressbar" accessibilityLabel={state.statusLabel} style={styles.waitingCard}>
       <LottieView
-        autoPlay={!reducedMotion}
+        ref={animation}
+        autoPlay={!reducedMotion && active}
         loop={!reducedMotion}
-        progress={reducedMotion ? 0.75 : undefined}
-        source={PEN_DRAW_ANIMATION}
-        style={[styles.waitingAnimation, { height: animationSize, width: animationSize }]}
+        progress={reducedMotion ? 0.675 : undefined}
+        source={PENCIL_DRAW_ANIMATION}
+        style={[styles.waitingAnimation, { height: animationWidth * 280 / 320, width: animationWidth }]}
       />
       <Text style={[styles.loadingPrimary, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>
         {copy.stage.loadingPrimary}
       </Text>
-      <View style={styles.loadingMessageSlot}>
-        <Text style={[styles.loadingMessage, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>
-          {message}
-        </Text>
+      <View style={[styles.loadingMessageSlot, { minHeight: Math.max(58, messageHeight) }]}>
+       <View style={[styles.loadingMessageViewport, { height: messageHeight }]}>
+        <Animated.View style={[styles.loadingMessageTrack, { transform: [{ translateY: messageShift }] }]}>
+          {[message, loadingMessageAt(state.loadingMessages, (messageIndex + 1) % Math.max(1, state.loadingMessages.length))].map((text, index) => (
+            <View key={index} style={[styles.loadingMessageRow, { minHeight: messageHeight }]} onLayout={(event) => {
+              const height = Math.ceil(event.nativeEvent.layout.height);
+              setMessageHeight((current) => Math.max(current, height));
+            }} accessibilityElementsHidden={index === 1} importantForAccessibility={index === 1 ? "no-hide-descendants" : "auto"}>
+              <Text style={[styles.loadingMessage, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{text}</Text>
+            </View>
+          ))}
+        </Animated.View>
+       </View>
       </View>
       <Text style={styles.srOnly} accessibilityLiveRegion="polite">{state.statusLabel}</Text>
     </View>
@@ -451,6 +492,9 @@ const styles = StyleSheet.create({
   waitingAnimation: {},
   loadingPrimary: { color: NATIVE_COLORS.graphite, fontSize: 20, fontWeight: "600", lineHeight: 27, textAlign: "center" },
   loadingMessageSlot: { alignItems: "center", justifyContent: "center", minHeight: 58, width: "100%" },
+  loadingMessageViewport: { overflow: "hidden", width: "100%" },
+  loadingMessageTrack: { position: "absolute", top: 0, left: 0, right: 0 },
+  loadingMessageRow: { alignItems: "center", justifyContent: "center", width: "100%" },
   loadingMessage: { color: NATIVE_COLORS.muted, fontSize: 13, lineHeight: 20, textAlign: "center" },
   srOnly: { height: 1, opacity: 0, position: "absolute", width: 1 },
   resultScreen: { gap: 14 },

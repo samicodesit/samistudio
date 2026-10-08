@@ -1,0 +1,9 @@
+{
+  "asset": "mobile/assets/pencil-loader.json",
+  "bytes": 488194,
+  "sha256": "540b73d5911fe44255d7bef236d3cfdaf812c3c562ac6e4dcf02f3e0511e9b7b",
+  "provenance": "Owner-selected original built-in imagegen cedar pencil, original paper/shadows and canonical custom stroke motion. Production prompt and source remain in the main workspace docs/design/loading-2026-10-08.",
+  "directionApproved": true,
+  "published": false,
+  "grid": "Static six-line dashed blue vector grid with pale halo; no new runtime dependency."
+}

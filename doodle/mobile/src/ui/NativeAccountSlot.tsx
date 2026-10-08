@@ -1,4 +1,4 @@
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { NativeIcon } from "./NativeIcon";
 import { NATIVE_COLORS, nativeFontFamily } from "./theme";
 import type { NativeAccountUi, NativeDoodleUiCopy, NativeLocale } from "./types";
@@ -11,6 +11,7 @@ interface NativeAccountSlotProps {
 }
 
 export function NativeAccountSlot({ locale, copy, account, onPress }: NativeAccountSlotProps) {
+  const { fontScale } = useWindowDimensions();
   const loading = account.status === "loading";
   const signedIn = account.status === "signedIn";
   const retryable = account.status === "error";
@@ -31,7 +32,7 @@ export function NativeAccountSlot({ locale, copy, account, onPress }: NativeAcco
         </View>
       ) : null}
       {!loading && !signedIn ? <NativeIcon name="signIn" size={18} color={NATIVE_COLORS.moss} /> : null}
-      {!loading && !signedIn ? <Text style={[styles.signInText, { fontFamily: nativeFontFamily(locale, "body") }]}>{retryable ? copy.actions.tryAgain : copy.auth.signIn}</Text> : null}
+      {!loading && !signedIn ? <Text allowFontScaling={false} style={[styles.signInText, { fontSize: 14 * fontScale, lineHeight: 20 * fontScale, fontFamily: nativeFontFamily(locale, "body") }]}>{retryable ? copy.actions.tryAgain : copy.auth.signIn}</Text> : null}
     </Pressable>
   );
 }

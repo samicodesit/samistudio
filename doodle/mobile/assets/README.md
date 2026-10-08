@@ -25,4 +25,11 @@ The Bricolage and IBM Plex files cover the Latin copy used by the app. Alexandri
 
 All three identity PNGs have an alpha channel whose pixels are fully opaque. No transparent adaptive foreground asset exists in the approved source set. Keep these filenames when wiring `mobile/app.config.ts`, or coordinate a rename before changing this directory.
 
-The native waiting animation is `pen-draw.json`, extracted from the approved `pen-draw-source.lottie` archive. The source is Pen draw by Kirill Aizenberg, published on [LottieFiles](https://lottiefiles.com/free-animation/pen-draw-ypxT0jiu4Y) under the LottieSimple License, which permits commercial use, modification, and distribution. Attribution is optional. The original archive SHA-256 is `DE4D75473E9F62E112C17B1F70E8ACA3E27D0C0AF891D8E7D184DB6805A60D10`. The extracted JSON preserves the original canvas, frame rate, layer structure, and keyframes. Its solid black artwork is mapped to native graphite `#20231f`, and its gold stroke is mapped to native moss `#195c47` for contrast on the Doodle yellow card. No timing or geometry was changed.
+The native waiting animation is `pencil-loader.json`, the owner-selected Doodle
+pencil direction refined on 8 October 2026. It contains original generated
+pencil/paper artwork and custom vector graphite strokes, with an 8-second loop
+at 60 fps. The 488,194-byte JSON embeds four PNG assets once. Its SHA-256 is
+`540b73d5911fe44255d7bef236d3cfdaf812c3c562ac6e4dcf02f3e0511e9b7b`.
+The old pen animation is superseded and excluded from the bundle. Source
+artwork and motion studies remain outside the runtime package in the main
+workspace's `docs/design/loading-2026-10-08/pencil-loader` directory.

@@ -1,6 +1,7 @@
 # Play Data safety final mapping
 
-Prepared 8 September 2026 from the current source, deployed privacy policy, the
+Updated 8 October 2026 for the photo-to-doodle release. Originally prepared
+8 September 2026 from the current source, deployed privacy policy, the
 internal Play payment QA record, and the current official Google/provider
 documentation. This is a Console entry worksheet. The top-level Console
 answers are already saved as `Yes` for collecting or sharing data, `Yes` for encryption
@@ -9,8 +10,8 @@ been entered and this document has not been submitted.
 
 Independent review provenance: a fresh LunaMax `play_disclosure_acceptance`
 review returned **APPROVE**, and root accepted that the existing eight aggregate
-categories suffice, on 8 September 2026. This review adds no Play data
-category.
+categories suffice, on 8 September 2026. That review covered the previous eight categories. The October photo feature
+adds Photos below; its Console entry remains pending owner approval.
 
 Google's [Data safety definitions](https://support.google.com/googleplay/android-developer/answer/10787469?hl=en)
 require data sent off the device by the controlled webview and by libraries or
@@ -24,13 +25,14 @@ kept no longer than needed for the real-time request.
 
 ## Data types to select
 
-Select these eight types. The `Shared` column is intentionally a separate
+Select these nine types. The `Shared` column is intentionally a separate
 provider check because Play has no `unknown` option; do not turn a conditional
 answer into a submitted answer without the check described below.
 
 | Play category / data type | Collected | Ephemeral? | Required or optional | Purpose(s) to select | Shared field |
 | --- | --- | --- | --- | --- | --- |
 | App activity / Other user-generated content | Yes | No | Required | App functionality | `No` for the standard OpenAI API, Upstash customer-data storage, and Vercel Pro Customer Data hosting under the DPA. |
+| Photos and videos / Photos | Yes | No | Optional | App functionality | `No` for OpenAI API processing and Vercel hosting on the developer's behalf under the existing service-provider assessment. |
 | Personal info / Email address | Yes | No | Optional | App functionality; Account management | `No` for Vercel Pro Customer Data hosting under the DPA; no app-to-Google transfer of the email is evidenced in the app path. |
 | Personal info / User IDs | Yes | No | Optional | App functionality; Account management; Fraud prevention, security, and compliance | `No` for the user-initiated Google Identity/Play paths, Upstash storage, and Vercel Pro Customer Data hosting under the DPA. The separate web Stripe path is nonblocking for Android. |
 | Financial info / Purchase history | Yes | No | Optional | App functionality; Fraud prevention, security, and compliance | `No` for the user-initiated Play purchase and Upstash ledger; hold only for the separate web Stripe path, which is nonblocking for Android. |
@@ -52,8 +54,17 @@ answer into a submitted answer without the check described below.
   OpenAI's [current API data-controls page](https://developers.openai.com/api/docs/guides/your-data)
   says image-generation requests have abuse-monitoring retention of up to 30
   days by default. `Other user-generated content` covers the prompt, report
-  details, and the generated doodle attachment; the current app does not read a
-  user's photo library.
+  details, and the generated doodle attachment. User-selected source photos are
+  declared separately in the Photos row.
+- **Photos.** The optional system picker exposes only the selected photo.
+  Selection and preparation stay on the device. Create sends a metadata-stripped
+  thumbnail to the Doodle backend and OpenAI Images edits for conversion
+  (`mobile/src/platform/photo-picker.ts`, `src/lib/generation/generate-photo-doodle.ts`).
+  Doodle does not intentionally store the source in its account database.
+  OpenAI's default abuse-monitoring retention of up to 30 days means this is
+  collected and non-ephemeral. Text-only creation remains available, so the
+  collection is optional. The privacy page describes both upload timing and
+  local draft/cache retention.
 - **Email address and User IDs.** Google credential verification accepts the
   verified `sub` and email (`../src/lib/auth/google.ts:8`), creates a protected
   identity mapping (`../src/lib/auth/accounts.ts:23`), and puts the email and
@@ -167,12 +178,6 @@ only; Stripe is not an Android release declaration blocker.
 
 ## Do not select these types on the current evidence
 
-- `Photos`: No. The only image sent by the report flow is the Doodle-generated
-  result; the app does not use a photo picker or photo-library permission.
-  Treat that attachment as `Other user-generated content`. This is an
-  interpretation of Google's `Photos` definition (a user's photos) and the
-  actual report payload, not a claim that arbitrary future image uploads would
-  be covered.
 - `Financial info / User payment info`: No. Doodle receives a purchase token or
   provider transaction references, not a complete card number.
 - `Location / Precise location`: No. No GPS or Android location permission is

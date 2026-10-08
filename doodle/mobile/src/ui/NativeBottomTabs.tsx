@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { NativeIcon, type NativeIconName } from "./NativeIcon";
 import { NATIVE_COLORS, nativeFontFamily, nativeRowDirection } from "./theme";
@@ -19,6 +19,7 @@ const TAB_ICONS: { [key in NativeTab]: NativeIconName } = {
 };
 
 export function NativeBottomTabs({ locale, direction, copy, tab, onTabChange }: NativeBottomTabsProps) {
+  const { fontScale } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const items: readonly { id: NativeTab; label: string }[] = [
     { id: "create", label: copy.navigation.create },
@@ -45,7 +46,7 @@ export function NativeBottomTabs({ locale, direction, copy, tab, onTabChange }: 
               style={({ pressed }) => [styles.item, selected && styles.itemSelected, pressed && styles.itemPressed]}
             >
               <NativeIcon name={TAB_ICONS[item.id]} size={21} color={selected ? NATIVE_COLORS.moss : NATIVE_COLORS.muted} />
-              <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.label, { color: selected ? NATIVE_COLORS.moss : NATIVE_COLORS.muted, fontFamily: nativeFontFamily(locale, "body") }]}>
+              <Text allowFontScaling={false} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={[styles.label, { fontSize: 12 * fontScale, lineHeight: 16 * fontScale, color: selected ? NATIVE_COLORS.moss : NATIVE_COLORS.muted, fontFamily: nativeFontFamily(locale, "body") }]}>
                 {item.label}
               </Text>
             </Pressable>

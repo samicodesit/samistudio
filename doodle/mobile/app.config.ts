@@ -99,7 +99,7 @@ if (iosGoogleUrlScheme) {
 const config: NativeExpoConfig = {
   name: "Doodle",
   slug: "doodle",
-  version: "0.1.7",
+  version: "0.1.8",
   icon: brandIcon,
   orientation: "portrait",
   splash: {
@@ -113,7 +113,7 @@ const config: NativeExpoConfig = {
   runtimeVersion: { policy: "appVersion" },
   android: {
     package: packageName,
-    versionCode: 9,
+    versionCode: 10,
     // Doodle uses the system picker for access to one selected photo. Keep
     // legacy save support for Android <= 12, while
     // preventing modern gallery and overlay permissions from entering the
