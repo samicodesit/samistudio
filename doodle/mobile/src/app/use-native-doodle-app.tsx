@@ -1,7 +1,7 @@
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 import { getPhotoCopy } from "../../../src/lib/photo-copy";
-import { pickPhoto, removePhotoFile, type NativePhotoDraft } from "../platform/photo-picker";
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
+import { pickPhoto, recoverPhoto, removePhotoFile, type NativePhotoDraft } from "../platform/photo-picker";
+import { useCallback, useEffect, useEffectEvent, useMemo, useReducer, useRef, useState } from "react";
 import { Alert, AppState, Linking } from "react-native";
 import type { NativeDoodleUiProps, NativeLocale, NativeReportSubmission } from "../ui/types";
 import { canSubmitScene, characterCountLabel } from "../ui/ui-logic";
@@ -36,19 +36,45 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
   const photoRef = useRef<NativePhotoDraft | null>(null);
   const pickerInFlight = useRef(false);
   const mounted = useRef(true);
+  const photoSelectionVersion = useRef(0);
   useEffect(() => { mounted.current = true; return () => { mounted.current = false; removePhotoFile(photoRef.current); }; }, []);
+  const recoveredPhotoFailed = useEffectEvent((error: unknown) => {
+    const copy = getPhotoCopy(state.locale);
+    setPhotoError(error instanceof Error && error.message === "tooLarge" ? copy.tooLarge : copy.invalid);
+  });
+  useEffect(() => {
+    const version = photoSelectionVersion.current;
+    let active = true;
+    let claimed = false;
+    void recoverPhoto(() => {
+      if (!active || version !== photoSelectionVersion.current || pickerInFlight.current || generationInFlight.current) return false;
+      claimed = true; pickerInFlight.current = true; setPreparingPhoto(true);
+      return true;
+    }).then(selected => {
+      if (!selected) return;
+      if (!active || version !== photoSelectionVersion.current) { removePhotoFile(selected); return; }
+      removePhotoFile(photoRef.current); photoRef.current = selected; setPhoto(selected);
+    }).catch(error => {
+      if (active && claimed && version === photoSelectionVersion.current) recoveredPhotoFailed(error);
+    }).finally(() => {
+      if (claimed) { pickerInFlight.current = false; if (active) setPreparingPhoto(false); }
+    });
+    return () => { active = false; };
+  }, []);
   const onRemovePhoto = useCallback(() => {
+    photoSelectionVersion.current += 1;
     removePhotoFile(photoRef.current); photoRef.current = null; setPhoto(null); setPhotoError(null);
   }, []);
   const onPickPhoto = useCallback(async () => {
     if (pickerInFlight.current || generationInFlight.current) return;
+    const version = ++photoSelectionVersion.current;
     pickerInFlight.current = true; setPreparingPhoto(true); setPhotoError(null);
     try {
       const selected = await pickPhoto();
-      if (!mounted.current) { removePhotoFile(selected); return; }
+      if (!mounted.current || version !== photoSelectionVersion.current) { removePhotoFile(selected); return; }
       if (selected) { removePhotoFile(photoRef.current); photoRef.current = selected; setPhoto(selected); dispatch({ type: "generationIdle" }); }
     } catch (error) {
-      if (mounted.current) { const text = getPhotoCopy(state.locale); setPhotoError(error instanceof Error && error.message === "tooLarge" ? text.tooLarge : text.invalid); }
+      if (mounted.current && version === photoSelectionVersion.current) { const text = getPhotoCopy(state.locale); setPhotoError(error instanceof Error && error.message === "tooLarge" ? text.tooLarge : text.invalid); }
     } finally { pickerInFlight.current = false; if (mounted.current) setPreparingPhoto(false); }
   }, [state.locale]);
   const lastResultInput = useRef<{ scene: string; detailLevel: DetailLevel; photo?: string } | null>(null);
@@ -182,6 +208,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
 
   const runGeneration = useCallback(async (scene: string, detailLevel: DetailLevel = state.detailLevel, photoInput: string | undefined = photo?.base64) => {
     if (!state.detailReady || pickerInFlight.current || generationInFlight.current) return;
+    photoSelectionVersion.current += 1;
     if (!photoInput && !canSubmitScene(scene, 180)) {
       dispatch({ type: "generationFailed", message: copy.errors.general, retryLabel: copy.actions.tryAgain });
       return;

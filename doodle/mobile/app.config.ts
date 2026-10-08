@@ -25,6 +25,7 @@ if (!/^\d+$/.test(integrityCloudProjectNumber)) {
 
 const plugins: NonNullable<ExpoConfig["plugins"]> = [
   "./plugins/withDoodleLocalBuildTypes",
+  "./plugins/withDoodleConfigurationChanges",
   "./plugins/withDoodleReleaseSigning",
   "expo-dev-client",
   ["expo-image-picker", { cameraPermission: false, microphonePermission: false, photosPermission: "Choose a photo to turn into a doodle." }],

@@ -1,32 +1,11 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { MAX_PHOTO_BYTES, PHOTO_MAX_EDGE } from "@/lib/generation/photo-input";
+import { preparePhoto } from "@/lib/prepare-photo";
 import { photoDraftStore } from "@/lib/photo-draft-store";
 import type { PhotoCopy } from "@/lib/photo-copy";
 
 export interface PhotoDraft { base64: string; uri: string }
 
-async function preparePhoto(file: File): Promise<PhotoDraft> {
-  if (file.size > 20_000_000) throw new Error("tooLarge");
-  if (!file.type.startsWith("image/") || !file.size) throw new Error("invalid");
-  const bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
-  try {
-    if (!bitmap.width || !bitmap.height || bitmap.width * bitmap.height > 24_000_000) throw new Error("tooLarge");
-    const scale = Math.min(1, PHOTO_MAX_EDGE / Math.max(bitmap.width, bitmap.height));
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-    const context = canvas.getContext("2d");
-    if (!context) throw new Error("invalid");
-    context.fillStyle = "white";
-    context.fillRect(0, 0, canvas.width, canvas.height);
-    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-    const uri = canvas.toDataURL("image/jpeg", 0.9);
-    const base64 = uri.split(",")[1];
-    if (base64.length * 0.75 > MAX_PHOTO_BYTES) throw new Error("tooLarge");
-    return { base64, uri };
-  } finally { bitmap.close(); }
-}
 
 export function usePhotoDraft(scene: string, onRestoreScene: (scene: string) => void, copy: PhotoCopy) {
   const [photo, setPhoto] = useState<PhotoDraft | null>(null);

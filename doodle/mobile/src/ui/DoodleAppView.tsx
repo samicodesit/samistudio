@@ -19,7 +19,7 @@ import type { NativeDoodleUiProps, NativeImageSource } from "./types";
 
 export function DoodleAppView(props: NativeDoodleUiProps) {
   const reducedMotion = useReducedMotion();
-  const { width, fontScale } = useWindowDimensions();
+  const { width, fontScale, scale } = useWindowDimensions();
   const showHeroArt = fontScale <= 1.3 && props.tab === "create" && (props.generation.status === "idle" || props.generation.status === "error");
   const [gridImageUri, setGridImageUri] = useState<NativeImageSource | null>(null);
   const gridEnabled = props.generation.status === "ready" && gridImageUri === props.generation.imageUri;
@@ -41,7 +41,9 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
   }, [props.accountModal, props.generation.status, props.modal, props.onResultBack, props.tab]);
 
   return (
-    <SafeAreaView edges={["top"]} style={styles.safe}>
+    // Recreate native text nodes after a live accessibility size change. App
+    // state, including the photo draft, remains in the parent controller.
+    <SafeAreaView key={`${fontScale}:${scale}`} edges={["top"]} style={styles.safe}>
       <View style={styles.root}>
         <View style={[styles.accountHeader, { flexDirection: nativeRowDirection(props.direction) }, showHeroArt && (props.direction === "rtl" ? { paddingRight: 100 } : { paddingLeft: 100 })]}>
           {showHeroArt ? (

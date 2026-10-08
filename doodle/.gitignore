@@ -48,6 +48,7 @@ next-env.d.ts
 /mobile/.expo-export/
 /mobile/android/.gradle/
 /mobile/android/.cxx/
+/mobile/modules/*/android/build/
 /mobile/android/local.properties
 /mobile/android/app/src/main/java/inline/
 /android/.gradle/

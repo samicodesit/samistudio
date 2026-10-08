@@ -3,6 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import { DoodleClient } from "./doodle-client";
 import { getCopy } from "@/lib/i18n";
 import { photoDraftStore, discardPhotoDraft } from "@/lib/photo-draft-store";
+import { File as NodeFile } from "node:buffer";
 
 vi.mock("@vercel/analytics", () => ({ track: vi.fn() }));
 vi.mock("@/lib/photo-draft-store", async importOriginal => ({ ...await importOriginal<typeof import("@/lib/photo-draft-store")>(), photoDraftStore: vi.fn().mockResolvedValue(undefined) }));
@@ -18,7 +19,8 @@ afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 async function choosePhoto() {
   const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
-  fireEvent.change(input, { target: { files: [new File(["photo"], "photo.jpg", { type: "image/jpeg" })] } });
+  const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aXioAAAAASUVORK5CYII=", "base64");
+  fireEvent.change(input, { target: { files: [new NodeFile([png], "photo.png", { type: "image/png" })] } });
   await screen.findByRole("img", { name: "Selected photo" });
 }
 
@@ -60,4 +62,21 @@ it("starts an Ideas selection without restoring the previous photo", async () =>
   await screen.findByText("2 free doodles left");
   expect(screen.getByRole("textbox")).toHaveValue("A new idea");
   expect(screen.queryByRole("img", { name: "Selected photo" })).toBeNull();
+});
+
+it("keeps a valid selection when a replacement is damaged or cancelled", async () => {
+  vi.mocked(photoDraftStore).mockResolvedValue(undefined);
+  render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="My saved idea" />);
+  await screen.findByText("2 free doodles left");
+  await choosePhoto();
+  const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
+  fireEvent.change(input, { target: { files: [new NodeFile(["damaged"], "photo.jpg", { type: "image/jpeg" })] } });
+  await screen.findByText("This photo could not be opened. Try a JPG, PNG or WebP image.");
+  expect(screen.getByRole("img", { name: "Selected photo" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "Create doodle" })).toBeEnabled();
+  fireEvent.change(input, { target: { files: [] } });
+  expect(screen.getByRole("img", { name: "Selected photo" })).toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+  expect(screen.getByRole("textbox")).toHaveValue("My saved idea");
+  expect(screen.queryByText("This photo could not be opened. Try a JPG, PNG or WebP image.")).toBeNull();
 });
