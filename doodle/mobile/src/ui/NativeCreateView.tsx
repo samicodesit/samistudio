@@ -343,7 +343,7 @@ function NativeResultCard({ locale, direction, copy, state, usage, reducedMotion
   return (
     <Animated.View style={[styles.resultScreen, { opacity: reveal, transform: [{ translateY: revealY }] }]}>
       <View style={[styles.resultHeader, { alignItems: direction === "rtl" ? "flex-end" : "flex-start" }]}>
-        <Pressable accessibilityRole="button" accessibilityLabel={copy.navigation.create} onPress={onResultBack} style={({ pressed }) => [styles.resultBackButton, pressed && styles.pressed]}>
+        <Pressable accessibilityRole="button" accessibilityLabel={copy.actions.back} onPress={onResultBack} style={({ pressed }) => [styles.resultBackButton, pressed && styles.pressed]}>
           <NativeIcon name="back" size={23} color={NATIVE_COLORS.graphite} />
         </Pressable>
       </View>

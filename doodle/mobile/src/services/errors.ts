@@ -1,5 +1,8 @@
 export type NativeServiceErrorCode =
   | "invalid_request"
+  | "invalid_photo"
+  | "request_too_large"
+  | "refused"
   | "unauthorized"
   | "forbidden"
   | "native_generation_unavailable"

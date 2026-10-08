@@ -36,7 +36,7 @@ export interface NativeDoodleUiCopy {
     referenceAria: string;
     referenceAlt: string;
   };
-  actions: { download: string; tryAgain: string; redraw: string; newScene: string };
+  actions: { back: string; download: string; tryAgain: string; redraw: string; newScene: string };
   dialog: { label: string; close: string; imageAlt: string; download: string };
   usage: { freeTrial: string; freeLeft: NativePluralTemplates; paidLeft: NativePluralTemplates };
   purchase: {

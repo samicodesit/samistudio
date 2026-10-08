@@ -1,5 +1,5 @@
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
-import { getPhotoCopy } from "../../../src/lib/photo-copy";
+import { getPhotoCopy, photoFailureMessage } from "../../../src/lib/photo-copy";
 import { pickPhoto, recoverPhoto, removePhotoFile, type NativePhotoDraft } from "../platform/photo-picker";
 import { useCallback, useEffect, useEffectEvent, useMemo, useReducer, useRef, useState } from "react";
 import { Alert, AppState, Linking } from "react-native";
@@ -64,6 +64,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
   const onRemovePhoto = useCallback(() => {
     photoSelectionVersion.current += 1;
     removePhotoFile(photoRef.current); photoRef.current = null; setPhoto(null); setPhotoError(null);
+    dispatch({ type: "generationIdle" });
   }, []);
   const onPickPhoto = useCallback(async () => {
     if (pickerInFlight.current || generationInFlight.current) return;
@@ -246,7 +247,8 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
         }
         return;
       }
-      const message = code === "rate_limited"
+      const photoMessage = photoInput ? photoFailureMessage(code, getPhotoCopy(state.locale)) : undefined;
+      const message = photoMessage ?? (code === "rate_limited"
         ? copy.errors.rateLimited
         : code === "timeout"
           ? copy.errors.timeout
@@ -254,7 +256,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
             ? copy.errors.unavailable
             : code === "unauthorized"
             ? copy.auth.authError
-              : copy.errors.general;
+              : copy.errors.general);
       dispatch({ type: "generationFailed", message, retryLabel: copy.actions.tryAgain });
     } finally {
       generationInFlight.current = false;

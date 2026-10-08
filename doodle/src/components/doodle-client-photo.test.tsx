@@ -14,6 +14,9 @@ beforeEach(() => {
   vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({ fillRect: vi.fn(), drawImage: vi.fn() } as never);
   vi.spyOn(HTMLCanvasElement.prototype, "toDataURL").mockReturnValue("data:image/jpeg;base64,AQID");
   sessionStorage.clear(); localStorage.clear();
+  vi.mocked(photoDraftStore).mockResolvedValue(undefined);
+  URL.createObjectURL = vi.fn(() => "blob:doodle-result");
+  URL.revokeObjectURL = vi.fn();
 });
 afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
@@ -22,7 +25,86 @@ async function choosePhoto() {
   const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aXioAAAAASUVORK5CYII=", "base64");
   fireEvent.change(input, { target: { files: [new NodeFile([png], "photo.png", { type: "image/png" })] } });
   await screen.findByRole("img", { name: "Selected photo" });
+  await waitFor(() => expect(screen.getByRole("button", { name: "Create doodle" })).toBeEnabled());
 }
+
+function generationResponse(status: number) {
+  vi.mocked(fetch).mockImplementation(async input => input === "/api/account"
+    ? Response.json({ authenticated: false, email: null, balance: 0, freeRemaining: 2 })
+    : status === 200
+      ? new Response(new Blob(["png"], { type: "image/png" }), { headers: { "X-Doodle-Free-Remaining": "1" } })
+      : new Response(null, { status }));
+}
+
+it.each([
+  [400, "This photo could not be opened. Try a JPG, PNG or WebP image."],
+  [413, "That photo is too large. Try a smaller image."],
+  [422, "This photo couldn't be turned into a doodle. Try a different photo."],
+] as const)("gives photo-specific recovery for status %s without losing the input", async (status, message) => {
+  generationResponse(status);
+  render(<DoodleClient locale="en" copy={getCopy("en")} />);
+  await screen.findByText("2 free doodles left");
+  fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
+  await choosePhoto();
+  fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+  await screen.findByText(message);
+  expect(screen.getByRole("img", { name: "Selected photo" })).toBeVisible();
+  expect(screen.getByRole("radio", { name: "Medium" })).toHaveAttribute("aria-checked", "true");
+  expect(screen.queryByText(getCopy("en").errors.refused)).toBeNull();
+});
+
+it("keeps the existing guidance for a refused text idea", async () => {
+  generationResponse(422);
+  render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="Two cats" />);
+  await screen.findByText("2 free doodles left");
+  fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+  await screen.findByText(getCopy("en").errors.refused);
+  expect(screen.getByRole("textbox")).toHaveValue("Two cats");
+});
+
+it("clears an old generation failure only after a successful replacement or Remove", async () => {
+  generationResponse(502);
+  render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="My saved idea" />);
+  await screen.findByText("2 free doodles left");
+  await choosePhoto();
+  fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+  await screen.findByText(getCopy("en").errors.general);
+  const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
+  fireEvent.change(input, { target: { files: [] } });
+  expect(screen.getByText(getCopy("en").errors.general)).toBeVisible();
+  fireEvent.change(input, { target: { files: [new NodeFile(["damaged"], "photo.jpg", { type: "image/jpeg" })] } });
+  await screen.findByText("This photo could not be opened. Try a JPG, PNG or WebP image.");
+  expect(screen.getByText(getCopy("en").errors.general)).toBeVisible();
+  await choosePhoto();
+  await waitFor(() => expect(screen.queryByText(getCopy("en").errors.general)).toBeNull());
+  fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+  await screen.findByText(getCopy("en").errors.general);
+  fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+  expect(screen.queryByText(getCopy("en").errors.general)).toBeNull();
+  expect(screen.getByRole("textbox")).toHaveValue("My saved idea");
+  expect(screen.getByRole("textbox")).toHaveFocus();
+});
+
+it.each([true, false])("returns from a result to the same draft without another generation (photo: %s)", async withPhoto => {
+  generationResponse(200);
+  render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="My earlier idea" />);
+  await screen.findByText("2 free doodles left");
+  fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
+  if (withPhoto) await choosePhoto();
+  fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+  fireEvent.click(await screen.findByRole("button", { name: "Back" }));
+  expect(screen.getByRole("radio", { name: "Medium" })).toHaveAttribute("aria-checked", "true");
+  expect(screen.getByText("1 free doodle left")).toBeVisible();
+  expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === "/api/generate")).toHaveLength(1);
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith("blob:doodle-result");
+  if (withPhoto) {
+    expect(screen.getByRole("img", { name: "Selected photo" })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Create doodle" })).toHaveFocus();
+    fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+  }
+  expect(screen.getByRole("textbox")).toHaveValue("My earlier idea");
+  expect(screen.getByRole("textbox")).toHaveFocus();
+});
 
 it("keeps selection local, restores the draft and retains the chosen detail", async () => {
   render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="My earlier idea" />);

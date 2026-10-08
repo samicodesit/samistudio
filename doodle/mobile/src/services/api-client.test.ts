@@ -11,6 +11,14 @@ function response(body: unknown, init?: ResponseInit) {
 }
 
 describe("NativeApiClient", () => {
+  it.each([[422, "refused"], [400, "invalid_photo"], [413, "request_too_large"]] as const)("preserves photo failure %s for the correct recovery message", async (status, code) => {
+    const fetchImpl = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(response({ enabled: true, packageName: "nl.samistudio.doodle", minimumVersionCode: 2, attestation: "play_integrity", guestEnabled: true, cloudProjectNumber: "123" }))
+      .mockResolvedValueOnce(response({ error: code }, { status }));
+    const client = new NativeApiClient({ baseUrl: "https://doodle.samistudio.nl", fetchImpl, getAccessToken: async () => "a".repeat(43), getTrialToken: async () => null, getInstallId: async () => "11111111-1111-4111-8111-111111111111", hashScene: async () => "a".repeat(64), createChallenge: async () => ({ challenge: "c".repeat(43), requestHash: "h".repeat(43), expiresAt: Date.now() + 1000 }), requestIntegrity: async () => "integrity-token-123" });
+    await expect(client.generate("Private text", "medium", "AQID")).rejects.toMatchObject({ code, status });
+    expect(fetchImpl).toHaveBeenCalledTimes(2);
+  });
   it("sends the native origin and bearer without relying on cookies", async () => {
     const fetchImpl = vi.fn<typeof fetch>().mockResolvedValue(response({
       authenticated: true,

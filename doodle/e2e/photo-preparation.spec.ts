@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { mkdirSync, statSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
 const fixtures = path.join(process.cwd(), "e2e/fixtures/photo");
@@ -147,6 +147,66 @@ test("Create sends only the prepared photo and chosen detail; a recoverable erro
   await expect(page.getByRole("img", { name: "Selected photo" })).toHaveAttribute("src", previous!);
   await expect(page.getByRole("radio", { name: "Medium", exact: true })).toHaveAttribute("aria-checked", "true");
   await expect(create(page)).toBeEnabled();
+});
+
+for (const installed of [false, true]) {
+  test(`result Back restores photo, detail and allowance without generating (${installed ? "installed" : "website"})`, async ({ page }) => {
+    if (installed) {
+      await page.goto("/?runtime=app");
+      await expect(page.locator(".usage-copy")).toContainText("2 free doodles left");
+    }
+    let requests = 0;
+    await page.route("**/api/generate", route => {
+      requests++;
+      return route.fulfill({ contentType: "image/png", body: readFileSync(path.join(fixtures, "transparent.png")), headers: { "X-Doodle-Free-Remaining": "1" } });
+    });
+    await page.getByRole("textbox").fill("My saved writing");
+    await page.getByRole("radio", { name: "Medium", exact: true }).click();
+    await choose(page, "orientation-6.jpg");
+    const previous = await page.getByRole("img", { name: "Selected photo" }).getAttribute("src");
+    await create(page).click();
+    const back = page.getByRole("button", { name: "Back", exact: true });
+    await expect(back).toBeVisible();
+    await expect.poll(async () => {
+      const button = await back.boundingBox();
+      const image = await page.locator(".doodle-stage").boundingBox();
+      return !!button && !!image && button.height >= 44 && button.y + button.height <= image.y;
+    }).toBe(true);
+    if (installed) {
+      await page.setViewportSize({ width: 320, height: 568 });
+      await expect.poll(async () => {
+        const actions = await page.locator(".secondary-actions").boundingBox();
+        const navigation = await page.locator(".app-bottom-nav").boundingBox();
+        return !!actions && !!navigation && actions.y + actions.height <= navigation.y;
+      }).toBe(true);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    }
+    await back.click();
+    await expect(page.getByRole("img", { name: "Selected photo" })).toHaveAttribute("src", previous!);
+    await expect(page.getByRole("radio", { name: "Medium", exact: true })).toHaveAttribute("aria-checked", "true");
+    await expect(page.locator(".usage-copy")).toContainText("1 free doodle left");
+    await expect(create(page)).toBeFocused();
+    expect(requests).toBe(1);
+    await page.getByRole("button", { name: "Remove", exact: true }).click();
+    await expect(page.getByRole("textbox")).toHaveValue("My saved writing");
+    await expect(page.getByRole("textbox")).toBeFocused();
+  });
+}
+
+test("photo refusal clears after replacement and Remove", async ({ page }) => {
+  await page.route("**/api/generate", route => route.fulfill({ status: 422, json: { error: "refused" } }));
+  await page.getByRole("textbox").fill("My saved writing");
+  await choose(page, "orientation-6.jpg");
+  const error = page.getByText("This photo couldn't be turned into a doodle. Try a different photo.");
+  await create(page).click();
+  await expect(error).toBeVisible();
+  await choose(page, "transparent.png");
+  await expect(error).toHaveCount(0);
+  await create(page).click();
+  await expect(error).toBeVisible();
+  await page.getByRole("button", { name: "Remove", exact: true }).click();
+  await expect(error).toHaveCount(0);
+  await expect(page.getByRole("textbox")).toHaveValue("My saved writing");
 });
 
 test("local preparation benchmark on previously approved public research photos", async ({ page }, testInfo) => {

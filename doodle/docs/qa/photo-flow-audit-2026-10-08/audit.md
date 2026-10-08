@@ -1,5 +1,7 @@
 # Photo flow audit
 
+Follow-up: the three recommended interaction fixes were implemented and verified on October 8. See the [polish verification record](../photo-flow-polish-2026-10-08/verification.md). The findings and screenshots below preserve the original audit state.
+
 Reviewed October 8, 2026, on `codex/photo-input` after `f976704`. Goal: select a photo, choose drawing complexity, obtain a Doodle-style drawing and recover easily, with a minimal interface and predictable spending.
 
 ## Verdict

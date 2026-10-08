@@ -47,14 +47,17 @@ export function usePhotoDraft(scene: string, onRestoreScene: (scene: string) => 
   }, [photo, scene]);
 
   async function select(file: File | undefined) {
-    if (!file) return;
+    if (!file) return false;
     const version = ++revision.current;
     setPreparing(true); setError(null);
     try {
       const selected = await preparePhoto(file);
-      if (version === revision.current) setPhoto(selected);
+      if (version !== revision.current) return false;
+      setPhoto(selected);
+      return true;
     } catch (failure) {
       if (version === revision.current) setError(failure instanceof Error && failure.message === "tooLarge" ? copy.tooLarge : copy.invalid);
+      return false;
     } finally {
       if (version === revision.current) setPreparing(false);
       if (input.current) input.current.value = "";

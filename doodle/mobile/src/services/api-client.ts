@@ -111,6 +111,9 @@ function normalizeScene(scene: string): string {
 function mapErrorCode(status: number, value: unknown): NativeServiceErrorCode {
   if (value && typeof value === "object" && typeof (value as { error?: unknown }).error === "string") {
     const code = (value as { error: string }).error as NativeServiceErrorCode;
+    if (status === 400 && code === "invalid_photo") return code;
+    if (status === 413 && code === "request_too_large") return code;
+    if (status === 422 && code === "refused") return code;
     if (ERROR_CODES.has(code)) return code;
   }
   if (status === 401) return "unauthorized";

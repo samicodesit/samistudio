@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { track } from "@vercel/analytics";
-import { RefreshCw } from "lucide-react";
+import { ArrowLeft, RefreshCw } from "lucide-react";
 import type { AccountSummary } from "@/app/api/account/route";
 import { formatCount, localePath, SUPPORTED_LOCALES, type DoodleCopy, type Locale } from "@/lib/i18n";
 import { DEFAULT_SUGGESTION_IDS, localizeSceneIdeas, pickSceneIdeas, type SceneIdeaId } from "@/lib/scenes/suggestions";
@@ -19,7 +19,7 @@ import { isPlayRuntime } from "@/lib/billing/play-client";
 import { getLandingCopy, LANDING_EXAMPLE, type LandingCopy } from "@/lib/landing-copy";
 import { getComposerIntro } from "@/lib/composer-intro";
 import { usePhotoDraft } from "./use-photo-draft";
-import { getPhotoCopy } from "@/lib/photo-copy";
+import { getPhotoCopy, photoFailureMessage } from "@/lib/photo-copy";
 
 type DoodleInput = { scene: string; detailLevel: DetailLevel; photo?: string };
 
@@ -117,6 +117,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
     ? null
     : document.querySelector<HTMLElement>(`[data-account-host="${accountHost}"]`);
   const focusNextScene = useRef(false);
+  const focusNextCreate = useRef(false);
   const sceneInputRef = useCallback((node: HTMLTextAreaElement | null) => {
     if (node && focusNextScene.current) {
       node.focus();
@@ -227,6 +228,10 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   useEffect(() => { isPlayRuntime(); }, []);
 
   useLayoutEffect(() => {
+    if (generation.status === "idle" && focusNextCreate.current) {
+      createButtonRef.current?.focus();
+      focusNextCreate.current = false;
+    }
     if (generation.status !== "idle" && window.innerWidth < 900 && !workspaceRef.current?.closest("[hidden]")) {
       window.scrollTo({ top: 0, behavior: "instant" });
     }
@@ -341,7 +346,9 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
       }
 
       if (!response.ok) {
-        setGeneration({ status: "error", imageUrl: null, error: messageForStatus(response.status, copy.errors) });
+        const photoCode = response.status === 400 ? "invalid_photo" : response.status === 413 ? "request_too_large" : response.status === 422 ? "refused" : "";
+        const photoMessage = input.photo ? photoFailureMessage(photoCode, getPhotoCopy(locale)) : undefined;
+        setGeneration({ status: "error", imageUrl: null, error: photoMessage ?? messageForStatus(response.status, copy.errors) });
         return;
       }
 
@@ -379,6 +386,13 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
     } finally {
       generationInFlight.current = false;
     }
+  }
+
+  function handleResultBack() {
+    focusNextScene.current = !photo;
+    focusNextCreate.current = Boolean(photo);
+    setIsResultOpen(false);
+    clearGeneration();
   }
 
   function handleNewScene() {
@@ -446,7 +460,13 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
 
   return (
     <div ref={workspaceRef} className={`doodle-workspace doodle-workspace-${generation.status}${landing ? " doodle-workspace-landing" : ""}`}>
-      <input ref={photoInputRef} type="file" accept="image/*" hidden tabIndex={-1} aria-label={getPhotoCopy(locale).use} onChange={event => { void selectPhoto(event.target.files?.[0]); }} />
+      <input ref={photoInputRef} type="file" accept="image/*" hidden tabIndex={-1} aria-label={getPhotoCopy(locale).use} onChange={async event => { if (await selectPhoto(event.target.files?.[0])) clearGeneration(); }} />
+      {generation.status === "ready" ? (
+        <button type="button" className="result-back" onClick={handleResultBack}>
+          <ArrowLeft size={20} aria-hidden="true" />
+          <span>{copy.actions.back}</span>
+        </button>
+      ) : null}
       {landing && (generation.status === "idle" || generation.status === "error") ? (
         <div className="landing-intro">
           <h1>{landing.title}<br />{landing.titleEnd}</h1>
@@ -470,7 +490,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
             preparingPhoto={preparingPhoto}
             photoError={photoError}
             onPickPhoto={pickPhoto}
-            onRemovePhoto={() => { removePhoto(); focusNextScene.current = true; }}
+            onRemovePhoto={() => { focusNextScene.current = true; removePhoto(); clearGeneration(); }}
             scene={scene}
             isGenerating={false}
             onSceneChange={setScene}
