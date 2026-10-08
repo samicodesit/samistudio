@@ -1,9 +1,9 @@
 .copy-grid-overlay { position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity var(--grid-fade) ease-out; }
 .copy-grid-overlay[data-enabled="true"] { opacity: 1; }
 .doodle-grid-frame { position: relative; width: fit-content; max-width: 100%; margin-inline: auto; }
-.copy-grid-line { position: absolute; background: var(--grid-line-color); }
-.copy-grid-vertical { top: 0; bottom: 0; width: 1px; }
-.copy-grid-horizontal { left: 0; right: 0; height: 1px; }
+.copy-grid-line { position: absolute; filter: drop-shadow(0 0 1px rgba(255, 253, 243, 0.95)) drop-shadow(0 0 1px rgba(255, 253, 243, 0.95)); }
+.copy-grid-vertical { top: 0; bottom: 0; width: 1.5px; background: repeating-linear-gradient(to bottom, var(--grid-line-color) 0 7px, transparent 7px 12px); }
+.copy-grid-horizontal { left: 0; right: 0; height: 1.5px; background: repeating-linear-gradient(to right, var(--grid-line-color) 0 7px, transparent 7px 12px); }
 .grid-result-wrap .stage-inspect-label { width: 48px; height: 48px; }
 .grid-toggle { position: absolute; inset-inline-start: 14px; bottom: 14px; display: grid; place-items: center; width: 48px; height: 48px; padding: 0; border: 1px solid rgba(252, 252, 248, 0.32); border-radius: 50%; background: rgba(32, 35, 31, 0.8); color: var(--paper); cursor: pointer; }
 .grid-toggle[aria-pressed="true"] { background: var(--moss); border-color: var(--paper); }

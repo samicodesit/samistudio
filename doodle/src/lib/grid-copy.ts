@@ -2,7 +2,7 @@ import type { Locale } from "./i18n";
 
 export const GRID_POSITIONS = [25, 50, 75] as const;
 export const GRID_FADE_MS = 180;
-export const GRID_LINE_COLOR = "rgba(32, 35, 31, 0.3)";
+export const GRID_LINE_COLOR = "rgba(38, 103, 139, 0.85)";
 
 export const GRID_COPY: Record<Locale, { show: string; hide: string }> = {
   en: { show: "Show grid", hide: "Hide grid" },

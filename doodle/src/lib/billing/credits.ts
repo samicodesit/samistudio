@@ -1,4 +1,5 @@
 import "server-only";
+import { createHash } from "node:crypto";
 
 import { redisCommand, redisInteger } from "@/lib/redis";
 import { trackUsage } from "@/lib/usage-metrics";
@@ -57,6 +58,8 @@ if mapped ~= ARGV[1] and redis.call('EXISTS', KEYS[2]) == 0 then return 0 end
 redis.call('SET', KEYS[6], 'deleted')
 if mapped == ARGV[1] then redis.call('DEL', KEYS[1]) end
 redis.call('DEL', KEYS[2], KEYS[3], KEYS[4], KEYS[5])
+redis.call('DEL', KEYS[7])
+if redis.call('TYPE', KEYS[8]).ok == 'set' then redis.call('SREM', KEYS[8], ARGV[2]) end
 return 1
 `;
 
@@ -159,10 +162,11 @@ export async function fulfillCreditPack(accountId: string, checkoutSessionId: st
 export async function deletePaidAccount(accountId: string, identityKey: string): Promise<void> {
   if (!IDENTITY_KEY_PATTERN.test(identityKey)) unavailable();
   const result = integer(await redisCommand([
-    "EVAL", DELETE_SCRIPT, "6",
+    "EVAL", DELETE_SCRIPT, "8",
     `doodle:auth:google:${identityKey}`,
     accountKey(accountId, "active"), accountKey(accountId, "balance"), accountKey(accountId, "holds"), accountKey(accountId, "finalized"), accountKey(accountId, "deleted"),
-    accountId,
+    accountKey(accountId, "grants"), "doodle:metrics:gifted",
+    accountId, createHash("sha256").update(`account:${accountId}`).digest("hex"),
   ]));
   if (result !== 0 && result !== 1) unavailable();
 }

@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { recordUsage, trackUsage } from "./usage-metrics";
+import { recordOperation, recordUsage, trackOperation, trackUsage } from "./usage-metrics";
 
 vi.mock("server-only", () => ({}));
 const schedule = vi.hoisted(() => vi.fn());
@@ -35,5 +35,34 @@ describe("non-blocking counting", () => {
     });
     await expect(recordUsage(event)).resolves.toBeUndefined();
     expect(wasAborted).toBe(true);
+    wasAborted = false;
+    await expect(recordOperation({ metric: "generation", channel: "web", outcome: "error" })).resolves.toBeUndefined();
+    expect(wasAborted).toBe(true);
+  });
+  it("defers operational storage and ignores previews", async () => {
+    const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response('{"result":1}'));
+    trackOperation({ metric: "generation", channel: "web", outcome: "timeout", durationMs: 60_000 });
+    expect(fetch).not.toHaveBeenCalled();
+    expect(schedule).toHaveBeenCalledOnce();
+    await schedule.mock.calls[0][0]();
+    expect(fetch).toHaveBeenCalledOnce();
+    vi.stubEnv("VERCEL_ENV", "preview");
+    trackOperation({ metric: "checkout", channel: "web", outcome: "created" });
+    expect(schedule).toHaveBeenCalledOnce();
+  });
+  it("cannot interrupt a response when operational scheduling fails", () => {
+    schedule.mockImplementation(() => { throw new Error("private scheduler error"); });
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    expect(() => trackOperation({ metric: "checkout", channel: "web", outcome: "error" })).not.toThrow();
+  });
+  it("drops known tests, invalid tags and non-finite durations without transmitting private values", async () => {
+    const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response('{"result":1}'));
+    await recordOperation({ metric: "checkout", channel: "web", outcome: "created", email: "SamiCodesIt@gmail.com" });
+    expect(fetch).not.toHaveBeenCalled();
+    await recordOperation({ metric: "generation", channel: "web", outcome: "private error" as "error" });
+    expect(fetch).not.toHaveBeenCalled();
+    await recordOperation({ metric: "generation", channel: "web", outcome: "success", durationMs: NaN, actor: "account:private", email: "buyer@example.com" });
+    const body = String(fetch.mock.calls[0][1]?.body);
+    expect(body).not.toMatch(/account:private|buyer@example|NaN/);
   });
 });

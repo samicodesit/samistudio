@@ -21,7 +21,7 @@ import { getNativeBearer } from "@/lib/native-session";
 import { consumeNativeAttestation, nativePrincipal } from "@/lib/native-attestation";
 import { hasExactKeys, NativeRequestError, readNativeJson } from "@/lib/native-contracts";
 import { checkBotId } from "botid/server";
-import { trackUsage } from "@/lib/usage-metrics";
+import { trackOperation, trackUsage, type GenerationOutcome } from "@/lib/usage-metrics";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -52,6 +52,7 @@ async function finalizeWithReplay(operation: () => Promise<{ finalized: boolean;
 }
 
 async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
+  const startedAt = performance.now();
   const nativeClient = request.headers.get("x-doodle-client") === "native-android";
   if (!hasSameOrigin(request)) {
     return nativeClient ? nativeError("forbidden", 403) : NextResponse.json({ error: "forbidden" }, { status: 403 });
@@ -174,6 +175,17 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     }
   }
 
+  let metricsActor = user ? `account:${user.id}` : nativeTrialIdentity ? `trial:${nativeTrialIdentity.id}` : undefined;
+  let generationRequested = false;
+  const finish = (response: NextResponse, outcome: GenerationOutcome) => {
+    trackOperation({
+      metric: "generation", channel: nativeClient ? "android" : "web", outcome,
+      actor: metricsActor, email: user?.email,
+      durationMs: generationRequested ? performance.now() - startedAt : undefined,
+    });
+    return response;
+  };
+
   diagnostics.stage = "credit_reserve";
   let reservation:
     | { kind: "paid"; userId: string }
@@ -189,10 +201,10 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
       try {
         await releasePaidCredit(user.id, reservationId);
       } catch {}
-      return unavailable(nativeClient);
+      return finish(unavailable(nativeClient), "service_unavailable");
     }
     if (!reservation && nativeClient && nativeBearer) {
-      return NextResponse.json(
+      return finish(NextResponse.json(
         { error: "payment_required" },
         {
           status: 402,
@@ -201,7 +213,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
             "X-Doodle-Paid-Remaining": String(paid?.remaining ?? 0),
           },
         },
-      );
+      ), "credits_exhausted");
     }
   }
 
@@ -209,8 +221,9 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     let identity: TrialIdentity;
     try {
       identity = nativeTrialIdentity ?? getTrialIdentity(request);
+      metricsActor = `trial:${identity.id}`;
     } catch {
-      return unavailable(nativeClient);
+      return finish(unavailable(nativeClient), "service_unavailable");
     }
 
     let free;
@@ -220,7 +233,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
       try {
         await releaseFreeDoodle(identity, reservationId);
       } catch {}
-      return unavailable(nativeClient);
+      return finish(unavailable(nativeClient), "service_unavailable");
     }
 
     if (!free.reserved) {
@@ -236,9 +249,9 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
           },
         );
         if (!nativeClient) setTrialCookie(response, identity);
-        return response;
+        return finish(response, "credits_exhausted");
       } catch {
-        return unavailable(nativeClient);
+        return finish(unavailable(nativeClient), "service_unavailable");
       }
     }
     reservation = { kind: "free", identity };
@@ -271,12 +284,13 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
             );
         if (!nativeClient) setTrialCookie(response, reservation.identity);
         await release();
-        return response;
+        return finish(response, limit === "rate_limited" ? "rate_limited" : "service_unavailable");
       }
     }
 
     infrastructureFailure = false;
     diagnostics.stage = "image_provider";
+    generationRequested = true;
     const result = await generateDoodle(scene, undefined, detailLevel);
     diagnostics.paperCorrection = result.paperCorrection;
     infrastructureFailure = true;
@@ -294,7 +308,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
         actor: reservation.kind === "paid" ? `account:${reservation.userId}` : `trial:${reservation.identity.id}`,
         email: user?.email,
       });
-      return response;
+      return finish(response, "success");
     };
     diagnostics.stage = "credit_finalize";
     const finalized = await finalizeWithReplay(
@@ -318,18 +332,18 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     return success();
   } catch (error) {
     await release();
-    if (infrastructureFailure) return unavailable(nativeClient);
+    if (infrastructureFailure) return finish(unavailable(nativeClient), "service_unavailable");
     if (error instanceof GenerationError) {
       Object.assign(diagnostics, error.diagnostics);
       diagnostics.failureCode = error.kind;
       if (error.kind === "refused") {
-        return nativeClient ? nativeError("refused", 422) : NextResponse.json({ error: "refused" }, { status: 422 });
+        return finish(nativeClient ? nativeError("refused", 422) : NextResponse.json({ error: "refused" }, { status: 422 }), "refused");
       }
       if (error.kind === "timeout") {
-        return nativeClient ? nativeError("timeout", 504) : NextResponse.json({ error: "timeout" }, { status: 504 });
+        return finish(nativeClient ? nativeError("timeout", 504) : NextResponse.json({ error: "timeout" }, { status: 504 }), "timeout");
       }
     }
-    return nativeClient ? nativeError("temporary_error", 502) : NextResponse.json({ error: "temporary_error" }, { status: 502 });
+    return finish(nativeClient ? nativeError("temporary_error", 502) : NextResponse.json({ error: "temporary_error" }, { status: 502 }), "error");
   }
 }
 

@@ -6,8 +6,12 @@ import { createServer } from "node:net";
 import { promisify } from "node:util";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { processPlayPurchase, type ProductPurchaseV2 } from "./billing/play-purchase";
-import { fulfillCreditPack } from "./billing/credits";
-import { recordUsage, trackUsage } from "./usage-metrics";
+import { deletePaidAccount, fulfillCreditPack } from "./billing/credits";
+import { recordOperation, recordUsage, trackUsage } from "./usage-metrics";
+import { createHash } from "node:crypto";
+async function grantComplimentaryCredits(accountId: string, input: { grantId: string; credits: number; reason: string }) {
+  return (await import("./billing/complimentary-credits")).grantComplimentaryCredits(accountId, input);
+}
 
 vi.mock("server-only", () => ({}));
 const callbacks = vi.hoisted(() => [] as Array<() => Promise<unknown>>);
@@ -142,6 +146,19 @@ async function flushCallbacks() {
     await recordUsage({ metric: "drawings", channel: "android", id: "qa-drawing", actor: `account:${account}` });
     expect(await redis(["KEYS", "doodle:metrics:day:*"])).toEqual([]);
   });
+  it("excludes a configured verified email across account and free-trial actors without storing the email", async () => {
+    const email = "family@example.com";
+    const emailHash = createHash("sha256").update(email).digest("hex");
+    await redis(["SADD", "doodle:metrics:qa", `email:${emailHash}`]);
+    await recordUsage({ metric: "drawings", channel: "web", id: "family-free", actor: "trial:family", email: " FAMILY@example.com " });
+    await recordUsage({ metric: "purchases", channel: "web", id: "family-pack", actor: `account:${account}`, email });
+    await recordOperation({ metric: "generation", channel: "web", outcome: "success", actor: "trial:another-family", email, durationMs: 10000 });
+    await recordOperation({ metric: "checkout", channel: "web", outcome: "created", actor: `account:${account}`, email });
+    await recordUsage({ metric: "drawings", channel: "web", id: "family-without-email", actor: "trial:family" });
+    expect(await redis(["KEYS", "doodle:metrics:day:*"])).toEqual([]);
+    expect(await redis(["KEYS", "doodle:metrics:operations:*"])).toEqual([]);
+    expect((await redis(["SMEMBERS", "doodle:metrics:qa"])).join(" ")).not.toContain(email);
+  });
   it("uses the drawing's response day even if the background callback runs after midnight", async () => {
     vi.setSystemTime(new Date("2026-10-01T21:59:59Z"));
     trackUsage({ metric: "drawings", channel: "web", id: "before-midnight", actor: "trial:anonymous" });
@@ -149,5 +166,101 @@ async function flushCallbacks() {
     await flushCallbacks();
     expect(await redis(["HGET", "doodle:metrics:day:2026-10-01", "drawings:web"])).toBe("1");
     expect(await redis(["HGET", "doodle:metrics:day:2026-10-02", "drawings:web"])).toBe(null);
+  });
+  it("aggregates outcomes and timing atomically without retaining new operation or visitor references", async () => {
+    const event = { metric: "generation", channel: "web", outcome: "success", durationMs: 25_123, actor: "trial:private", email: "buyer@example.com" } as const;
+    await Promise.all(Array.from({ length: 8 }, () => recordOperation(event)));
+    await recordOperation({ metric: "generation", channel: "android", outcome: "credits_exhausted" });
+    const key = "doodle:metrics:operations:day:2026-10-02";
+    expect(await redis(["HGETALL", key])).toEqual({
+      collection_version: "1",
+      "generation:web:success": "8",
+      "generation:web:success:duration_count": "8",
+      "generation:web:success:duration_ms": "200984",
+      "generation:web:success:10_to_30s": "8",
+      "generation:android:credits_exhausted": "1",
+    });
+    expect(await redis(["KEYS", "doodle:metrics:*"])).toEqual([key]);
+    expect(await redis(["TTL", key])).toBeLessThanOrEqual(90 * 86_400);
+    expect(await redis(["TTL", key])).toBeGreaterThan(89 * 86_400);
+  });
+  it("excludes operational activity for an already known anonymous QA identity", async () => {
+    await recordUsage({ metric: "drawings", channel: "web", id: "qa", actor: "trial:qa", email: "samicodesit@gmail.com" });
+    await recordOperation({ metric: "generation", channel: "web", outcome: "timeout", actor: "trial:qa", durationMs: 120_000 });
+    await recordOperation({ metric: "checkout", channel: "web", outcome: "created", email: "doodlereview889@gmail.com" });
+    expect(await redis(["KEYS", "doodle:metrics:operations:*"])).toEqual([]);
+  });
+  it("grants fifty complimentary credits exactly once under concurrent retries without recording a sale", async () => {
+    const input = { grantId: "22222222-2222-4222-8222-222222222222", credits: 50, reason: "owner_gift" };
+    const results = await Promise.all(Array.from({ length: 8 }, () => grantComplimentaryCredits(account, input)));
+    expect(results.filter(result => result.granted)).toHaveLength(1);
+    expect(await redis(["GET", `doodle:account:${account}:balance`])).toBe("50");
+    expect(await redis(["HLEN", `doodle:account:${account}:grants`])).toBe(1);
+    expect(await redis(["SISMEMBER", "doodle:metrics:gifted", createHash("sha256").update(`account:${account}`).digest("hex")])).toBe(1);
+    expect(callbacks).toHaveLength(0);
+    expect(await redis(["KEYS", "doodle:purchase:*"])).toEqual([]);
+    expect(await redis(["KEYS", "doodle:metrics:day:*"])).toEqual([]);
+  });
+  it("adds the gift to an existing balance, preserves spent credits on replay, and rejects a changed grant", async () => {
+    await redis(["SET", `doodle:account:${account}:balance`, "7"]);
+    const input = { grantId: "22222222-2222-4222-8222-222222222222", credits: 50, reason: "owner_gift" };
+    expect(await grantComplimentaryCredits(account, input)).toEqual({ granted: true, balance: 57 });
+    await redis(["DECRBY", `doodle:account:${account}:balance`, "3"]);
+    expect(await grantComplimentaryCredits(account, input)).toEqual({ granted: false, balance: 54 });
+    await expect(grantComplimentaryCredits(account, { ...input, credits: 51 })).rejects.toThrow("Grant does not match its original record");
+    expect(await redis(["GET", `doodle:account:${account}:balance`])).toBe("54");
+  });
+  it("rejects deleted, inactive and malformed accounts without changing balances", async () => {
+    const input = { grantId: "22222222-2222-4222-8222-222222222222", credits: 50, reason: "owner_gift" };
+    await expect(grantComplimentaryCredits("not-an-account", input)).rejects.toThrow();
+    await expect(grantComplimentaryCredits(account, { ...input, credits: -1 })).rejects.toThrow();
+    await redis(["SET", `doodle:account:${account}:deleted`, "deleted"]);
+    await expect(grantComplimentaryCredits(account, input)).rejects.toThrow("Account is not active");
+    await redis(["DEL", `doodle:account:${account}:deleted`, `doodle:account:${account}:active`]);
+    await expect(grantComplimentaryCredits(account, input)).rejects.toThrow("Account is not active");
+    expect(await redis(["GET", `doodle:account:${account}:balance`])).toBe(null);
+    expect(await redis(["KEYS", "doodle:metrics:*"])).toEqual([]);
+  });
+  it("does not partially grant when bookkeeping keys have the wrong type", async () => {
+    const input = { grantId: "22222222-2222-4222-8222-222222222222", credits: 50, reason: "owner_gift" };
+    await redis(["SET", "doodle:metrics:gifted", "invalid-type"]);
+    await expect(grantComplimentaryCredits(account, input)).rejects.toThrow("Grant storage unavailable");
+    expect(await redis(["GET", `doodle:account:${account}:balance`])).toBe(null);
+    expect(await redis(["EXISTS", `doodle:account:${account}:grants`])).toBe(0);
+  });
+  it("removes complimentary grant records and the gifted label when the account is deleted", async () => {
+    const input = { grantId: "22222222-2222-4222-8222-222222222222", credits: 50, reason: "owner_gift" };
+    await grantComplimentaryCredits(account, input);
+    const identity = "a".repeat(64);
+    await redis(["SET", `doodle:auth:google:${identity}`, account]);
+    await deletePaidAccount(account, identity);
+    expect(await redis(["EXISTS", `doodle:account:${account}:grants`])).toBe(0);
+    expect(await redis(["SISMEMBER", "doodle:metrics:gifted", createHash("sha256").update(`account:${account}`).digest("hex")])).toBe(0);
+    await expect(grantComplimentaryCredits(account, input)).rejects.toThrow("Account is not active");
+  });
+  it("separates gifted drawings while keeping a later real purchase counted", async () => {
+    await redis(["SADD", "doodle:metrics:gifted", createHash("sha256").update(`account:${account}`).digest("hex")]);
+    const event = { metric: "drawings", channel: "android", id: "gifted-drawing", actor: `account:${account}` } as const;
+    await Promise.all(Array.from({ length: 5 }, () => recordUsage(event)));
+    expect(await redis(["HGETALL", "doodle:metrics:day:2026-10-02"])).toEqual({ "gifted_drawings:android": "1" });
+    await play();
+    await flushCallbacks();
+    expect(await redis(["HGET", "doodle:metrics:day:2026-10-02", "purchases:android"])).toBe("1");
+  });
+  it("keeps gifted failures, timing and checkout setup visible separately without private identifiers", async () => {
+    const actor = `account:${account}`;
+    await redis(["SADD", "doodle:metrics:gifted", createHash("sha256").update(actor).digest("hex")]);
+    await recordOperation({ metric: "generation", channel: "android", outcome: "timeout", durationMs: 120_000, actor });
+    await recordOperation({ metric: "checkout", channel: "web", outcome: "created", actor });
+    expect(await redis(["HGETALL", "doodle:metrics:operations:day:2026-10-02"])).toEqual({
+      collection_version: "1", "gifted:generation:android:timeout": "1",
+      "gifted:generation:android:timeout:duration_count": "1",
+      "gifted:generation:android:timeout:duration_ms": "120000",
+      "gifted:generation:android:timeout:120s_plus": "1", "gifted:checkout:web:created": "1",
+    });
+    expect((await redis(["KEYS", "doodle:metrics:*"])).join(" ")).not.toContain(account);
+    await redis(["SADD", "doodle:metrics:qa", createHash("sha256").update(actor).digest("hex")]);
+    await recordUsage({ metric: "drawings", channel: "web", id: "qa-priority", actor });
+    expect(await redis(["HGET", "doodle:metrics:day:2026-10-02", "gifted_drawings:web"])).toBe(null);
   });
 });

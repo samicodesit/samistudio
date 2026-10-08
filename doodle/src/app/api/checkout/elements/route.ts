@@ -4,6 +4,7 @@ import { hasLocale } from "@/lib/i18n";
 import { getCurrentUser } from "@/lib/auth/session";
 import { checkBotId } from "botid/server";
 import { NextRequest, NextResponse } from "next/server";
+import { trackOperation } from "@/lib/usage-metrics";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,10 +43,12 @@ export async function POST(request: NextRequest) {
       locale,
       origin: request.nextUrl.origin,
     });
+    trackOperation({ metric: "wallet_setup", channel: "web", outcome: checkout.client_secret ? "created" : "error", actor: `account:${user.id}`, email: user.email });
     return checkout.client_secret
       ? NextResponse.json({ clientSecret: checkout.client_secret })
       : NextResponse.json({ error: "billing_unavailable" }, { status: 503 });
   } catch {
+    trackOperation({ metric: "wallet_setup", channel: "web", outcome: "error", actor: `account:${user.id}`, email: user.email });
     return NextResponse.json({ error: "billing_unavailable" }, { status: 503 });
   }
 }

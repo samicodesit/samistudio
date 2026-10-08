@@ -1,17 +1,19 @@
-vi.mock("server-only", () => ({}));
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./route";
+vi.mock("server-only", () => ({}));
 
 const mocks = vi.hoisted(() => ({
   checkBotId: vi.fn(),
   createPackCheckout: vi.fn(),
   getCurrentUser: vi.fn(),
+  trackOperation: vi.fn(),
 }));
 
 vi.mock("botid/server", () => ({ checkBotId: mocks.checkBotId }));
 vi.mock("@/lib/billing/checkout", () => ({ createPackCheckout: mocks.createPackCheckout }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.getCurrentUser }));
+vi.mock("@/lib/usage-metrics", () => ({ trackOperation: mocks.trackOperation }));
 
 function request(locale: unknown, origin = "https://doodle.test", query = "") {
   return new NextRequest("https://doodle.test/api/checkout" + query, {
@@ -43,6 +45,7 @@ describe("checkout route", () => {
     expect(mocks.checkBotId).not.toHaveBeenCalled();
     expect(mocks.getCurrentUser).not.toHaveBeenCalled();
     expect(mocks.createPackCheckout).not.toHaveBeenCalled();
+    expect(mocks.trackOperation).not.toHaveBeenCalled();
   });
 
   it("rejects bots before parsing locale or authenticating", async () => {
@@ -86,6 +89,9 @@ describe("checkout route", () => {
     const response = await POST(request("de"));
 
     expect(await response.json()).toEqual({ url: "https://checkout.stripe.com/test" });
+    expect(mocks.trackOperation).toHaveBeenCalledExactlyOnceWith({
+      metric: "checkout", channel: "web", outcome: "created", actor: "account:user", email: "buyer@example.com",
+    });
     expect(mocks.createPackCheckout).toHaveBeenCalledWith({
       userId: "user",
       email: "buyer@example.com",
@@ -98,6 +104,9 @@ describe("checkout route", () => {
     mocks.createPackCheckout.mockRejectedValue(new Error("Stripe unavailable"));
 
     expect((await POST(request("en"))).status).toBe(503);
+    expect(mocks.trackOperation).toHaveBeenCalledExactlyOnceWith({
+      metric: "checkout", channel: "web", outcome: "error", actor: "account:user", email: "buyer@example.com",
+    });
   });
 
   it("returns 503 when Stripe does not provide a hosted URL", async () => {

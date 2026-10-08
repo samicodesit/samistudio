@@ -6,11 +6,13 @@ const mocks = vi.hoisted(() => ({
   checkBotId: vi.fn(),
   createPackElementsCheckout: vi.fn(),
   getCurrentUser: vi.fn(),
+  trackOperation: vi.fn(),
 }));
 
 vi.mock("botid/server", () => ({ checkBotId: mocks.checkBotId }));
 vi.mock("@/lib/billing/checkout", () => ({ createPackElementsCheckout: mocks.createPackElementsCheckout }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.getCurrentUser }));
+vi.mock("@/lib/usage-metrics", () => ({ trackOperation: mocks.trackOperation }));
 
 function request(locale: unknown, origin = "https://doodle.test") {
   return new NextRequest("https://doodle.test/api/checkout/elements", {
@@ -49,6 +51,9 @@ describe("Elements checkout route", () => {
     const response = await POST(request("de"));
 
     expect(await response.json()).toEqual({ clientSecret: "cs_secret_test" });
+    expect(mocks.trackOperation).toHaveBeenCalledExactlyOnceWith({
+      metric: "wallet_setup", channel: "web", outcome: "created", actor: "account:user", email: "buyer@example.com",
+    });
     expect(mocks.createPackElementsCheckout).toHaveBeenCalledWith({
       userId: "user",
       email: "buyer@example.com",
@@ -61,5 +66,8 @@ describe("Elements checkout route", () => {
     mocks.createPackElementsCheckout.mockResolvedValue({ client_secret: null });
 
     expect((await POST(request("en"))).status).toBe(503);
+    expect(mocks.trackOperation).toHaveBeenCalledExactlyOnceWith({
+      metric: "wallet_setup", channel: "web", outcome: "error", actor: "account:user", email: "buyer@example.com",
+    });
   });
 });

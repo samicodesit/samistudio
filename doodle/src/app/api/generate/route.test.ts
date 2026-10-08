@@ -28,6 +28,7 @@ const mocks = vi.hoisted(() => ({
   reservePaidCredit: vi.fn(),
   setTrialCookie: vi.fn(),
   trackUsage: vi.fn(),
+  trackOperation: vi.fn(),
 }));
 
 vi.mock("@/lib/generation/generate-doodle", async () => {
@@ -51,7 +52,7 @@ vi.mock("@/lib/generation/free-allowance", () => ({
 vi.mock("@/lib/generation/generation-limit", () => ({ checkGenerationLimit: mocks.checkGenerationLimit }));
 vi.mock("botid/server", () => ({ checkBotId: mocks.checkBotId }));
 vi.mock("@/lib/native-session", () => ({ getNativeBearer: mocks.getNativeBearer }));
-vi.mock("@/lib/usage-metrics", () => ({ trackUsage: mocks.trackUsage }));
+vi.mock("@/lib/usage-metrics", () => ({ trackUsage: mocks.trackUsage, trackOperation: mocks.trackOperation }));
 vi.mock("@/lib/native-attestation", () => ({
   consumeNativeAttestation: mocks.consumeNativeAttestation,
   nativePrincipal: mocks.nativePrincipal,
@@ -162,6 +163,27 @@ describe("generate route", () => {
     expect(response.status).toBe(200);
     expect(mocks.trackUsage).toHaveBeenCalledExactlyOnceWith({
       metric: "drawings", channel: "web", id: expect.any(String), actor: "trial:trial", email: undefined,
+    });
+    expect(mocks.trackOperation).toHaveBeenCalledExactlyOnceWith({
+      metric: "generation", channel: "web", outcome: "success", actor: "trial:trial", email: undefined, durationMs: expect.any(Number),
+    });
+  });
+
+  it("records a provider timeout while preserving the unused credit", async () => {
+    mocks.generateDoodle.mockRejectedValue(new GenerationError("timeout", "private provider detail"));
+    expect((await POST(request("Two cats hug"))).status).toBe(504);
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
+    expect(mocks.trackOperation).toHaveBeenCalledExactlyOnceWith({
+      metric: "generation", channel: "web", outcome: "timeout", actor: "trial:trial", email: undefined, durationMs: expect.any(Number),
+    });
+  });
+
+  it("records exhausted credits separately from a generation failure", async () => {
+    mocks.reserveFreeDoodle.mockResolvedValue({ reserved: false, remaining: 0 });
+    expect((await POST(request("Two cats hug"))).status).toBe(402);
+    expect(mocks.generateDoodle).not.toHaveBeenCalled();
+    expect(mocks.trackOperation).toHaveBeenCalledExactlyOnceWith({
+      metric: "generation", channel: "web", outcome: "credits_exhausted", actor: "trial:trial", email: undefined, durationMs: undefined,
     });
   });
 
