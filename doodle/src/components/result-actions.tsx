@@ -1,6 +1,6 @@
 "use client";
 
-import { CreditCard, Download, Ellipsis, Flag, Plus, RotateCcw, Share2, X } from "lucide-react";
+import { Download, Ellipsis, FileHeart, Flag, Plus, RotateCcw, Share2, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { track } from "@vercel/analytics";
 import { getCopy } from "@/lib/i18n";
@@ -109,7 +109,7 @@ export function ResultActions({ imageUrl, imageFile, scene, locale, onTryAgain, 
       {optionsOpen ? <dialog ref={optionsRef} className="result-options-dialog" aria-label={MORE_LABEL[locale]} onCancel={event => { event.preventDefault(); closeOptions(); }} onClick={event => { if (event.target === event.currentTarget) closeOptions(); }}>
         <div className="result-options-header"><h2>{MORE_LABEL[locale]}</h2><button type="button" aria-label={REPORT_COPY[locale].close} onClick={closeOptions}><X size={20} aria-hidden="true" /></button></div>
         <button type="button" onClick={() => { closeOptions(); onTryAgain(); }}><RotateCcw size={20} aria-hidden="true" />{copy.redraw}</button>
-        <button type="button" onClick={() => { closeOptions(); setCardOpen(true); }}><CreditCard size={20} aria-hidden="true" />{copy.makeCard}</button>
+        <button type="button" onClick={() => { closeOptions(); setCardOpen(true); }}><FileHeart size={20} aria-hidden="true" />{copy.makeCard}</button>
         <button className="report-action" type="button" onClick={() => { closeOptions(); setReportOpen(true); }}><Flag size={20} aria-hidden="true" />{REPORT_COPY[locale].trigger}</button>
       </dialog> : null}
       {reportOpen ? <ReportDialog key={imageUrl} open imageFile={imageFile} scene={scene} locale={locale} onClose={() => setReportOpen(false)} /> : null}
