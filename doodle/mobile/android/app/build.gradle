@@ -63,12 +63,6 @@ react {
     autolinkLibrariesWithApp()
 }
 
-// Shared web/native copy and generation values live outside the mobile root.
-// Include them in Gradle's inputs so an incremental APK cannot bundle stale copy.
-tasks.withType(com.facebook.react.tasks.BundleHermesCTask).configureEach {
-    inputs.dir(file("../../../src/lib"))
-}
-
 /**
  * Set this to true in release builds to optimize the app using [R8](https://developer.android.com/topic/performance/app-optimization/enable-app-optimization).
  */
@@ -111,8 +105,8 @@ android {
         applicationId 'nl.samistudio.doodle'
         minSdk = rootProject.ext.minSdkVersion
         targetSdk = rootProject.ext.targetSdkVersion
-        versionCode 8
-        versionName "0.1.6"
+        versionCode 9
+        versionName "0.1.7"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }
@@ -178,6 +172,10 @@ android {
     androidResources {
         ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:!CVS:!thumbs.db:!picasa.ini:!*~'
     }
+}
+
+tasks.withType(com.facebook.react.tasks.BundleHermesCTask).configureEach {
+    inputs.dir(file("../../../src/lib"))
 }
 
 // Apply static values from `gradle.properties` to the `android.packagingOptions`

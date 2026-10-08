@@ -75,7 +75,7 @@ for (const plan of plans) {
     console.log(`${plan.detailLevel}: ${attempt.generationMs} ms, estimated $${estimate.toFixed(6)}, batch $${spentEstimateUsd.toFixed(6)}`);
   } catch (error) {
     attempt.status = "failed";
-    if (error instanceof OpenAI.APIError) Object.assign(attempt, { httpStatus: error.status, providerCode: error.code, requestId: error.request_id });
+    if (error instanceof OpenAI.APIError) Object.assign(attempt, { httpStatus: error.status, providerCode: error.code, requestId: error.requestID });
     await save();
     throw new Error(`${plan.detailLevel} failed. No retry or further requests made`);
   }

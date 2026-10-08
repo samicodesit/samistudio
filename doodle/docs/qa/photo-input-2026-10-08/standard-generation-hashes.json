@@ -1,0 +1,9 @@
+{
+  "baseline": "fcd03f7",
+  "unchanged": {
+    "src/lib/generation/prompt.ts": "9f88c108a23225d17a8ded5faf80161f52d163a1b84cb58ed231cd1e25a0b8a8",
+    "src/lib/generation/generate-doodle.ts": "68f76ea023067882aa6396b79c9ef92a5651ff414bd97fc5677cea54a7ffab53",
+    "src/lib/generation/profile.ts": "d804eddf61fd89456b9164af1cd6efb9b50b4766474045fec400ae9aefafbe38",
+    "src/lib/generation/paper-color.ts": "cbf896e21ecc457bd0c87537e6679a010a2072701df560c598f316b4f008f172"
+  }
+}

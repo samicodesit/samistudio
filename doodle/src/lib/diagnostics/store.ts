@@ -11,7 +11,7 @@ export type ServerDiagnostic = ProviderFailure & {
   source: "server"; timestamp: string; requestId: string; operation: DiagnosticOperation;
   stage: DiagnosticStage; code: DiagnosticCode | "ok"; status: number;
   channel: "android" | "web"; durationMs: number;
-  detailLevel?: DetailLevel; promptVersion?: typeof PROMPT_VERSIONS[DetailLevel];
+  detailLevel?: DetailLevel; promptVersion?: typeof PROMPT_VERSIONS[DetailLevel] | `photo-v3-${DetailLevel}`;
   paperCorrection?: PaperCorrectionMetadata;
 };
 export const DIAGNOSTIC_RETENTION_SECONDS = 30 * 86_400;

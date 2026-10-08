@@ -1,0 +1,99 @@
+{
+  "date": "2026-10-08T16:05:05.324Z",
+  "approvedRunCapUsd": 0.3,
+  "priorExperimentEstimatedUsd": 1.089289,
+  "inputSha256": "e601aa2816cca1f34c356d6192addb4bec1a70aed4b611dbc4c59cb61dc6a817",
+  "results": [
+    {
+      "detail": "simple",
+      "model": "gpt-image-1-mini",
+      "quality": "medium",
+      "size": "1024x1024",
+      "requestId": "req_c08df0c24b7848e483b4cc2e65701018",
+      "usage": {
+        "input_tokens": 1212,
+        "input_tokens_details": {
+          "image_tokens": 247,
+          "text_tokens": 965
+        },
+        "output_tokens": 1056,
+        "output_tokens_details": {
+          "image_tokens": 1056,
+          "text_tokens": 0
+        },
+        "total_tokens": 2268
+      },
+      "httpMs": 11688,
+      "elapsedMs": 11877,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 185
+      },
+      "conservativeBudgetChargeUsd": 0.038481
+    },
+    {
+      "detail": "medium",
+      "model": "gpt-image-1-mini",
+      "quality": "medium",
+      "size": "1024x1024",
+      "requestId": "req_7a238d45d42b4d2e9d744622e9c80254",
+      "usage": {
+        "input_tokens": 999,
+        "input_tokens_details": {
+          "image_tokens": 247,
+          "text_tokens": 752
+        },
+        "output_tokens": 1056,
+        "output_tokens_details": {
+          "image_tokens": 1056,
+          "text_tokens": 0
+        },
+        "total_tokens": 2055
+      },
+      "httpMs": 12841,
+      "elapsedMs": 13013,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 171
+      },
+      "conservativeBudgetChargeUsd": 0.037416
+    },
+    {
+      "detail": "detailed",
+      "model": "gpt-image-1-mini",
+      "quality": "medium",
+      "size": "1024x1024",
+      "requestId": "req_96e3bca5706a4e929e2a8ee1304bd1ca",
+      "usage": {
+        "input_tokens": 1033,
+        "input_tokens_details": {
+          "image_tokens": 247,
+          "text_tokens": 786
+        },
+        "output_tokens": 1056,
+        "output_tokens_details": {
+          "image_tokens": 1056,
+          "text_tokens": 0
+        },
+        "total_tokens": 2089
+      },
+      "httpMs": 15209,
+      "elapsedMs": 15354,
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 142
+      },
+      "conservativeBudgetChargeUsd": 0.037586
+    }
+  ],
+  "validProductionVerification": false,
+  "actualModel": "gpt-image-1-mini",
+  "quality": "medium",
+  "reason": "Legacy local OPENAI_IMAGE_MODEL override. Labels in results were incorrect. Budget charge conservatively retains the prior Flare-rate estimate. Do not use these outputs for quality review.",
+  "conservativeBudgetChargeUsd": 0.113483,
+  "conservativeCumulativeBudgetChargeUsd": 1.202772,
+  "outputsRemoved": true
+}

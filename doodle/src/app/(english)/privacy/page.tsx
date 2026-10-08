@@ -8,7 +8,7 @@ export const metadata = legalMetadata(
 
 export default function PrivacyPage() {
   return (
-    <LegalPage title="Privacy policy" intro="This policy explains what information Doodle uses and why." updated="October 7, 2026">
+    <LegalPage title="Privacy policy" intro="This policy explains what information Doodle uses and why." updated="October 8, 2026">
       <section>
         <h2>Who operates Doodle</h2>
         <p>Doodle is operated by {OPERATOR_NAME}, publishing as Sami Studio (samistudio.nl) in the Netherlands. For privacy questions or requests, email <ContactEmail />.</p>
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
       <section>
         <h2>Information we process</h2>
         <ul>
-          <li><strong>Doodle requests.</strong> The scene you enter is sent to OpenAI to create your image. Doodle does not intentionally save your prompt or generated image in its account database.</li>
+          <li><strong>Doodle requests.</strong> The description you enter, or the photo you choose, is sent to OpenAI when you select Create doodle. Photos are resized and metadata such as location is removed before they are sent. Doodle does not save your description, source photo or generated image in its account database. Choosing a photo alone does not upload it.</li>
           <li><strong>Account information.</strong> If you sign in with Google, we receive your verified Google account identifier and email address. We store a protected identifier, an internal account ID and your doodle balance. Your email is kept in a signed session cookie so the app can show your account.</li>
           <li><strong>Complimentary credits.</strong> If we give you extra doodle credits, we record the amount, date and reason against your existing account. A protected account identifier separates gift recipients&apos; drawing usage and operational totals from regular usage reporting. The gift itself is not recorded as a purchase.</li>
           <li><strong>Payments.</strong> Stripe processes web payments. Where purchasing is available in the Google Play app, Google Play processes the payment. Doodle verifies purchase status with the payment provider and records transaction references and credit delivery. For Play purchases, a protected account identifier links the purchase to your Doodle account, and a hash of the purchase token prevents duplicate credit delivery. Stripe also supplies the email used at checkout. Doodle does not receive your complete card number.</li>
@@ -43,6 +43,7 @@ export default function PrivacyPage() {
 
       <section>
         <h2>Retention</h2>
+        <p>Photo drafts stay on your device so you can finish after signing in or buying credits. On the web, a draft expires after 30 minutes and is removed from local storage the next time Doodle accesses that storage. Remove or starting a new doodle clears the draft immediately. On Android, a temporary photo copy remains in the app&apos;s private cache while you work and is removed when you replace or remove it, start a new doodle or close the active app session. Android may also clear cached files; an interrupted session can leave a temporary copy until the cache is cleared. Our server processes the photo in memory to request the doodle and does not create a stored photo library.</p>
         <p>Signed-in sessions last up to 30 days. The anonymous free-allowance cookie and associated count can remain for up to one year. Rate-limit counters expire after about two days. Submitted reports and any included doodle or description are kept for up to 30 days. Account and balance records remain until the account is deleted, while transaction or support records may be kept as required for tax, fraud prevention and legal claims.</p>
         <p>Android failure records are kept for up to seven days on your device. Uploaded failure records and our structured server failure records expire within 30 days after their storage day ends. If you share diagnostics with support, we keep that copy only as needed to resolve your request.</p>
         <p>Daily usage counts and hashed duplicate references expire after 366 days. Protected identifiers of known testing accounts remain excluded from these counts.</p>

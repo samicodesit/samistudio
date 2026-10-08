@@ -1,5 +1,6 @@
 import "server-only";
 import { isDetailLevel, PROMPT_VERSIONS, type DetailLevel } from "../generation/detail-level";
+import { PHOTO_PROMPT_VERSIONS } from "../generation/photo-input";
 import type { ProviderFailure } from "./provider";
 import { randomUUID } from "node:crypto";
 import { diagnosticCode, DIAGNOSTIC_UUID, type DiagnosticCode, type DiagnosticOperation, type DiagnosticStage } from "./events";
@@ -9,6 +10,7 @@ import { PAPER_CORRECTION_STATUSES, PAPER_CORRECTION_VERSION, type PaperCorrecti
 export interface RequestDiagnostics extends ProviderFailure {
   requestId: string;
   detailLevel?: DetailLevel;
+  inputKind?: "photo";
   stage: DiagnosticStage;
   failureCode?: DiagnosticCode;
   paperCorrection?: PaperCorrectionMetadata;
@@ -43,7 +45,7 @@ export async function diagnoseRequest<T extends Response>(
       operation, stage: diagnostics.stage, code, status,
       channel: request.headers.get("x-doodle-client") === "native-android" ? "android" : "web",
       durationMs: Math.min(190000, Math.max(0, Date.now() - startedAt)),
-      ...(operation === "generation" && isDetailLevel(diagnostics.detailLevel) ? { detailLevel: diagnostics.detailLevel, promptVersion: PROMPT_VERSIONS[diagnostics.detailLevel] } : {}),
+      ...(operation === "generation" && isDetailLevel(diagnostics.detailLevel) ? { detailLevel: diagnostics.detailLevel, promptVersion: (diagnostics.inputKind === "photo" ? PHOTO_PROMPT_VERSIONS : PROMPT_VERSIONS)[diagnostics.detailLevel] } : {}),
       ...(operation === "generation" && diagnostics.paperCorrection?.version === PAPER_CORRECTION_VERSION && PAPER_CORRECTION_STATUSES.includes(diagnostics.paperCorrection.status) && Number.isSafeInteger(diagnostics.paperCorrection.durationMs) && diagnostics.paperCorrection.durationMs >= 0 && diagnostics.paperCorrection.durationMs <= 5_000 ? {
         paperCorrection: { version: PAPER_CORRECTION_VERSION, status: diagnostics.paperCorrection.status, durationMs: diagnostics.paperCorrection.durationMs },
       } : {}),

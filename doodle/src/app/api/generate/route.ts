@@ -3,6 +3,9 @@ import { createHash, randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { isDetailLevel } from "@/lib/generation/detail-level";
 import { generateDoodle, GenerationError } from "@/lib/generation/generate-doodle";
+import { generatePhotoDoodle } from "@/lib/generation/generate-photo-doodle";
+import { normalizePhoto } from "@/lib/generation/photo";
+import { MAX_PHOTO_REQUEST_BYTES, photoAttestationInput } from "@/lib/generation/photo-input";
 import { normalizeScene, SceneValidationError } from "@/lib/scenes/scene";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { checkGenerationLimit } from "@/lib/generation/generation-limit";
@@ -70,16 +73,17 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
 
   let body: unknown;
   try {
-    body = nativeClient ? await readNativeJson(request, 16_384) : await request.json();
+    body = await readNativeJson(request, MAX_PHOTO_REQUEST_BYTES);
   } catch (error) {
+    if (error instanceof NativeRequestError && error.code === "body_too_large") return nativeError("request_too_large", 413);
     if (nativeClient) {
-      return error instanceof NativeRequestError && error.code === "body_too_large"
-        ? nativeError("request_too_large", 413)
-        : nativeError("invalid_request", 400);
+      return nativeError("invalid_request", 400);
     }
     return NextResponse.json({ error: "invalid_scene" }, { status: 400 });
   }
-  if (nativeClient && (typeof body !== "object" || body === null || Array.isArray(body) || !hasExactKeys(body as Record<string, unknown>, "detailLevel" in body ? ["scene", "detailLevel"] : ["scene"]))) {
+  const photoInput = typeof body === "object" && body !== null && "photo" in body;
+  const inputKey = photoInput ? "photo" : "scene";
+  if ((nativeClient || photoInput) && (typeof body !== "object" || body === null || Array.isArray(body) || !hasExactKeys(body as Record<string, unknown>, "detailLevel" in body ? [inputKey, "detailLevel"] : [inputKey]))) {
     return nativeError("invalid_request", 400);
   }
 
@@ -96,10 +100,19 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
       : undefined;
 
   diagnostics.detailLevel = detailLevel;
+  if (photoInput) diagnostics.inputKind = "photo";
   let scene: string;
+  let photo: Buffer | undefined;
   try {
-    scene = normalizeScene(sceneValue);
+    if (photoInput) {
+      const value = (body as { photo: unknown }).photo;
+      photo = await normalizePhoto(value);
+      scene = photoAttestationInput(value as string);
+    } else {
+      scene = normalizeScene(sceneValue);
+    }
   } catch (error) {
+    if (photoInput) return nativeError("invalid_photo", 400);
     if (error instanceof SceneValidationError) {
       return nativeClient ? nativeError(error.code, 400) : NextResponse.json({ error: error.code }, { status: 400 });
     }
@@ -291,7 +304,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     infrastructureFailure = false;
     diagnostics.stage = "image_provider";
     generationRequested = true;
-    const result = await generateDoodle(scene, undefined, detailLevel);
+    const result = photo ? await generatePhotoDoodle(photo, detailLevel) : await generateDoodle(scene, undefined, detailLevel);
     diagnostics.paperCorrection = result.paperCorrection;
     infrastructureFailure = true;
     const response = new NextResponse(Buffer.from(result.bytes), {

@@ -93,6 +93,19 @@ describe("NativeApiClient", () => {
     expect(headers.get("X-Doodle-Install-Id")).toBe("11111111-1111-4111-8111-111111111111");
   });
 
+  it("sends only photo bytes and detail, binding the photo domain to integrity", async () => {
+    const fetchImpl = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(response({ enabled: true, packageName: "nl.samistudio.doodle", minimumVersionCode: 2, attestation: "play_integrity", guestEnabled: true, cloudProjectNumber: "123" }))
+      .mockResolvedValueOnce(new Response(new Uint8Array([137, 80, 78, 71]), { headers: { "Content-Type": "image/png", "X-Doodle-Paid-Remaining": "8" } }));
+    const hashScene = vi.fn().mockResolvedValue("a".repeat(64));
+    const createChallenge = vi.fn().mockResolvedValue({ challenge: "c".repeat(43), requestHash: "h".repeat(43), expiresAt: Date.now() + 1000 });
+    const client = new NativeApiClient({ baseUrl: "https://doodle.samistudio.nl", fetchImpl, getAccessToken: async () => "a".repeat(43), getTrialToken: async () => null, getInstallId: async () => "11111111-1111-4111-8111-111111111111", hashScene, createChallenge, requestIntegrity: async () => "integrity-token-123", stagePng: async () => "file:///doodle.png" });
+    await client.generate("Private text draft", "medium", "AQID");
+    expect(hashScene).toHaveBeenCalledWith("doodle-photo-v1:AQID");
+    expect(createChallenge).toHaveBeenCalledWith(expect.objectContaining({ sceneHash: "a".repeat(64), detailLevel: "medium" }));
+    expect(JSON.parse(String(fetchImpl.mock.calls[1][1]?.body))).toEqual({ photo: "AQID", detailLevel: "medium" });
+  });
+
   it("records a bounded image download failure with the generation request reference", async () => {
     const png = new Uint8Array([137, 80, 78, 71]).buffer;
     const bodyError = new Error("response body failed");

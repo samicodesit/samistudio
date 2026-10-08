@@ -30,6 +30,7 @@ module.exports = function withDoodleLocalBuildTypes(config) {
         // package id, and is never suitable for distribution verification.
         fixture {
             initWith release
+            signingConfig = signingConfigs.debug
             applicationIdSuffix '.fixture'
             matchingFallbacks = ['release']
             debuggable false
@@ -39,6 +40,8 @@ module.exports = function withDoodleLocalBuildTypes(config) {
     const boundary = /\n    }\n    packagingOptions \{/;
     if (!boundary.test(mod.modResults.contents)) throw new Error("Doodle build type insertion point was not found");
     mod.modResults.contents = mod.modResults.contents.replace(boundary, `${buildTypes}    }\n    packagingOptions {`);
+    // Shared brand copy and input contracts live above the mobile root.
+    mod.modResults.contents += `\n\ntasks.withType(com.facebook.react.tasks.BundleHermesCTask).configureEach {\n    inputs.dir(file("../../../src/lib"))\n}\n`;
     return mod;
   });
 };

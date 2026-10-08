@@ -1,4 +1,6 @@
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
+import { getPhotoCopy } from "../../../src/lib/photo-copy";
+import { pickPhoto, removePhotoFile, type NativePhotoDraft } from "../platform/photo-picker";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { Alert, AppState, Linking } from "react-native";
 import type { NativeDoodleUiProps, NativeLocale, NativeReportSubmission } from "../ui/types";
@@ -28,7 +30,28 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
   const [reportState, setReportState] = useState<{ pending: boolean; error?: string }>({ pending: false });
   const reportInFlight = useRef(false);
   const generationInFlight = useRef(false);
-  const lastResultInput = useRef<{ scene: string; detailLevel: DetailLevel } | null>(null);
+  const [photo, setPhoto] = useState<NativePhotoDraft | null>(null);
+  const [preparingPhoto, setPreparingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const photoRef = useRef<NativePhotoDraft | null>(null);
+  const pickerInFlight = useRef(false);
+  const mounted = useRef(true);
+  useEffect(() => { mounted.current = true; return () => { mounted.current = false; removePhotoFile(photoRef.current); }; }, []);
+  const onRemovePhoto = useCallback(() => {
+    removePhotoFile(photoRef.current); photoRef.current = null; setPhoto(null); setPhotoError(null);
+  }, []);
+  const onPickPhoto = useCallback(async () => {
+    if (pickerInFlight.current || generationInFlight.current) return;
+    pickerInFlight.current = true; setPreparingPhoto(true); setPhotoError(null);
+    try {
+      const selected = await pickPhoto();
+      if (!mounted.current) { removePhotoFile(selected); return; }
+      if (selected) { removePhotoFile(photoRef.current); photoRef.current = selected; setPhoto(selected); dispatch({ type: "generationIdle" }); }
+    } catch (error) {
+      if (mounted.current) { const text = getPhotoCopy(state.locale); setPhotoError(error instanceof Error && error.message === "tooLarge" ? text.tooLarge : text.invalid); }
+    } finally { pickerInFlight.current = false; if (mounted.current) setPreparingPhoto(false); }
+  }, [state.locale]);
+  const lastResultInput = useRef<{ scene: string; detailLevel: DetailLevel; photo?: string } | null>(null);
   const preferenceWrite = useRef<Promise<void>>(Promise.resolve());
   const accountSummary = useRef<AccountSummary | null>(null);
   const baseCopy = useMemo(() => getNativeCopy(state.locale), [state.locale]);
@@ -157,16 +180,16 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     });
   }, [copy, recoverPendingPurchases, runtime, state.locale]);
 
-  const runGeneration = useCallback(async (scene: string, detailLevel: DetailLevel = state.detailLevel) => {
-    if (!state.detailReady || generationInFlight.current) return;
-    if (!canSubmitScene(scene, 180)) {
+  const runGeneration = useCallback(async (scene: string, detailLevel: DetailLevel = state.detailLevel, photoInput: string | undefined = photo?.base64) => {
+    if (!state.detailReady || pickerInFlight.current || generationInFlight.current) return;
+    if (!photoInput && !canSubmitScene(scene, 180)) {
       dispatch({ type: "generationFailed", message: copy.errors.general, retryLabel: copy.actions.tryAgain });
       return;
     }
     generationInFlight.current = true;
     dispatch({ type: "generationStarted", loadingMessages: getNativeLoadingMessages(state.locale), statusLabel: copy.stage.loadingSr });
     try {
-      const result = await runtime.api.generate(scene, detailLevel);
+      const result = photoInput ? await runtime.api.generate(scene, detailLevel, photoInput) : await runtime.api.generate(scene, detailLevel);
       if (typeof result.paidRemaining === "number" || typeof result.freeRemaining === "number") {
         const summary = accountSummary.current;
         if (summary) {
@@ -183,7 +206,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
           paidRemaining: result.paidRemaining,
         });
       }
-      lastResultInput.current = { scene, detailLevel };
+      lastResultInput.current = { scene, detailLevel, ...(photoInput ? { photo: photoInput } : {}) };
       dispatch({ type: "generationReady", imageUri: result.imageUri, imageAlt: copy.stage.generatedAlt, freeRemaining: result.freeRemaining, paidRemaining: result.paidRemaining });
     } catch (error) {
       const code = serviceErrorCode(error);
@@ -209,11 +232,11 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     } finally {
       generationInFlight.current = false;
     }
-  }, [copy, prepareOffer, runtime, state.account.status, state.freeRemaining, state.locale, state.paidRemaining, state.detailLevel, state.detailReady]);
+  }, [copy, prepareOffer, runtime, state.account.status, state.freeRemaining, state.locale, state.paidRemaining, state.detailLevel, state.detailReady, photo]);
 
   const onCreate = useCallback(() => { void runGeneration(state.scene); }, [runGeneration, state.scene]);
   const onRetry = useCallback(() => { void runGeneration(state.scene); }, [runGeneration, state.scene]);
-  const onRedraw = useCallback(() => { dispatch({ type: "modalChanged", modal: "none" }); const input = lastResultInput.current; if (input) void runGeneration(input.scene, input.detailLevel); }, [runGeneration]);
+  const onRedraw = useCallback(() => { dispatch({ type: "modalChanged", modal: "none" }); const input = lastResultInput.current; if (input) void runGeneration(input.scene, input.detailLevel, input.photo); }, [runGeneration]);
 
   const onSceneChange = useCallback((scene: string) => dispatch({ type: "sceneChanged", scene }), []);
   const refreshSuggestions = useCallback(() => {
@@ -222,16 +245,17 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     setSuggestionIds(ids);
   }, [baseCopy.suggestions.items]);
   const onNewScene = useCallback(() => {
+    onRemovePhoto(); lastResultInput.current = null;
     refreshSuggestions();
     dispatch({ type: "newScene" });
-  }, [refreshSuggestions]);
+  }, [refreshSuggestions, onRemovePhoto]);
   const onResultBack = useCallback(() => dispatch({ type: "resultBack" }), []);
   const onTabChange = useCallback((tab: NativeDoodleUiProps["tab"]) => dispatch({ type: "tabChanged", tab }), []);
   const onSelectIdea = useCallback((id: string) => {
     if (state.generation.status === "waiting") return;
     const idea = ideas.find((item) => item.id === id);
-    if (idea) dispatch({ type: "ideaSelected", scene: idea.prompt });
-  }, [ideas, state.generation.status]);
+    if (idea) { onRemovePhoto(); dispatch({ type: "ideaSelected", scene: idea.prompt }); }
+  }, [ideas, state.generation.status, onRemovePhoto]);
   const onOpenMore = useCallback(() => dispatch({ type: "modalChanged", modal: "more" }), []);
   const onOpenReport = useCallback(() => {
     setReportState({ pending: false });
@@ -258,7 +282,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     reportInFlight.current = true;
     setReportState({ pending: true });
     const imageUri = state.generation.status === "ready" && typeof state.generation.imageUri === "string" ? state.generation.imageUri : undefined;
-    void runtime.reports.submit({ locale: state.locale, report, scene: state.scene, imageUri }).then(() => {
+    void runtime.reports.submit({ locale: state.locale, report, scene: lastResultInput.current?.photo ? "Photo doodle" : state.scene, imageUri }).then(() => {
       setReportState({ pending: false });
       dispatch({ type: "modalChanged", modal: "none" });
       Alert.alert(copy.report.title, copy.report.success);
@@ -377,6 +401,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
   }) : undefined;
   const draftCount = characterCountLabel(state.scene, 180);
   return {
+    photo, preparingPhoto, photoError, onPickPhoto, onRemovePhoto,
     detailLevel: state.detailLevel,
     detailReady: state.detailReady,
     onDetailLevelChange,

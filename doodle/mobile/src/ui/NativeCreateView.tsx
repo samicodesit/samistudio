@@ -1,5 +1,6 @@
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 import { getComposerIntro } from "../../../src/lib/composer-intro";
+import { getPhotoCopy } from "../../../src/lib/photo-copy";
 import { NativeDetailSelector, NATIVE_DETAIL_GEOMETRY } from "./NativeDetailSelector";
 import { NativeArtExamples } from "./NativeArtExamples";
 import { Image } from "expo-image";
@@ -34,6 +35,11 @@ import type {
 } from "./types";
 
 interface NativeCreateViewProps {
+  photo?: { uri: string; base64: string } | null;
+  preparingPhoto?: boolean;
+  photoError?: string | null;
+  onPickPhoto?(): void;
+  onRemovePhoto?(): void;
   detailLevel: DetailLevel;
   detailReady: boolean;
   onDetailLevelChange(level: DetailLevel): void;
@@ -93,6 +99,11 @@ export function NativeCreateView(props: NativeCreateViewProps) {
 }
 
 function NativeComposer({
+  photo,
+  preparingPhoto = false,
+  photoError,
+  onPickPhoto,
+  onRemovePhoto,
   detailLevel,
   detailReady,
   onDetailLevelChange,
@@ -112,6 +123,13 @@ function NativeComposer({
   usage,
 }: NativeCreateViewProps & { error?: string; onDetailFocus(tile: View): void }) {
   const [focused, setFocused] = useState(false);
+  const inputRef = useRef<TextInput>(null);
+  const previousPhoto = useRef(photo);
+  useEffect(() => {
+    if (previousPhoto.current && !photo) inputRef.current?.focus();
+    previousPhoto.current = photo;
+  }, [photo]);
+  const photoCopy = getPhotoCopy(locale);
   const [refreshing, setRefreshing] = useState(false);
   const refreshInFlight = useRef(false);
   const refreshSpin = useRef(new Animated.Value(0)).current;
@@ -152,7 +170,7 @@ function NativeComposer({
   const stackedFooter = width < 360 || fontScale > 1.3;
   // The heading can use the dock's empty upper space, stopping before its pull target.
   const inlineTitleWidth = width - 2 * NATIVE_SPACING.screen - NATIVE_DETAIL_GEOMETRY.toggleInset - NATIVE_DETAIL_GEOMETRY.toggleSize - 8;
-  const disabled = !detailReady || !canSubmitScene(draft.scene, draft.maxLength);
+  const disabled = preparingPhoto || !detailReady || (!photo && !canSubmitScene(draft.scene, draft.maxLength));
   return (
     <View style={[styles.composerScreen, compact && styles.compactComposerScreen]}>
       {error ? (
@@ -176,12 +194,18 @@ function NativeComposer({
           <View style={[styles.detailRow, { flexDirection: nativeRowDirection(direction) }]}>
             <View style={styles.sceneHeading}>
               {stackedHeading ? null : <Text accessibilityRole="header" style={[styles.composerTitle, locale === "ar" && styles.arabicComposerTitle, { width: inlineTitleWidth, alignSelf: direction === "rtl" ? "flex-end" : "flex-start", fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text>}
-              <Text style={[styles.composerHint, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{intro.hint}</Text>
+              <Text style={[styles.composerHint, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{photo ? photoCopy.hint : intro.hint}</Text>
             </View>
             <NativeDetailSelector locale={locale} direction={direction} value={detailLevel} reducedMotion={reducedMotion} disabled={!detailReady} onChange={onDetailLevelChange} onFocusVisible={onDetailFocus} />
           </View>
-          <View style={[styles.scenePaper, focused && styles.sceneInputFocused]}>
-          <TextInput
+          <View style={[styles.scenePaper, !photo && focused && styles.sceneInputFocused]}>
+          {photo ? <View style={styles.photoSelection}>
+            <Image source={photo.uri} cachePolicy="none" contentFit="contain" style={styles.photoPreview} accessibilityLabel={photoCopy.alt} accessible />
+            <View style={[styles.photoActions, { flexDirection: nativeRowDirection(direction) }]}>
+              <Pressable accessibilityRole="button" accessibilityLabel={photoCopy.remove} disabled={preparingPhoto} onPress={onRemovePhoto} style={({ pressed }) => [styles.photoAction, { flexDirection: nativeRowDirection(direction) }, pressed && styles.pressed]}><NativeIcon name="close" size={17} color={NATIVE_COLORS.moss} /><Text style={[styles.photoActionText, { fontFamily: nativeFontFamily(locale, "body") }]}>{photoCopy.remove}</Text></Pressable>
+            </View>
+          </View> : <TextInput
+            ref={inputRef}
             accessibilityLabel={copy.composer.label}
             accessibilityHint={copy.composer.hint}
             autoCapitalize="sentences"
@@ -195,11 +219,11 @@ function NativeComposer({
             selectionColor={NATIVE_COLORS.moss}
             style={[styles.sceneInput, compact && styles.compactSceneInput, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}
             value={draft.scene}
-          />
+          />}
         <View style={[styles.composerFooter, { flexDirection: stackedFooter ? "column" : nativeRowDirection(direction) }, stackedFooter && styles.composerFooterStacked]}>
           <View style={[styles.characterCountSlot, stackedFooter && styles.characterCountSlotStacked]}>
-            <Text accessibilityLiveRegion="polite" style={[styles.composerUsage, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{usage.status === "ready" ? usage.label : ""}</Text>
-            {shouldShowCharacterCount(draft.usedLength) ? (
+            {onPickPhoto ? <Pressable accessibilityRole="button" disabled={preparingPhoto} accessibilityState={{ disabled: preparingPhoto, busy: preparingPhoto }} onPress={onPickPhoto} style={({ pressed }) => [styles.photoAction, { flexDirection: nativeRowDirection(direction), alignSelf: direction === "rtl" ? "flex-end" : "flex-start" }, pressed && styles.pressed]}><NativeIcon name="photo" size={21} color={NATIVE_COLORS.moss} /><Text style={[styles.photoActionText, { fontFamily: nativeFontFamily(locale, "body") }]}>{preparingPhoto ? photoCopy.preparing : photo ? photoCopy.change : photoCopy.use}</Text></Pressable> : null}
+            {!photo && shouldShowCharacterCount(draft.usedLength) ? (
               <Text style={[styles.characterCount, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>
                 {draft.characterCountLabel}
               </Text>
@@ -220,7 +244,10 @@ function NativeComposer({
         </View>
       </View>
 
-      <View style={styles.suggestionsBlock}>
+      {photoError ? <Text accessibilityRole="alert" accessibilityLiveRegion="assertive" style={[styles.photoError, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{photoError}</Text> : null}
+      <Text accessibilityLiveRegion="polite" style={[styles.composerUsage, styles.usageBelowComposer, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{usage.status === "ready" ? usage.label : ""}</Text>
+
+      {!photo ? <View style={styles.suggestionsBlock}>
         <View style={[styles.suggestionsHeading, { flexDirection: nativeRowDirection(direction) }]}>
           <Text accessibilityRole="header" style={[styles.suggestionsTitle, compact && styles.compactSuggestionsTitle, locale === "ar" && styles.arabicSuggestionsTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>
             {copy.suggestions.title}
@@ -253,8 +280,8 @@ function NativeComposer({
           </Pressable>
         ))}
         </Animated.View>
-      </View>
-      <NativeArtExamples locale={locale} direction={direction} copy={copy} onOpenIdeas={onOpenIdeas} />
+      </View> : null}
+      {!photo ? <NativeArtExamples locale={locale} direction={direction} copy={copy} onOpenIdeas={onOpenIdeas} /> : null}
     </View>
   );
 }
@@ -314,9 +341,9 @@ function NativeResultCard({ locale, direction, copy, state, usage, reducedMotion
 
   const revealY = reveal.interpolate({ inputRange: [0, 1], outputRange: [10, 0] });
   return (
-    <Animated.View style={[styles.resultScreen, { opacity: reveal, transform: [{ translateY: revealY }] }]}> 
-      <View style={[styles.resultHeader, { alignItems: direction === "rtl" ? "flex-end" : "flex-start" }]}> 
-        <Pressable accessibilityRole="button" accessibilityLabel={copy.navigation.create} onPress={onResultBack} style={({ pressed }) => [styles.resultBackButton, pressed && styles.pressed]}> 
+    <Animated.View style={[styles.resultScreen, { opacity: reveal, transform: [{ translateY: revealY }] }]}>
+      <View style={[styles.resultHeader, { alignItems: direction === "rtl" ? "flex-end" : "flex-start" }]}>
+        <Pressable accessibilityRole="button" accessibilityLabel={copy.navigation.create} onPress={onResultBack} style={({ pressed }) => [styles.resultBackButton, pressed && styles.pressed]}>
           <NativeIcon name="back" size={23} color={NATIVE_COLORS.graphite} />
         </Pressable>
       </View>
@@ -373,6 +400,13 @@ function ResultAction({ compact, locale, icon, label, onPress, primary = false }
 }
 
 const styles = StyleSheet.create({
+  photoSelection: { padding: 12, paddingBottom: 0 },
+  photoPreview: { width: "100%", height: 218, backgroundColor: NATIVE_COLORS.canvas, borderRadius: 9 },
+  photoActions: { alignItems: "center", justifyContent: "flex-end", gap: 8 },
+  photoAction: { alignItems: "center", justifyContent: "center", gap: 7, minHeight: 44, paddingHorizontal: 4, paddingVertical: 7, borderRadius: 8 },
+  photoActionText: { color: NATIVE_COLORS.moss, fontSize: 14, lineHeight: 20, flexShrink: 1 },
+  photoError: { color: NATIVE_COLORS.coral, fontSize: 13, lineHeight: 19, marginTop: -12 },
+  usageBelowComposer: { marginTop: -14, paddingHorizontal: 2, minHeight: 19 },
   flex: { flex: 1 },
   scrollContent: { gap: 24, paddingBottom: 24, paddingHorizontal: NATIVE_SPACING.screen, paddingTop: 14 },
   waitingScrollContent: { flexGrow: 1, justifyContent: "center" },

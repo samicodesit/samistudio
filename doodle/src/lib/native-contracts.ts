@@ -16,15 +16,27 @@ export async function readNativeJson(
     throw new NativeRequestError("body_too_large");
   }
 
-  let text: string;
+  let text = "";
+  const reader = request.body?.getReader();
+  if (!reader) throw new NativeRequestError("invalid_request");
   try {
-    text = await request.text();
-  } catch {
+    const decoder = new TextDecoder("utf-8", { fatal: true });
+    let total = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      total += value.byteLength;
+      if (total > maxBytes) {
+        try { await reader.cancel(); } catch {}
+        throw new NativeRequestError("body_too_large");
+      }
+      text += decoder.decode(value, { stream: true });
+    }
+    text += decoder.decode();
+  } catch (error) {
+    if (error instanceof NativeRequestError) throw error;
     throw new NativeRequestError("invalid_request");
-  }
-  if (new TextEncoder().encode(text).byteLength > maxBytes) {
-    throw new NativeRequestError("body_too_large");
-  }
+  } finally { reader.releaseLock(); }
 
   let value: unknown;
   try {

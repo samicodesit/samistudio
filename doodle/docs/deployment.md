@@ -30,7 +30,7 @@ Verification: 615 unit/integration tests, TypeScript, lint with zero errors and 
 
 One real Simple generation through the live app returned a corrected downloadable PNG in 9,663 ms. Runtime logs confirmed Flare, MEDIUM and simple-v3; the owner account went from 100 to 99 credits. No automatic retries. See docs/qa/flare-release-2026-10-05.json and its retained PNG. Native Integrity remains enabled; trusted hardware generation was not newly verified. Slow provider outliers remain possible.
 
-Rollback: promote dpl_94xaVdn7f4FSRjPcyeren3PjYM1o, then restore OPENAI_IMAGE_MODEL=gpt-image-1-mini for subsequent builds. Keep MEDIUM quality.
+Historical rollback for the October 5 model change: promote dpl_94xaVdn7f4FSRjPcyeren3PjYM1o, then restore OPENAI_IMAGE_MODEL=gpt-image-1-mini for subsequent builds. This is a past rollback procedure, not the current default. Current generation uses Flare at MEDIUM quality.
 
 ## Desktop result alignment hotfix, October 5, 2026
 

@@ -189,6 +189,11 @@ export const NATIVE_REPORT_DETAILS_MAX_LENGTH = 500;
 export type NativeContentModal = "none" | "more" | "image" | "purchase" | "report";
 
 export interface NativeDoodleUiProps {
+  photo?: { uri: string; base64: string } | null;
+  preparingPhoto?: boolean;
+  photoError?: string | null;
+  onPickPhoto?(): void;
+  onRemovePhoto?(): void;
   detailLevel: DetailLevel;
   detailReady: boolean;
   onDetailLevelChange(level: DetailLevel): void;

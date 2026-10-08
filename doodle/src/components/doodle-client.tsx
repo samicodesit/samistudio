@@ -18,11 +18,15 @@ import { DoodlePreviewDialog } from "./doodle-preview-dialog";
 import { isPlayRuntime } from "@/lib/billing/play-client";
 import { getLandingCopy, LANDING_EXAMPLE, type LandingCopy } from "@/lib/landing-copy";
 import { getComposerIntro } from "@/lib/composer-intro";
+import { usePhotoDraft } from "./use-photo-draft";
+import { getPhotoCopy } from "@/lib/photo-copy";
+
+type DoodleInput = { scene: string; detailLevel: DetailLevel; photo?: string };
 
 type GenerationState =
   | { status: "idle"; imageUrl: null; error: null }
   | { status: "generating"; imageUrl: null; error: null }
-  | { status: "ready"; imageUrl: string; imageFile: File; error: null; input: { scene: string; detailLevel: DetailLevel } }
+  | { status: "ready"; imageUrl: string; imageFile: File; error: null; input: DoodleInput }
   | { status: "error"; imageUrl: null; error: string };
 type PurchaseReturnFocus =
   | { kind: "element"; element: HTMLElement }
@@ -81,6 +85,8 @@ function messageForStatus(status: number, copy: DoodleCopy["errors"]): string {
 export function DoodleClient({ locale, copy, initialScene = "", initialSuggestionIds, accountHost = "web", landing }: DoodleClientProps) {
   const composerHints = useMemo(() => getLandingCopy(locale).placeholderPrompts, [locale]);
   const [scene, setScene] = useState(initialScene);
+  const { photo, preparing: preparingPhoto, error: photoError, input: photoInputRef, select: selectPhoto, remove: removePhoto, pick: pickPhoto } = usePhotoDraft(scene, setScene, getPhotoCopy(locale));
+  const generationInFlight = useRef(false);
   const { detailLevel, detailReady, selectDetailLevel } = useDetailLevel();
   const initialIds = initialSuggestionIds ?? DEFAULT_SUGGESTION_IDS;
   const [suggestionIds, setSuggestionIds] = useState<readonly SceneIdeaId[]>(initialIds);
@@ -307,8 +313,9 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
     }
   }
 
-  async function createDoodle(input = { scene, detailLevel }) {
-    if (!detailReady || !input.scene.trim() || generation.status === "generating") return;
+  async function createDoodle(input: DoodleInput = { scene, detailLevel, ...(photo ? { photo: photo.base64 } : {}) }) {
+    if (!detailReady || preparingPhoto || (!input.photo && !input.scene.trim()) || generationInFlight.current) return;
+    generationInFlight.current = true;
 
     if (document.activeElement instanceof HTMLTextAreaElement) {
       document.activeElement.blur();
@@ -319,7 +326,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input),
+        body: JSON.stringify(input.photo ? { photo: input.photo, detailLevel: input.detailLevel } : { scene: input.scene, detailLevel: input.detailLevel }),
       });
 
       updateRemaining(response);
@@ -369,10 +376,13 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
         imageUrl: null,
         error: copy.errors.general,
       });
+    } finally {
+      generationInFlight.current = false;
     }
   }
 
   function handleNewScene() {
+    removePhoto();
     focusNextScene.current = true;
     setScene("");
     setIsResultOpen(false);
@@ -381,6 +391,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   }
 
   function handleSuggestion(sceneSuggestion: string) {
+    removePhoto();
     setScene(sceneSuggestion);
     setIsResultOpen(false);
     clearGeneration();
@@ -435,6 +446,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
 
   return (
     <div ref={workspaceRef} className={`doodle-workspace doodle-workspace-${generation.status}${landing ? " doodle-workspace-landing" : ""}`}>
+      <input ref={photoInputRef} type="file" accept="image/*" hidden tabIndex={-1} aria-label={getPhotoCopy(locale).use} onChange={event => { void selectPhoto(event.target.files?.[0]); }} />
       {landing && (generation.status === "idle" || generation.status === "error") ? (
         <div className="landing-intro">
           <h1>{landing.title}<br />{landing.titleEnd}</h1>
@@ -445,7 +457,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
         {generation.status === "generating" ? null : generation.status === "ready" ? (
           <section className="state-copy" aria-labelledby="ready-title">
             <h1 id="ready-title">{copy.status.readyTitle}</h1>
-            <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} scene={scene} locale={locale} onTryAgain={() => createDoodle(generation.input)} onNewScene={handleNewScene} copy={copy.actions} />
+            <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} scene={generation.input.photo ? "Photo doodle" : generation.input.scene} locale={locale} onTryAgain={() => createDoodle(generation.input)} onNewScene={handleNewScene} copy={copy.actions} />
             <div className="workspace-usage">
               {usage === null
                 ? <span className="usage-loading" role="status" aria-label={copy.account.label} />
@@ -454,6 +466,11 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
           </section>
         ) : (
           <SceneComposer
+            photo={photo}
+            preparingPhoto={preparingPhoto}
+            photoError={photoError}
+            onPickPhoto={pickPhoto}
+            onRemovePhoto={() => { removePhoto(); focusNextScene.current = true; }}
             scene={scene}
             isGenerating={false}
             onSceneChange={setScene}
@@ -471,7 +488,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
             placeholderPrompts={composerHints}
           />
         )}
-        {generation.status !== "generating" && generation.status !== "ready" ? (
+        {!photo && generation.status !== "generating" && generation.status !== "ready" ? (
         <>
         {landing ? <section className="landing-suggestions" aria-label={landing.tryIdea}>
           <span>{landing.tryIdea}</span>

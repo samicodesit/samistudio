@@ -4,6 +4,7 @@ import type { ComponentProps } from "react";
 type IoniconName = ComponentProps<typeof Ionicons>["name"];
 
 export type NativeIconName =
+  | "photo"
   | "create"
   | "ideas"
   | "settings"
@@ -28,6 +29,7 @@ export type NativeIconName =
   | "expand";
 
 const ICONS: { [key in NativeIconName]: IoniconName } = {
+  photo: "image-outline",
   create: "pencil-outline",
   ideas: "bulb-outline",
   settings: "settings-outline",

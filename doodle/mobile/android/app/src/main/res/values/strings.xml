@@ -1,4 +1,4 @@
 <resources>
   <string name="app_name">Doodle</string>
-  <string name="expo_runtime_version">0.1.6</string>
+  <string name="expo_runtime_version">0.1.7</string>
 </resources>

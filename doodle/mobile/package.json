@@ -32,6 +32,7 @@
     "expo-iap": "5.5.1",
     "expo-image": "57.0.4",
     "expo-image-manipulator": "57.0.16",
+    "expo-image-picker": "~57.0.20",
     "expo-localization": "57.0.1",
     "expo-media-library": "57.0.4",
     "expo-secure-store": "57.0.3",

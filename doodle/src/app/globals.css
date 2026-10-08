@@ -470,6 +470,27 @@ dialog:focus-visible {
   gap: 3px 10px;
 }
 
+.composer-photo-slot { display: flex; flex: 1; min-width: 0; align-items: center; flex-wrap: wrap; gap: 0 8px; }
+.composer-photo-slot .character-count:empty { display: none; }
+.composer-photo-slot .character-count { min-width: 0; padding-inline-start: 8px; }
+.photo-action { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 6px 8px; border: 0; border-radius: 8px; background: transparent; color: var(--moss); font-family: var(--font-body); font-size: 14px; font-weight: 500; line-height: 1.35; cursor: pointer; }
+.photo-action svg { flex-shrink: 0; }
+.photo-action:hover:not(:disabled) { background: rgba(25, 92, 71, 0.055); }
+.photo-action:focus-visible { outline: 2px solid var(--moss); outline-offset: 2px; }
+.photo-action:disabled { cursor: wait; opacity: 0.55; }
+.photo-selection { padding: 12px 12px 0; }
+.photo-preview { display: block; width: 100%; height: auto; max-height: 270px; object-fit: contain; background: #eef1ea; border-radius: 9px; }
+.photo-selection-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding-top: 3px; }
+.composer-usage { min-height: 18px; margin-top: 10px; padding-inline: 2px; }
+.photo-error { color: var(--coral); font-size: 13px; line-height: 1.5; margin: 10px 2px 0; }
+.doodle-composer-photo .composer-footer { padding-top: 0; }
+
+@media (max-width: 380px) {
+  .composer-footer { gap: 4px; }
+  .composer-footer .photo-action { font-size: 13px; gap: 6px; padding-inline: 5px; }
+  .composer-footer > button { padding-inline: 12px; }
+}
+
 .usage-copy,
 .workspace-usage {
   color: var(--muted);

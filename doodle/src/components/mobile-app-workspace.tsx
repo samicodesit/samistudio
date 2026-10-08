@@ -11,6 +11,7 @@ import { getCopy, localePath, SUPPORTED_LOCALES, type DoodleCopy, type Locale } 
 import { getDoodleIdeas, IDEA_IMAGES } from "@/lib/doodle-ideas";
 import type { SceneIdeaId } from "@/lib/scenes/suggestions";
 import { getLandingCopy } from "@/lib/landing-copy";
+import { discardPhotoDraft } from "@/lib/photo-draft-store";
 import "./mobile-app-workspace.css";
 
 type Tab = "create" | "ideas" | "settings";
@@ -59,6 +60,7 @@ export function MobileAppWorkspace({ locale, copy, initialScene = "", initialSug
   }
 
   function selectIdea(prompt: string) {
+    discardPhotoDraft();
     setPreviewIndex(null);
     setDraft(previous => ({ scene: prompt, revision: previous.revision + 1 }));
     selectTab("create");

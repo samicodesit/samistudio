@@ -3,12 +3,31 @@ import { afterEach, expect, it, vi } from "vitest";
 import { getCopy } from "@/lib/i18n";
 import { getLandingCopy } from "@/lib/landing-copy";
 import { SceneComposer } from "./scene-composer";
+import { useState } from "react";
 
 function composer(scene = "") {
   return <SceneComposer scene={scene} isGenerating={false} onSceneChange={vi.fn()} onCreate={vi.fn()} copy={getCopy("en").composer} usage="4 free doodles left" usageLoadingLabel="Account" compactHeading placeholderPrompts={getLandingCopy("en").placeholderPrompts} />;
 }
 
 afterEach(() => vi.useRealTimers());
+
+it("replaces writing with an uncropped photo and restores the unchanged draft on Remove", () => {
+  function Harness() {
+    const [photo, setPhoto] = useState({ uri: "data:image/jpeg;base64,AAAA", base64: "AAAA" } as { uri: string; base64: string } | null);
+    return <SceneComposer scene="My earlier idea" isGenerating={false} onSceneChange={vi.fn()} onCreate={vi.fn()} copy={getCopy("en").composer} usage="2 free doodles left" usageLoadingLabel="Account" photo={photo} onRemovePhoto={() => setPhoto(null)} onPickPhoto={vi.fn()} />;
+  }
+  render(<Harness />);
+  expect(screen.queryByRole("textbox")).toBeNull();
+  expect(screen.getByRole("img", { name: "Selected photo" })).toBeVisible();
+  expect(screen.getByRole("button", { name: "Create doodle" })).toBeEnabled();
+  const photoFooter = screen.getByRole("button", { name: "Create doodle" }).parentElement;
+  expect(photoFooter).toContainElement(screen.getByRole("button", { name: "Change photo" }));
+  expect(screen.getByRole("button", { name: "Change photo" }).querySelector("svg")).not.toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Remove" }));
+  expect(screen.getByRole("textbox")).toHaveValue("My earlier idea");
+  expect(screen.getByRole("button", { name: "Use a photo" })).toBeVisible();
+  expect(photoFooter).toContainElement(screen.getByRole("button", { name: "Use a photo" }));
+});
 
 it("cycles five distinct hints without entering text or enabling generation", () => {
   vi.useFakeTimers();

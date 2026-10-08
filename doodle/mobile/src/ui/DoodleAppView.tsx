@@ -55,6 +55,11 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
         <View style={styles.content}>
           {props.tab === "create" ? (
             <NativeCreateView
+              photo={props.photo}
+              preparingPhoto={props.preparingPhoto}
+              photoError={props.photoError}
+              onPickPhoto={props.onPickPhoto}
+              onRemovePhoto={props.onRemovePhoto}
               detailLevel={props.detailLevel}
               detailReady={props.detailReady}
               onDetailLevelChange={props.onDetailLevelChange}

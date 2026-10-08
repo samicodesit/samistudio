@@ -27,6 +27,7 @@ const plugins: NonNullable<ExpoConfig["plugins"]> = [
   "./plugins/withDoodleLocalBuildTypes",
   "./plugins/withDoodleReleaseSigning",
   "expo-dev-client",
+  ["expo-image-picker", { cameraPermission: false, microphonePermission: false, photosPermission: "Choose a photo to turn into a doodle." }],
   [
     "expo-font",
     {
@@ -112,14 +113,16 @@ const config: NativeExpoConfig = {
   android: {
     package: packageName,
     versionCode: 9,
-    // Doodle creates its own PNG and never reads the user's gallery or draws
-    // over other apps. Keep legacy storage support for Android <= 12, while
+    // Doodle uses the system picker for access to one selected photo. Keep
+    // legacy save support for Android <= 12, while
     // preventing modern gallery and overlay permissions from entering the
     // release manifest through Expo or transitive libraries.
     blockedPermissions: [
       "android.permission.READ_MEDIA_IMAGES",
       "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
       "android.permission.SYSTEM_ALERT_WINDOW",
+      "android.permission.CAMERA",
+      "android.permission.RECORD_AUDIO",
     ],
     adaptiveIcon: {
       // The approved asset is a complete opaque composition. Keep it as the

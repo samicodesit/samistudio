@@ -1,4 +1,5 @@
 import { isDetailLevel, type DetailLevel } from "../../../src/lib/generation/detail-level";
+import { isPhotoPayload, photoAttestationInput } from "../../../src/lib/generation/photo-input";
 import {
   isNativeConfig,
   MAX_SCENE_LENGTH,
@@ -603,10 +604,11 @@ export class NativeApiClient implements NativeApi {
     return body;
   }
 
-  async generate(scene: string, detailLevel: DetailLevel = "simple"): Promise<NativeGenerationResult> {
+  async generate(scene: string, detailLevel: DetailLevel = "simple", photo?: string): Promise<NativeGenerationResult> {
     if (this.platform !== "android") throw new NativeServiceError("native_generation_unavailable");
     if (!isDetailLevel(detailLevel)) throw new NativeServiceError("invalid_request");
-    const normalizedScene = normalizeScene(scene);
+    if (photo !== undefined && !isPhotoPayload(photo)) throw new NativeServiceError("invalid_request");
+    const normalizedScene = photo === undefined ? normalizeScene(scene) : photoAttestationInput(photo);
     const installId = await this.getInstallId();
     const accessToken = await this.getAccessToken();
     const config = await this.getConfig();
@@ -645,7 +647,7 @@ export class NativeApiClient implements NativeApi {
         "X-Doodle-Attestation-Challenge": challenge.challenge,
         "X-Doodle-Attestation-Token": integrityToken,
       },
-      body: JSON.stringify({ scene: normalizedScene, ...(detailLevel !== "simple" ? { detailLevel } : {}) }),
+      body: JSON.stringify({ ...(photo === undefined ? { scene: normalizedScene } : { photo }), ...(detailLevel !== "simple" ? { detailLevel } : {}) }),
       includeTrial: auth === "trial",
       auth,
       timeoutMs: this.generationTimeoutMs,

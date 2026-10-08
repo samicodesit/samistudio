@@ -17,6 +17,7 @@ const mocks = vi.hoisted(() => ({
   finalizeFreeDoodle: vi.fn(),
   finalizePaidCredit: vi.fn(),
   generateDoodle: vi.fn(),
+  generatePhotoDoodle: vi.fn(),
   getCurrentUser: vi.fn(),
   getNativeBearer: vi.fn(),
   getTrialIdentity: vi.fn(),
@@ -36,6 +37,7 @@ vi.mock("@/lib/generation/generate-doodle", async () => {
   return { ...actual, generateDoodle: mocks.generateDoodle };
 });
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.getCurrentUser }));
+vi.mock("@/lib/generation/generate-photo-doodle", () => ({ generatePhotoDoodle: mocks.generatePhotoDoodle }));
 vi.mock("@/lib/billing/credits", () => ({
   finalizePaidCredit: mocks.finalizePaidCredit,
   releasePaidCredit: mocks.releasePaidCredit,
@@ -94,6 +96,7 @@ describe("generate route", () => {
     mocks.finalizeFreeDoodle.mockResolvedValue({ finalized: true, remaining: 1 });
     mocks.finalizePaidCredit.mockResolvedValue({ finalized: true, remaining: 9 });
     mocks.generateDoodle.mockResolvedValue(png);
+    mocks.generatePhotoDoodle.mockResolvedValue(png);
     mocks.getCurrentUser.mockResolvedValue(null);
     mocks.getNativeBearer.mockReturnValue(undefined);
     mocks.getTrialIdentity.mockReturnValue(trialIdentity);
@@ -106,6 +109,50 @@ describe("generate route", () => {
     mocks.setTrialCookie.mockImplementation((response: NextResponse) => {
       response.cookies.set("doodle_trial", "signed", { httpOnly: true, sameSite: "lax", path: "/" });
     });
+  });
+
+  function photoRequest(body: unknown, native = false) {
+    return new NextRequest("http://localhost:3000/api/generate", {
+      method: "POST",
+      headers: { host: "localhost:3000", origin: "http://localhost:3000", "content-type": "application/json",
+        ...(native ? { "x-doodle-client": "native-android", "x-doodle-trial-token": "signed-trial-token", "x-doodle-install-id": "install", "x-doodle-attestation-challenge": "challenge", "x-doodle-attestation-token": "integrity" } : {}) },
+      body: JSON.stringify(body),
+    });
+  }
+
+  it("validates photos before charging and rejects mixed text/photo requests", async () => {
+    for (const body of [{ photo: "!!!!" }, { scene: "cat", photo: "AAAA" }]) {
+      expect((await POST(photoRequest(body))).status).toBe(400);
+      expectNoReservation();
+    }
+  });
+
+  it.each(["free", "paid"])("converts a photo and finalizes one %s credit using the selected detail", async (kind) => {
+    if (kind === "paid") {
+      mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "owner@example.test" });
+      mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 9 });
+    }
+    const photo = (await sharp({ create: { width: 60, height: 40, channels: 3, background: "red" } }).jpeg().toBuffer()).toString("base64");
+    const response = await POST(photoRequest({ photo, detailLevel: "detailed" }));
+    expect(response.status).toBe(200);
+    expect(mocks.generatePhotoDoodle).toHaveBeenCalledWith(expect.any(Buffer), "detailed");
+    expect(mocks.generateDoodle).not.toHaveBeenCalled();
+    expect(kind === "paid" ? mocks.finalizePaidCredit : mocks.finalizeFreeDoodle).toHaveBeenCalledOnce();
+  });
+
+  it("releases a held credit when photo conversion fails", async () => {
+    const photo = (await sharp({ create: { width: 20, height: 20, channels: 3, background: "red" } }).jpeg().toBuffer()).toString("base64");
+    mocks.generatePhotoDoodle.mockRejectedValue(new GenerationError("timeout", "timeout"));
+    expect((await POST(photoRequest({ photo }))).status).toBe(504);
+    expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
+    expect(mocks.finalizeFreeDoodle).not.toHaveBeenCalled();
+  });
+
+  it("binds native photo bytes and detail to integrity without forwarding photo content to metrics", async () => {
+    const photo = (await sharp({ create: { width: 20, height: 20, channels: 3, background: "red" } }).jpeg().toBuffer()).toString("base64");
+    expect((await POST(photoRequest({ photo, detailLevel: "medium" }, true))).status).toBe(200);
+    expect(mocks.consumeNativeAttestation).toHaveBeenCalledWith(expect.objectContaining({ sceneHash: createHash("sha256").update(`doodle-photo-v1:${photo}`).digest("hex"), detailLevel: "medium" }));
+    expect(JSON.stringify(mocks.trackOperation.mock.calls)).not.toContain(photo);
   });
 
   it.each(["free", "paid"])("delivers the corrected PNG and finalizes one %s credit", async (kind) => {

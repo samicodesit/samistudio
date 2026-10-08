@@ -1,0 +1,101 @@
+{
+  "date": "2026-10-08T16:07:30.897Z",
+  "approvedRunCapUsd": 0.3,
+  "priorExperimentEstimatedUsd": 1.089289,
+  "invalidConfigurationRunBudgetChargeUsd": 0.113483,
+  "estimatedRunUsd": 0.069071,
+  "estimatedCumulativeBudgetChargeUsd": 1.271843,
+  "inputSha256": "e601aa2816cca1f34c356d6192addb4bec1a70aed4b611dbc4c59cb61dc6a817",
+  "results": [
+    {
+      "detail": "simple",
+      "model": "gpt-image-2.5-flare",
+      "quality": "medium",
+      "size": "1024x1024",
+      "requestId": "req_0150647e637b43738b0cc3b4d6bdc31d",
+      "usage": {
+        "input_tokens": 1679,
+        "input_tokens_details": {
+          "image_tokens": 704,
+          "text_tokens": 975
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 2118
+      },
+      "httpMs": 21243,
+      "elapsedMs": 21450,
+      "estimatedUsd": 0.023677,
+      "outputSha256": "e9388b1954ea5f204fce71c00bdc0c9c2241035d940a1178803f45bab0fad489",
+      "file": "/home/mests/projects/samistudio/.worktrees/doodle-photo-input/doodle/docs/qa/photo-input-2026-10-08/flare-live/simple.png",
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 203
+      }
+    },
+    {
+      "detail": "medium",
+      "model": "gpt-image-2.5-flare",
+      "quality": "medium",
+      "size": "1024x1024",
+      "requestId": "req_e3432aa688ca4a20b9246c93b55cc241",
+      "usage": {
+        "input_tokens": 1466,
+        "input_tokens_details": {
+          "image_tokens": 704,
+          "text_tokens": 762
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 1905
+      },
+      "httpMs": 11680,
+      "elapsedMs": 11859,
+      "estimatedUsd": 0.022612,
+      "outputSha256": "2dd5389b22dc815476507f48328973bb68abc284c1bed9f0405612bb78a827e9",
+      "file": "/home/mests/projects/samistudio/.worktrees/doodle-photo-input/doodle/docs/qa/photo-input-2026-10-08/flare-live/medium.png",
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 176
+      }
+    },
+    {
+      "detail": "detailed",
+      "model": "gpt-image-2.5-flare",
+      "quality": "medium",
+      "size": "1024x1024",
+      "requestId": "req_3b4c53c1d5624f7387287529794ad9ea",
+      "usage": {
+        "input_tokens": 1500,
+        "input_tokens_details": {
+          "image_tokens": 704,
+          "text_tokens": 796
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 1939
+      },
+      "httpMs": 11889,
+      "elapsedMs": 12106,
+      "estimatedUsd": 0.022782,
+      "outputSha256": "20d65a4024dc0225d046f9c8dead9370b32fec66e5dc9247b93e2a06af0f200e",
+      "file": "/home/mests/projects/samistudio/.worktrees/doodle-photo-input/doodle/docs/qa/photo-input-2026-10-08/flare-live/detailed.png",
+      "paperCorrection": {
+        "version": "paper-v1",
+        "status": "corrected",
+        "durationMs": 215
+      }
+    }
+  ]
+}

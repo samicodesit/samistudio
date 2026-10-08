@@ -68,7 +68,7 @@ export interface NativeApi {
   getTrialAccount(): Promise<AccountSummary>;
   deleteAccount(): Promise<void>;
   createGuestSession(installId: string): Promise<NativeGuestSessionResponse>;
-  generate(scene: string, detailLevel?: DetailLevel): Promise<NativeGenerationResult>;
+  generate(scene: string, detailLevel?: DetailLevel, photo?: string): Promise<NativeGenerationResult>;
 }
 
 export interface NativePurchaseApi {
