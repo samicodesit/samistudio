@@ -1,0 +1,937 @@
+{
+  "date": "2026-10-08",
+  "engine": "Playwright WebKit 26.5, Windows, revision 2336",
+  "note": "Desktop CPU with iPhone viewport/touch emulation. Not iPhone hardware or a recognition accuracy benchmark. No paid provider calls.",
+  "summaries": [
+    {
+      "browser": "webkit-iphone-13",
+      "samples": 18,
+      "realPhotos": {
+        "preparationMs": {
+          "min": 82,
+          "median": 96,
+          "max": 119
+        },
+        "jpegBytes": {
+          "min": 34780,
+          "median": 66963,
+          "max": 71777
+        },
+        "requestBytes": {
+          "min": 46411,
+          "median": 89319,
+          "max": 95739
+        }
+      },
+      "synthetic48mp": {
+        "preparationMs": {
+          "min": 296,
+          "median": 314,
+          "max": 331
+        },
+        "jpegBytes": 4804
+      }
+    },
+    {
+      "browser": "webkit-iphone-large",
+      "samples": 18,
+      "realPhotos": {
+        "preparationMs": {
+          "min": 72,
+          "median": 115,
+          "max": 126
+        },
+        "jpegBytes": {
+          "min": 34780,
+          "median": 66963,
+          "max": 71777
+        },
+        "requestBytes": {
+          "min": 46411,
+          "median": 89319,
+          "max": 95739
+        }
+      },
+      "synthetic48mp": {
+        "preparationMs": {
+          "min": 292,
+          "median": 347,
+          "max": 347
+        },
+        "jpegBytes": 4804
+      }
+    },
+    {
+      "browser": "webkit-iphone-se",
+      "samples": 18,
+      "realPhotos": {
+        "preparationMs": {
+          "min": 65,
+          "median": 78,
+          "max": 121
+        },
+        "jpegBytes": {
+          "min": 34780,
+          "median": 66963,
+          "max": 71777
+        },
+        "requestBytes": {
+          "min": 46411,
+          "median": 89319,
+          "max": 95739
+        }
+      },
+      "synthetic48mp": {
+        "preparationMs": {
+          "min": 262,
+          "median": 277,
+          "max": 281
+        },
+        "jpegBytes": 4804
+      }
+    },
+    {
+      "browser": "chromium-mobile",
+      "samples": 18,
+      "realPhotos": {
+        "preparationMs": {
+          "min": 21.299999982118607,
+          "median": 27.80000001192093,
+          "max": 38.900000005960464
+        },
+        "jpegBytes": {
+          "min": 34780,
+          "median": 66963,
+          "max": 71777
+        },
+        "requestBytes": {
+          "min": 46411,
+          "median": 89319,
+          "max": 95739
+        }
+      },
+      "synthetic48mp": {
+        "preparationMs": {
+          "min": 174.60000002384186,
+          "median": 197.90000000596046,
+          "max": 310.19999998807907
+        },
+        "jpegBytes": 5048
+      }
+    }
+  ],
+  "server": [
+    {
+      "subject": "portrait",
+      "normalizeMs": {
+        "min": 8.832808999999997,
+        "median": 10.07560699999999,
+        "max": 13.114764000000008
+      },
+      "inputBytes": 66963,
+      "finalBytes": 66329,
+      "width": 512,
+      "height": 512,
+      "additionalJpegRms": 0.818728319031481,
+      "additionalJpegPsnrDb": 49.86800735905574
+    },
+    {
+      "subject": "coffee",
+      "normalizeMs": {
+        "min": 8.729626999999994,
+        "median": 9.697885999999983,
+        "max": 11.028187000000003
+      },
+      "inputBytes": 71777,
+      "finalBytes": 71060,
+      "width": 600,
+      "height": 400,
+      "additionalJpegRms": 0.7979966234960592,
+      "additionalJpegPsnrDb": 50.09078253354752
+    },
+    {
+      "subject": "cat",
+      "normalizeMs": {
+        "min": 6.098476000000005,
+        "median": 6.574927000000002,
+        "max": 6.944983000000036
+      },
+      "inputBytes": 34780,
+      "finalBytes": 34259,
+      "width": 451,
+      "height": 300,
+      "additionalJpegRms": 0.2574104943502227,
+      "additionalJpegPsnrDb": 59.91827863567332
+    },
+    {
+      "subject": "woman-dog",
+      "normalizeMs": {
+        "min": 7.54511599999995,
+        "median": 7.798744999999997,
+        "max": 8.023550999999998
+      },
+      "inputBytes": 36058,
+      "finalBytes": 35575,
+      "width": 400,
+      "height": 600,
+      "additionalJpegRms": 0.1673029520892497,
+      "additionalJpegPsnrDb": 63.6607315240684
+    },
+    {
+      "subject": "two-dogs",
+      "normalizeMs": {
+        "min": 8.589447000000007,
+        "median": 9.080737999999997,
+        "max": 10.862130999999977
+      },
+      "inputBytes": 70516,
+      "finalBytes": 69987,
+      "width": 600,
+      "height": 400,
+      "additionalJpegRms": 0.357357197586206,
+      "additionalJpegPsnrDb": 57.068752934336246
+    }
+  ],
+  "raw": [
+    {
+      "browser": "webkit-iphone-13",
+      "samples": [
+        {
+          "subject": "portrait",
+          "repeat": 0,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 108,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 0,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 93,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 0,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 88,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 0,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 89,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 0,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 93,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 0,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 296,
+          "jpegBytes": 4804,
+          "jsonRequestBytes": 6443
+        },
+        {
+          "subject": "portrait",
+          "repeat": 1,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 82,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 1,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 93,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 1,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 96,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 1,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 102,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 1,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 85,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 1,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 314,
+          "jpegBytes": 4804,
+          "jsonRequestBytes": 6443
+        },
+        {
+          "subject": "portrait",
+          "repeat": 2,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 119,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 2,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 99,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 2,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 96,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 2,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 101,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 2,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 102,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 2,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 331,
+          "jpegBytes": 4804,
+          "jsonRequestBytes": 6443
+        }
+      ]
+    },
+    {
+      "browser": "webkit-iphone-large",
+      "samples": [
+        {
+          "subject": "portrait",
+          "repeat": 0,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 104,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 0,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 93,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 0,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 82,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 0,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 77,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 0,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 126,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 0,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 347,
+          "jpegBytes": 4804,
+          "jsonRequestBytes": 6443
+        },
+        {
+          "subject": "portrait",
+          "repeat": 1,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 115,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 1,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 117,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 1,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 118,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 1,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 122,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 1,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 72,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 1,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 347,
+          "jpegBytes": 4804,
+          "jsonRequestBytes": 6443
+        },
+        {
+          "subject": "portrait",
+          "repeat": 2,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 122,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 2,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 116,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 2,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 72,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 2,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 121,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 2,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 105,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 2,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 292,
+          "jpegBytes": 4804,
+          "jsonRequestBytes": 6443
+        }
+      ]
+    },
+    {
+      "browser": "webkit-iphone-se",
+      "samples": [
+        {
+          "subject": "portrait",
+          "repeat": 0,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 78,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 0,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 78,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 0,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 76,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 0,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 81,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 0,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 89,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 0,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 277,
+          "jpegBytes": 4804,
+          "jsonRequestBytes": 6443
+        },
+        {
+          "subject": "portrait",
+          "repeat": 1,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 121,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 1,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 76,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 1,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 71,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 1,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 91,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 1,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 74,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 1,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 262,
+          "jpegBytes": 4804,
+          "jsonRequestBytes": 6443
+        },
+        {
+          "subject": "portrait",
+          "repeat": 2,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 96,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 2,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 79,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 2,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 75,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 2,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 74,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 2,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 65,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 2,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 281,
+          "jpegBytes": 4804,
+          "jsonRequestBytes": 6443
+        }
+      ]
+    },
+    {
+      "browser": "chromium-mobile",
+      "samples": [
+        {
+          "subject": "portrait",
+          "repeat": 0,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 31.30000001192093,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 0,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 29.69999998807907,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 0,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 30.099999994039536,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 0,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 21.399999976158142,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 0,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 25.69999998807907,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 0,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 310.19999998807907,
+          "jpegBytes": 5048,
+          "jsonRequestBytes": 6767
+        },
+        {
+          "subject": "portrait",
+          "repeat": 1,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 38.900000005960464,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 1,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 29.399999976158142,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 1,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 27.80000001192093,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 1,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 23.69999998807907,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 1,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 28.69999998807907,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 1,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 197.90000000596046,
+          "jpegBytes": 5048,
+          "jsonRequestBytes": 6767
+        },
+        {
+          "subject": "portrait",
+          "repeat": 2,
+          "sourceBytes": 791555,
+          "width": 512,
+          "height": 512,
+          "preparationMs": 28.600000023841858,
+          "jpegBytes": 66963,
+          "jsonRequestBytes": 89319
+        },
+        {
+          "subject": "coffee",
+          "repeat": 2,
+          "sourceBytes": 466706,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 23.900000005960464,
+          "jpegBytes": 71777,
+          "jsonRequestBytes": 95739
+        },
+        {
+          "subject": "cat",
+          "repeat": 2,
+          "sourceBytes": 240512,
+          "width": 451,
+          "height": 300,
+          "preparationMs": 21.80000001192093,
+          "jpegBytes": 34780,
+          "jsonRequestBytes": 46411
+        },
+        {
+          "subject": "woman-dog",
+          "repeat": 2,
+          "sourceBytes": 209174,
+          "width": 400,
+          "height": 600,
+          "preparationMs": 21.299999982118607,
+          "jpegBytes": 36058,
+          "jsonRequestBytes": 48115
+        },
+        {
+          "subject": "two-dogs",
+          "repeat": 2,
+          "sourceBytes": 407788,
+          "width": 600,
+          "height": 400,
+          "preparationMs": 25.30000001192093,
+          "jpegBytes": 70516,
+          "jsonRequestBytes": 94059
+        },
+        {
+          "subject": "synthetic-camera-48mp",
+          "repeat": 2,
+          "sourceBytes": 294512,
+          "width": 600,
+          "height": 450,
+          "preparationMs": 174.60000002384186,
+          "jpegBytes": 5048,
+          "jsonRequestBytes": 6767
+        }
+      ]
+    }
+  ]
+}
