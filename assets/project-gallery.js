@@ -271,15 +271,13 @@ export function initProjectGallery({ onReturn }) {
         movement = [camera].map(element =>
           element.animate([{ transform: 'scale(1.065)' }, { transform: 'scale(1)' }],
             { duration: 1100, easing, fill: 'backwards' }));
-        [title, description, externalLink].forEach((element, index) => {
-          movement.push(element.animate([
-            { transform: `translateY(${[64, 34, 22][index]}px)`, opacity: 0 },
-            { transform: 'translateY(0)', opacity: 1 },
-          ], { duration: [780, 650, 580][index], delay: [260, 430, 540][index], easing, fill: 'backwards' }));
-        });
-      } else movement.push(dialog.querySelector('.project-caption').animate([
-          { transform: 'translateY(14px)', opacity: 0 }, { transform: 'translateY(0)', opacity: 1 },
-        ], { duration: 440, delay: 240, easing, fill: 'backwards' }));
+      }
+      [title, description, externalLink].forEach((element, index) => {
+        movement.push(element.animate([
+          { transform: `translateY(${[64, 34, 22][index]}px)`, opacity: 0 },
+          { transform: 'translateY(0)', opacity: 1 },
+        ], { duration: [780, 650, 580][index], delay: [260, 430, 540][index], easing, fill: 'backwards' }));
+      });
       try { await Promise.all([reveal, ...movement].map(animation => animation.finished)); }
       catch { /* Close, resize, or reduced motion can finish the transition early. */ }
     }
