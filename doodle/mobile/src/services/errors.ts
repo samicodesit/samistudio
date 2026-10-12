@@ -13,6 +13,7 @@ export type NativeServiceErrorCode =
   | "not_found"
   | "network"
   | "timeout"
+  | "offer_changed"
   | "billing_unavailable"
   | "purchase_pending"
   | "purchase_rejected"

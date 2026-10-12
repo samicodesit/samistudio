@@ -6,9 +6,11 @@ import type { StripeExpressCheckoutElementConfirmEvent } from "@stripe/stripe-js
 import {
   CheckoutElementsProvider,
   ExpressCheckoutElement,
+  CurrencySelectorElement,
   useCheckoutElements,
 } from "@stripe/react-stripe-js/checkout";
 import type { Locale } from "@/lib/i18n";
+import { getPackCopy, getWalletTotalLabel } from "@/lib/pack-copy";
 import {
   APPLE_PAY_DIAGNOSTIC_PATH,
   mapApplePayAvailability,
@@ -18,6 +20,9 @@ import {
 
 interface ApplePayCheckoutProps {
   locale: Locale;
+  productId?: string;
+  expectedCredits?: number;
+  onBeforeConfirm?: () => Promise<void>;
   ariaLabel: string;
   unavailableMessage: string;
   onComplete: (sessionId: string) => void;
@@ -39,9 +44,11 @@ function reportDiagnostic(event: ApplePayDiagnosticEvent) {
   }
 }
 
-function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, onBusyChange }: Omit<ApplePayCheckoutProps, "locale">) {
+function ApplePayButton({ locale, productId, ariaLabel, unavailableMessage, onComplete, onError, onBusyChange, onBeforeConfirm }: Omit<ApplePayCheckoutProps, "expectedCredits">) {
   const checkoutState = useCheckoutElements();
   const [availability, setAvailability] = useState<"pending" | "available" | "unavailable">("pending");
+  const [currencyReady, setCurrencyReady] = useState(false);
+  const [currencyFailed, setCurrencyFailed] = useState(false);
 
   useEffect(() => {
     if (checkoutState.type === "loading") return;
@@ -53,9 +60,22 @@ function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, on
   if (checkoutState.type === "loading") return null;
   if (checkoutState.type === "error") return null;
 
+  const adaptive = Boolean(productId);
+  const checkout = checkoutState.checkout;
+  const needsSelector = adaptive && Boolean(checkout.currencyOptions?.length);
+  const total = checkout.total?.total;
+  const quoteReady = !adaptive || (typeof total?.amount === "string" && total.amount.length > 0 && /^[a-z]{3}$/i.test(checkout.currency) && (!needsSelector || currencyReady) && !currencyFailed);
+  const walletVisible = availability === "available" && quoteReady;
+
   const handleConfirm = async (event: StripeExpressCheckoutElementConfirmEvent) => {
+    if (!quoteReady) {
+      event.paymentFailed({ reason: "fail", message: unavailableMessage });
+      onError(unavailableMessage);
+      return;
+    }
     onBusyChange(true);
     try {
+      await onBeforeConfirm?.();
       const result = await checkoutState.checkout.confirm({
         redirect: "if_required",
         expressCheckoutConfirmEvent: event,
@@ -76,12 +96,17 @@ function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, on
 
   return (
     <div className={`purchase-apple-pay purchase-apple-pay-${availability}`} aria-label={ariaLabel} aria-hidden={availability !== "available"} data-wallet-state={availability}>
+      {adaptive && availability === "available" ? <div className="purchase-wallet-pricing">
+        {needsSelector ? <CurrencySelectorElement onReady={() => setCurrencyReady(true)} onLoadError={() => { setCurrencyFailed(true); setCurrencyReady(false); }} /> : null}
+        {quoteReady ? <p className="purchase-wallet-total"><span>{getWalletTotalLabel(locale)}</span> <strong dir="ltr">{total.amount} {checkout.currency.toUpperCase()}</strong></p> : <p role="status">{currencyFailed ? unavailableMessage : getPackCopy(locale).loading}</p>}
+      </div> : null}
       <ExpressCheckoutElement
+        className={walletVisible ? undefined : "purchase-wallet-hidden"}
         options={{
           buttonHeight: 48,
           buttonType: { applePay: "buy" },
           buttonTheme: { applePay: "white-outline" },
-          layout: { maxColumns: 1, maxRows: 1, overflow: "never" },
+          layout: { maxColumns: 1, maxRows: 1, overflow: "auto" },
           paymentMethodOrder: ["applePay"],
           paymentMethods: {
             applePay: "always",
@@ -113,7 +138,7 @@ function ApplePayButton({ ariaLabel, unavailableMessage, onComplete, onError, on
   );
 }
 
-export function ApplePayCheckout({ locale, ariaLabel, unavailableMessage, onComplete, onError, onBusyChange }: ApplePayCheckoutProps) {
+export function ApplePayCheckout({ productId, expectedCredits, onBeforeConfirm, locale, ariaLabel, unavailableMessage, onComplete, onError, onBusyChange }: ApplePayCheckoutProps) {
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
   const stripePromise = useMemo(() => publishableKey ? loadStripe(publishableKey) : null, [publishableKey]);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -145,7 +170,7 @@ export function ApplePayCheckout({ locale, ariaLabel, unavailableMessage, onComp
     void fetch("/api/checkout/elements", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ locale }),
+      body: JSON.stringify({ locale, ...(productId ? { productId, expectedCredits } : {}) }),
     })
       .then(async (response) => {
         if (!response.ok) {
@@ -177,7 +202,7 @@ export function ApplePayCheckout({ locale, ariaLabel, unavailableMessage, onComp
         // Confirmation failures still surface through onError below.
       });
     return () => { active = false; };
-  }, [locale, stripePromise]);
+  }, [locale, stripePromise, productId, expectedCredits]);
 
   if (!stripePromise || !clientSecret) return null;
   return (
@@ -185,15 +210,23 @@ export function ApplePayCheckout({ locale, ariaLabel, unavailableMessage, onComp
       stripe={stripePromise}
       options={{
         clientSecret,
-        elementsOptions: { loader: "auto" },
+        adaptivePricing: { allowed: Boolean(productId) },
+        elementsOptions: {
+          loader: "auto",
+          appearance: { variables: { fontFamily: locale === "ar" ? "Alexandria, sans-serif" : "IBM Plex Sans, sans-serif", colorPrimary: "#195c47", colorText: "#222222", borderRadius: "8px" } },
+          fonts: [{ cssSrc: locale === "ar" ? "https://fonts.googleapis.com/css2?family=Alexandria:wght@400;600&display=swap" : "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600&display=swap" }],
+        },
       }}
     >
       <ApplePayButton
+        locale={locale}
+        productId={productId}
         ariaLabel={ariaLabel}
         unavailableMessage={unavailableMessage}
         onComplete={onComplete}
         onError={onError}
         onBusyChange={onBusyChange}
+        onBeforeConfirm={onBeforeConfirm}
       />
     </CheckoutElementsProvider>
   );

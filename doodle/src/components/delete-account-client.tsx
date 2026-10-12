@@ -2,6 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { AccountSummary } from "@/app/api/account/route";
+import { discardCheckoutDraft } from "@/lib/checkout-draft-store";
+import { discardPhotoDraft } from "@/lib/photo-draft-store";
+import { clearPurchaseWording } from "@/lib/purchase-wording";
 import { GoogleSignInButton } from "./google-sign-in-button";
 
 async function readAccount(): Promise<AccountSummary> {
@@ -79,6 +82,10 @@ export function DeleteAccountClient() {
         body: JSON.stringify({ confirm: true }),
       });
       if (!response.ok) throw new Error("delete_failed");
+      discardCheckoutDraft();
+      discardPhotoDraft();
+      clearPurchaseWording();
+      try { sessionStorage.removeItem("doodle:pack-selection"); sessionStorage.removeItem("doodle:return"); } catch {}
       setDeleted(true);
       setAccount(null);
       setConfirming(false);

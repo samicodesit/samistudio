@@ -1,3 +1,4 @@
+import { fulfillStripePack, refundStripePack } from "./billing/web-pack-ledger";
 // @vitest-environment node
 import { execFile, spawn, spawnSync, type ChildProcess } from "node:child_process";
 import { mkdtempSync, rmSync } from "node:fs";
@@ -6,8 +7,9 @@ import { createServer } from "node:net";
 import { promisify } from "node:util";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { processPlayPurchase, type ProductPurchaseV2 } from "./billing/play-purchase";
-import { deletePaidAccount, fulfillCreditPack } from "./billing/credits";
+import { deletePaidAccount, fulfillCreditPack, finalizePaidCredit, reservePaidCredit } from "./billing/credits";
 import { recordOperation, recordUsage, trackUsage } from "./usage-metrics";
+import { recordFunnel, mergeFunnelIdentity, readFunnel, deleteFunnelIdentity } from "./funnel-metrics";
 import { createHash } from "node:crypto";
 async function grantComplimentaryCredits(accountId: string, input: { grantId: string; credits: number; reason: string }) {
   return (await import("./billing/complimentary-credits")).grantComplimentaryCredits(accountId, input);
@@ -80,6 +82,105 @@ async function flushCallbacks() {
       purchaseToken: "local-test-purchase-token", productId: "doodle_credits_10",
       publisher: { getProductPurchase: async () => value, consumeProductPurchase: async () => {} } });
   }
+  it("counts unique funnel identities across days and merges the signed-in guest", async () => {
+    await recordFunnel({metric:"first_doodle",actor:"trial:guest"});
+    await recordFunnel({metric:"paywall_hit",actor:"trial:guest",trigger:"get_more"});
+    await recordFunnel({metric:"paywall_hit",actor:"account:"+account,trigger:"tapped_create"});
+    await mergeFunnelIdentity("trial:guest","account:"+account);
+    await recordFunnel({metric:"first_doodle",actor:"account:"+account});
+    await recordFunnel({metric:"paywall_hit",actor:"trial:guest",trigger:"get_more"},new Date("2026-10-03T12:00:00Z"));
+    expect(await readFunnel(["2026-10-02","2026-10-03"])).toMatchObject({regular:{first_doodle:1,paywall_hit:1}});
+  });
+  it("deletes account funnel identities and guest aliases in the account deletion transaction", async () => {
+    const prefix = "doodle:metrics:funnel:";
+    const accountActor = "account:" + account;
+    const trialActor = "trial:retained-guest";
+    const hash = (value: string) => createHash("sha256").update(value).digest("hex");
+    await recordFunnel({ metric: "first_doodle", actor: trialActor });
+    await mergeFunnelIdentity(trialActor, accountActor);
+    await recordFunnel({ metric: "paywall_hit", actor: accountActor, trigger: "get_more" });
+    expect((await readFunnel(["2026-10-02"])).regular.first_doodle).toBe(1);
+    await deletePaidAccount(account, "a".repeat(64));
+    expect((await readFunnel(["2026-10-02"])).regular).toMatchObject({ first_doodle: 0, paywall_hit: 0 });
+    for (const key of ["identity:" + hash(accountActor), "history:" + hash(accountActor), "aliases:" + hash(accountActor), "alias:" + hash(trialActor)]) {
+      expect(await redis(["EXISTS", prefix + key])).toBe(0);
+    }
+    expect(await redis(["EXISTS", `doodle:account:${account}:active`])).toBe(0);
+    expect(await redis(["GET", `doodle:account:${account}:deleted`])).toBe("deleted");
+    // Callbacks admitted before deletion may execute after the deletion transaction.
+    await recordFunnel({ metric: "first_doodle", actor: accountActor });
+    await recordFunnel({ metric: "paywall_hit", actor: trialActor, trigger: "get_more" });
+    await mergeFunnelIdentity("trial:late-sign-in", accountActor);
+    await recordFunnel({ metric: "first_doodle", actor: "trial:late-sign-in" });
+    expect(await redis(["EXISTS", prefix + "identity:" + hash(accountActor)])).toBe(0);
+    expect(await redis(["EXISTS", prefix + "alias:" + hash("trial:late-sign-in")])).toBe(0);
+    expect((await readFunnel(["2026-10-02"])).regular.paywall_hit).toBe(0);
+  });
+  it.each([["pack_mini",6],["pack_regular",20],["pack_big",60]] as const)("fulfills and reconciles %s with incremental, duplicate and out-of-order refunds",async(productId,credits)=>{
+    const ref="b".repeat(64), priceId="price_pack";
+    await redis(["HSET","doodle:stripe:intent:"+ref,"account",account,"productId",productId,"credits",credits,"offerApplied",0,"priceId",priceId]);
+    const grant={productId,credits,offerApplied:false,priceId,reference:ref};
+    await Promise.all(Array.from({length:8},()=>fulfillStripePack(account,"cs_pack","pi_pack",grant)));
+    expect(await refundStripePack("cs_pack",Math.floor(credits/2))).toEqual({recovered:Math.floor(credits/2),unrecovered:0});
+    expect(await refundStripePack("cs_pack",credits)).toEqual({recovered:credits,unrecovered:0});
+    expect(await refundStripePack("cs_pack",1)).toEqual({recovered:credits,unrecovered:0});
+    await redis(["DEL","doodle:stripe:intent:"+ref]);
+    expect(await fulfillStripePack(account,"cs_pack","pi_pack",grant)).toMatchObject({balance:0,creditsGranted:credits});
+    expect(await redis(["GET",`doodle:account:${account}:balance`])).toBe("0");
+  });
+  it("recovers an already refunded Stripe payment without exposing its credits",async()=>{
+    const ref="e".repeat(64),grant={productId:"pack_regular" as const,credits:25,offerApplied:true,priceId:"price_regular",reference:ref};
+    await redis(["HSET","doodle:stripe:intent:"+ref,"account",account,"productId",grant.productId,"credits",25,"offerApplied",1,"priceId",grant.priceId]);
+    expect(await fulfillStripePack(account,"cs_refunded","pi_refunded",grant,undefined,25)).toMatchObject({balance:0,creditsGranted:25});
+    expect(await refundStripePack("cs_refunded",25)).toEqual({recovered:25,unrecovered:0});
+    expect(await redis(["GET",`doodle:account:${account}:balance`])).toBe("0");
+  });
+  it("does not revive an account deleted before Stripe pack fulfillment",async()=>{
+    const ref="c".repeat(64), grant={productId:"pack_mini" as const,credits:6,offerApplied:false,priceId:"price_mini",reference:ref};
+    await redis(["HSET","doodle:stripe:intent:"+ref,"account",account,"productId",grant.productId,"credits",6,"offerApplied",0,"priceId",grant.priceId]);
+    await deletePaidAccount(account,"d".repeat(64));
+    await expect(fulfillStripePack(account,"cs_deleted","pi_deleted",grant)).rejects.toThrow();
+    expect(await redis(["EXISTS",`doodle:account:${account}:balance`])).toBe(0);
+  });
+  it("grants variable Stripe packs once and reverses the recorded quantity without consuming active holds", async () => {
+    const ref = "a".repeat(64), key = "doodle:stripe:intent:"+ref;
+    await redis(["HSET",key,"account",account,"productId","pack_regular","credits",25,"offerApplied",1,"priceId","price_regular"]);
+    const grant = { productId: "pack_regular" as const, credits: 25, offerApplied: true, reference: ref, priceId: "price_regular" };
+    const results = await Promise.all(Array.from({length:12},()=>fulfillStripePack(account,"cs_bonus","pi_bonus",grant)));
+    expect(results.every(x=>x.creditsGranted===25)).toBe(true);
+    expect(await redis(["GET",`doodle:account:${account}:balance`])).toBe("25");
+    await expect(fulfillStripePack(account,"cs_second","pi_second",grant)).rejects.toThrow();
+    await reservePaidCredit(account,"33333333-3333-4333-8333-333333333333");
+    expect(await refundStripePack("cs_bonus",25)).toMatchObject({recovered:24,unrecovered:1});
+    expect(await refundStripePack("cs_bonus",25)).toMatchObject({recovered:24,unrecovered:1});
+    expect(await redis(["GET",`doodle:account:${account}:balance`])).toBe("1");
+    const replay=await fulfillStripePack(account,"cs_bonus","pi_bonus",grant);
+    expect(replay).toMatchObject({creditsGranted:25,balance:1,offerApplied:true});
+  });
+  it("marks uninstrumented report dates unavailable instead of inferring zero", async () => {
+    const empty = await readFunnel(["2026-10-01"]);
+    expect(empty).toMatchObject({ coverage: { status: "unobserved", unobservedDates: ["2026-10-01"] }, regular: { first_doodle: null }, creditsGranted: null });
+    await recordFunnel({ metric: "first_doodle", actor: "trial:observed" });
+    const partial = await readFunnel(["2026-10-01", "2026-10-02"]);
+    expect(partial).toMatchObject({ coverage: { status: "partial", observedFrom: "2026-10-02", unobservedDates: ["2026-10-01"] }, regular: { first_doodle: 1 } });
+    expect(await readFunnel(["2026-10-02"])).toMatchObject({ coverage: { status: "observed", unobservedDates: [] } });
+  });
+  it("excludes QA and test payments, reports gifted activity separately, and deletes membership", async () => {
+    await recordFunnel({metric:"first_doodle",actor:"account:"+account,email:"samicodesit@gmail.com"});
+    await recordFunnel({metric:"purchase",actor:"account:tester",id:"test-token",pack:"pack_regular",creditsGranted:25,offerApplied:true,isTest:true});
+    expect(await readFunnel(["2026-10-02"])).toMatchObject({regular:{first_doodle:null}});
+    const gifted="account:gifted";
+    await redis(["SADD","doodle:metrics:gifted",createHash("sha256").update(gifted).digest("hex")]);
+    await recordFunnel({metric:"free_exhausted",actor:gifted});
+    expect(await readFunnel(["2026-10-02"])).toMatchObject({gifted:{free_exhausted:1}});
+    await deleteFunnelIdentity(gifted);
+    expect(await readFunnel(["2026-10-02"])).toMatchObject({gifted:{free_exhausted:0}});
+  });
+  it("records a verified purchase once with its actual grant", async () => {
+    const event={metric:"purchase",actor:"account:"+account,id:"receipt-one",pack:"pack_regular",creditsGranted:25,offerApplied:true} as const;
+    await Promise.all([recordFunnel(event),recordFunnel(event)]);
+    expect(await readFunnel(["2026-10-02"])).toMatchObject({purchases:{"pack_regular:25:bonus":1},creditsGranted:25});
+  });
   it("counts a concurrent Play pack once without changing its credit grant", async () => {
     await Promise.all(Array.from({ length: 4 }, () => play()));
     expect(await redis(["GET", `doodle:account:${account}:balance`])).toBe("10");
@@ -263,4 +364,94 @@ async function flushCallbacks() {
     await recordUsage({ metric: "drawings", channel: "web", id: "qa-priority", actor });
     expect(await redis(["HGET", "doodle:metrics:day:2026-10-02", "gifted_drawings:web"])).toBe(null);
   });
+  it("does not label retained earlier paid drawings as a first doodle", async () => {
+    await redis(["HSET", "doodle:account:" + account + ":finalized", "earlier-drawing", 9, "current-drawing", 8]);
+    await recordFunnel({ metric: "first_doodle", actor: "account:" + account }, new Date("2026-10-10T12:00:00Z"));
+    const report = await readFunnel(["2026-10-10"]);
+    expect(report.regular.first_doodle).toBeNull();
+  });
+
+  it("counts the first paid drawing for an identity with no earlier finalizations", async () => {
+    await redis(["HSET", "doodle:account:" + account + ":finalized", "current-drawing", 9]);
+    await recordFunnel({ metric: "first_doodle", actor: "account:" + account }, new Date("2026-10-10T12:00:00Z"));
+    const report = await readFunnel(["2026-10-10"]);
+    expect(report.regular.first_doodle).toBe(1);
+  });
+
+  it("retains the first paid drawing decision across concurrent draws and replay", async () => {
+    await redis(["SET", "doodle:account:" + account + ":balance", 10]);
+    const refs = ["11111111-1111-4111-8111-111111111112", "11111111-1111-4111-8111-111111111113"];
+    await Promise.all(refs.map(ref => reservePaidCredit(account, ref)));
+    const finalized = await Promise.all(refs.map(ref => finalizePaidCredit(account, ref)));
+    const firstIndex = finalized.findIndex(value => "firstDoodle" in value && value.firstDoodle === true);
+    expect(firstIndex).toBeGreaterThanOrEqual(0);
+    expect(finalized.filter(value => "firstDoodle" in value && value.firstDoodle === true)).toHaveLength(1);
+    const replay = await finalizePaidCredit(account, refs[firstIndex]);
+    expect(replay).toEqual(finalized[firstIndex]);
+    await recordFunnel({ metric: "first_doodle", actor: "account:" + account, knownFirstPaid: true }, new Date("2026-10-10T12:00:00Z"));
+    expect((await readFunnel(["2026-10-10"])).regular.first_doodle).toBe(1);
+  });
+
+  it("keeps historical paid finalizations ineligible for a first-doodle event", async () => {
+    await redis(["SET", "doodle:account:" + account + ":balance", 10]);
+    await redis(["HSET", "doodle:account:" + account + ":finalized", "historical-drawing", 10]);
+    const ref = "11111111-1111-4111-8111-111111111114";
+    await reservePaidCredit(account, ref);
+    const finalized = await finalizePaidCredit(account, ref);
+    expect("firstDoodle" in finalized && finalized.firstDoodle === true).toBe(false);
+  });
+
+  it("does not manufacture a first doodle when a partially used legacy trial signs in", async () => {
+    const trial = "11111111-1111-4111-8111-111111111115";
+    await redis(["SET", "doodle:trial:used:" + trial, 2]);
+    await mergeFunnelIdentity("trial:" + trial, "account:" + account);
+    await recordFunnel({ metric: "first_doodle", actor: "account:" + account, knownFirstPaid: true }, new Date("2026-10-10T12:00:00Z"));
+    expect((await readFunnel(["2026-10-10"])).regular.first_doodle).toBeNull();
+  });
+
+  it("keeps an observed first free drawing when sign-in precedes its delayed metric callback", async () => {
+    const trial = "11111111-1111-4111-8111-111111111116";
+    await redis(["SET", "doodle:trial:used:" + trial, 1]);
+    await mergeFunnelIdentity("trial:" + trial, "account:" + account);
+    await recordFunnel({ metric: "first_doodle", actor: "trial:" + trial, knownFirstFree: true }, new Date("2026-10-10T12:00:00Z"));
+    await recordFunnel({ metric: "first_doodle", actor: "account:" + account, knownFirstPaid: true }, new Date("2026-10-10T12:00:00Z"));
+    expect((await readFunnel(["2026-10-10"])).regular.first_doodle).toBe(1);
+  });
+
+  it("does not turn an existing paid account into a first doodle through a fresh trial alias", async () => {
+    const trial = "11111111-1111-4111-8111-111111111117";
+    await redis(["HSET", "doodle:account:" + account + ":finalized", "historical-reservation", 9]);
+    await recordFunnel({ metric: "first_doodle", actor: "trial:" + trial, knownFirstFree: true }, new Date("2026-10-10T12:00:00Z"));
+    await mergeFunnelIdentity("trial:" + trial, "account:" + account);
+    expect((await readFunnel(["2026-10-10"])).regular.first_doodle).toBe(0);
+  });
+
+  it("bounds concurrent catalog reads per client and expires protected counters", async () => {
+    vi.stubEnv("SESSION_SECRET", "isolated-catalog-secret-at-least-32-characters");
+    const { checkWebCatalogLimit } = await import("./billing/web-packs");
+    const request = new Request("https://doodle.example/api/checkout/catalog", {headers: {"x-vercel-forwarded-for": "192.0.2.40"}});
+    const outcomes = await Promise.all(Array.from({length: 31}, () => checkWebCatalogLimit(request)));
+    expect(outcomes.filter(status => status === "allowed")).toHaveLength(30);
+    expect(outcomes.filter(status => status === "rate_limited")).toHaveLength(1);
+    const keys = await redis(["KEYS", "doodle:stripe:catalog:*"]);
+    expect(keys).toHaveLength(2);
+    for (const key of keys) {
+      expect(key).not.toContain("192.0.2.40");
+      expect(await redis(["TTL", key])).toBeGreaterThan(0);
+      expect(await redis(["TTL", key])).toBeLessThanOrEqual(120);
+    }
+    vi.setSystemTime(new Date(Date.now() + 60_000));
+    expect(await checkWebCatalogLimit(request)).toBe("allowed");
+  });
+  it("shares the catalog cap across different clients", async () => {
+    vi.stubEnv("SESSION_SECRET", "isolated-catalog-secret-at-least-32-characters");
+    const { checkWebCatalogLimit } = await import("./billing/web-packs");
+    const request = (ip: string) => new Request("https://doodle.example/api/checkout/catalog", {headers: {"x-vercel-forwarded-for": ip}});
+    expect(await checkWebCatalogLimit(request("192.0.2.41"))).toBe("allowed");
+    const [key] = await redis(["KEYS", "doodle:stripe:catalog:global:*"]);
+    await redis(["SET", key, 599, "KEEPTTL"]);
+    const outcomes = await Promise.all([checkWebCatalogLimit(request("192.0.2.42")), checkWebCatalogLimit(request("192.0.2.43"))]);
+    expect(outcomes.sort()).toEqual(["allowed", "rate_limited"]);
+  });
+
 });

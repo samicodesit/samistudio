@@ -4,19 +4,34 @@ import { createHash } from "node:crypto";
 import { redisCommand, redisInteger } from "@/lib/redis";
 
 const CREDIT_QUANTITY = 10;
+import { playIntentKey, playTokenHash, type PlayGrant } from "./play-intents";
+import { isPlayProductId, LEGACY_PLAY_PRODUCT } from "./play-catalog";
 const VOID_REVIEW_INDEX_KEY = "doodle:play:voids:review";
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const CLAIM_SCRIPT = `
 if redis.call('HGET', KEYS[4], 'state') == 'voided' then return {-3, 0} end
 if redis.call('EXISTS', KEYS[1]) == 0 or redis.call('EXISTS', KEYS[2]) == 1 then return {-2, 0} end
+local balance = tonumber(redis.call('GET', KEYS[3]) or '0')
+if not balance or balance < 0 or balance ~= math.floor(balance) or balance > 9007199254740931 then return redis.error_reply('Invalid balance') end
+local purchasedKey = KEYS[#KEYS]
 local owner = redis.call('HGET', KEYS[4], 'account')
 if owner then
   if owner ~= ARGV[1] then return {-1, 0} end
-  return {0, tonumber(redis.call('GET', KEYS[3]) or '0')}
+  redis.call('SET', purchasedKey, '1')
+  return {0, balance}
 end
-redis.call('HSET', KEYS[4], 'account', ARGV[1], 'state', 'granted', 'createdAt', ARGV[3])
-return {1, redis.call('INCRBY', KEYS[3], ARGV[2])}
+
+if #KEYS == 6 then
+ if redis.call('HGET', KEYS[5], 'account') ~= ARGV[1] or redis.call('HGET', KEYS[5], 'productId') ~= ARGV[4] or redis.call('HGET', KEYS[5], 'credits') ~= ARGV[2] or redis.call('HGET', KEYS[5], 'offerApplied') ~= ARGV[5] then return {-4,0} end
+ local prior=redis.call('HGET', KEYS[5], 'purchaseHash')
+ if prior and prior ~= ARGV[6] then return {-4,0} end
+ redis.call('HSET', KEYS[5], 'purchaseHash', ARGV[6])
+end
+redis.call('HSET', KEYS[4], 'account', ARGV[1], 'state', 'granted', 'createdAt', ARGV[3], 'productId', ARGV[4], 'credits', ARGV[2], 'offerApplied', ARGV[5])
+local remaining = redis.call('INCRBY', KEYS[3], ARGV[2])
+redis.call('SET', purchasedKey, '1')
+return {1, remaining}
 `;
 
 const READ_SCRIPT = `
@@ -37,6 +52,7 @@ return 1
 `;
 
 const PREVIEW_VOID_SCRIPT = `
+local quantity=tonumber(redis.call('HGET', KEYS[1], 'credits') or ARGV[3])
 local state = redis.call('HGET', KEYS[1], 'state')
 if state == 'voided' then
   return {0, tonumber(redis.call('HGET', KEYS[1], 'recovered') or '0'), tonumber(redis.call('HGET', KEYS[1], 'unrecovered') or '0'), redis.call('HGET', KEYS[1], 'priorState') or ''}
@@ -45,15 +61,16 @@ local owner = redis.call('HGET', KEYS[1], 'account') or ''
 if owner ~= ARGV[1] then return {-5, 0, 0, ''} end
 if owner == '' then return {1, 0, 0, state or ''} end
 if redis.call('EXISTS', KEYS[3]) == 1 then return {3, 0, 0, state or ''} end
-if redis.call('EXISTS', KEYS[2]) == 0 then return {4, 0, ARGV[3], state or ''} end
+if redis.call('EXISTS', KEYS[2]) == 0 then return {4, 0, quantity, state or ''} end
 local balance = tonumber(redis.call('GET', KEYS[4]) or '0')
 local activeHolds = redis.call('ZCOUNT', KEYS[5], '(' .. ARGV[2], '+inf')
 local available = math.max(0, balance - activeHolds)
-local recovered = math.min(tonumber(ARGV[3]), available)
-return {2, recovered, tonumber(ARGV[3]) - recovered, state or ''}
+local recovered = math.min(quantity, available)
+return {2, recovered, quantity - recovered, state or ''}
 `;
 
 const APPLY_VOID_SCRIPT = `
+local quantity=tonumber(redis.call('HGET', KEYS[1], 'credits') or ARGV[3])
 local state = redis.call('HGET', KEYS[1], 'state')
 if state == 'voided' then
   return {0, tonumber(redis.call('HGET', KEYS[1], 'recovered') or '0'), tonumber(redis.call('HGET', KEYS[1], 'unrecovered') or '0'), redis.call('HGET', KEYS[1], 'priorState') or ''}
@@ -70,7 +87,7 @@ if redis.call('EXISTS', KEYS[3]) == 1 then
   return {3, 0, 0, priorState}
 end
 local recovered = 0
-local unrecovered = tonumber(ARGV[3])
+local unrecovered = quantity
 local status = 4
 if redis.call('EXISTS', KEYS[2]) == 1 then
   redis.call('ZREMRANGEBYSCORE', KEYS[5], '-inf', ARGV[2])
@@ -111,20 +128,27 @@ function pair(value: unknown): [number, number] {
   return [status, balance];
 }
 
-export async function claimPlayCredits(accountId: string, purchaseToken: string) {
+export async function claimPlayCredits(accountId: string, purchaseToken: string, grant?: PlayGrant) {
+  if (grant && (!isPlayProductId(grant.productId) || ![6,20,25,60].includes(grant.credits) || !grant.intentRef)) throw new Error("Invalid Play grant");
   const [status, balance] = pair(await redisCommand([
-    "EVAL", CLAIM_SCRIPT, "4",
+    "EVAL", CLAIM_SCRIPT, grant ? "6" : "5",
     accountKey(accountId, "active"),
     accountKey(accountId, "deleted"),
     accountKey(accountId, "balance"),
     tokenKey(purchaseToken),
+    ...(grant ? [playIntentKey(grant.intentRef!)] : []),
+    accountKey(accountId, "purchased"),
     accountId,
-    CREDIT_QUANTITY,
+    grant?.credits ?? CREDIT_QUANTITY,
     new Date().toISOString(),
+    grant?.productId ?? LEGACY_PLAY_PRODUCT,
+    grant?.offerApplied ? "1" : "0",
+    playTokenHash(purchaseToken),
   ]));
   if (status === -1) throw new Error("Purchase belongs to another account");
   if (status === -2) throw new Error("Account is not active");
   if (status === -3) throw new Error("Purchase was voided");
+  if (status === -4) throw new Error("Invalid or reused checkout intent");
   if (status !== 0 && status !== 1) throw new Error("Play ledger unavailable");
   return { granted: status === 1, balance };
 }
@@ -196,7 +220,7 @@ function voidResult(value: unknown): PlayVoidResult | "retry" {
   const unrecovered = redisInteger(value[2]);
   const priorState = value[3];
   const labels = ["already_voided", "tombstoned", "reversed", "deleted_account", "inactive_account"] as const;
-  if (status < 0 || status >= labels.length || recovered < 0 || recovered > CREDIT_QUANTITY || unrecovered < 0 || unrecovered > CREDIT_QUANTITY || typeof priorState !== "string") {
+  if (status < 0 || status >= labels.length || recovered < 0 || recovered > 60 || unrecovered < 0 || unrecovered > 60 || typeof priorState !== "string") {
     throw new Error("Play ledger unavailable");
   }
   return { status: labels[status], recovered, unrecovered, priorState };
@@ -262,9 +286,20 @@ export async function listPlayVoidReviews(limit = 100): Promise<PlayVoidReview[]
     const unrecovered = redisInteger(fields[3]);
     const voidedReason = redisInteger(fields[4]);
     const voidedSource = redisInteger(fields[5]);
-    if (recovered < 0 || recovered > CREDIT_QUANTITY || unrecovered < 1 || unrecovered > CREDIT_QUANTITY || voidedReason < 0 || voidedReason > 8 || voidedSource < 0 || voidedSource > 2) {
+    if (recovered < 0 || recovered > 60 || unrecovered < 1 || unrecovered > 60 || voidedReason < 0 || voidedReason > 8 || voidedSource < 0 || voidedSource > 2) {
       throw new Error("Play ledger unavailable");
     }
     return { purchaseHash, voidedAt, priorState, recovered, unrecovered, voidedReason, voidedSource };
   }));
+}
+
+export async function getPlayGrant(accountId: string, purchaseToken: string): Promise<Omit<PlayGrant,"intentRef">> {
+ const fields=await redisCommand(["HMGET",tokenKey(purchaseToken),"account","productId","credits","offerApplied"]);
+ if (!Array.isArray(fields) || fields.length!==4 || fields[0]!==accountId) throw new Error("Invalid Play grant");
+ const productId=fields[1] ?? LEGACY_PLAY_PRODUCT;
+ const credits=fields[2]===null ? 10 : Number(fields[2]);
+ const offerApplied=fields[3]==="1";
+ const allowed=productId===LEGACY_PLAY_PRODUCT?[10]:productId==="pack_mini"?[6]:productId==="pack_regular"?[20,25]:productId==="pack_big"?[60]:[];
+ if (!allowed.includes(credits) || offerApplied !== (productId==="pack_regular" && credits===25)) throw new Error("Invalid Play grant");
+ return {productId,credits,offerApplied};
 }

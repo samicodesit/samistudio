@@ -12,7 +12,7 @@ function readPreference(): DetailLevel {
 }
 const subscribeHydration = () => () => undefined;
 
-export function useDetailLevel() {
+export function useDetailLevel(initialDetailLevel?: DetailLevel) {
   const restored = useSyncExternalStore(subscribe, readPreference, () => "simple" as DetailLevel);
   const detailReady = useSyncExternalStore(subscribeHydration, () => true, () => false);
   const [selected, setSelected] = useState<DetailLevel | undefined>();
@@ -21,5 +21,5 @@ export function useDetailLevel() {
     setSelected(level);
     try { window.localStorage.setItem(DETAIL_STORAGE_KEY, level); } catch {}
   }, [detailReady]);
-  return { detailLevel: selected ?? restored, detailReady, selectDetailLevel };
+  return { detailLevel: selected ?? initialDetailLevel ?? restored, detailReady, selectDetailLevel };
 }

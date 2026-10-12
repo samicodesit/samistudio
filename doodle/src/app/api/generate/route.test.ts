@@ -30,6 +30,7 @@ const mocks = vi.hoisted(() => ({
   setTrialCookie: vi.fn(),
   trackUsage: vi.fn(),
   trackOperation: vi.fn(),
+  trackFunnel: vi.fn(),
 }));
 
 vi.mock("@/lib/generation/generate-doodle", async () => {
@@ -55,6 +56,7 @@ vi.mock("@/lib/generation/generation-limit", () => ({ checkGenerationLimit: mock
 vi.mock("botid/server", () => ({ checkBotId: mocks.checkBotId }));
 vi.mock("@/lib/native-session", () => ({ getNativeBearer: mocks.getNativeBearer }));
 vi.mock("@/lib/usage-metrics", () => ({ trackUsage: mocks.trackUsage, trackOperation: mocks.trackOperation }));
+vi.mock("@/lib/funnel-metrics", () => ({ trackFunnel: mocks.trackFunnel }));
 vi.mock("@/lib/native-attestation", () => ({
   consumeNativeAttestation: mocks.consumeNativeAttestation,
   nativePrincipal: mocks.nativePrincipal,
@@ -140,12 +142,39 @@ describe("generate route", () => {
     expect(kind === "paid" ? mocks.finalizePaidCredit : mocks.finalizeFreeDoodle).toHaveBeenCalledOnce();
   });
 
-  it("releases a held credit when photo conversion fails", async () => {
+  it.each(["free", "paid"])("releases the %s held credit when photo conversion fails", async kind => {
+    if (kind === "paid") {
+      mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.test" });
+      mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 5 });
+    }
     const photo = (await sharp({ create: { width: 20, height: 20, channels: 3, background: "red" } }).jpeg().toBuffer()).toString("base64");
     mocks.generatePhotoDoodle.mockRejectedValue(new GenerationError("timeout", "timeout"));
     expect((await POST(photoRequest({ photo }))).status).toBe(504);
-    expect(mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
+    expect(kind === "paid" ? mocks.releasePaidCredit : mocks.releaseFreeDoodle).toHaveBeenCalledOnce();
     expect(mocks.finalizeFreeDoodle).not.toHaveBeenCalled();
+    expect(mocks.finalizePaidCredit).not.toHaveBeenCalled();
+    expect(mocks.trackFunnel).not.toHaveBeenCalled();
+  });
+
+  it("counts a successful fourth free photo against the existing native trial and exhaustion funnel", async () => {
+    const photo = (await sharp({ create: { width: 20, height: 20, channels: 3, background: "red" } }).jpeg().toBuffer()).toString("base64");
+    mocks.finalizeFreeDoodle.mockResolvedValue({ finalized: true, remaining: 0 });
+    const response = await POST(photoRequest({ photo }, true));
+    expect(response.status).toBe(200);
+    expect(response.headers.get("X-Doodle-Free-Remaining")).toBe("0");
+    expect(mocks.reserveFreeDoodle).toHaveBeenCalledWith(trialIdentity, expect.any(String));
+    expect(mocks.reservePaidCredit).not.toHaveBeenCalled();
+    expect(mocks.trackFunnel).toHaveBeenCalledOnce();
+    expect(mocks.trackFunnel).toHaveBeenCalledWith({ metric: "free_exhausted", actor: "trial:trial", email: undefined });
+  });
+
+  it("rejects a fifth free photo before calling the provider", async () => {
+    const photo = (await sharp({ create: { width: 20, height: 20, channels: 3, background: "red" } }).jpeg().toBuffer()).toString("base64");
+    mocks.reserveFreeDoodle.mockResolvedValue({ reserved: false, remaining: 0 });
+    expect((await POST(photoRequest({ photo }, true))).status).toBe(402);
+    expect(mocks.generatePhotoDoodle).not.toHaveBeenCalled();
+    expect(mocks.finalizeFreeDoodle).not.toHaveBeenCalled();
+    expect(mocks.trackFunnel).not.toHaveBeenCalled();
   });
 
   it("binds native photo bytes and detail to integrity without forwarding photo content to metrics", async () => {

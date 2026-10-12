@@ -31,15 +31,15 @@ describe("presentation fixture service boundary", () => {
     await expect(fixture.api.getAccount()).resolves.toMatchObject({
       authenticated: true,
       balance: 0,
-      freeRemaining: 2,
+      freeRemaining: 4,
     });
     await expect(fixture.api.generate("A small test scene")).resolves.toMatchObject({
-      freeRemaining: 1,
+      freeRemaining: 3,
     });
     await expect(fixture.api.getAccount()).resolves.toMatchObject({
       authenticated: true,
       balance: 0,
-      freeRemaining: 1,
+      freeRemaining: 3,
     });
 
     await fixture.billing.buy();

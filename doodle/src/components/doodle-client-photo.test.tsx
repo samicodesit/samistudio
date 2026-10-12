@@ -9,11 +9,19 @@ vi.mock("@vercel/analytics", () => ({ track: vi.fn() }));
 vi.mock("@/lib/photo-draft-store", async importOriginal => ({ ...await importOriginal<typeof import("@/lib/photo-draft-store")>(), photoDraftStore: vi.fn().mockResolvedValue(undefined) }));
 
 beforeEach(() => {
+  // Node's optional Web Storage global can shadow JSDOM's browser storage.
+  const preferences = new Map<string, string>();
+  vi.stubGlobal("localStorage", {
+    getItem: (key: string) => preferences.get(key) ?? null,
+    setItem: (key: string, value: string) => preferences.set(key, value),
+    removeItem: (key: string) => preferences.delete(key),
+    clear: () => preferences.clear(),
+  });
   vi.stubGlobal("fetch", vi.fn(async (input) => input === "/api/account" ? Response.json({ authenticated: false, email: null, balance: 0, freeRemaining: 2 }) : new Response(null, { status: 502 })));
   vi.stubGlobal("createImageBitmap", vi.fn(async () => ({ width: 600, height: 400, close: vi.fn() })));
   vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue({ fillRect: vi.fn(), drawImage: vi.fn() } as never);
   vi.spyOn(HTMLCanvasElement.prototype, "toDataURL").mockReturnValue("data:image/jpeg;base64,AQID");
-  sessionStorage.clear(); localStorage.clear();
+  window.sessionStorage.clear(); window.localStorage.clear();
   vi.mocked(photoDraftStore).mockResolvedValue(undefined);
   URL.createObjectURL = vi.fn(() => "blob:doodle-result");
   URL.revokeObjectURL = vi.fn();

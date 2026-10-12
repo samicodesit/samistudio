@@ -1,4 +1,7 @@
 "use client";
+import { clearPurchaseWording } from "@/lib/purchase-wording";
+import { discardPhotoDraft } from "@/lib/photo-draft-store";
+import { discardCheckoutDraft } from "@/lib/checkout-draft-store";
 
 import { useEffect, useRef, useState } from "react";
 import type { AccountSummary } from "@/app/api/account/route";
@@ -54,7 +57,7 @@ export function AccountMenu({ account, locale, copy, onAccountChange, purchaseLa
   if (!account.authenticated) return null;
 
   async function refreshAccount() {
-    const response = await fetch("/api/account", { cache: "no-store" });
+    const response = await fetch("/api/account", { cache: "no-store", headers: { "x-doodle-packs": "v1" } });
     if (!response.ok) return;
     onAccountChange((await response.json()) as AccountSummary);
     detailsRef.current?.removeAttribute("open");
@@ -76,6 +79,10 @@ export function AccountMenu({ account, locale, copy, onAccountChange, purchaseLa
       body: JSON.stringify({ confirm: true }),
     });
     if (response.ok) {
+      discardCheckoutDraft();
+      discardPhotoDraft();
+      clearPurchaseWording();
+      try { sessionStorage.removeItem("doodle:pack-selection"); sessionStorage.removeItem("doodle:return"); } catch {}
       await refreshAccount();
       setConfirmingDelete(false);
     }
@@ -91,7 +98,7 @@ export function AccountMenu({ account, locale, copy, onAccountChange, purchaseLa
         </summary>
         <div className="account-popover">
           <p className="account-email" dir="ltr">{account.email}</p>
-          <p className="account-balance">{formatCount(locale, copy.balance, account.balance)}</p>
+          <p className="account-balance">{formatCount(locale, copy.balance, account.balance + (account.freeRemaining ?? 0))}</p>
           {onPurchase ? <button type="button" disabled={busy !== null} onClick={() => {
             detailsRef.current?.removeAttribute("open");
             onPurchase(detailsRef.current?.querySelector("summary") ?? null);

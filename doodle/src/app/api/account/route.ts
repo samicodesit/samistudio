@@ -1,8 +1,10 @@
+import { mergeFunnelIdentity } from "@/lib/funnel-metrics";
 import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { clearSessionCookie, getCurrentUser } from "@/lib/auth/session";
-import { deletePaidAccount, getPaidBalance } from "@/lib/billing/credits";
+import { deletePaidAccount, getPaidBalance, getPurchaseHistory } from "@/lib/billing/credits";
 import {
+  isValidTrialToken,
   getFreeRemaining,
   getTrialIdentity,
   setTrialCookie,
@@ -17,6 +19,7 @@ export type AccountSummary = {
   email: string | null;
   balance: number;
   freeRemaining: number | null;
+  hasPurchased?: boolean | null;
 };
 
 function errorResponse(error: string, status: number) {
@@ -32,12 +35,17 @@ async function handleGET(request: NextRequest, diagnostics: RequestDiagnostics) 
   diagnostics.stage = "session_read";
   const user = await getCurrentUser(request);
   diagnostics.stage = "account_read";
+  const trialToken=request.cookies.get("doodle_trial")?.value;
+  // The cookie returns on this same-site GET after Google's cross-site POST.
+  if(user && request.headers.get("x-doodle-packs")==="v1" && trialToken && isValidTrialToken(trialToken))await mergeFunnelIdentity("trial:"+identity.id,"account:"+user.id,user.email);
   const summary: AccountSummary = user
     ? {
         authenticated: true,
         email: user.email,
         balance: await getPaidBalance(user.id),
-        freeRemaining: null,
+        freeRemaining: request.headers.get("x-doodle-client") === "native-android" && request.headers.has("authorization")
+          ? null
+          : await getFreeRemaining(identity),
       }
     : {
         authenticated: false,
@@ -45,6 +53,9 @@ async function handleGET(request: NextRequest, diagnostics: RequestDiagnostics) 
         balance: 0,
         freeRemaining: await getFreeRemaining(identity),
       };
+  if (request.headers.get("x-doodle-client") === "native-android" || request.headers.get("x-doodle-packs") === "v1") {
+    summary.hasPurchased = user ? await getPurchaseHistory(user.id) : false;
+  }
   const response = NextResponse.json(summary, {
     headers: { "Cache-Control": "no-store" },
   });

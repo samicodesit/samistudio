@@ -5,8 +5,10 @@ import { tmpdir } from "node:os";
 import { promisify } from "node:util";
 import { createServer } from "node:net";
 import { beforeAll, beforeEach, afterAll, describe, expect, it, vi } from "vitest";
-import { claimPlayCredits, voidPlayPurchase } from "./play-credits";
+import { createPlayIntent } from "./play-intents";
+import { claimPlayCredits, getPlayGrant, voidPlayPurchase } from "./play-credits";
 import { processPlayPurchase, type ProductPurchaseV2 } from "./play-purchase";
+import { getPurchaseHistory } from "./credits";
 
 vi.mock("server-only", () => ({}));
 const redisCommand = vi.hoisted(() => vi.fn());
@@ -72,6 +74,70 @@ async function activate(accountId: string) {
 }
 
 describeRedis("Play credit ledger against isolated Redis", () => {
+  it("does not consume an intent or write a receipt when the balance is corrupt", async () => {
+    await activate(accountA);
+    const reference = "c".repeat(64);
+    await redis(["HSET", "doodle:play:intent:" + reference, "account", accountA, "productId", "pack_regular", "credits", 25, "offerApplied", "1"]);
+    await redis(["SET", accountKey(accountA, "balance"), "invalid"]);
+    await expect(claimPlayCredits(accountA, token, { productId: "pack_regular", credits: 25, offerApplied: true, intentRef: reference })).rejects.toThrow();
+    expect(await redis(["EXISTS", tokenKey])).toBe(0);
+    expect(await redis(["HGET", "doodle:play:intent:" + reference, "purchaseHash"])).toBeNull();
+  });
+  it("remembers a buyer after all credits are spent, without labelling gifts as purchases", async () => {
+    await activate(accountA);
+    expect(await getPurchaseHistory(accountA)).toBe(false);
+    await redis(["SET", accountKey(accountA, "balance"), "0"]);
+    expect(await getPurchaseHistory(accountA)).toBe(true);
+    await redis(["SET", accountKey(accountA, "grants"), "gift"]);
+    expect(await getPurchaseHistory(accountA)).toBeNull();
+    await claimPlayCredits(accountA, token);
+    await redis(["SET", accountKey(accountA, "balance"), "0"]);
+    expect(await getPurchaseHistory(accountA)).toBe(true);
+  });
+  it("grants a 25-credit intent once and refuses a second purchase using the same intent", async () => {
+    await activate(accountA);
+    const reference="a".repeat(64);
+    await redis(["HSET","doodle:play:intent:"+reference,"account",accountA,"productId","pack_regular","credits",25,"offerApplied","1"]);
+    const grant={productId:"pack_regular",credits:25,offerApplied:true,intentRef:reference};
+    const results=await Promise.all(Array.from({length:8},()=>claimPlayCredits(accountA,token,grant)));
+    expect(results.filter(r=>r.granted)).toHaveLength(1);
+    expect(await getPlayGrant(accountA,token)).toEqual({productId:"pack_regular",credits:25,offerApplied:true});
+    await expect(claimPlayCredits(accountA,token+"-second",grant)).rejects.toThrow();
+    expect(await redis(["GET",accountKey(accountA,"balance")])).toBe("25");
+    const metadata={voidedAt:"2026-10-10T12:00:00.000Z",voidedReason:1,voidedSource:0,voidedQuantity:1} as const;
+    expect(await voidPlayPurchase(token,metadata)).toMatchObject({recovered:25,unrecovered:0});
+  });
+  it.each([6,20,60])("refunds the stored %i-credit grant", async credits => {
+    await activate(accountA);
+    const reference="b".repeat(64);
+    const productId=credits===6?"pack_mini":credits===60?"pack_big":"pack_regular";
+    await redis(["HSET","doodle:play:intent:"+reference,"account",accountA,"productId",productId,"credits",credits,"offerApplied","0"]);
+    await claimPlayCredits(accountA,token,{productId,credits,offerApplied:false,intentRef:reference});
+    expect(await voidPlayPurchase(token,{voidedAt:"2026-10-10T12:00:00.000Z",voidedReason:1,voidedSource:0,voidedQuantity:1})).toMatchObject({recovered:credits,unrecovered:0});
+  });
+  it("preserves a pre-expiry bonus when verified after the deadline",async()=>{
+    vi.stubEnv("PLAY_PACKS_CHECKOUT_ENABLED","true");
+    await activate(accountA);
+    const intent=await createPlayIntent(accountA,"pack_regular",25,new Date("2026-10-31T20:00:00Z"));
+    const verified={...purchase,obfuscatedExternalProfileId:intent.obfuscatedProfileId,productLineItem:[{productId:"pack_regular",productOfferDetails:purchase.productLineItem![0].productOfferDetails}]};
+    const publisher={getProductPurchase:async()=>verified,consumeProductPurchase:vi.fn().mockResolvedValue(undefined)};
+    const input={accountId:accountA,expectedObfuscatedAccountId:"bound-account",purchaseToken:token,productId:"pack_regular",publisher};
+    const first=await processPlayPurchase(input);
+    expect(first).toMatchObject({status:"granted",balance:25,creditsGranted:25,offerApplied:true});
+    expect(await processPlayPurchase(input)).toMatchObject({status:"already_granted",balance:25,creditsGranted:25});
+    await expect(createPlayIntent(accountA,"pack_regular",25,new Date("2026-11-01T00:00:00Z"))).rejects.toThrow("offer_changed");
+    expect(await createPlayIntent(accountA,"pack_regular",20,new Date("2026-11-01T00:00:00Z"))).toMatchObject({credits:20,offerApplied:false});
+    vi.unstubAllEnvs();
+  });
+  it("rejects missing, foreign and mismatched new-pack intents without credit delivery",async()=>{
+    await activate(accountA);
+    const verified={...purchase,productLineItem:[{productId:"pack_regular",productOfferDetails:purchase.productLineItem![0].productOfferDetails}]};
+    await expect(processPlayPurchase({accountId:accountA,expectedObfuscatedAccountId:"bound-account",purchaseToken:token,productId:"pack_regular",publisher:{getProductPurchase:async()=>verified,consumeProductPurchase:async()=>{}}})).rejects.toMatchObject({kind:"invalid"});
+    const reference="c".repeat(64);
+    await redis(["HSET","doodle:play:intent:"+reference,"account",accountB,"productId","pack_regular","credits",25,"offerApplied","1"]);
+    await expect(claimPlayCredits(accountA,token,{productId:"pack_regular",credits:25,offerApplied:true,intentRef:reference})).rejects.toThrow();
+    expect(await redis(["GET",accountKey(accountA,"balance")])).toBeNull();
+  });
   beforeAll(async () => {
     port = await freePort();
     dataDir = mkdtempSync(`${tmpdir()}/doodle-play-redis-`);

@@ -12,6 +12,29 @@ function storage() {
 }
 
 describe("NativeSessionStore", () => {
+  it("knows a fresh installation is new, without treating a legacy installation as a first buyer", async () => {
+    const fresh = new NativeSessionStore(storage());
+    expect(await fresh.getPurchaseHistoryHint()).toBe(false);
+    const legacyData = storage();
+    legacyData.values.set("doodle.native.install", "11111111-1111-4111-8111-111111111111");
+    expect(await new NativeSessionStore(legacyData).getPurchaseHistoryHint()).toBeUndefined();
+  });
+  it("retains known purchase history through sign-out and removes it on account deletion", async () => {
+    const data = storage();
+    const store = new NativeSessionStore(data);
+    await store.setPurchaseHistoryHint(true);
+    await store.clearAccessToken();
+    expect(await new NativeSessionStore(data).getPurchaseHistoryHint()).toBe(true);
+    await store.clearPurchaseHistoryHint();
+    expect(data.values.has("doodle.native.purchase-history")).toBe(false);
+  });
+  it("does not invent purchase history from corrupt or unavailable storage", async () => {
+    const data = storage();
+    data.values.set("doodle.native.purchase-history", "corrupt");
+    expect(await new NativeSessionStore(data).getPurchaseHistoryHint()).toBeUndefined();
+    data.getItem = async () => { throw new Error("Storage unavailable"); };
+    expect(await new NativeSessionStore(data).getPurchaseHistoryHint()).toBeUndefined();
+  });
   it("validates the opaque bearer and expiry before returning it", async () => {
     const storeData = storage();
     const store = new NativeSessionStore(storeData, { now: () => 1000 });

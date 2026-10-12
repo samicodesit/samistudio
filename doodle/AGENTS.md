@@ -27,7 +27,7 @@ Factual accuracy alone is not sufficient QA. Before recommending or publishing c
 - For Doodle, lead with an understandable use case: a small drawing for a card, lunchbox note or journal. Match the language and emphasis to the actual channel and audience.
 - Owner preference: avoid unnecessary AI wording in promotional copy, app/store titles and visual assets. Keep required platform disclosures and accurate privacy/data information. Never imply machine-generated examples were drawn by hand; describe them as drawing ideas or app examples. Do not add an AI caption by default just because generation uses AI.
 - Check every detail for timing: does the reader need it to make this decision, or does it distract from the purpose? Discovery posts should establish usefulness and an easy next step; purchase screens must clearly explain price and terms before payment.
-- Do not turn this into a blanket rule to omit prices. Include pricing when requested, required by the channel, relevant to the post's purpose, or necessary to avoid a misleading impression. Never imply unlimited free use when the trial is limited. For a brief Doodle introduction, "Try your first two doodles free" can communicate the trial without reproducing checkout copy.
+- Do not turn this into a blanket rule to omit prices. Include pricing when requested, required by the channel, relevant to the post's purpose, or necessary to avoid a misleading impression. Never imply unlimited free use when the trial is limited. For a brief Doodle introduction, "Try your first four doodles free" can communicate the trial without reproducing checkout copy.
 - Read the final draft as a first-time user: is it immediately clear what Doodle does, why I might want it, and what to do next? Remove details that compete with those answers unless they are necessary disclosures.
 - Owner approval establishes permission, not quality. The agent remains responsible for the recommendation and must not rely on the owner to catch weak choices. Give delegated reviewers this same audience-and-purpose brief.
 - Every current channel recommendation must record the source date and the latest meaningful audience interaction or demand signal. A pinned or allowed thread, or fresh promotional comments alone, does not establish reach. Separate first-hand self-reported growth from verified metrics, and never call first-party testing visitors customers.
@@ -40,6 +40,8 @@ Work inline by default. Use sub-agents only when the user explicitly requests th
 ### Required final presentation check
 
 - Loading UI preference: preserve the generous yellow animated card and its rotating messages as pleasant waiting feedback ("wait therapy"). Remove redundant copy below the card, rather than shrinking the animation or deleting the in-card messages. Keep message placement steady as the copy changes and apply this preference to app captures and demos.
+
+- Loading animation direction: use Doodle's existing visual world of loose graphite lines, yellow paper and warm little interactions. Develop the story, poses and proportions before building the animation. The owner rejected the flat pencil mascot and the realistic pencil drawing a small flower on 2026-10-08. Do not reuse either as an approved direction. A visible drawing tool should be a pencil rather than a brush; the scene itself can be a character, interaction or expressive line movement.
 
 - Before publishing, inspect the rendered preview when available, not only the source text. Check wording, paragraph spacing, link labels, images, and the clarity of the next action as the intended reader would see them.
 - Never present a fixed or mock UI preview as functional app validation. Label previews before user use, state which flows are simulated, and restore or open the real app for functional testing. Report code review, fixture screenshots, live backend generation, and Play-installed native end-to-end results separately.
@@ -72,3 +74,11 @@ When the user is completing verification, authentication, payment approval, or a
 ## Workspace housekeeping
 
 Follow the global workspace housekeeping rule in `C:\Users\Sami\.codex\AGENTS.md` for disposable scratch files, test outputs, diagnostics, and build intermediates. Preserve source, final deliverables, minimal QA evidence, and active or shared files.
+
+## Generation cost reference
+
+For paid generation estimates, use `docs/generation-costs.md` and verify the actual deployed model and quality. Historical model/pricing records describe their original runs. Estimates do not grant spending approval.
+
+## Android release procedure
+
+Use [Android release testing](docs/android-release-testing.md) before native Play testing or submission. It consolidates the canonical source, separate Play/Doodle accounts, existing reviewer Integrity workflow and safe emulator recovery. Historical September setup documents do not define current release gates or version codes. Preserve the distinction between test-verdict integration and normal physical-device evidence.

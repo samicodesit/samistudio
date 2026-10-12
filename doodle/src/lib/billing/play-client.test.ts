@@ -6,7 +6,42 @@ const service = () => ({ getDetails: vi.fn().mockResolvedValue([product]), listP
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); sessionStorage.clear(); });
 
 describe("Play client", () => {
+  it("does not route an ordinary browser to Play just because the API exists", () => {
+    vi.stubGlobal("location", { search: "" });
+    vi.stubGlobal("getDigitalGoodsService", vi.fn().mockRejectedValue(new Error("unsupported context")));
+    expect(isPlayRuntime()).toBe(false);
+  });
+
+  it("keeps ordinary browsers on web checkout when session storage is unavailable", () => {
+    vi.stubGlobal("location", { search: "" });
+    vi.stubGlobal("getDigitalGoodsService", vi.fn());
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => { throw new Error("blocked"); });
+    expect(isPlayRuntime()).toBe(false);
+  });
+  it("ignores a copied Play launch URL in an ordinary mobile browser", () => {
+    vi.stubGlobal("location", { search: "?runtime=play" });
+    vi.stubGlobal("matchMedia", vi.fn(() => ({ matches: false })));
+    expect(isPlayRuntime()).toBe(false);
+    expect(sessionStorage.getItem("doodle:play-runtime")).toBeNull();
+  });
+
+  it("clears a stale Play marker when the same session is opened in a browser tab", () => {
+    sessionStorage.setItem("doodle:play-runtime", "1");
+    vi.stubGlobal("location", { search: "" });
+    vi.stubGlobal("matchMedia", vi.fn(() => ({ matches: false })));
+    expect(isPlayRuntime()).toBe(false);
+    expect(sessionStorage.getItem("doodle:play-runtime")).toBeNull();
+  });
+
+  it("keeps a normal home-screen web app on Stripe without a Play launch", () => {
+    vi.stubGlobal("location", { search: "?runtime=app" });
+    vi.stubGlobal("matchMedia", vi.fn(() => ({ matches: true })));
+    vi.stubGlobal("getDigitalGoodsService", vi.fn());
+    expect(isPlayRuntime()).toBe(false);
+  });
+
   it("retains Play intent across locale navigation and API failure", async () => {
+    vi.stubGlobal("matchMedia", vi.fn(() => ({ matches: true })));
     vi.stubGlobal("location", { search: "?runtime=play" });
     expect(isPlayRuntime()).toBe(true);
     vi.stubGlobal("location", { search: "" });

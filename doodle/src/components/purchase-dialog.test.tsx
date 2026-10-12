@@ -3,7 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AccountSummary } from "@/app/api/account/route";
 import { getCopy } from "@/lib/i18n";
-import { PurchaseDialog } from "./purchase-dialog";
+import { LegacyPurchaseDialog as PurchaseDialog } from "./purchase-dialog";
 const play = vi.hoisted(() => ({ isPlayRuntime: vi.fn(() => false), preparePlayPurchase: vi.fn(), purchasePlayPack: vi.fn(), recoverPlayPurchases: vi.fn() }));
 vi.mock("@/lib/billing/play-client", () => play);
 
@@ -35,7 +35,7 @@ function renderDialog(account = anonymous, signInOnly = false, onExpressCheckout
   return { onClose, onAccountChange };
 }
 
-describe("PurchaseDialog", () => {
+describe("Historical wrapper purchase and account sign-in", () => {
   beforeEach(() => { sessionStorage.clear(); vi.stubGlobal("location", { assign: vi.fn() }); play.isPlayRuntime.mockReturnValue(false); applePay.mountDialogOpen.length = 0; google.redirectModes.length = 0; google.isIosBrowser.mockReset(); google.isIosBrowser.mockReturnValue(false); });
 
   it("shows one honest fixed offer", () => {
@@ -100,7 +100,7 @@ describe("PurchaseDialog", () => {
 
     await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
 
-    const button = screen.getByRole("button", { name: "Get 10 doodles" });
+    const button = screen.getByRole("button", { name: "Payment processing" });
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("aria-busy", "true");
 
@@ -218,4 +218,17 @@ describe("Play PurchaseDialog", () => {
     expect(play.purchasePlayPack).not.toHaveBeenCalled();
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
+});
+
+it("uses the same disabled processing CTA for a pending legacy web payment", () => {
+ render(<PurchaseDialog open account={signedIn} scene="A cat" locale="en" copy={copy} success={false} paymentPending onRetryConfirmation={vi.fn()} onClose={vi.fn()} onAccountChange={vi.fn()} />);
+ const button = screen.getByRole("button", { name: "Payment processing" });
+ expect(button).toBeDisabled();
+ expect(button).toHaveAttribute("aria-busy", "true");
+ expect(screen.queryByRole("alert")).toBeNull();
+});
+
+it("focuses the heading when payment makes the primary action unavailable",async()=>{
+ render(<PurchaseDialog open account={signedIn} scene="A cat" locale="en" copy={copy} success={false} paymentPending onRetryConfirmation={vi.fn()} onClose={vi.fn()} onAccountChange={vi.fn()}/>);
+ await waitFor(()=>expect(screen.getByRole("heading",{name:"Keep doodling"})).toHaveFocus());
 });

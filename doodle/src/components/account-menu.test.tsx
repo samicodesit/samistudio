@@ -40,6 +40,12 @@ describe("AccountMenu", () => {
     expect(screen.getByText("4 doodles left")).toBeVisible();
   });
 
+  it("includes unspent trial drawings in the available balance", async () => {
+    render(<AccountMenu account={{ ...account, balance: 0, freeRemaining: 2 }} locale="en" copy={copy} onAccountChange={vi.fn()} />);
+    await userEvent.setup().click(screen.getByText("Account"));
+    expect(screen.getByText("2 doodles left")).toBeVisible();
+  });
+
   it("closes when clicking outside or pressing Escape", async () => {
     const user = userEvent.setup();
     render(<AccountMenu account={account} locale="en" copy={copy} onAccountChange={vi.fn()} />);
@@ -65,7 +71,7 @@ describe("AccountMenu", () => {
     await user.click(screen.getByRole("button", { name: "Sign out" }));
 
     expect(fetchMock).toHaveBeenNthCalledWith(1, "/api/auth/sign-out", { method: "POST" });
-    expect(fetchMock).toHaveBeenNthCalledWith(2, "/api/account", { cache: "no-store" });
+    expect(fetchMock).toHaveBeenNthCalledWith(2, "/api/account", { cache: "no-store", headers: { "x-doodle-packs": "v1" } });
     await waitFor(() => expect(onAccountChange).toHaveBeenCalledWith(anonymousAccount));
   });
 
@@ -120,7 +126,7 @@ describe("AccountMenu", () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ confirm: true }),
     });
-    expect(fetchMock).toHaveBeenNthCalledWith(2, "/api/account", { cache: "no-store" });
+    expect(fetchMock).toHaveBeenNthCalledWith(2, "/api/account", { cache: "no-store", headers: { "x-doodle-packs": "v1" } });
     await waitFor(() => expect(onAccountChange).toHaveBeenCalledWith(anonymousAccount));
     expect(screen.queryByRole("dialog", { name: "Delete account" })).not.toBeInTheDocument();
   });

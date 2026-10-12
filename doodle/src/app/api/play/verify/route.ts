@@ -2,7 +2,8 @@ import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/requ
 import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
-import { getPlayBillingConfig, playAccountId, PLAY_PRODUCT_ID } from "@/lib/billing/play-config";
+import { getPlayBillingConfig, playAccountId } from "@/lib/billing/play-config";
+import { isPlayProductId, type PlayProductId } from "@/lib/billing/play-catalog";
 import { createPlayPublisherClient } from "@/lib/billing/play-google";
 import { PlayPurchaseError, processPlayPurchase } from "@/lib/billing/play-purchase";
 
@@ -48,18 +49,18 @@ async function readLimitedJson(request: Request): Promise<unknown> {
   return JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes));
 }
 
-function parseInput(value: unknown): { purchaseToken: string; productId: typeof PLAY_PRODUCT_ID } {
+function parseInput(value: unknown): { purchaseToken: string; productId: PlayProductId } {
   if (!value || typeof value !== "object" || Array.isArray(value)) throw new Error("Invalid request");
   const record = value as Record<string, unknown>;
   if (Object.keys(record).sort().join(",") !== "productId,purchaseToken") throw new Error("Invalid request");
-  if (record.productId !== PLAY_PRODUCT_ID) throw new Error("Invalid request");
+  if (!isPlayProductId(record.productId)) throw new Error("Invalid request");
   if (
     typeof record.purchaseToken !== "string" ||
     record.purchaseToken.length < 16 ||
     record.purchaseToken.length > 4_096 ||
     /[\s\u0000-\u001f\u007f]/u.test(record.purchaseToken)
   ) throw new Error("Invalid request");
-  return { purchaseToken: record.purchaseToken, productId: PLAY_PRODUCT_ID };
+  return { purchaseToken: record.purchaseToken, productId: record.productId };
 }
 
 async function handlePOST(request: Request, diagnostics: RequestDiagnostics) {

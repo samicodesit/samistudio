@@ -17,7 +17,7 @@ function renderClient(locale: Locale = "en", initialScene = "", landing = false)
   const host = document.createElement("div");
   host.dataset.accountHost = "web";
   document.body.append(host);
-  return render(<DoodleClient locale={locale} copy={getCopy(locale)} initialScene={initialScene} accountHost="web" landing={landing ? getLandingCopy(locale) : undefined} />);
+  return render(<DoodleClient webPacksEnabled locale={locale} copy={getCopy(locale)} initialScene={initialScene} accountHost="web" landing={landing ? getLandingCopy(locale) : undefined} />);
 }
 
 function suggestionLabels() {
@@ -180,7 +180,7 @@ describe("DoodleClient", () => {
     fireEvent.click(screen.getByRole("button", { name: /warm scarf/ }));
     expect(screen.getByRole("textbox")).toHaveValue("A person giving someone a warm scarf");
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock).toHaveBeenCalledWith("/api/account", { cache: "no-store" });
+    expect(fetchMock).toHaveBeenCalledWith("/api/account", { cache: "no-store", headers: { "x-doodle-packs": "v1" } });
   });
 
   it("keeps the same idea cards while the scene is edited", () => {
@@ -201,10 +201,10 @@ describe("DoodleClient", () => {
     const user = userEvent.setup();
     renderClient();
     await user.click(await screen.findByText("Account"));
-    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+    await user.click(screen.getByRole("button", { name: "Get more" }));
     expect(screen.getByRole("dialog")).toBeVisible();
     expect(screen.getByText("buyer@example.com")).not.toBeVisible();
-    expect(fetch).toHaveBeenCalledWith("/api/account", { cache: "no-store" });
+    expect(fetch).toHaveBeenCalledWith("/api/account", { cache: "no-store", headers: { "x-doodle-packs": "v1" } });
     expect(vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/account")).toHaveLength(1);
     await user.click(screen.getByRole("button", { name: "Not now" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -226,7 +226,7 @@ describe("DoodleClient", () => {
     renderClient();
 
     await user.click(await screen.findByText("Account"));
-    await user.click(screen.getByRole("button", { name: "Get 10 doodles" }));
+    await user.click(screen.getByRole("button", { name: "Get more" }));
     await user.click(screen.getByRole("button", { name: "Not now" }));
     await waitFor(() => expect(screen.getByText("Account").closest("summary")).toHaveFocus());
 
@@ -247,7 +247,7 @@ describe("DoodleClient", () => {
 
     expect(screen.getByRole("textbox")).toHaveValue("A dog holding one birthday balloon");
     expect(fetchMock).toHaveBeenCalledOnce();
-    expect(fetchMock).toHaveBeenCalledWith("/api/account", { cache: "no-store" });
+    expect(fetchMock).toHaveBeenCalledWith("/api/account", { cache: "no-store", headers: { "x-doodle-packs": "v1" } });
   });
 
   it("does not flash anonymous allowance while the account is loading", async () => {
@@ -381,7 +381,7 @@ describe("DoodleClient", () => {
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "قطة تحمل مظلة" } });
     fireEvent.click(screen.getByRole("button", { name: "أنشئ رسمة" }));
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("أنشأت رسومات كثيرة اليوم");
+    expect(await screen.findByRole("alert")).toHaveTextContent("تم الوصول إلى حدّ الرسم اليومي. جرّب مرة أخرى غدًا.");
     expect(screen.getByRole("textbox")).toHaveValue("قطة تحمل مظلة");
   });
 
@@ -432,12 +432,36 @@ describe("DoodleClient", () => {
     const dialog = await screen.findByRole("dialog", { name: "Keep doodling" });
     expect(dialog).toBeVisible();
     expect(screen.getByRole("textbox")).toHaveValue("Keep this exact scene");
-    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    // Unconfigured prices may report unavailable, but never a generation error.
+    expect(screen.queryByText(getCopy("en").errors.general)).not.toBeInTheDocument();
 
     fireEvent(dialog, new Event("cancel", { bubbles: false, cancelable: true }));
 
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
     expect(screen.getByRole("button", { name: "Create doodle" })).toHaveFocus();
+  });
+
+  it("keeps remaining free drawings visible after sign-in and generation", async () => {
+    const signedIn = { authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: 2 };
+    vi.mocked(fetch).mockResolvedValueOnce(json(signedIn)).mockResolvedValueOnce(
+      new Response(new Blob(["png"]), { status: 200, headers: { "X-Doodle-Free-Remaining": "1" } }),
+    );
+    renderClient();
+    expect(await screen.findByText("2 free doodles left")).toBeVisible();
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
+    fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+    expect(await screen.findByText("1 free doodle left")).toBeVisible();
+  });
+
+  it("shows all available paid and free drawings, then the trial after paid exhaustion", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(json({ authenticated: true, email: "buyer@example.com", balance: 1, freeRemaining: 2 })).mockResolvedValueOnce(
+      new Response(new Blob(["png"]), { status: 200, headers: { "X-Doodle-Paid-Remaining": "0" } }),
+    );
+    renderClient();
+    expect(await screen.findByText("3 doodles left", { selector: ".usage-copy" })).toBeVisible();
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
+    fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
+    expect(await screen.findByText("2 free doodles left")).toBeVisible();
   });
 
   it("updates remaining usage from generation headers", async () => {
@@ -567,7 +591,7 @@ describe("DoodleClient", () => {
     });
 
     renderClient();
-    await waitFor(() => expect(fetch).toHaveBeenCalledWith("/api/account", { cache: "no-store" }));
+    await waitFor(() => expect(fetch).toHaveBeenCalledWith("/api/account", { cache: "no-store", headers: { "x-doodle-packs": "v1" } }));
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "A paid doodle" } });
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
     await screen.findByAltText("Generated sticky-note doodle");
@@ -607,6 +631,7 @@ describe("DoodleClient", () => {
     };
     let accountRequests = 0;
     vi.mocked(fetch).mockImplementation(async (input) => {
+      if (input === "/api/checkout/catalog") return json({offerEnd:"2026-10-31T23:59:59+01:00",packs:[{productId:"pack_mini",credits:6,normalCredits:6,offerApplied:false,unitAmount:199,currency:"EUR"},{productId:"pack_regular",credits:25,normalCredits:20,offerApplied:true,unitAmount:499,currency:"EUR"},{productId:"pack_big",credits:60,normalCredits:60,offerApplied:false,unitAmount:999,currency:"EUR"}]});
       if (input === "/api/auth/google") return new Response(null, { status: 204 });
       if (input === "/api/account") {
         accountRequests += 1;
@@ -623,8 +648,8 @@ describe("DoodleClient", () => {
     await waitFor(() => expect(accountRequests).toBe(1));
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "A cat" } });
     await user.click(screen.getByRole("button", { name: "Create doodle" }));
-    await user.click(await screen.findByRole("button", { name: "Get 10 doodles" }));
-    await user.click(screen.getByRole("button", { name: "Continue with Google" }));
+    await user.click(await screen.findByRole("button", { name: /Get 25 doodles/ }));
+    await user.click(await screen.findByRole("button", { name: "Continue with Google" }));
 
     await waitFor(() => expect(accountRequests).toBe(2));
     await waitFor(() => expect(screen.getByText("0 doodles left", { selector: ".usage-copy" })).toBeVisible());
@@ -698,7 +723,7 @@ describe("DoodleClient", () => {
 
     renderClient();
 
-    expect(await screen.findByText("10 doodles added")).toBeVisible();
+    expect(await screen.findByText("Added 10 doodles")).toBeVisible();
     expect(screen.getByRole("textbox")).toHaveValue("A cat");
     const confirmationCalls = vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/checkout/confirm");
     expect(confirmationCalls).toEqual([
@@ -706,8 +731,9 @@ describe("DoodleClient", () => {
         "/api/checkout/confirm",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-doodle-packs": "v1" },
           body: JSON.stringify({ sessionId: "cs_paid" }),
+          signal: expect.any(AbortSignal),
         },
       ],
     ]);
@@ -715,28 +741,30 @@ describe("DoodleClient", () => {
     expect(location.search).toBe("");
   });
 
-  it("retries a failed returned Checkout confirmation without starting another Checkout", async () => {
+  it("recovers a temporary confirmation failure without another checkout or an error-looking payment state", async () => {
     history.replaceState({}, "", "/?checkout=cs_retry");
     sessionStorage.setItem("doodle:return", JSON.stringify({ scene: "A cat", intent: "checkout" }));
-    vi.mocked(fetch)
-      .mockResolvedValueOnce(json({ authenticated: true, email: "buyer@example.com", balance: 0, freeRemaining: null }))
-      .mockResolvedValueOnce(json({ error: "temporary" }, { status: 503 }))
-      .mockResolvedValueOnce(json({ balance: 10 }));
+    let confirmations=0;
+    vi.mocked(fetch).mockImplementation(async input => input==="/api/account" ? json({authenticated:true,email:"buyer@example.com",balance:0,freeRemaining:null}) : input==="/api/checkout/catalog" ? json({offerEnd:"2026-10-31T23:59:59+01:00",packs:[{productId:"pack_mini",credits:6,normalCredits:6,offerApplied:false,unitAmount:199,currency:"EUR"},{productId:"pack_regular",credits:25,normalCredits:20,offerApplied:true,unitAmount:499,currency:"EUR"},{productId:"pack_big",credits:60,normalCredits:60,offerApplied:false,unitAmount:999,currency:"EUR"}]}) : input==="/api/checkout/confirm" ? ++confirmations===1 ? json({error:"temporary"},{status:503}) : json({balance:10,creditsGranted:10}) : new Response(null,{status:503}));
 
-    renderClient();
+    vi.useFakeTimers();
+    try {
+    await act(async () => { renderClient(); });
 
-    expect(await screen.findByRole("alert")).toHaveTextContent("Checkout could not start");
+    expect(screen.getByRole("button", { name: "Payment processing" })).toBeDisabled();
+    expect(screen.queryByRole("alert")).toBeNull();
     expect(sessionStorage.getItem("doodle:return")).not.toBeNull();
     expect(location.search).toBe("?checkout=cs_retry");
 
-    fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+    await act(async () => { await vi.advanceTimersByTimeAsync(15_000); });
 
-    expect(await screen.findByText("10 doodles added")).toBeVisible();
+    expect(screen.getByText("Added 10 doodles")).toBeVisible();
     const confirmationCalls = vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/checkout/confirm");
     expect(confirmationCalls).toHaveLength(2);
     expect(vi.mocked(fetch).mock.calls.some(([input]) => input === "/api/checkout")).toBe(false);
     expect(sessionStorage.getItem("doodle:return")).toBeNull();
     expect(location.search).toBe("");
+    } finally { vi.useRealTimers(); }
   });
 
   it("selects a visual detail level without generating, remembers it and submits it", async () => {

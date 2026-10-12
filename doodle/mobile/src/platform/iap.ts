@@ -9,13 +9,13 @@ import {
   requestPurchase,
   type Purchase,
 } from "expo-iap";
-import type { IapModule } from "../services/billing";
+import type { IapModule, IapProduct } from "../services/billing";
 
 export const expoIapModule: IapModule = {
   initConnection,
   fetchProducts: async (input) => {
     const products = await fetchProducts(input);
-    return (products ?? []) as readonly { id?: string; type?: string; displayPrice?: string }[];
+    return (products ?? []) as readonly IapProduct[];
   },
   purchaseUpdatedListener: (listener) => purchaseUpdatedListener(listener as (purchase: Purchase) => void),
   purchaseErrorListener,

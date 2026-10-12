@@ -1,12 +1,13 @@
 import "server-only";
 import { createHash } from "node:crypto";
+import { funnelDeletionLua } from "../funnel-deletion";
 
 import { redisCommand, redisInteger } from "@/lib/redis";
 import { trackUsage } from "@/lib/usage-metrics";
 import { notifyOwnerSale } from "./sale-notification";
 
 export type CreditReservation = { reserved: boolean; remaining: number };
-export type CreditFinalization = { finalized: boolean; remaining: number };
+export type CreditFinalization = { finalized: boolean; remaining: number; firstDoodle?: true };
 
 const HOLD_TTL_MS = 600_000;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -25,14 +26,19 @@ return {1, balance - active - 1}
 
 const FINALIZE_SCRIPT = `
 if redis.call('EXISTS', KEYS[1]) == 0 or redis.call('EXISTS', KEYS[2]) == 1 then return {-1, 0} end
-if redis.call('HEXISTS', KEYS[5], ARGV[2]) == 1 then return {1, tonumber(redis.call('HGET', KEYS[5], ARGV[2]))} end
+if redis.call('HEXISTS', KEYS[5], ARGV[2]) == 1 then
+  local first = redis.call('HGET', KEYS[5], '__first_doodle__') == ARGV[2] and 1 or 0
+  return {1, tonumber(redis.call('HGET', KEYS[5], ARGV[2])), first}
+end
 redis.call('ZREMRANGEBYSCORE', KEYS[4], '-inf', ARGV[1])
 if redis.call('ZREM', KEYS[4], ARGV[2]) == 0 then return {0, 0} end
 local balance = tonumber(redis.call('GET', KEYS[3]) or '0')
 if balance <= 0 then return {0, 0} end
 balance = redis.call('DECR', KEYS[3])
+if redis.call('HLEN', KEYS[5]) == 0 then redis.call('HSET', KEYS[5], '__first_doodle__', ARGV[2]) end
 redis.call('HSET', KEYS[5], ARGV[2], balance)
-return {1, balance}
+local first = redis.call('HGET', KEYS[5], '__first_doodle__') == ARGV[2] and 1 or 0
+return {1, balance, first}
 `;
 
 const RELEASE_SCRIPT = `
@@ -42,9 +48,16 @@ return redis.call('ZREM', KEYS[1], ARGV[2])
 
 const FULFILL_SCRIPT = `
 if redis.call('EXISTS', KEYS[1]) == 0 or redis.call('EXISTS', KEYS[2]) == 1 then return {-1, 0} end
-if redis.call('EXISTS', KEYS[4]) == 1 then return {0, tonumber(redis.call('GET', KEYS[3]) or '0')} end
+local balance = tonumber(redis.call('GET', KEYS[3]) or '0')
+if not balance or balance < 0 or balance ~= math.floor(balance) or balance > 9007199254740981 then return redis.error_reply('Invalid balance') end
+if redis.call('EXISTS', KEYS[4]) == 1 then
+ redis.call('SET', KEYS[5], '1')
+ return {0, balance}
+end
+local remaining = redis.call('INCRBY', KEYS[3], 10)
 redis.call('SET', KEYS[4], ARGV[1])
-return {1, redis.call('INCRBY', KEYS[3], 10)}
+redis.call('SET', KEYS[5], '1')
+return {1, remaining}
 `;
 
 const ACTIVE_ACCOUNT_SCRIPT = `
@@ -55,10 +68,11 @@ return 0
 const DELETE_SCRIPT = `
 local mapped = redis.call('GET', KEYS[1])
 if mapped ~= ARGV[1] and redis.call('EXISTS', KEYS[2]) == 0 then return 0 end
+${funnelDeletionLua("ARGV[2]", "'doodle:metrics:funnel:aliases:'..ARGV[2]", "'doodle:metrics:funnel:'")}
 redis.call('SET', KEYS[6], 'deleted')
 if mapped == ARGV[1] then redis.call('DEL', KEYS[1]) end
 redis.call('DEL', KEYS[2], KEYS[3], KEYS[4], KEYS[5])
-redis.call('DEL', KEYS[7])
+redis.call('DEL', KEYS[7], KEYS[9])
 if redis.call('TYPE', KEYS[8]).ok == 'set' then redis.call('SREM', KEYS[8], ARGV[2]) end
 return 1
 `;
@@ -104,6 +118,17 @@ export async function getPaidBalance(accountId: string): Promise<number> {
   return result === null ? 0 : balance(result);
 }
 
+/** Legacy balances are created only by credit fulfillment or a recorded gift.
+ * Mixed historical gift/purchase accounts stay unknown until a verified purchase. */
+export async function getPurchaseHistory(accountId: string): Promise<boolean | null> {
+  const value = redisInteger(await redisCommand(["EVAL",
+    "if redis.call('EXISTS',KEYS[1]) == 1 then return 1 end; if redis.call('EXISTS',KEYS[2]) == 0 then return 0 end; if redis.call('EXISTS',KEYS[3]) == 1 then return -1 end; return 1",
+    "3", accountKey(accountId, "purchased"), accountKey(accountId, "balance"), accountKey(accountId, "grants"),
+  ]));
+  if (![0, 1, -1].includes(value)) unavailable();
+  return value === -1 ? null : value === 1;
+}
+
 export async function isPaidAccountActive(accountId: string): Promise<boolean> {
   return redisInteger(await redisCommand([
     "EVAL",
@@ -127,14 +152,16 @@ export async function reservePaidCredit(accountId: string, reservationId: string
 }
 
 export async function finalizePaidCredit(accountId: string, reservationId: string): Promise<CreditFinalization> {
-  const result = holdResult(
-    await redisCommand([
+  const raw = await redisCommand([
       "EVAL", FINALIZE_SCRIPT, "5",
       accountKey(accountId, "active"), accountKey(accountId, "deleted"), accountKey(accountId, "balance"), accountKey(accountId, "holds"), accountKey(accountId, "finalized"),
       Date.now(), reservationId,
-    ]),
-  );
-  return { finalized: result.active, remaining: result.remaining };
+    ]);
+  if (!Array.isArray(raw) || (raw.length !== 2 && raw.length !== 3)) unavailable();
+  const result = holdResult(raw.slice(0, 2));
+  const first = raw.length === 3 ? integer(raw[2]) : 0;
+  if ((first !== 0 && first !== 1) || (first === 1 && !result.active)) unavailable();
+  return { finalized: result.active, remaining: result.remaining, ...(first === 1 ? { firstDoodle: true as const } : {}) };
 }
 
 export async function releasePaidCredit(accountId: string, reservationId: string): Promise<number> {
@@ -145,8 +172,8 @@ export async function releasePaidCredit(accountId: string, reservationId: string
 
 export async function fulfillCreditPack(accountId: string, checkoutSessionId: string, paymentIntentId: string, usage?: { isTest: boolean; email?: string | null }): Promise<number> {
   const [status, remaining] = pair(await redisCommand([
-    "EVAL", FULFILL_SCRIPT, "4",
-    accountKey(accountId, "active"), accountKey(accountId, "deleted"), accountKey(accountId, "balance"), purchaseKey(checkoutSessionId),
+    "EVAL", FULFILL_SCRIPT, "5",
+    accountKey(accountId, "active"), accountKey(accountId, "deleted"), accountKey(accountId, "balance"), purchaseKey(checkoutSessionId), accountKey(accountId, "purchased"),
     paymentIntentId,
   ]));
   if (status === -1) throw new Error("Account deleted");
@@ -162,10 +189,10 @@ export async function fulfillCreditPack(accountId: string, checkoutSessionId: st
 export async function deletePaidAccount(accountId: string, identityKey: string): Promise<void> {
   if (!IDENTITY_KEY_PATTERN.test(identityKey)) unavailable();
   const result = integer(await redisCommand([
-    "EVAL", DELETE_SCRIPT, "8",
+    "EVAL", DELETE_SCRIPT, "9",
     `doodle:auth:google:${identityKey}`,
     accountKey(accountId, "active"), accountKey(accountId, "balance"), accountKey(accountId, "holds"), accountKey(accountId, "finalized"), accountKey(accountId, "deleted"),
-    accountKey(accountId, "grants"), "doodle:metrics:gifted",
+    accountKey(accountId, "grants"), "doodle:metrics:gifted", accountKey(accountId, "purchased"),
     accountId, createHash("sha256").update(`account:${accountId}`).digest("hex"),
   ]));
   if (result !== 0 && result !== 1) unavailable();

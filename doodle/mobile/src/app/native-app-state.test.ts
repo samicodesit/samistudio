@@ -1,7 +1,27 @@
 import { describe, expect, it } from "vitest";
-import { appReducer, initialAppState } from "./native-app-state";
+import { appReducer, initialAppState, resultUsage, isNativeCreditExhausted } from "./native-app-state";
 
 describe("native app state", () => {
+  it("opens checkout only after the retained free and paid balances are exhausted", () => {
+    expect(isNativeCreditExhausted(null, 0)).toBe(true);
+    expect(isNativeCreditExhausted(3, 0)).toBe(false);
+    expect(isNativeCreditExhausted(4, 0)).toBe(false);
+    expect(isNativeCreditExhausted(0, 0)).toBe(true);
+    expect(isNativeCreditExhausted(0, 6)).toBe(false);
+    expect(isNativeCreditExhausted(0, null)).toBe(true);
+    expect(isNativeCreditExhausted(1, null)).toBe(false);
+    expect(isNativeCreditExhausted(null, null)).toBe(false);
+  });
+  it("replaces the last-free notice with the verified balance without losing the drawing or prompt", () => {
+    const draft = appReducer(initialAppState, { type: "sceneChanged", scene: "A cat holding a flower" });
+    const ready = appReducer(draft, { type: "generationReady", imageUri: "file:///fourth.png", imageAlt: "Cat", freeRemaining: 0 });
+    expect(resultUsage(ready).lastFree).toBe(true);
+    const refilled = appReducer(ready, { type: "usageChanged", label: "25 doodles left", paidRemaining: 25 });
+    expect(resultUsage(refilled)).toMatchObject({ label: "25 doodles left", lastFree: false });
+    expect(refilled.generation).toEqual(ready.generation);
+    expect(refilled.scene).toBe(draft.scene);
+    expect(resultUsage(appReducer(ready, { type: "usageChanged", label: "0 doodles left", paidRemaining: 0 })).lastFree).toBe(true);
+  });
   it("keeps the account balance aligned with generation usage", () => {
     const signedIn = appReducer(initialAppState, {
       type: "accountLoaded",
@@ -72,6 +92,18 @@ describe("native app state", () => {
     expect(purchase.account.status).toBe("signedIn");
     expect(purchase.account.email).toBe("sam@example.com");
     expect(purchase.purchase?.mode).toBe("offer");
+  });
+  it("keeps the fourth free result and prompt through purchase and dismissal", () => {
+    const draft = appReducer(initialAppState, { type: "sceneChanged", scene: "A cat holding a flower" });
+    const ready = appReducer(draft, { type: "generationReady", imageUri: "file:///fourth.png", imageAlt: "Cat", freeRemaining: 0 });
+    expect(ready.modal).toBe("none");
+    expect(ready.generation).toMatchObject({ status: "ready", freeExhausted: true });
+    const offer = appReducer(ready, { type: "purchaseChanged", purchase: { mode: "offer" } });
+    const closed = appReducer(offer, { type: "purchaseChanged", purchase: null });
+    expect(closed.generation).toEqual(ready.generation);
+    expect(closed.scene).toBe(draft.scene);
+    const paid = appReducer(closed, { type: "generationReady", imageUri: "file:///paid.png", imageAlt: "Cat", paidRemaining: 0 });
+    expect(paid.generation).not.toHaveProperty("freeExhausted");
   });
 
   it("clears paid usage when the account is signed out", () => {

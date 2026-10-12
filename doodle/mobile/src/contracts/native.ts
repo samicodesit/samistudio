@@ -1,3 +1,8 @@
+import type { PlayCatalog, PlayPackId, PlayPack } from "../../../src/lib/billing/play-catalog";
+export type { PlayCatalog, PlayPackId, PlayPack };
+export type NativePricedPack = PlayPack & {priceLabel:string;price:number;priceMicros:number;currency:string};
+export type NativePackCatalog = Omit<PlayCatalog,"packs"> & {packs:NativePricedPack[]};
+export type NativeCheckoutIntent = PlayPack & {obfuscatedAccountId:string;obfuscatedProfileId:string};
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 export const NATIVE_ORIGIN = "https://doodle.samistudio.nl" as const;
 export const NATIVE_CLIENT = "native-android" as const;
@@ -39,6 +44,7 @@ export interface AccountSummary {
   email: string | null;
   balance: number;
   freeRemaining: number | null;
+  hasPurchased?: boolean | null;
 }
 
 export interface NativeGenerationResult {
@@ -58,9 +64,14 @@ export type NativePlayVerifyStatus = "granted" | "already_granted" | "granted_co
 export interface NativePlayVerifyResponse {
   status: NativePlayVerifyStatus;
   balance: number;
+  productId?: string;
+  creditsGranted?: number;
+  offerApplied?: boolean;
+  checkoutReference?: string;
 }
 
 export interface NativeApi {
+  recordPaywall?(trigger: "tapped_create" | "get_more"): Promise<void>;
   getConfig(): Promise<NativeConfigResponse>;
   signInWithGoogle(credential: string): Promise<NativeGoogleResponse>;
   signOut(): Promise<void>;
@@ -72,11 +83,19 @@ export interface NativeApi {
 }
 
 export interface NativePurchaseApi {
+  getPlayCatalog?(): Promise<PlayCatalog>;
+  createPlayIntent?(productId:PlayPackId,expectedCredits:number):Promise<NativeCheckoutIntent>;
   getPlayConfig(): Promise<NativePlayConfig>;
-  verifyPlayPurchase(input: { productId: typeof NATIVE_PRODUCT_ID; purchaseToken: string }): Promise<NativePlayVerifyResponse>;
+  verifyPlayPurchase(input: { productId: string; purchaseToken: string }): Promise<NativePlayVerifyResponse>;
 }
 
 export interface NativeBilling {
+  resetAccount?(): void;
+  getPendingPack?(): PlayPackId | null;
+  subscribeGrants?(listener: (grant: NativePlayVerifyResponse) => void): () => void;
+  preparePacks(): Promise<NativePackCatalog>;
+  buyPack(productId: PlayPackId, expectedCredits: number): Promise<NativePlayVerifyResponse>;
+  recoverPacks(): Promise<void>;
   prepare(): Promise<{ productId: typeof NATIVE_PRODUCT_ID; priceLabel: string }>;
   buy(): Promise<void>;
   recoverPending(): Promise<void>;

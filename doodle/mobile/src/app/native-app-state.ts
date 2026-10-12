@@ -29,6 +29,16 @@ export interface NativeAppState {
   paidRemaining: number | null;
 }
 
+export function resultUsage(state: NativeAppState) {
+  return { ...state.usage, lastFree: state.generation.status === "ready" && !!state.generation.freeExhausted && !(state.paidRemaining !== null && state.paidRemaining > 0) };
+}
+
+export function isNativeCreditExhausted(freeRemaining: number | null, paidRemaining: number | null) {
+  // Signed-in users can still use their retained trial when paid credits are empty.
+  return (paidRemaining === 0 && !(freeRemaining !== null && freeRemaining > 0))
+    || (freeRemaining === 0 && paidRemaining === null);
+}
+
 export const initialAppState: NativeAppState = {
   locale: "en",
   detailLevel: "simple",
@@ -47,11 +57,13 @@ export const initialAppState: NativeAppState = {
 };
 
 export type NativeAppAction =
+  | { type: "pendingPurchaseEnded" }
   | { type: "detailLevelLoaded"; detailLevel: DetailLevel }
   | { type: "detailLevelChanged"; detailLevel: DetailLevel }
   | { type: "sceneChanged"; scene: string }
   | { type: "generationStarted"; loadingMessages: readonly string[]; statusLabel: string }
   | { type: "generationIdle" }
+  | { type: "generationRestored"; generation: NativeGenerationUiState }
   | { type: "generationReady"; imageUri: string; imageAlt: string; freeRemaining?: number; paidRemaining?: number }
   | { type: "generationFailed"; message: string; retryLabel?: string }
   | { type: "resultBack" }
@@ -89,10 +101,12 @@ export function appReducer(state: NativeAppState, action: NativeAppAction): Nati
       };
     case "generationIdle":
       return { ...state, generation: { status: "idle" }, modal: state.modal === "purchase" ? state.modal : "none" };
+    case "generationRestored":
+      return { ...state, generation: action.generation };
     case "generationReady":
       return {
         ...state,
-        generation: { status: "ready", imageUri: action.imageUri, imageAlt: action.imageAlt },
+        generation: { status: "ready", imageUri: action.imageUri, imageAlt: action.imageAlt, ...(action.freeRemaining === 0 ? { freeExhausted: true } : {}) },
         freeRemaining: action.freeRemaining ?? state.freeRemaining,
         paidRemaining: action.paidRemaining ?? state.paidRemaining,
         modal: "none",
@@ -137,6 +151,8 @@ export function appReducer(state: NativeAppState, action: NativeAppAction): Nati
         freeRemaining: action.freeRemaining ?? state.freeRemaining,
         paidRemaining: action.paidRemaining ?? state.paidRemaining,
       };
+    case "pendingPurchaseEnded":
+      return state.purchase?.mode === "pending" ? { ...state, purchase: { ...state.purchase, mode: "offer", busy: false }, modal: "purchase" } : state;
     case "purchaseChanged":
       if (!action.purchase) return { ...state, purchase: undefined, modal: state.modal === "purchase" ? "none" : state.modal };
       return { ...state, purchase: { ...emptyPurchaseUi, ...state.purchase, ...action.purchase, visible: true }, modal: "purchase" };

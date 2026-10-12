@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { DoodleIdeasPage } from "@/components/doodle-ideas-page";
 import DoodleIdeasRoute, { metadata } from "./page";
@@ -8,17 +8,12 @@ afterEach(() => {
 });
 
 describe("DoodleIdeasPage", () => {
-  it("offers ten examples that lead back to a prefilled generator", () => {
+  it("offers 31 examples with the creation action inside the preview", () => {
     render(<DoodleIdeasRoute />);
-
-    expect(screen.getAllByRole("img")).toHaveLength(10);
-    expect(screen.getAllByRole("link", { name: "Try this idea" })).toHaveLength(10);
-    expect(screen.getAllByRole("link", { name: "Try this idea" })[8]).toHaveAttribute("href", "/?scene=Two%20friends%20baking%20pancakes#composer");
-    expect(screen.getAllByRole("link", { name: "Try this idea" })[9]).toHaveAttribute("href", "/?scene=A%20cozy%20bookshop%20with%20plants%20and%20a%20bicycle%20outside#composer");
-    expect(screen.getAllByRole("link", { name: "Try this idea" })[0]).toHaveAttribute(
-      "href",
-      "/?scene=A%20steaming%20mug%20beside%20a%20folded%20thank-you%20note%20with%20a%20tiny%20heart%20on%20it#composer",
-    );
+    expect(screen.getAllByRole("article")).toHaveLength(31);
+    expect(screen.queryByRole("link", { name: "Try this idea" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "View larger: A cozy bookshop" }));
+    expect(screen.getByRole("link", { name: "Try this idea" })).toHaveAttribute("href", "/?scene=A%20cozy%20bookshop%20with%20plants%20and%20a%20bicycle%20outside&detail=detailed#doodle-tool");
   });
 
   it("does not repeat arbitrary use-case labels on every drawing", () => {
@@ -35,23 +30,14 @@ describe("DoodleIdeasPage", () => {
     });
   });
 
-  it("forwards approved attribution on the other generator CTAs", async () => {
+  it("forwards approved attribution only on the modal creator destination", () => {
     window.history.replaceState({}, "", "/doodle-ideas?utm_source=pinterest&utm_medium=organic_social&utm_campaign=doodle_web_launch&utm_content=birthday_card&scene=private&auth=private-token");
     render(<DoodleIdeasPage locale="en" />);
-
-    await waitFor(() => {
-      expect(screen.getByRole("link", { name: "Make a doodle" })).toHaveAttribute(
-        "href",
-        "/?utm_source=pinterest&utm_medium=organic_social&utm_campaign=doodle_web_launch&utm_content=birthday_card#composer",
-      );
-      expect(screen.getByRole("link", { name: "Try this idea: A tiny frog sheltering under a leaf" })).toHaveAttribute(
-        "href",
-        "/?scene=A%20tiny%20frog%20sheltering%20under%20a%20leaf&utm_source=pinterest&utm_medium=organic_social&utm_campaign=doodle_web_launch&utm_content=birthday_card#composer",
-      );
-      expect(screen.getByRole("link", { name: "Turn your idea into a doodle" })).toHaveAttribute(
-        "href",
-        "/?utm_source=pinterest&utm_medium=organic_social&utm_campaign=doodle_web_launch&utm_content=birthday_card#composer",
-      );
-    });
+    fireEvent.click(screen.getByRole("button", { name: "View larger: A cozy bookshop" }));
+    expect(screen.getByRole("link", { name: "Try this idea" })).toHaveAttribute(
+      "href",
+      "/?scene=A%20cozy%20bookshop%20with%20plants%20and%20a%20bicycle%20outside&detail=detailed&utm_source=pinterest&utm_medium=organic_social&utm_campaign=doodle_web_launch&utm_content=birthday_card#doodle-tool",
+    );
+    expect(screen.queryByRole("link", { name: "Make a doodle" })).not.toBeInTheDocument();
   });
 });

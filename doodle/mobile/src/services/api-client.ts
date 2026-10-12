@@ -1,3 +1,5 @@
+import { PLAY_PACK_IDS, type PlayCatalog, type PlayPackId } from "../../../src/lib/billing/play-catalog";
+import type { NativeCheckoutIntent } from "../contracts/native";
 import { isDetailLevel, type DetailLevel } from "../../../src/lib/generation/detail-level";
 import { isPhotoPayload, photoAttestationInput } from "../../../src/lib/generation/photo-input";
 import {
@@ -83,6 +85,7 @@ const ERROR_CODES = new Set<NativeServiceErrorCode>([
   "native_attestation_required",
   "native_attestation_failed",
   "payment_required",
+  "purchase_pending",
   "rate_limited",
   "not_found",
   "report_unavailable",
@@ -146,6 +149,7 @@ function validAccountSummary(value: unknown): value is AccountSummary {
   const freeRemaining = summary.freeRemaining;
   return (
     typeof summary.authenticated === "boolean" &&
+    (summary.hasPurchased === undefined || summary.hasPurchased === null || typeof summary.hasPurchased === "boolean") &&
     (summary.email === null || typeof summary.email === "string") &&
     Number.isSafeInteger(balance) &&
     (balance as number) >= 0 &&
@@ -457,6 +461,8 @@ export class NativeApiClient implements NativeApi {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ credential }),
+      includeTrial: true,
+      auth: "trial",
       diagnosticStage: "google_token",
     });
     const body = await this.requireOk(response);
@@ -682,6 +688,28 @@ export class NativeApiClient implements NativeApi {
     };
   }
 
+  async getPlayCatalog():Promise<PlayCatalog>{
+    const response=await this.request("/api/play/catalog",{auth:"none",diagnosticStage:"billing_prepare"});
+    const value=await this.requireOk(response) as PlayCatalog;
+    if(!value||value.version!==1||!Number.isFinite(Date.parse(value.offerEnd))||!Array.isArray(value.packs)||value.packs.length!==3)throw new NativeServiceError("billing_unavailable");
+    if(!PLAY_PACK_IDS.every(id=>value.packs.filter(p=>p.productId===id).length===1))throw new NativeServiceError("billing_unavailable");
+    for(const pack of value.packs){
+      const allowed=pack.productId==="pack_mini"?[6]:pack.productId==="pack_regular"?[20,25]:[60];
+      if(!allowed.includes(pack.credits)||pack.normalCredits!==(pack.productId==="pack_regular"?20:pack.credits)||pack.offerApplied!==(pack.productId==="pack_regular"&&pack.credits===25))throw new NativeServiceError("billing_unavailable");
+    }
+    return value;
+  }
+  async createPlayIntent(productId:PlayPackId,expectedCredits:number):Promise<NativeCheckoutIntent>{
+    const response=await this.request("/api/play/intent",{method:"POST",auth:"access",headers:{"Content-Type":"application/json"},body:JSON.stringify({productId,expectedCredits}),diagnosticStage:"billing_prepare"});
+    if(response.status===409)throw new NativeServiceError("offer_changed");
+    const value=await this.requireOk(response) as NativeCheckoutIntent;
+    if(value.productId!==productId||value.credits!==expectedCredits||!/^[a-f0-9]{64}$/.test(value.obfuscatedAccountId)||!/^[a-f0-9]{64}$/.test(value.obfuscatedProfileId))throw new NativeServiceError("billing_unavailable");
+    return value;
+  }
+  async recordPaywall(trigger:"tapped_create"|"get_more"):Promise<void>{
+    try {const trial = await this.getTrialToken(); await this.request("/api/play/paywall",{method:"POST",includeTrial:true,headers:{"Content-Type":"application/json",...(isValidTrialToken(trial) ? {"X-Doodle-Trial-Token":trial} : {})},body:JSON.stringify({trigger})});}catch{/* Metrics never block the paywall. */}
+  }
+
   async getPlayConfig(): Promise<NativePlayConfig> {
     const response = await this.request("/api/play/config", { auth: "access", diagnosticStage: "billing_prepare" });
     const body = await this.requireOk(response);
@@ -697,8 +725,8 @@ export class NativeApiClient implements NativeApi {
     return config as NativePlayConfig;
   }
 
-  async verifyPlayPurchase(input: { productId: typeof NATIVE_PRODUCT_ID; purchaseToken: string }): Promise<NativePlayVerifyResponse> {
-    if (input.productId !== NATIVE_PRODUCT_ID || typeof input.purchaseToken !== "string" || input.purchaseToken.length === 0 || input.purchaseToken.length > 16_384) {
+  async verifyPlayPurchase(input: { productId: string; purchaseToken: string }): Promise<NativePlayVerifyResponse> {
+    if (![NATIVE_PRODUCT_ID,...PLAY_PACK_IDS].includes(input.productId as typeof NATIVE_PRODUCT_ID) || typeof input.purchaseToken !== "string" || input.purchaseToken.length === 0 || input.purchaseToken.length > 16_384) {
       throw new NativeServiceError("invalid_request");
     }
     const response = await this.request("/api/play/verify", {
@@ -717,6 +745,10 @@ export class NativeApiClient implements NativeApi {
     if (!["granted", "already_granted", "granted_consume_pending"].includes(value.status ?? "") || !Number.isSafeInteger(value.balance) || (value.balance ?? -1) < 0) {
       this.safeRecordMalformedResponse(response, "billing", "billing_verify");
       throw new NativeServiceError("network", "Invalid Play verification response", response.status);
+    }
+    if(input.productId!==NATIVE_PRODUCT_ID){
+      const allowed=input.productId==="pack_mini"?[6]:input.productId==="pack_regular"?[20,25]:input.productId==="pack_big"?[60]:[];
+      if(value.productId!==input.productId||!allowed.includes(value.creditsGranted??0)||value.offerApplied!==(input.productId==="pack_regular"&&value.creditsGranted===25)||!/^[a-f0-9]{64}$/.test(value.checkoutReference??""))throw new NativeServiceError("billing_unavailable");
     }
     return value as NativePlayVerifyResponse;
   }

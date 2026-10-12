@@ -1,5 +1,7 @@
 # Google Play purchase integration
 
+> Historical September setup record, not current release instructions. Use [Android release testing](android-release-testing.md) for the procedure and [the 10 October release report](qa/combined-release-2026-10-10/report.md) for the latest recorded results. Old wrapper guidance, fixed ten-credit grants, tester membership, budgets and pending gates below describe their original dates.
+
 ## Controlled internal-test state — September 7, 2026
 
 Production alias `https://doodle.samistudio.nl` now runs deployment `C6wvJWTtzHVZaEPNp419ADGVhfDu` with `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON`, `PLAY_ACCOUNT_LINK_SECRET` and `PLAY_BILLING_ENABLED=true`, deployed by the coordinating agent for the owner-only internal license test. The owner is configured as a Play license tester; public Play distribution is not enabled. This supersedes historical disabled-configuration notes below; successful purchase delivery remains unverified.
@@ -19,7 +21,7 @@ Unauthenticated production probes at `2026-09-07T18:11:58.389574Z` (`GET /api/pl
 
 No fake credit allocation or real-card payment is part of this test plan.
 
-## Current API access evidence — September 7, 2026
+## Historical API access evidence — September 7, 2026
 
 The prior HTTP 401 permission blocker has cleared without broadening the service account's app-scoped permissions. At `2026-09-07T18:05:53.113Z`, product lookup returned HTTP 200; at `18:05:53.620Z`, voided-purchases lookup returned HTTP 200. Purchase V2 and legacy lookups with an explicitly synthetic token returned HTTP 400 `invalid` at `18:05:53.790Z` and `18:05:53.939Z`, respectively. The cause of the earlier failure remains unproven. These read-only checks do not constitute a real payment, consumption, credit-delivery or refund test. See `docs/play-api-support-draft.md` for the historical support report.
 

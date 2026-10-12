@@ -4,7 +4,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { after } from "next/server";
 import { redisCommand } from "../redis";
 
-type Sale = { channel: "android" | "web"; id: string; isTest: boolean };
+type Sale = { channel: "android" | "web"; id: string; isTest: boolean; creditsGranted?: number };
 const ORDERS = "https://play.google.com/console/u/0/developers/5843530199260119810/orders";
 const FINISH = `
 if redis.call('GET', KEYS[1]) ~= ARGV[1] then return 0 end
@@ -17,6 +17,8 @@ return 1
 export async function sendOwnerSale(sale: Sale): Promise<void> {
   const apiKey = process.env.RESEND_API_KEY;
   if (sale.isTest || !apiKey || process.env.VERCEL_ENV !== "production") return;
+  const quantity=sale.creditsGranted ?? 10;
+  if(![6,10,20,25,60].includes(quantity))return;
   const fingerprint = createHash("sha256").update(`${sale.channel}:${sale.id}`).digest("hex");
   const key = `doodle:notifications:sale:${fingerprint}`;
   const lock = randomUUID();
@@ -30,8 +32,8 @@ export async function sendOwnerSale(sale: Sale): Promise<void> {
     const body = JSON.stringify({
       from: "Doodle <updates@autolister.app>",
       to: ["samicodesit@gmail.com"],
-      subject: `Doodle sale: 10 doodles on ${platform}`,
-      text: `A real 10-doodle pack was purchased on ${platform}.\n\n10 doodles have been delivered to the customer's account.\n\nView the payment details and amount:\n${dashboard}\n\nThis is a sale notification, not a bank payout confirmation.`,
+      subject: `Doodle sale: ${quantity} doodles on ${platform}`,
+      text: `A real ${quantity}-doodle pack was purchased on ${platform}.\n\n${quantity} doodles have been delivered to the customer's account.\n\nView the payment details and amount:\n${dashboard}\n\nThis is a sale notification, not a bank payout confirmation.`,
     });
     for (let attempt = 0; attempt < 3; attempt += 1) {
       try {

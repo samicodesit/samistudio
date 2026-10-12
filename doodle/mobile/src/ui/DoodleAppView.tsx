@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AccessibilityInfo, BackHandler, StyleSheet, View, useWindowDimensions } from "react-native";
+import { AccessibilityInfo, BackHandler, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { NativeAccountSlot } from "./NativeAccountSlot";
 import { NativeBottomTabs } from "./NativeBottomTabs";
@@ -11,10 +11,10 @@ import {
   NativeAccountModal,
   NativeImageModal,
   NativeMoreModal,
-  NativePurchaseModal,
   NativeReportModal,
 } from "./NativeModals";
-import { NATIVE_COLORS, NATIVE_SPACING, nativeRowDirection } from "./theme";
+import { NATIVE_COLORS, NATIVE_SPACING, nativeFontFamily, nativeRowDirection } from "./theme";
+import { NativePackPaywall } from "./NativePackPaywall";
 import type { NativeDoodleUiProps, NativeImageSource } from "./types";
 
 export function DoodleAppView(props: NativeDoodleUiProps) {
@@ -41,9 +41,11 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
   }, [props.accountModal, props.generation.status, props.modal, props.onResultBack, props.tab]);
 
   return (
-    // Recreate native text nodes after a live accessibility size change. App
-    // state, including the photo draft, remains in the parent controller.
-    <SafeAreaView key={`${fontScale}:${scale}`} edges={["top"]} style={styles.safe}>
+    // Recreate cached native layout after font scaling or a window-width
+    // change. Otherwise Android can retain the old scroll/keyboard frame and
+    // cover result actions with navigation. The parent keeps the photo draft,
+    // prompt, result and balances. Keyboard height changes do not remount it.
+    <SafeAreaView key={`${fontScale}:${scale}:${width}`} edges={["top"]} style={styles.safe}>
       <View style={styles.root}>
         <View style={[styles.accountHeader, { flexDirection: nativeRowDirection(props.direction) }, showHeroArt && (props.direction === "rtl" ? { paddingRight: 100 } : { paddingLeft: 100 })]}>
           {showHeroArt ? (
@@ -84,6 +86,7 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
               onResultBack={props.onResultBack}
               onOpenMore={props.onOpenMore}
               onOpenLarger={props.onOpenLarger}
+              onGetMore={props.onRefill}
               onOpenIdeas={() => props.onTabChange("ideas")}
               gridEnabled={gridEnabled}
               onToggleGrid={() => setGridImageUri(current => props.generation.status === "ready" && current !== props.generation.imageUri ? props.generation.imageUri : null)}
@@ -93,11 +96,12 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
           {props.tab === "settings" ? <NativeSettingsView locale={props.locale} direction={props.direction} copy={props.copy} locales={props.locales} supportLinks={props.supportLinks} onLocaleChange={props.onLocaleChange} onSupportLink={props.onSupportLink} onShareDiagnostics={props.onShareDiagnostics} /> : null}
         </View>
         <NativeBottomTabs locale={props.locale} direction={props.direction} copy={props.copy} tab={props.tab} onTabChange={props.onTabChange} />
+        {props.purchaseNotice ? <View pointerEvents="none" style={styles.purchaseNotice}><Text accessibilityLiveRegion="polite" style={{ color: NATIVE_COLORS.white, fontSize: 16, fontFamily: nativeFontFamily(props.locale, "body") }}>{props.purchaseNotice}</Text></View> : null}
       </View>
 
       <NativeMoreModal locale={props.locale} direction={props.direction} copy={props.copy} visible={props.modal === "more"} onClose={props.onCloseModal} onRedraw={() => startDoodle(props.onRedraw)} onOpenReport={props.onOpenReport} />
       <NativeReportModal locale={props.locale} direction={props.direction} copy={props.copy} visible={props.modal === "report"} reportState={props.reportState} onClose={props.onCloseModal} onSubmit={props.onReportSubmit} />
-      <NativePurchaseModal locale={props.locale} direction={props.direction} copy={props.copy} purchase={props.modal === "purchase" ? props.purchase : undefined} onCancel={props.onCancelPurchase} onPurchase={props.onPurchase} onRestore={props.onRestore} onSignIn={props.onSignIn} onNewScene={props.onNewScene} />
+      <NativePackPaywall locale={props.locale} direction={props.direction} reducedMotion={reducedMotion} purchase={props.modal === "purchase" ? props.purchase : undefined} onCancel={props.onCancelPurchase} onPurchase={props.onPurchase} onSelectPack={productId => props.onSelectPack?.(productId)} />
       <NativeImageModal locale={props.locale} direction={props.direction} copy={props.copy} visible={props.modal === "image"} imageUri={readyImage} imageAlt={readyAlt} onClose={props.onCloseModal} onAction={props.onDownload} gridEnabled={props.generation.status === "ready" ? gridEnabled : undefined} onToggleGrid={props.generation.status === "ready" ? () => setGridImageUri(current => current === readyImage ? null : readyImage) : undefined} reducedMotion={reducedMotion} />
       <NativeAccountModal locale={props.locale} direction={props.direction} copy={props.copy} account={props.account} state={props.accountModal} onClose={props.onCloseAccount} onSignIn={props.onSignIn} onRefill={props.onRefill} onSignOut={props.onSignOut} onDeleteRequest={props.onDeleteRequest} onDeleteConfirm={props.onDeleteConfirm} />
     </SafeAreaView>
@@ -130,4 +134,5 @@ const styles = StyleSheet.create({
   heroArtRoomy: { top: 12, width: 72, height: 90 },
   heroArtImage: { width: "100%", height: "100%" },
   content: { flex: 1 },
+  purchaseNotice: { position: "absolute", bottom: 96, left: 22, right: 22, backgroundColor: NATIVE_COLORS.moss, padding: 16, borderRadius: 12, alignItems: "center" },
 });

@@ -1,3 +1,4 @@
+import { getPlayCatalog } from "../../../src/lib/billing/play-catalog";
 import { Asset } from "expo-asset";
 import { NATIVE_REFERENCE_IMAGE } from "../platform/assets";
 import { NATIVE_PRODUCT_ID, type NativeApi, type NativeBilling, type NativeConfigResponse, type NativeGenerationResult, type NativeGoogleResponse } from "../contracts/native";
@@ -22,6 +23,7 @@ type FixtureState = {
   signedIn: boolean;
   balance: number;
   freeRemaining: number;
+  hasPurchased: boolean;
 };
 
 /**
@@ -32,7 +34,7 @@ type FixtureState = {
 export function createFrontendFixtureServices(enabled = false, options: FrontendFixtureOptions = {}): FrontendFixtureServices {
   if (!enabled) throw new Error("Frontend fixture mode is explicitly disabled");
 
-  const state: FixtureState = { signedIn: false, balance: 0, freeRemaining: 2 };
+  const state: FixtureState = { signedIn: false, balance: 0, freeRemaining: 4, hasPurchased: false };
   const generationDelayMs = Math.max(0, options.generationDelayMs ?? 8_000);
   const config: NativeConfigResponse = {
     enabled: false,
@@ -41,8 +43,8 @@ export function createFrontendFixtureServices(enabled = false, options: Frontend
     attestation: "play_integrity",
     guestEnabled: false,
   };
-  const signedOut = () => ({ authenticated: false, email: null, balance: 0, freeRemaining: state.freeRemaining });
-  const signedIn = () => ({ authenticated: true, email: "preview@example.test", balance: state.balance, freeRemaining: state.freeRemaining });
+  const signedOut = () => ({ authenticated: false, email: null, balance: 0, freeRemaining: state.freeRemaining, hasPurchased: state.hasPurchased });
+  const signedIn = () => ({ authenticated: true, email: "preview@example.test", balance: state.balance, freeRemaining: state.freeRemaining, hasPurchased: state.hasPurchased });
   const googleResponse = (): NativeGoogleResponse => ({
     authenticated: true,
     email: "preview@example.test",
@@ -62,7 +64,8 @@ export function createFrontendFixtureServices(enabled = false, options: Frontend
     async deleteAccount() {
       state.signedIn = false;
       state.balance = 0;
-      state.freeRemaining = 2;
+      state.freeRemaining = 4;
+      state.hasPurchased = false;
     },
     async createGuestSession() { throw new NativeServiceError("native_generation_unavailable"); },
     async generate(_scene: string): Promise<NativeGenerationResult> {
@@ -92,9 +95,23 @@ export function createFrontendFixtureServices(enabled = false, options: Frontend
     async signOut() { state.signedIn = false; },
   };
 
+  const catalog = getPlayCatalog(new Date("2026-10-10T12:00:00Z"));
+  const pricedCatalog = { ...catalog, packs: catalog.packs.map(pack => {
+    const price = pack.productId === "pack_mini" ? 1.99 : pack.productId === "pack_regular" ? 4.99 : 9.99;
+    return { ...pack, price, priceMicros: Math.round(price * 1000000), currency: "EUR", priceLabel: "\u20ac" + price.toFixed(2) };
+  }) };
   const billing: NativeBilling = {
+    async preparePacks() { return pricedCatalog; },
+    async buyPack(productId, expectedCredits) {
+      const pack = pricedCatalog.packs.find(item => item.productId === productId);
+      if (!pack || expectedCredits !== pack.credits) throw new NativeServiceError("offer_changed");
+      state.balance += pack.credits;
+      state.hasPurchased = true;
+      return { status: "granted", balance: state.balance, productId, creditsGranted: pack.credits, offerApplied: pack.offerApplied };
+    },
+    async recoverPacks() {},
     async prepare() { return { productId: NATIVE_PRODUCT_ID, priceLabel: "€4.99" }; },
-    async buy() { state.balance += 10; },
+    async buy() { state.balance += 10; state.hasPurchased = true; },
     async recoverPending() {},
     async dispose() {},
   };

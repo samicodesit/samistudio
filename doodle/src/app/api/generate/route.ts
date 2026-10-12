@@ -1,4 +1,5 @@
 import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
+import { trackFunnel } from "@/lib/funnel-metrics";
 import { createHash, randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { isDetailLevel } from "@/lib/generation/detail-level";
@@ -46,7 +47,7 @@ function nativeError(error: string, status: number) {
   );
 }
 
-async function finalizeWithReplay(operation: () => Promise<{ finalized: boolean; remaining: number }>) {
+async function finalizeWithReplay(operation: () => Promise<{ finalized: boolean; remaining: number; firstDoodle?: true }>) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
       return await operation();
@@ -342,6 +343,11 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
       String(finalized.remaining),
     );
 
+    {
+      const actor=reservation.kind==="paid" ? "account:"+reservation.userId : "trial:"+reservation.identity.id;
+      if (reservation.kind==="paid" ? finalized.firstDoodle===true : finalized.remaining===3) trackFunnel({metric:"first_doodle",actor,email:user?.email,knownFirstPaid:reservation.kind==="paid",knownFirstFree:reservation.kind==="free"});
+      if (reservation.kind==="free" && finalized.remaining===0) trackFunnel({metric:"free_exhausted",actor,email:user?.email});
+    }
     return success();
   } catch (error) {
     await release();

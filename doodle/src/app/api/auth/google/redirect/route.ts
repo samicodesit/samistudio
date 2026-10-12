@@ -1,3 +1,5 @@
+import { mergeFunnelIdentity } from "@/lib/funnel-metrics";
+import { getTrialIdentity, isValidTrialToken } from "@/lib/generation/free-allowance";
 import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { timingSafeEqual } from "node:crypto";
 import { createOrGetGoogleAccount } from "@/lib/auth/accounts";
@@ -24,7 +26,7 @@ function matchesCsrfToken(formToken: string | null, cookieToken: string | undefi
 }
 
 async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
-  let form: FormData;
+  let form: Awaited<ReturnType<NextRequest["formData"]>>;
   try {
     form = await request.formData();
   } catch {
@@ -56,6 +58,8 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
   try {
     diagnostics.stage = "account_read";
     const account = await createOrGetGoogleAccount(google.sub);
+    const trialToken=request.cookies.get("doodle_trial")?.value;
+    if(trialToken && isValidTrialToken(trialToken))await mergeFunnelIdentity("trial:"+getTrialIdentity(request).id,"account:"+account.id,google.email);
     const response = redirectWithAuthResult("success");
     diagnostics.stage = "session_create";
     setSessionCookie(response, { ...account, email: google.email });

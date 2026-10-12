@@ -1,0 +1,16 @@
+import {render,screen} from "@testing-library/react";
+import {beforeEach,it,expect,vi} from "vitest";
+import {PurchaseDialog} from "./purchase-dialog";
+import {getCopy} from "@/lib/i18n";
+import {isPlayRuntime} from "@/lib/billing/play-client";
+vi.mock("./web-pack-purchase-dialog",()=>({WebPackPurchaseDialog:()=> <div>New web packs</div>}));
+vi.mock("@/lib/billing/play-client",()=>({isPlayRuntime:vi.fn(()=>false),preparePlayPurchase:vi.fn(),purchasePlayPack:vi.fn(),recoverPlayPurchases:vi.fn()}));
+vi.mock("./google-sign-in-button",()=>({GoogleSignInButton:()=> <button>Google sign-in</button>,isIosBrowser:()=>false}));
+const props={open:true,account:{authenticated:false,email:null,balance:0,freeRemaining:0},scene:"Flower cat",locale:"en" as const,copy:getCopy("en"),success:false,onClose:vi.fn(),onAccountChange:vi.fn()};
+beforeEach(()=>{vi.mocked(isPlayRuntime).mockReturnValue(false);});
+it("keeps the existing web checkout when new Stripe packs are disabled",()=>{render(<PurchaseDialog {...props} webPacksEnabled={false}/>);expect(screen.getByRole("button",{name:props.copy.purchase.buy})).toBeVisible();expect(screen.queryByText("New web packs")).toBeNull();});
+it("shows web packs once their rollout is enabled",()=>{render(<PurchaseDialog {...props} webPacksEnabled/>);expect(screen.getByText("New web packs")).toBeVisible();});
+it("keeps account sign-in independent of the web packs switch",()=>{render(<PurchaseDialog {...props} webPacksEnabled signInOnly/>);expect(screen.getByRole("button",{name:"Google sign-in"})).toBeVisible();expect(screen.queryByText("New web packs")).toBeNull();});
+it("keeps legacy Play wrapper purchases independent of the web switch",()=>{vi.mocked(isPlayRuntime).mockReturnValue(true);render(<PurchaseDialog {...props} webPacksEnabled/>);expect(screen.getByRole("button",{name:props.copy.purchase.buy})).toBeVisible();expect(screen.queryByText("New web packs")).toBeNull();});
+it("saves the retained drawing before legacy checkout asks for sign-in",async()=>{const saved=vi.fn().mockResolvedValue(undefined);render(<PurchaseDialog {...props} webPacksEnabled={false} onBeforeCheckout={saved}/>);const {fireEvent}=await import("@testing-library/react");fireEvent.click(screen.getByRole("button",{name:props.copy.purchase.buy}));await screen.findByRole("button",{name:"Google sign-in"});expect(saved).toHaveBeenCalledOnce();});
+it("keeps checkout closed if the retained drawing cannot be saved",async()=>{const saved=vi.fn().mockRejectedValue(new Error("draft unavailable"));render(<PurchaseDialog {...props} webPacksEnabled={false} onBeforeCheckout={saved}/>);const {fireEvent}=await import("@testing-library/react");fireEvent.click(screen.getByRole("button",{name:props.copy.purchase.buy}));await screen.findByRole("alert");expect(screen.queryByRole("button",{name:"Google sign-in"})).toBeNull();});

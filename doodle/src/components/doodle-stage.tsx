@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element -- generated images are browser-owned object URLs. */
 import Image from "next/image";
 import { Maximize2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { DoodleWaitingCard } from "./doodle-waiting-card";
 import type { DoodleCopy, Locale } from "@/lib/i18n";
 import { DoodleGridFrame } from "./doodle-grid-frame";
 
@@ -22,47 +22,8 @@ interface DoodleStageProps {
   onToggleGrid?: () => void;
 }
 
-const LOADING_DELAYS = [8000, 12000, 25000, 30000];
-
 export function DoodleStage({ status, imageUrl, error, onInspect, copy, referenceImage, referenceAlt, locale = "en", gridEnabled = false, onToggleGrid }: DoodleStageProps) {
-  const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
-
-  useEffect(() => {
-    if (status !== "generating") return;
-
-    let timeout: ReturnType<typeof setTimeout> | undefined;
-    let messageIndex = 0;
-    const advanceMessage = () => {
-      if (messageIndex >= LOADING_DELAYS.length) return;
-      timeout = setTimeout(() => {
-        messageIndex += 1;
-        setLoadingMessageIndex(messageIndex);
-        advanceMessage();
-      }, LOADING_DELAYS[messageIndex]);
-    };
-
-    advanceMessage();
-    return () => {
-      if (timeout) clearTimeout(timeout);
-    };
-  }, [status]);
-
-  if (status === "generating") {
-    return (
-      <div className="doodle-stage doodle-stage-loading" role="status" aria-live="polite">
-        <div className="loading-note" aria-hidden="true">
-          <span className="loading-ink-line loading-ink-line-one" />
-          <span className="loading-ink-line loading-ink-line-two" />
-          <span className="loading-ink-line loading-ink-line-three" />
-        </div>
-        <span className="loading-primary">{copy.loadingPrimary}</span>
-        <span className="loading-message" aria-hidden="true">
-          {copy.loadingMessages[loadingMessageIndex]}
-        </span>
-        <span className="sr-only">{copy.loadingSr}</span>
-      </div>
-    );
-  }
+  if (status === "generating") return <DoodleWaitingCard copy={copy} />;
 
   if (status === "ready" && imageUrl) {
     return (

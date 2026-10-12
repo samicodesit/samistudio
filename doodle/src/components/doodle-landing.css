@@ -6,7 +6,11 @@
 .doodle-landing .doodle-header .language-switcher { margin-inline-start: 0; }
 .landing-examples-link { margin-inline-start: auto; padding-inline-end: 20px; border-inline-end: 1px solid var(--line); font-size: 15px; color: var(--muted); }
 .doodle-landing .language-switcher summary { border-color: transparent; font-size: 15px; }
-.language-switcher-animated summary { display: flex; align-items: center; justify-content: center; gap: 9px; }
+.language-switcher-animated summary { display: flex; align-items: center; justify-content: center; gap: 9px; padding-inline: 12px; }
+.language-switcher-animated summary::after { content: none; display: none; }
+.language-current-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.language-chevron { flex: 0 0 14px; transition: transform 180ms ease; }
+.language-switcher-animated[data-state="open"] .language-chevron { transform: rotate(180deg); }
 .language-switcher-animated summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .language-flag { display: block; width: 24px; height: 18px; flex-shrink: 0; border-radius: 2px; box-shadow: 0 0 0 1px rgba(32,35,31,.08); }
 .language-switcher-animated nav {
@@ -61,6 +65,7 @@
 .landing-suggestions button { min-height: 36px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--moss); font-size: 13px; line-height: 1.4; }
 .landing-suggestions button:hover { border-color: var(--moss); background: #e4ece2; }
 .doodle-workspace-landing .suggestions-section { display: none; }
+.landing-mobile-app-link { display: none; }
 .doodle-workspace-landing .workspace-visual { grid-column: 2; grid-row: 1 / span 2; width: 100%; padding: 0; margin: 0; }
 .doodle-workspace-landing .landing-stage-wrap { display: block; width: 100%; }
 .doodle-workspace-landing .doodle-stage { width: 100%; margin: 0; }
@@ -86,20 +91,28 @@
 .landing-afterword { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); align-items: center; gap: 28px; width: min(1120px, calc(100% - 48px)); margin: 40px auto 0; padding-top: 28px; border-top: 1px solid var(--line); }
 .landing-afterword h2 { margin: 0 0 12px; font-family: var(--font-display); font-size: 27px; letter-spacing: -.035em; line-height: 1.12; font-weight: 600; }
 .landing-afterword p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.5; }
-.landing-example-papers { width: 100%; max-width: 540px; justify-self: end; }
+.landing-example-papers { position: relative; width: 100%; max-width: 540px; justify-self: end; }
 .landing-example-papers img { display: block; width: 100%; height: auto; }
 .landing-afterword .android-app-link { padding: 8px 0 0; text-align: start; }
 .landing-afterword .android-app-link img { width: min(100%, 190px); }
-.landing-resources { width: min(1120px, calc(100% - 48px)); margin: 28px auto 0; color: var(--muted); }
-.landing-resources > summary { width: fit-content; cursor: pointer; font-size: 14px; padding: 12px 0; }
-.landing-resources .seo-content { width: 100%; margin: 24px 0; }
-.landing-resources .drawing-guides { width: 100%; margin: 36px 0; }
-.doodle-landing .site-footer { display: block; width: min(1120px, calc(100% - 48px)); margin: 24px auto 0; padding: 24px 0 32px; }
+#doodle-tool { scroll-margin-top: 20px; }
+.landing-next-step { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; width: min(1120px, calc(100% - 48px)); margin: 28px auto 0; padding: 32px 0; border-block: 1px solid var(--line); }
+.landing-next-step h2 { margin: 0; font-family: var(--font-display); font-size: 27px; font-weight: 600; letter-spacing: -.035em; line-height: 1.2; }
+.landing-next-actions { display: flex; align-items: center; gap: 24px; }
+.landing-next-step .landing-create-link { width: auto; flex-shrink: 0; min-height: 48px; padding: 0 24px; border-radius: 10px; font-size: 16px; }
+.landing-ideas-link { display: inline-flex; align-items: center; min-height: 48px; color: var(--moss); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; }
+.landing-next-actions a:focus-visible, .landing-footer-guides a:focus-visible { outline: 2px solid var(--moss); outline-offset: 4px; border-radius: 4px; }
+.doodle-landing .landing-footer-guides { gap: 4px 20px; margin-top: 16px; font-size: 13px; }
+.landing-footer-guides a { display: inline-flex; align-items: center; min-height: 44px; color: var(--muted); text-decoration: underline; text-decoration-color: #a4b9a7; text-underline-offset: 4px; }
+.doodle-landing .site-footer { display: block; width: min(1120px, calc(100% - 48px)); margin: 24px auto 0; padding: 24px 0 32px; border-top: 0; }
 .landing-footer-main { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .landing-footer-main .doodle-wordmark { font-size: 28px; color: var(--graphite); }
+.landing-footer-brand { display: flex; align-items: center; gap: 24px; }
+.landing-footer-brand .android-app-link { padding: 0; }
+.landing-footer-brand .android-app-link img { width: 128px; }
 .landing-footer-main nav { font-size: 14px; }
 .landing-footer-secondary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; margin-top: 24px; font-size: 12px; }
-body:has(.mobile-app-workspace[data-installed="true"]) .landing-afterword, body:has(.mobile-app-workspace[data-installed="true"]) .landing-resources { display: none; }
+body:has(.mobile-app-workspace[data-installed="true"]) .landing-afterword, body:has(.mobile-app-workspace[data-installed="true"]) .landing-next-step { display: none; }
 @media (max-width: 899px) and (min-width: 700px) {
  .doodle-workspace-landing { grid-template-columns: minmax(0, 1fr) 200px; column-gap: 24px; }
  .landing-intro h1 { font-size: 40px; }
@@ -108,13 +121,13 @@ body:has(.mobile-app-workspace[data-installed="true"]) .landing-afterword, body:
  .landing-afterword { grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); }
 }
 @media (max-width: 699px) {
- .doodle-landing .doodle-header { height: 72px; padding-inline: 20px; gap: 8px; }
+ .doodle-landing .doodle-header { height: 68px; padding-inline: 20px; gap: 8px; }
  .doodle-landing .doodle-wordmark { font-size: 28px; }
  .landing-examples-link { display: none; }
  .doodle-landing .doodle-header .language-switcher { margin-inline-start: auto; }
  .doodle-landing .language-switcher summary { padding-inline: 4px; font-size: 13px; }
  .doodle-landing .doodle-header .account-sign-in-action { min-height: 42px; padding-inline: 14px; font-size: 14px; }
- .doodle-landing .doodle-main { width: calc(100% - 40px); padding-top: 24px; }
+ .doodle-landing .doodle-main { width: calc(100% - 40px); padding-top: 20px; }
  .doodle-workspace-landing { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
  .landing-intro { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
  .doodle-workspace-landing .scene-heading { position: static; width: auto; height: auto; overflow: visible; clip-path: none; white-space: normal; }
@@ -130,15 +143,19 @@ body:has(.mobile-app-workspace[data-installed="true"]) .landing-afterword, body:
    transform: none;
  }
  [dir="rtl"] .mobile-app-workspace[data-installed="false"] .composer-hero-art { transform: scaleX(-1); }
- .doodle-workspace-landing .doodle-composer { min-height: 194px; }
- .doodle-workspace-landing .doodle-composer textarea { min-height: 118px; padding: 18px 16px 8px; font-size: 16px; }
+ .doodle-workspace-landing .doodle-composer { min-height: 186px; }
+ .doodle-workspace-landing .doodle-composer textarea { min-height: 110px; padding: 18px 16px 8px; font-size: 16px; }
  .doodle-workspace-landing .animated-prompt-hint { inset: 18px 16px auto; font-size: 16px; }
  .doodle-workspace-landing .composer-footer { flex-wrap: wrap; padding: 12px; gap: 12px; }
  .doodle-workspace-landing .composer-meta { min-width: 0; }
  .doodle-workspace-landing .usage-copy { font-size: 13px; }
  .doodle-workspace-landing .composer-footer > button { min-height: 48px; padding-inline: 16px; font-size: 16px; }
  .landing-suggestions { display: none; }
- .doodle-workspace-landing .suggestions-section { display: block; margin-top: 28px; }
+ .doodle-workspace-landing .suggestions-section { display: block; margin-top: 20px; }
+ .landing-mobile-app-link { display: block; margin-top: 12px; }
+ .landing-mobile-app-link .android-app-link { padding: 0; }
+ .landing-mobile-app-link .android-app-link img { width: 128px; }
+ .landing-afterword .android-app-link { display: none; }
  .doodle-workspace-landing.doodle-workspace-idle .workspace-visual { display: none; }
  .doodle-workspace-landing.doodle-workspace-generating, .doodle-workspace-landing.doodle-workspace-ready { min-height: 560px; justify-content: flex-start; }
  .doodle-workspace-landing .state-copy h1 { font-size: 34px; }
@@ -146,7 +163,20 @@ body:has(.mobile-app-workspace[data-installed="true"]) .landing-afterword, body:
  .landing-afterword h2 { font-size: 24px; }
  .landing-afterword p { font-size: 15px; }
  .landing-example-papers { max-width: 440px; justify-self: start; }
- .landing-resources, .doodle-landing .site-footer { width: calc(100% - 40px); }
+ .landing-next-step, .doodle-landing .site-footer { width: calc(100% - 40px); }
+ .landing-next-step { flex-direction: column; align-items: stretch; gap: 20px; padding: 28px 0; }
+ .landing-next-step h2 { font-size: 25px; max-width: 22ch; }
+ .landing-next-actions { flex-direction: column; align-items: stretch; gap: 8px; }
+ .landing-next-step .landing-create-link { width: 100%; }
+ .landing-ideas-link { justify-content: center; }
+ .landing-footer-main { flex-wrap: wrap; gap: 16px; }
+ .landing-footer-brand { width: 100%; justify-content: space-between; gap: 16px; }
+ .landing-footer-brand .android-app-link { display: none; }
+ .landing-footer-main > nav { width: 100%; }
  .landing-footer-main nav { font-size: 13px; gap: 12px; }
 }
 @media (prefers-reduced-motion: reduce) { .prompt-hint-caret { animation: none; } }
+
+.landing-example-targets { position: absolute; inset: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 2%; }
+.landing-example-targets button { min-width: 0; border: 0; background: transparent; border-radius: 4px; cursor: zoom-in; }
+.landing-example-targets button:focus-visible { outline: 2px solid var(--moss); outline-offset: 3px; }

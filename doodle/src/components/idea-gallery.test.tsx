@@ -2,13 +2,15 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getDoodleIdeas } from "@/lib/doodle-ideas";
 import { getCopy } from "@/lib/i18n";
+import { getGalleryItems } from "@/lib/gallery-catalog";
+import { getGalleryCopy } from "@/lib/gallery-copy";
 import { IdeaGallery } from "./idea-gallery";
 
 const copy = getDoodleIdeas("en");
 
 describe("IdeaGallery attribution", () => {
   it("uses the shared preview and starts each reopened idea with the grid off", () => {
-    render(<IdeaGallery locale="en" copy={copy} />);
+    render(<IdeaGallery locale="en" items={getGalleryItems("en")} labels={{ ...copy, all: getGalleryCopy("en").all }} />);
     const open = screen.getAllByRole("button", { name: new RegExp(copy.viewLarger) })[0];
     fireEvent.click(open);
     let dialog = screen.getByRole("dialog");
@@ -29,12 +31,13 @@ describe("IdeaGallery attribution", () => {
   });
 
   it("carries approved inbound attribution through the Try this idea CTA", async () => {
-    render(<IdeaGallery locale="en" copy={copy} />);
+    render(<IdeaGallery locale="en" items={getGalleryItems("en")} labels={{ ...copy, all: getGalleryCopy("en").all }} />);
 
+    fireEvent.click(screen.getAllByRole("button", { name: new RegExp(copy.viewLarger) })[0]);
     await waitFor(() => {
       expect(screen.getAllByRole("link", { name: copy.tryIdea })[0]).toHaveAttribute(
         "href",
-        "/?scene=A%20steaming%20mug%20beside%20a%20folded%20thank-you%20note%20with%20a%20tiny%20heart%20on%20it&utm_source=pinterest&utm_medium=organic_social&utm_campaign=doodle_web_launch&utm_content=birthday_card#composer",
+        "/?scene=A%20steaming%20mug%20beside%20a%20folded%20thank-you%20note%20with%20a%20tiny%20heart%20on%20it&detail=simple&utm_source=pinterest&utm_medium=organic_social&utm_campaign=doodle_web_launch&utm_content=birthday_card#doodle-tool",
       );
     });
   });

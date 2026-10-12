@@ -1,3 +1,4 @@
+import { signedTrialToken } from "@/lib/generation/free-allowance";
 vi.mock("server-only", () => ({}));
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -6,8 +7,9 @@ import { POST } from "./route";
 const mocks = vi.hoisted(() => ({
   verifyGoogleCredential: vi.fn(),
   createOrGetGoogleAccount: vi.fn(),
-  setSessionCookie: vi.fn(),
+  mergeFunnelIdentity: vi.fn(), setSessionCookie: vi.fn(),
 }));
+vi.mock("@/lib/funnel-metrics",()=>({mergeFunnelIdentity:mocks.mergeFunnelIdentity}));
 vi.mock("@/lib/auth/google", () => ({ verifyGoogleCredential: mocks.verifyGoogleCredential }));
 vi.mock("@/lib/auth/accounts", () => ({ createOrGetGoogleAccount: mocks.createOrGetGoogleAccount }));
 vi.mock("@/lib/auth/session", () => ({ setSessionCookie: mocks.setSessionCookie }));
@@ -82,4 +84,8 @@ describe("Google redirect auth route", () => {
     expect(unavailable.status).toBe(303);
     expect(locationOf(unavailable)).toBe("https://doodle.samistudio.nl/?auth=error");
   });
+});
+
+it("merges a valid retained trial when the redirect includes it",async()=>{
+ vi.stubEnv("SESSION_SECRET","redirect-test-secret");mocks.verifyGoogleCredential.mockResolvedValue({sub:"google",email:"buyer@example.com"});mocks.createOrGetGoogleAccount.mockResolvedValue({id:"account",identityKey:"identity"});const trial={id:"11111111-1111-4111-8111-111111111111"};const response=await POST(request({credential:"token",g_csrf_token:"csrf"},"g_csrf_token=csrf; doodle_trial="+signedTrialToken(trial)));expect(locationOf(response)).toContain("auth=success");expect(mocks.mergeFunnelIdentity).toHaveBeenCalledWith("trial:"+trial.id,"account:account","buyer@example.com");vi.unstubAllEnvs();
 });

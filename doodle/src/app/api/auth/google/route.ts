@@ -1,3 +1,5 @@
+import { mergeFunnelIdentity } from "@/lib/funnel-metrics";
+import { getTrialIdentity, isValidTrialToken } from "@/lib/generation/free-allowance";
 import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { createOrGetGoogleAccount } from "@/lib/auth/accounts";
 import { verifyGoogleCredential } from "@/lib/auth/google";
@@ -28,6 +30,8 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
   try {
     diagnostics.stage = "account_read";
     const account = await createOrGetGoogleAccount(google.sub);
+    const trialToken=request.cookies.get("doodle_trial")?.value;
+    if(trialToken && isValidTrialToken(trialToken))await mergeFunnelIdentity("trial:"+getTrialIdentity(request).id,"account:"+account.id,google.email);
     const response = new NextResponse(null, { status: 204 });
     diagnostics.stage = "session_create";
     setSessionCookie(response, { ...account, email: google.email });

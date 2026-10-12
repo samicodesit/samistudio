@@ -1,9 +1,11 @@
+import { signedTrialToken } from "@/lib/generation/free-allowance";
 vi.mock("server-only", () => ({}));
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { POST } from "./route";
 
-const mocks = vi.hoisted(() => ({ verifyGoogleCredential: vi.fn(), createOrGetGoogleAccount: vi.fn(), setSessionCookie: vi.fn() }));
+const mocks = vi.hoisted(() => ({ verifyGoogleCredential: vi.fn(), createOrGetGoogleAccount: vi.fn(), mergeFunnelIdentity: vi.fn(), setSessionCookie: vi.fn() }));
+vi.mock("@/lib/funnel-metrics",()=>({mergeFunnelIdentity:mocks.mergeFunnelIdentity}));
 vi.mock("@/lib/auth/google", () => ({ verifyGoogleCredential: mocks.verifyGoogleCredential }));
 vi.mock("@/lib/auth/accounts", () => ({ createOrGetGoogleAccount: mocks.createOrGetGoogleAccount }));
 vi.mock("@/lib/auth/session", () => ({ setSessionCookie: mocks.setSessionCookie }));
@@ -65,4 +67,9 @@ describe("Google auth route", () => {
       email: "buyer@example.com",
     });
   });
+});
+
+it("merges only a verified retained web trial after successful sign-in",async()=>{
+ vi.stubEnv("SESSION_SECRET","local-secret-with-at-least-32-characters");mocks.verifyGoogleCredential.mockResolvedValue({sub:"google",email:"buyer@example.com"});mocks.createOrGetGoogleAccount.mockResolvedValue({id:"account",identityKey:"identity"});
+ const trial={id:"11111111-1111-4111-8111-111111111111"}, req=request({credential:"token"});req.cookies.set("doodle_trial",signedTrialToken(trial));expect((await POST(req)).status).toBe(204);expect(mocks.mergeFunnelIdentity).toHaveBeenCalledWith("trial:"+trial.id,"account:account","buyer@example.com");mocks.mergeFunnelIdentity.mockClear();await POST(request({credential:"token"}));expect(mocks.mergeFunnelIdentity).not.toHaveBeenCalled();vi.unstubAllEnvs();
 });

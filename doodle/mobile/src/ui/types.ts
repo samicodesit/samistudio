@@ -116,6 +116,7 @@ export interface NativeGenerationReady {
   status: "ready";
   imageUri: NativeImageSource;
   imageAlt: string;
+  freeExhausted?: boolean;
 }
 
 export interface NativeGenerationError {
@@ -139,9 +140,21 @@ export interface NativeAccountUi {
 
 export type NativeAccountModalState = "closed" | "menu" | "signIn" | "deleteConfirm";
 
+export interface NativePackCardUi {
+  productId: import("../contracts/native").PlayPackId;
+  name: string;
+  quantityLabel: string;
+  priceLabel: string;
+  unitPriceLabel: string;
+  caption: string;
+  badge?: string;
+  offerLabel?: string;
+  selected: boolean;
+}
+
 export interface NativePurchaseUi {
   visible: boolean;
-  mode: "offer" | "signIn" | "checkout" | "success" | "error";
+  mode: "offer" | "signIn" | "checkout" | "pending" | "success" | "error";
   title: string;
   body: string;
   quantityLabel: string;
@@ -154,6 +167,8 @@ export interface NativePurchaseUi {
   restoreLabel?: string;
   errorLabel?: string;
   busy: boolean;
+  packs?: readonly NativePackCardUi[];
+  selectedProductId?: import("../contracts/native").PlayPackId;
 }
 
 export interface NativeIdea {
@@ -203,7 +218,7 @@ export interface NativeDoodleUiProps {
   copy: NativeDoodleUiCopy;
   draft: NativeDraftUi;
   generation: NativeGenerationUiState;
-  usage: { status: "loading" | "ready"; label: string };
+  usage: { status: "loading" | "ready"; label: string; lastFree?: boolean };
   account: NativeAccountUi;
   accountModal: NativeAccountModalState;
   ideas: readonly NativeIdea[];
@@ -211,6 +226,7 @@ export interface NativeDoodleUiProps {
   locales: readonly NativeLocaleOption[];
   supportLinks: readonly NativeSupportLink[];
   purchase?: NativePurchaseUi;
+  purchaseNotice?: string;
   reportState: NativeReportUiState;
   modal: NativeContentModal;
   /**
@@ -239,6 +255,7 @@ export interface NativeDoodleUiProps {
   onSignIn(): void;
   onRefill(): void;
   onPurchase(): void;
+  onSelectPack?(productId: import("../contracts/native").PlayPackId): void;
   onRestore(): void;
   onCancelPurchase(): void;
   onSignOut(): void;

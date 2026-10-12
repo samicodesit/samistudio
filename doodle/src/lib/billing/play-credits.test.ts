@@ -20,7 +20,7 @@ describe("Play credit ledger", () => {
     await expect(claimPlayCredits(accountId, token)).resolves.toEqual({ granted: true, balance: 10 });
 
     const command = redisCommand.mock.calls[0][0] as unknown[];
-    expect(command.slice(0, 3)).toEqual(["EVAL", expect.any(String), "4"]);
+    expect(command.slice(0, 3)).toEqual(["EVAL", expect.any(String), "5"]);
     expect(command.slice(3, 7)).toEqual([
       `doodle:account:${accountId}:active`,
       `doodle:account:${accountId}:deleted`,

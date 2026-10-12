@@ -1,3 +1,6 @@
+const mergeFunnel = vi.hoisted(()=>vi.fn().mockResolvedValue(undefined));
+const deleteFunnel = vi.hoisted(()=>vi.fn().mockResolvedValue(undefined));
+vi.mock("@/lib/funnel-metrics",()=>({deleteFunnelIdentity:deleteFunnel,mergeFunnelIdentity:mergeFunnel}));
 import { createHmac } from "node:crypto";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -11,11 +14,12 @@ const mocks = vi.hoisted(() => ({
   getCurrentUser: vi.fn(),
   getFreeRemaining: vi.fn(),
   getPaidBalance: vi.fn(),
+  getPurchaseHistory: vi.fn(),
   revokeNativeSession: vi.fn(),
 }));
 
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.getCurrentUser, clearSessionCookie: mocks.clearSessionCookie }));
-vi.mock("@/lib/billing/credits", () => ({ getPaidBalance: mocks.getPaidBalance, deletePaidAccount: mocks.deletePaidAccount }));
+vi.mock("@/lib/billing/credits", () => ({ getPaidBalance: mocks.getPaidBalance, getPurchaseHistory: mocks.getPurchaseHistory, deletePaidAccount: mocks.deletePaidAccount }));
 vi.mock("@/lib/native-session", () => ({ revokeNativeSession: mocks.revokeNativeSession }));
 vi.mock("@/lib/generation/free-allowance", async () => {
   const actual = await vi.importActual<typeof import("@/lib/generation/free-allowance")>(
@@ -39,9 +43,11 @@ function request(
 
 describe("account route", () => {
   beforeEach(() => {
+    deleteFunnel.mockReset().mockResolvedValue(undefined);
     vi.unstubAllEnvs();
     vi.stubEnv("SESSION_SECRET", "account-route-test-secret");
     Object.values(mocks).forEach((mock) => mock.mockReset());
+    mocks.getFreeRemaining.mockResolvedValue(2);
     mocks.deletePaidAccount.mockResolvedValue(undefined);
     mocks.revokeNativeSession.mockResolvedValue(undefined);
   });
@@ -71,7 +77,7 @@ describe("account route", () => {
     expect(mocks.getPaidBalance).not.toHaveBeenCalled();
   });
 
-  it("reports the signed-in paid balance without reading anonymous usage", async () => {
+  it("reports paid and remaining browser trial usage after sign-in", async () => {
     mocks.getCurrentUser.mockResolvedValue({ id: "user", identityKey: "a".repeat(64), email: "buyer@example.com" });
     mocks.getPaidBalance.mockResolvedValue(7);
 
@@ -81,10 +87,38 @@ describe("account route", () => {
       authenticated: true,
       email: "buyer@example.com",
       balance: 7,
-      freeRemaining: null,
+      freeRemaining: 2,
     });
     expect(response.headers.get("set-cookie")).toContain("doodle_trial=");
+    expect(mocks.getFreeRemaining).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps the same browser trial identity across sign-in without resetting usage", async () => {
+    mocks.getCurrentUser.mockResolvedValueOnce(null).mockResolvedValueOnce({ id: "user", email: "buyer@example.com" });
+    mocks.getPaidBalance.mockResolvedValue(0);
+    const before = await GET(request());
+    const cookie = before.headers.get("set-cookie")!.split(";")[0];
+    const after = await GET(request("GET", undefined, "https://doodle.test", { cookie }));
+    expect(await after.json()).toMatchObject({ authenticated: true, balance: 0, freeRemaining: 2 });
+    expect(mocks.getFreeRemaining.mock.calls[1][0]).toEqual(mocks.getFreeRemaining.mock.calls[0][0]);
+  });
+
+  it("does not expose a browser trial to authenticated native Android requests", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", identityKey: "a".repeat(64), email: "buyer@example.com" });
+    mocks.getPaidBalance.mockResolvedValue(0);
+    const response = await GET(request("GET", undefined, "https://doodle.test", {
+      "x-doodle-client": "native-android", authorization: `Bearer ${"t".repeat(43)}`,
+    }));
+    expect(await response.json()).toMatchObject({ balance: 0, freeRemaining: null });
     expect(mocks.getFreeRemaining).not.toHaveBeenCalled();
+  });
+
+  it("returns purchase history for native clients separately from the current balance", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", email: "buyer@example.com" });
+    mocks.getPaidBalance.mockResolvedValue(0);
+    mocks.getPurchaseHistory.mockResolvedValue(true);
+    const response = await GET(request("GET", undefined, "https://doodle.test", { "x-doodle-client": "native-android" }));
+    expect(await response.json()).toMatchObject({ balance: 0, hasPurchased: true });
   });
 
   it("rejects cross-origin deletion before authentication", async () => {
@@ -118,9 +152,21 @@ describe("account route", () => {
     const response = await DELETE(request("DELETE", { confirm: true }));
 
     expect(response.status).toBe(204);
+    expect(deleteFunnel).not.toHaveBeenCalled();
     expect(mocks.deletePaidAccount).toHaveBeenCalledWith("user", "a".repeat(64));
     expect(mocks.clearSessionCookie).toHaveBeenCalledWith(response);
     expect(mocks.revokeNativeSession).toHaveBeenCalledWith(expect.any(NextRequest));
+  });
+
+  it("does not depend on a separate metrics request to delete the account", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", identityKey: "a".repeat(64), email: "buyer@example.com" });
+    deleteFunnel.mockRejectedValue(new Error("Metrics timeout"));
+    const response = await DELETE(request("DELETE", { confirm: true }));
+    expect(response.status).toBe(204);
+    expect(deleteFunnel).not.toHaveBeenCalled();
+    expect(mocks.deletePaidAccount).toHaveBeenCalledOnce();
+    expect(mocks.revokeNativeSession).toHaveBeenCalledOnce();
+    expect(mocks.clearSessionCookie).toHaveBeenCalledWith(response);
   });
 
   it("revokes the native bearer as part of account deletion", async () => {
@@ -143,4 +189,10 @@ describe("account route", () => {
 
     expect(response.status).toBe(500);
   });
+});
+
+it("merges the retained trial on a same-site web account refresh after redirect sign-in",async()=>{
+ vi.stubEnv("SESSION_SECRET","account-route-test-secret");mocks.getCurrentUser.mockResolvedValue({id:"account",email:"buyer@example.com"});mocks.getPaidBalance.mockResolvedValue(0);mocks.getFreeRemaining.mockResolvedValue(0);mocks.getPurchaseHistory.mockResolvedValue(false);
+ const trial="11111111-1111-4111-8111-111111111111", signature=createHmac("sha256","account-route-test-secret").update(trial).digest("base64url");
+ const response=await GET(request("GET",undefined,"https://doodle.test",{"x-doodle-packs":"v1",cookie:"doodle_trial="+trial+"."+signature}));expect(response.status).toBe(200);expect(mergeFunnel).toHaveBeenCalledWith("trial:"+trial,"account:account","buyer@example.com");
 });

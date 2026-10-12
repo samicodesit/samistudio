@@ -4,10 +4,11 @@ import { POST } from "./route";
 
 const mocks = vi.hoisted(() => ({
   fulfillCheckout: vi.fn(),
+  fulfillCheckoutDetails: vi.fn(),
   getCurrentUser: vi.fn(),
 }));
 
-vi.mock("@/lib/billing/checkout", () => ({ fulfillCheckout: mocks.fulfillCheckout }));
+vi.mock("@/lib/billing/checkout", () => ({ fulfillCheckout: mocks.fulfillCheckout, fulfillCheckoutDetails:mocks.fulfillCheckoutDetails }));
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.getCurrentUser }));
 
 function request(body?: unknown, origin = "https://doodle.test", query = "") {
@@ -64,4 +65,13 @@ describe("checkout confirmation route", () => {
 
     expect(response.status).toBe(503);
   });
+});
+
+it("returns the original grant details to the new web client",async()=>{mocks.getCurrentUser.mockResolvedValue({id:"user"});mocks.fulfillCheckoutDetails.mockResolvedValue({balance:25,productId:"pack_regular",creditsGranted:25,offerApplied:true});const req=request({sessionId:"cs_paid"});req.headers.set("x-doodle-packs","v1");const response=await POST(req);expect(await response.json()).toEqual({balance:25,productId:"pack_regular",creditsGranted:25,offerApplied:true});expect(response.headers.get("cache-control")).toBe("no-store");});
+
+it("reports pending completion without inventing a successful credit grant",async()=>{mocks.getCurrentUser.mockResolvedValue({id:"user"});mocks.fulfillCheckoutDetails.mockRejectedValue(new Error("checkout_pending"));const req=request({sessionId:"cs_pending"});req.headers.set("x-doodle-packs","v1");const response=await POST(req);expect(response.status).toBe(202);expect(await response.json()).toEqual({pending:true});});
+
+it("distinguishes a terminal payment failure from pending or temporary errors",async()=>{
+ mocks.getCurrentUser.mockResolvedValue({id:"user"});mocks.fulfillCheckoutDetails.mockRejectedValue(new Error("checkout_failed"));const req=request({sessionId:"cs_failed"});req.headers.set("x-doodle-packs","v1");
+ const response=await POST(req);expect(response.status).toBe(409);expect(await response.json()).toEqual({error:"checkout_failed"});
 });

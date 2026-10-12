@@ -10,14 +10,21 @@ export type PlayService = {
 export type PreparedPlayPurchase = { service: PlayService; product: PlayProduct; obfuscatedAccountId: string };
 type PlayWindow = Window & { getDigitalGoodsService?: (method: string) => Promise<PlayService> };
 
+// Legacy Play wrappers launch with runtime=play in an installed window.
+// A copied URL, browser API or old session marker does not prove store access.
 // This is only a checkout-routing hint. The server never uses it to grant credits.
 export function isPlayRuntime(): boolean {
   if (typeof window === "undefined") return false;
+  const installed = typeof window.matchMedia === "function" && window.matchMedia("(display-mode: standalone), (display-mode: fullscreen)").matches;
+  if (!installed) {
+    try { sessionStorage.removeItem(RUNTIME_KEY); } catch {}
+    return false;
+  }
   const marked = new URLSearchParams(window.location.search).get("runtime") === "play";
   try {
     if (marked) sessionStorage.setItem(RUNTIME_KEY, "1");
-    return marked || sessionStorage.getItem(RUNTIME_KEY) === "1" || typeof (window as PlayWindow).getDigitalGoodsService === "function";
-  } catch { return marked || typeof (window as PlayWindow).getDigitalGoodsService === "function"; }
+    return marked || sessionStorage.getItem(RUNTIME_KEY) === "1";
+  } catch { return marked; }
 }
 
 export async function preparePlayPurchase(): Promise<PreparedPlayPurchase> {

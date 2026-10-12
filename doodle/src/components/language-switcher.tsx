@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { ChevronDown } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { SUPPORTED_LOCALES, getCopy, htmlLang, localePath, type Locale } from "@/lib/i18n";
 
@@ -47,6 +48,7 @@ export function LanguageSwitcher({ locale }: { locale: Locale }) {
       setState(state === "open" ? "closing" : "open");
     }}>
       <Flag locale={locale} /><span className="language-current-label">{copy.localeLabel}</span>
+      <ChevronDown className="language-chevron" size={14} aria-hidden="true" />
     </summary>
     <nav aria-label={copy.header.languageLabel} inert={state !== "open"}>
       {SUPPORTED_LOCALES.filter((item) => item !== locale).map((item) => <Link key={item} href={localePath(item)} hrefLang={htmlLang(item)}>

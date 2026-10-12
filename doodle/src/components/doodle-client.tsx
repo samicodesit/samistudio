@@ -15,10 +15,14 @@ import { DoodleStage } from "./doodle-stage";
 import { PurchaseDialog } from "./purchase-dialog";
 import { ResultActions } from "./result-actions";
 import { DoodlePreviewDialog } from "./doodle-preview-dialog";
+import { AndroidAppLink } from "./discovery-links";
 import { isPlayRuntime } from "@/lib/billing/play-client";
 import { getLandingCopy, LANDING_EXAMPLE, type LandingCopy } from "@/lib/landing-copy";
 import { getComposerIntro } from "@/lib/composer-intro";
 import { usePhotoDraft } from "./use-photo-draft";
+import { rememberPurchase } from "@/lib/purchase-wording";
+import { getPackCopy, fillPackText } from "@/lib/pack-copy";
+import { saveCheckoutDraft, readCheckoutDraft, discardCheckoutDraft } from "@/lib/checkout-draft-store";
 import { getPhotoCopy, photoFailureMessage } from "@/lib/photo-copy";
 
 type DoodleInput = { scene: string; detailLevel: DetailLevel; photo?: string };
@@ -26,7 +30,7 @@ type DoodleInput = { scene: string; detailLevel: DetailLevel; photo?: string };
 type GenerationState =
   | { status: "idle"; imageUrl: null; error: null }
   | { status: "generating"; imageUrl: null; error: null }
-  | { status: "ready"; imageUrl: string; imageFile: File; error: null; input: DoodleInput }
+  | { status: "ready"; imageUrl: string; imageFile: File; error: null; input: DoodleInput; lastFree?: boolean }
   | { status: "error"; imageUrl: null; error: string };
 type PurchaseReturnFocus =
   | { kind: "element"; element: HTMLElement }
@@ -36,9 +40,11 @@ interface DoodleClientProps {
   locale: Locale;
   copy: DoodleCopy;
   initialScene?: string;
+  initialDetailLevel?: DetailLevel;
   initialSuggestionIds?: readonly SceneIdeaId[];
   accountHost?: "web" | "app";
   landing?: LandingCopy;
+  webPacksEnabled?: boolean;
 }
 
 const IDLE_STATE: GenerationState = { status: "idle", imageUrl: null, error: null };
@@ -82,12 +88,14 @@ function messageForStatus(status: number, copy: DoodleCopy["errors"]): string {
   return copy.general;
 }
 
-export function DoodleClient({ locale, copy, initialScene = "", initialSuggestionIds, accountHost = "web", landing }: DoodleClientProps) {
+export function DoodleClient({ locale, copy, initialScene = "", initialDetailLevel, initialSuggestionIds, accountHost = "web", landing, webPacksEnabled = false }: DoodleClientProps) {
+  const packCopy = getPackCopy(locale);
+  const [purchaseNotice, setPurchaseNotice] = useState<string | null>(null);
   const composerHints = useMemo(() => getLandingCopy(locale).placeholderPrompts, [locale]);
   const [scene, setScene] = useState(initialScene);
   const { photo, preparing: preparingPhoto, error: photoError, input: photoInputRef, select: selectPhoto, remove: removePhoto, pick: pickPhoto } = usePhotoDraft(scene, setScene, getPhotoCopy(locale));
   const generationInFlight = useRef(false);
-  const { detailLevel, detailReady, selectDetailLevel } = useDetailLevel();
+  const { detailLevel, detailReady, selectDetailLevel } = useDetailLevel(initialDetailLevel);
   const initialIds = initialSuggestionIds ?? DEFAULT_SUGGESTION_IDS;
   const [suggestionIds, setSuggestionIds] = useState<readonly SceneIdeaId[]>(initialIds);
   const [suggestionRefreshPhase, setSuggestionRefreshPhase] = useState<"idle" | "entering">("idle");
@@ -97,8 +105,8 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   const [accountReady, setAccountReady] = useState(false);
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const [signInOnly, setSignInOnly] = useState(false);
-  const [purchaseSuccess, setPurchaseSuccess] = useState(false);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
+  const [checkoutPaymentPending, setCheckoutPaymentPending] = useState(false);
   const [checkoutRetry, setCheckoutRetry] = useState<string | null>(null);
   const [checkoutConfirming, setCheckoutConfirming] = useState(false);
   const [isResultOpen, setIsResultOpen] = useState(false);
@@ -106,6 +114,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   const currentObjectUrl = useRef<string | null>(null);
   const handledCheckout = useRef<string | null>(null);
   const pendingCheckout = useRef<string | null>(null);
+  const purchaseDismissed = useRef(false);
   const identityRevision = useRef(0);
   const usageRevision = useRef(0);
   const uncertaintyRevision = useRef(0);
@@ -178,6 +187,14 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   const replaceAccount = useCallback((nextAccount: AccountSummary) => {
     identityRevision.current += 1;
     usageRevision.current += 1;
+    if(nextAccount.hasPurchased===true)rememberPurchase();
+    if (!nextAccount.authenticated) {
+      pendingCheckout.current = null;
+      setCheckoutRetry(null); setCheckoutPaymentPending(false); setCheckoutConfirming(false);
+      setPurchaseNotice(null);
+      const url = new URL(location.href); url.searchParams.delete("checkout");
+      history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
+    }
     setAccount(nextAccount);
     setAccountReady(true);
   }, []);
@@ -188,41 +205,73 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
     history.replaceState(history.state, "", `${url.pathname}${url.search}${url.hash}`);
   }, []);
 
-  const confirmCheckout = useCallback(async (sessionId: string) => {
+  const confirmCheckout = useCallback(async (sessionId: string, showDialog = true) => {
+    const identity = identityRevision.current;
     if (handledCheckout.current === sessionId || pendingCheckout.current === sessionId) return;
+    if (showDialog) purchaseDismissed.current = false;
     pendingCheckout.current = sessionId;
     setCheckoutRetry(sessionId);
     setCheckoutConfirming(true);
+    setCheckoutPaymentPending(true);
     setPurchaseError(null);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15_000);
     try {
       const response = await fetch("/api/checkout/confirm", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-doodle-packs": "v1" },
         body: JSON.stringify({ sessionId }),
+        signal: controller.signal,
       });
+      if (response.status === 202) throw new Error("checkout_pending");
+      if (response.status === 409) throw new Error("checkout_failed");
       if (!response.ok) throw new Error("confirmation failed");
-      const body = (await response.json()) as { balance?: unknown };
+      const body = (await response.json()) as { balance?: unknown; creditsGranted?: unknown };
       if (typeof body.balance !== "number" || !Number.isInteger(body.balance) || body.balance < 0) {
         throw new Error("invalid balance");
       }
+      if (identityRevision.current !== identity) return;
       identityRevision.current += 1;
       usageRevision.current += 1;
-      setAccount((current) => ({ ...current, authenticated: true, balance: body.balance as number }));
+      setAccount((current) => ({ ...current, authenticated: true, balance: body.balance as number, hasPurchased: true }));
+      rememberPurchase();
       handledCheckout.current = sessionId;
       setCheckoutRetry(null);
+      setCheckoutPaymentPending(false);
       setPurchaseError(null);
-      setPurchaseSuccess(true);
-      setIsPurchaseOpen(true);
+      setIsPurchaseOpen(false);
+      const creditsGranted = typeof body.creditsGranted === "number" && [6,10,20,25,60].includes(body.creditsGranted) ? body.creditsGranted : 10;
+      setPurchaseNotice(fillPackText(getPackCopy(locale, creditsGranted).added, { count: creditsGranted }));
       sessionStorage.removeItem("doodle:return");
       removeQuery("checkout");
-    } catch {
-      setPurchaseError(copy.purchase.checkoutError);
-      setIsPurchaseOpen(true);
+    } catch (error) {
+      if (identityRevision.current !== identity) return;
+      const paymentPending = error instanceof Error && error.message === "checkout_pending";
+      const failed = error instanceof Error && error.message === "checkout_failed";
+      if (failed) { setCheckoutPaymentPending(false); setCheckoutRetry(null); removeQuery("checkout"); }
+      if (paymentPending) setCheckoutPaymentPending(true);
+      setPurchaseError(failed ? copy.purchase.checkoutError : null);
+      if (showDialog && !purchaseDismissed.current) setIsPurchaseOpen(true);
     } finally {
-      pendingCheckout.current = null;
-      setCheckoutConfirming(false);
+      clearTimeout(timeout);
+      if (pendingCheckout.current === sessionId) { pendingCheckout.current = null; setCheckoutConfirming(false); }
     }
-  }, [copy.purchase.checkoutError, removeQuery]);
+  }, [copy.purchase.checkoutError, removeQuery, locale]);
+
+  useEffect(() => {
+    if (!checkoutPaymentPending || !checkoutRetry) return;
+    let checks = 0;
+    const check = () => {
+      if (document.visibilityState !== "visible" || checks >= 20) return;
+      checks += 1;
+      void confirmCheckout(checkoutRetry, false);
+      if (checks === 20) clearInterval(timer);
+    };
+    let timer = setInterval(check, 15_000);
+    const resume = () => { if (document.visibilityState === "visible") { clearInterval(timer); checks = 0; check(); timer = setInterval(check, 15_000); } };
+    document.addEventListener("visibilitychange", resume);
+    return () => { clearInterval(timer); document.removeEventListener("visibilitychange", resume); };
+  }, [checkoutPaymentPending, checkoutRetry, isPurchaseOpen, confirmCheckout]);
 
   useEffect(() => revokeCurrentUrl, [revokeCurrentUrl]);
   useEffect(() => { isPlayRuntime(); }, []);
@@ -260,21 +309,35 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
       const usage = usageRevision.current;
       let returnedAccount: AccountSummary | null = null;
       try {
-        const response = await fetch("/api/account", { cache: "no-store" });
+        const response = await fetch("/api/account", { cache: "no-store", headers: { "x-doodle-packs": "v1" } });
         if (response.ok && active) {
           const nextAccount = (await response.json()) as AccountSummary;
           returnedAccount = nextAccount;
+          if(nextAccount.hasPurchased===true)rememberPurchase();
           setAccount((current) => ({
             authenticated: identityRevision.current === identity ? nextAccount.authenticated : current.authenticated,
             email: identityRevision.current === identity ? nextAccount.email : current.email,
             balance: usageRevision.current === usage ? nextAccount.balance : current.balance,
             freeRemaining: usageRevision.current === usage ? nextAccount.freeRemaining : current.freeRemaining,
+            hasPurchased: identityRevision.current === identity ? nextAccount.hasPurchased : current.hasPurchased,
           }));
         }
       } catch {}
       if (active) setAccountReady(true);
       if (!active) return;
       if (restoredScene !== null) setScene(restoredScene);
+      if (authReturn || checkoutReturn) {
+        try {
+          const draft=await readCheckoutDraft();
+          if(draft && active){
+            revokeCurrentUrl();
+            const imageUrl=URL.createObjectURL(draft.image);currentObjectUrl.current=imageUrl;
+            setGeneration({status:"ready",imageUrl,imageFile:new File([draft.image],"doodle.png",{type:draft.image.type||"image/png"}),error:null,input:{scene:draft.scene,detailLevel:draft.detailLevel,...(draft.photo?{photo:draft.photo}:{})},lastFree:draft.lastFree});
+            setScene(draft.scene);
+            discardCheckoutDraft();
+          }
+        }catch{}
+      }
 
       if (authReturn) {
         sessionStorage.removeItem("doodle:return");
@@ -304,7 +367,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
     return () => {
       active = false;
     };
-  }, [confirmCheckout, copy.auth.authError, removeQuery]);
+  }, [confirmCheckout, copy.auth.authError, removeQuery, revokeCurrentUrl]);
 
   function updateRemaining(response: Response) {
     const paid = response.headers.get("X-Doodle-Paid-Remaining");
@@ -318,14 +381,28 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
     }
   }
 
+  function openPaywall(trigger: "tapped_create" | "get_more") {
+    purchaseDismissed.current = false;
+    purchaseReturnFocus.current = generation.status === "ready" && document.activeElement instanceof HTMLElement ? { kind:"element", element:document.activeElement } : { kind: "create" };
+    setSignInOnly(false);
+    setPurchaseError(null);
+    setIsPurchaseOpen(true);
+    void fetch("/api/checkout/paywall",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({trigger}),keepalive:true}).catch(()=>undefined);
+  }
+
+  async function preserveCheckoutDrawing() {
+    if(generation.status==="ready")await saveCheckoutDraft({image:generation.imageFile,scene:generation.input.scene,detailLevel:generation.input.detailLevel,photo:generation.input.photo,lastFree:generation.lastFree===true});
+  }
+
   async function createDoodle(input: DoodleInput = { scene, detailLevel, ...(photo ? { photo: photo.base64 } : {}) }) {
     if (!detailReady || preparingPhoto || (!input.photo && !input.scene.trim()) || generationInFlight.current) return;
+    if (accountReady && account.balance === 0 && account.freeRemaining === 0) { openPaywall("tapped_create"); return; }
+    const previousGeneration = generation;
     generationInFlight.current = true;
 
     if (document.activeElement instanceof HTMLTextAreaElement) {
       document.activeElement.blur();
     }
-    revokeCurrentUrl();
     setGeneration({ status: "generating", imageUrl: null, error: null });
     try {
       const response = await fetch("/api/generate", {
@@ -337,11 +414,8 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
       updateRemaining(response);
 
       if (response.status === 402) {
-        purchaseReturnFocus.current = { kind: "create" };
-        setGeneration(IDLE_STATE);
-        setPurchaseError(null);
-        setPurchaseSuccess(false);
-        setIsPurchaseOpen(true);
+        setGeneration(previousGeneration.status === "ready" ? previousGeneration : IDLE_STATE);
+        openPaywall("tapped_create");
         return;
       }
 
@@ -354,9 +428,11 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
 
       const imageBlob = await response.blob();
       const imageFile = new File([imageBlob], "doodle.png", { type: imageBlob.type || "image/png" });
+      revokeCurrentUrl();
+      discardCheckoutDraft();
       const imageUrl = URL.createObjectURL(imageBlob);
       currentObjectUrl.current = imageUrl;
-      setGeneration({ status: "ready", imageUrl, imageFile, error: null, input });
+      setGeneration({ status: "ready", imageUrl, imageFile, error: null, input, lastFree: response.headers.get("X-Doodle-Free-Remaining") === "0" });
       track("Doodle Created");
       if (response.headers.get("X-Doodle-Balance-Uncertain") === "1") {
         const identity = identityRevision.current;
@@ -364,7 +440,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
         const uncertainty = ++uncertaintyRevision.current;
         void (async () => {
           try {
-            const accountResponse = await fetch("/api/account", { cache: "no-store" });
+            const accountResponse = await fetch("/api/account", { cache: "no-store", headers: { "x-doodle-packs": "v1" } });
             if (!accountResponse.ok) return;
             const nextAccount = (await accountResponse.json()) as AccountSummary;
             if (
@@ -396,6 +472,8 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   }
 
   function handleNewScene() {
+    discardCheckoutDraft();
+    setPurchaseNotice(null);
     removePhoto();
     focusNextScene.current = true;
     setScene("");
@@ -418,19 +496,18 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
       ? generation.imageUrl
       : landing ? LANDING_EXAMPLE : "/references/doodle-reference-kiss.png";
   const usage = accountReady
-    ? account.authenticated
-      ? formatCount(locale, copy.usage.paidLeft, account.balance)
+    ? account.authenticated && (account.balance > 0 || account.freeRemaining === null)
+      ? formatCount(locale, copy.usage.paidLeft, account.balance + (account.freeRemaining ?? 0))
       : account.freeRemaining !== null
         ? formatCount(locale, copy.usage.freeLeft, account.freeRemaining)
         : copy.usage.freeTrial
     : null;
   const accountMenu = accountReady ? account.authenticated ? (
-    <AccountMenu account={account} locale={locale} copy={copy.account} onAccountChange={replaceAccount} purchaseLabel={copy.purchase.buy} onPurchase={(returnFocus) => {
+    <AccountMenu account={account} locale={locale} copy={copy.account} onAccountChange={replaceAccount} purchaseLabel={packCopy.getMore} onPurchase={(returnFocus) => {
+      purchaseDismissed.current = false;
       purchaseReturnFocus.current = returnFocus ? { kind: "element", element: returnFocus } : null;
       setSignInOnly(false);
-      setPurchaseSuccess(false);
       setPurchaseError(null);
-      setCheckoutRetry(null);
       setIsPurchaseOpen(true);
     }} />
   ) : (
@@ -440,9 +517,9 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
       onClick={(event) => {
         purchaseReturnFocus.current = { kind: "element", element: event.currentTarget };
         setSignInOnly(true);
-        setPurchaseSuccess(false);
         setPurchaseError(null);
         setCheckoutRetry(null);
+      setCheckoutPaymentPending(false);
         setIsPurchaseOpen(true);
       }}
     >
@@ -452,14 +529,15 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
   const accountPortal = accountPortalTarget && accountMenu ? createPortal(accountMenu, accountPortalTarget) : null;
 
   function closePurchase() {
+    purchaseDismissed.current = true;
     setIsPurchaseOpen(false);
     setSignInOnly(false);
-    setPurchaseSuccess(false);
     setPurchaseError(null);
   }
 
   return (
     <div ref={workspaceRef} className={`doodle-workspace doodle-workspace-${generation.status}${landing ? " doodle-workspace-landing" : ""}`}>
+      {purchaseNotice ? <p className="doodle-purchase-notice" role="status">{purchaseNotice}</p> : null}
       <input ref={photoInputRef} type="file" accept="image/*" hidden tabIndex={-1} aria-label={getPhotoCopy(locale).use} onChange={async event => { if (await selectPhoto(event.target.files?.[0])) clearGeneration(); }} />
       {generation.status === "ready" ? (
         <button type="button" className="result-back" onClick={handleResultBack}>
@@ -478,6 +556,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
           <section className="state-copy" aria-labelledby="ready-title">
             <h1 id="ready-title">{copy.status.readyTitle}</h1>
             <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} scene={generation.input.photo ? "Photo doodle" : generation.input.scene} locale={locale} onTryAgain={() => createDoodle(generation.input)} onNewScene={handleNewScene} copy={copy.actions} />
+            {generation.lastFree && account.balance === 0 ? <div className="doodle-last-free"><span>{packCopy.lastFree}</span><button type="button" onClick={()=>openPaywall("get_more")}>{packCopy.getMore}</button></div> : null}
             <div className="workspace-usage">
               {usage === null
                 ? <span className="usage-loading" role="status" aria-label={copy.account.label} />
@@ -540,6 +619,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
             ))}
           </div>
         </section>
+        {landing ? <div className="landing-mobile-app-link"><AndroidAppLink locale={locale} /></div> : null}
         </>
         ) : null}
       </div>
@@ -556,7 +636,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
           locale={locale}
           gridEnabled={generation.imageUrl !== null && gridImageUrl === generation.imageUrl}
           onToggleGrid={() => setGridImageUrl(current => current === generation.imageUrl ? null : generation.imageUrl)}
-          referenceImage={landing ? LANDING_EXAMPLE : undefined}
+          referenceImage={LANDING_EXAMPLE}
           referenceAlt={landing ? `${landing.exampleLabel}: ${landing.heroPrompt}` : undefined}
         />
         {landing && generation.status === "idle" ? <div className="landing-example-caption" id="examples">
@@ -585,11 +665,14 @@ export function DoodleClient({ locale, copy, initialScene = "", initialSuggestio
           scene={scene}
           locale={locale}
           copy={copy}
-          success={purchaseSuccess}
+          success={false}
+          webPacksEnabled={webPacksEnabled}
           errorMessage={purchaseError}
           confirmationBusy={checkoutConfirming}
+          paymentPending={checkoutPaymentPending}
           onRetryConfirmation={checkoutRetry ? () => void confirmCheckout(checkoutRetry) : undefined}
           onExpressCheckoutComplete={confirmCheckout}
+          onBeforeCheckout={preserveCheckoutDrawing}
           onRestoreFocus={restoreCreateFocus}
           onClose={closePurchase}
           onAccountChange={replaceAccount}

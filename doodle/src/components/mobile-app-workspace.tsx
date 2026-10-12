@@ -1,5 +1,7 @@
 "use client";
 
+import { isDetailLevel, type DetailLevel } from "@/lib/generation/detail-level";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Lightbulb, Maximize2, PencilLine, Settings } from "lucide-react";
@@ -34,13 +36,24 @@ const IDEAS_HINT: Record<Locale, string> = {
   ko: "아이디어를 골라 나만의 그림을 만들어 보세요.", ar: "اختر فكرة وأضف إليها لمستك.",
 };
 
-export function MobileAppWorkspace({ locale, copy, initialScene = "", initialSuggestionIds, initialInstalled = false }: { locale: Locale; copy: DoodleCopy; initialScene?: string; initialSuggestionIds?: readonly SceneIdeaId[]; initialInstalled?: boolean }) {
+export function MobileAppWorkspace({ locale, copy, initialScene = "", initialDetailLevel, initialSuggestionIds, initialInstalled = false, webPacksEnabled = false }: { locale: Locale; copy: DoodleCopy; initialScene?: string; initialDetailLevel?: DetailLevel; initialSuggestionIds?: readonly SceneIdeaId[]; initialInstalled?: boolean; webPacksEnabled?: boolean }) {
   const [installed, setInstalled] = useState(initialInstalled);
   const [tab, setTab] = useState<Tab>("create");
-  const [draft, setDraft] = useState({ scene: initialScene, revision: 0 });
+  const [draft, setDraft] = useState({ scene: initialScene, detailLevel: initialDetailLevel, revision: 0 });
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
   const labels = LABELS[locale];
   const ideas = getDoodleIdeas(locale);
+
+  useEffect(() => {
+    function tryIdea(event: Event) {
+      const input = (event as CustomEvent).detail;
+      if (typeof input?.scene !== "string" || !isDetailLevel(input?.detailLevel)) return;
+      setDraft(previous => ({ scene: input.scene, detailLevel: input.detailLevel, revision: previous.revision + 1 }));
+      setTab("create");
+    }
+    window.addEventListener("doodle:try-idea", tryIdea);
+    return () => window.removeEventListener("doodle:try-idea", tryIdea);
+  }, []);
 
   useEffect(() => {
     const media = window.matchMedia("(display-mode: standalone), (display-mode: fullscreen)");
@@ -62,7 +75,7 @@ export function MobileAppWorkspace({ locale, copy, initialScene = "", initialSug
   function selectIdea(prompt: string) {
     discardPhotoDraft();
     setPreviewIndex(null);
-    setDraft(previous => ({ scene: prompt, revision: previous.revision + 1 }));
+    setDraft(previous => ({ scene: prompt, detailLevel: undefined, revision: previous.revision + 1 }));
     selectTab("create");
   }
 
@@ -70,7 +83,7 @@ export function MobileAppWorkspace({ locale, copy, initialScene = "", initialSug
     <div className="app-account-slot" data-account-host="app" aria-label={copy.account.label} />
     {/* Keep Create mounted across tabs so browsing never discards a drawing. */}
     <div hidden={installed && tab !== "create"}>
-      <DoodleClient key={draft.revision} locale={locale} copy={copy} initialScene={draft.scene} initialSuggestionIds={initialSuggestionIds} accountHost={installed ? "app" : "web"} landing={installed ? undefined : getLandingCopy(locale)} />
+      <DoodleClient webPacksEnabled={webPacksEnabled} key={draft.revision} locale={locale} copy={copy} initialScene={draft.scene} initialDetailLevel={draft.detailLevel} initialSuggestionIds={initialSuggestionIds} accountHost={installed ? "app" : "web"} landing={installed ? undefined : getLandingCopy(locale)} />
     </div>
     {installed && tab === "ideas" ? <section className="app-panel" aria-labelledby="app-ideas-title">
       <h1 id="app-ideas-title">{labels[1]}</h1>

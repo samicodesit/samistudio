@@ -1,5 +1,13 @@
 # Native Android delivery record
 
+## Current checkpoint, 10 October 2026
+
+Code12 (0.1.8), Photos, packs, recovery, is submitted for production full rollout with the combined store description and Data safety update. Google quick checks passed. Console states Your changes are now in review; public availability is not yet confirmed. Web/mobile web and backend already have matching packs and photos live. Actual Play-installed code12 fresh Google sign-in, text and photo generation passed under the existing dedicated reviewer test responses, production checks unchanged. This is distinct from prior physical-phone evidence. Current delivery, tests, budget and submission evidence: docs/qa/combined-release-2026-10-10/report.md and play-production-submission.json in that directory.
+
+## Historical delivery timeline
+
+Use [Android release testing](android-release-testing.md) for reusable instructions. The dated entries below retain their original versions, limits and gates; they do not override the current checkpoint.
+
 Date: 10 September 2026
 
 This record covers the final native integration fixes and local Android packaging completed for Doodle. The web app remains a separate product surface.
@@ -56,8 +64,8 @@ The deployment proves configuration and route behavior only. A live Play Integri
 
 ## Artifacts
 
-- [Signed release AAB](../mobile/artifacts/doodle-release-v2.aab), package `nl.samistudio.doodle`, version code 2, version name `0.1.0`, SHA-256 `293c0cadee4f2c741765a093b9c43119d7aac40cc1c952ff2ba6dc8478a1c8d4`, 61,241,247 bytes.
-- [Isolated fixture APK](../mobile/artifacts/doodle-fixture.apk), package `nl.samistudio.doodle.fixture`, SHA-256 `02a08c5b22323f3ceed6761e01921939fade45d5dc21593ca7762a31b2552b36`, 40,447,831 bytes.
+- Historical signed release AAB `doodle-release-v2.aab` (superseded artifact, no longer retained), package `nl.samistudio.doodle`, version code 2, version name `0.1.0`, SHA-256 `293c0cadee4f2c741765a093b9c43119d7aac40cc1c952ff2ba6dc8478a1c8d4`, 61,241,247 bytes.
+- Historical isolated fixture APK `doodle-fixture.apk` (superseded artifact, no longer retained), package `nl.samistudio.doodle.fixture`, SHA-256 `02a08c5b22323f3ceed6761e01921939fade45d5dc21593ca7762a31b2552b36`, 40,447,831 bytes.
 - The AAB JAR signature was verified. Its upload certificate is `CN=Doodle Upload Key`, SHA-1 `44:D6:07:FE:0D:B6:BC:19:9E:12:6A:51:F8:CE:A0:64:62:3E:45:54`.
 - The AAB contains `arm64-v8a`, `armeabi-v7a`, `x86` and `x86_64` native libraries.
 - Embedded Expo config confirms API base `https://doodle.samistudio.nl` and `nativeFixtureMode: false`.

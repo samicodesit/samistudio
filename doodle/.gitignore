@@ -50,6 +50,7 @@ next-env.d.ts
 /mobile/android/.cxx/
 /mobile/modules/*/android/build/
 /mobile/android/local.properties
+/mobile/ios/
 /mobile/android/app/src/main/java/inline/
 /android/.gradle/
 /android/.cxx/

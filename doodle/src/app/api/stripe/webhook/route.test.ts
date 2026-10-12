@@ -4,14 +4,14 @@ import { POST } from "./route";
 
 const mocks = vi.hoisted(() => ({
   constructEvent: vi.fn(),
-  fulfillCheckout: vi.fn(),
+  fulfillCheckout: vi.fn(), reconcileStripePackRefund: vi.fn(),
   getStripe: vi.fn(),
 }));
 
 vi.mock("@/lib/billing/stripe", () => ({
   getStripe: mocks.getStripe,
 }));
-vi.mock("@/lib/billing/checkout", () => ({ fulfillCheckout: mocks.fulfillCheckout }));
+vi.mock("@/lib/billing/checkout", () => ({ fulfillCheckout: mocks.fulfillCheckout, reconcileStripePackRefund:mocks.reconcileStripePackRefund }));
 
 function webhookRequest(body: string, signature?: string) {
   return new NextRequest("https://doodle.test/api/stripe/webhook", {
@@ -132,4 +132,8 @@ describe("Stripe webhook route", () => {
 
     expect(response.status).toBe(500);
   });
+
+it("waits for async completion for pending pack payments",async()=>{mocks.constructEvent.mockReturnValue({type:"checkout.session.completed",data:{object:{id:"cs_pending",payment_status:"unpaid",metadata:{pack:"pack_regular"}}}});expect((await POST(webhookRequest("payload","valid"))).status).toBe(200);expect(mocks.fulfillCheckout).not.toHaveBeenCalled();});
+it("reconciles a signed pack refund and retries reconciliation failure",async()=>{mocks.constructEvent.mockReturnValue({type:"charge.refunded",data:{object:{id:"ch_pack",metadata:{pack:"pack_regular"}}}});mocks.reconcileStripePackRefund.mockResolvedValue({recovered:25,unrecovered:0});expect((await POST(webhookRequest("payload","valid"))).status).toBe(200);expect(mocks.reconcileStripePackRefund).toHaveBeenCalledWith("ch_pack");mocks.reconcileStripePackRefund.mockRejectedValue(new Error("unavailable"));expect((await POST(webhookRequest("payload","valid"))).status).toBe(500);});
+
 });

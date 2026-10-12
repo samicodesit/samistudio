@@ -26,6 +26,7 @@ import { NativeIcon } from "./NativeIcon";
 import { NativeDoodleGridFrame } from "./NativeDoodleGridFrame";
 import { canSubmitScene, loadingMessageAt, shouldShowCharacterCount } from "./ui-logic";
 import { NATIVE_COLORS, NATIVE_SPACING, nativeFontFamily, nativeRowDirection, nativeTextAlign } from "./theme";
+import { getNativePackCopy } from "../services/pack-copy";
 import type {
   NativeDirection,
   NativeDoodleUiCopy,
@@ -49,7 +50,7 @@ interface NativeCreateViewProps {
   copy: NativeDoodleUiCopy;
   draft: NativeDraftUi;
   generation: NativeGenerationUiState;
-  usage: { status: "loading" | "ready"; label: string };
+  usage: { status: "loading" | "ready"; label: string; lastFree?: boolean };
   referenceImageUri: NativeImageSource;
   reducedMotion: boolean;
   onSceneChange(scene: string): void;
@@ -63,6 +64,7 @@ interface NativeCreateViewProps {
   onResultBack(): void;
   onOpenMore(): void;
   onOpenLarger(): void;
+  onGetMore?(): void;
   onOpenIdeas(): void;
   gridEnabled?: boolean;
   onToggleGrid?(): void;
@@ -167,7 +169,7 @@ function NativeComposer({
   const { width, fontScale } = useWindowDimensions();
   const compact = width < 360;
   const intro = getComposerIntro(locale);
-  const stackedHeading = fontScale > 1.3;
+  const stackedHeading = compact || fontScale > 1.3;
   const stackedFooter = width < 360 || fontScale > 1.3;
   // The heading can use the dock's empty upper space, stopping before its pull target.
   const inlineTitleWidth = width - 2 * NATIVE_SPACING.screen - NATIVE_DETAIL_GEOMETRY.toggleInset - NATIVE_DETAIL_GEOMETRY.toggleSize - 8;
@@ -363,7 +365,7 @@ function NativeWaitingCard({ locale, copy, direction, reducedMotion, state }: Na
   );
 }
 
-function NativeResultCard({ locale, direction, copy, state, usage, reducedMotion, onDownload, onShare, onNewScene, onResultBack, onOpenMore, onOpenLarger, gridEnabled = false, onToggleGrid }: NativeCreateViewProps & { state: Extract<NativeGenerationUiState, { status: "ready" }> }) {
+function NativeResultCard({ locale, direction, copy, state, usage, reducedMotion, onDownload, onShare, onNewScene, onResultBack, onOpenMore, onOpenLarger, onGetMore, gridEnabled = false, onToggleGrid }: NativeCreateViewProps & { state: Extract<NativeGenerationUiState, { status: "ready" }> }) {
   const reveal = useMemo(() => new Animated.Value(0), []);
   const { width } = useWindowDimensions();
   const compactActions = width < 360;
@@ -421,7 +423,10 @@ function NativeResultCard({ locale, direction, copy, state, usage, reducedMotion
           <NativeIcon name="more" size={23} color={NATIVE_COLORS.graphite} />
         </Pressable>
       </View>
-      <Text style={[styles.usageLabel, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{usage.label}</Text>
+      <View style={[styles.freeNotice, { flexDirection: nativeRowDirection(direction) }]}>
+        <Text style={[styles.usageLabel, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{usage.lastFree ? getNativePackCopy(locale).lastFree : usage.label}</Text>
+        {usage.lastFree ? <Pressable accessibilityRole="button" onPress={onGetMore} style={styles.getMore}><Text style={[styles.getMoreText, { fontFamily: nativeFontFamily(locale, "body") }]}>{getNativePackCopy(locale).getMore}</Text></Pressable> : null}
+      </View>
     </Animated.View>
   );
 }
@@ -513,6 +518,9 @@ const styles = StyleSheet.create({
   newSceneButton: { alignItems: "center", borderColor: NATIVE_COLORS.line, borderRadius: 12, borderWidth: 1, flex: 1, justifyContent: "center", minHeight: NATIVE_SPACING.control, paddingHorizontal: 12 },
   newSceneText: { color: NATIVE_COLORS.graphite, fontSize: 14, fontWeight: "600", textAlign: "center" },
   moreButton: { alignItems: "center", borderColor: NATIVE_COLORS.line, borderRadius: 12, borderWidth: 1, height: NATIVE_SPACING.control, justifyContent: "center", width: NATIVE_SPACING.control },
-  usageLabel: { color: NATIVE_COLORS.muted, fontSize: 13, lineHeight: 20, paddingHorizontal: 2 },
+  usageLabel: { color: "#5C5C5C", fontSize: 14, lineHeight: 21, paddingHorizontal: 2, flex: 1 },
+  freeNotice: { alignItems: "center", gap: 12 },
+  getMore: { minHeight: 48, paddingHorizontal: 10, justifyContent: "center" },
+  getMoreText: { color: NATIVE_COLORS.moss, fontSize: 14, lineHeight: 21 },
   pressed: { opacity: 0.72 },
 });

@@ -15,7 +15,7 @@ const signedIn: AccountSummary = { authenticated: true, email: "buyer@example.co
 const json = (body: unknown) => new Response(JSON.stringify(body), { headers: { "Content-Type": "application/json" } });
 
 describe("DeleteAccountClient", () => {
-  afterEach(() => vi.restoreAllMocks());
+  afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
   it("lets a signed-out user authenticate on the public deletion page", async () => {
     const user = userEvent.setup();
@@ -42,6 +42,14 @@ describe("DeleteAccountClient", () => {
       .mockResolvedValueOnce(json(signedIn))
       .mockResolvedValueOnce(new Response(null, { status: 204 }));
 
+    const storage=()=>{const items=new Map<string,string>();return {setItem:(key:string,value:string)=>items.set(key,value),getItem:(key:string)=>items.get(key)??null,removeItem:(key:string)=>items.delete(key)};};
+    vi.stubGlobal("localStorage",storage());
+    vi.stubGlobal("sessionStorage",storage());
+    localStorage.setItem("doodle:has-purchased","1");
+    sessionStorage.setItem("doodle:pack-selection","pack_big");
+    sessionStorage.setItem("doodle:return","temporary prompt");
+    sessionStorage.setItem("doodle:checkout-draft-id","checkout-id");
+    sessionStorage.setItem("doodle:photo-draft-id","photo-id");
     render(<DeleteAccountClient />);
     await user.click(await screen.findByRole("button", { name: "Delete my Doodle account" }));
     expect(fetchMock).toHaveBeenCalledTimes(1);
@@ -55,5 +63,7 @@ describe("DeleteAccountClient", () => {
       body: JSON.stringify({ confirm: true }),
     });
     expect(await screen.findByRole("heading", { name: "Account deleted" })).toBeVisible();
+    expect(localStorage.getItem("doodle:has-purchased")).toBeNull();
+    for(const key of ["doodle:pack-selection","doodle:return","doodle:checkout-draft-id","doodle:photo-draft-id"])expect(sessionStorage.getItem(key)).toBeNull();
   });
 });

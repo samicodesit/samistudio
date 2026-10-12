@@ -1,12 +1,19 @@
 import Link from "next/link";
-import { AttributionLink, IdeaGallery } from "./idea-gallery";
-import { AndroidAppLink, DrawingGuides } from "./discovery-links";
-import { IDEA_IMAGES, getDoodleIdeas, ideasPath } from "@/lib/doodle-ideas";
+import { IdeaGallery } from "./idea-gallery";
+import { AndroidAppLink } from "./discovery-links";
+import { getDoodleIdeas, ideasPath } from "@/lib/doodle-ideas";
 import { SITE_URL, SUPPORTED_LOCALES, type Locale, getCopy, htmlLang, localePath } from "@/lib/i18n";
-import { getEditorialCopy, getEditorialPath } from "@/lib/editorial";
+import { ARTICLE_SLUGS, getEditorialCopy, getEditorialPath } from "@/lib/editorial";
+
+import { getGalleryItems } from "@/lib/gallery-catalog";
+import { getGalleryCopy } from "@/lib/gallery-copy";
+import { getLandingResources } from "@/lib/landing-resources";
 
 export function DoodleIdeasPage({ locale }: { locale: Locale }) {
   const copy = getDoodleIdeas(locale);
+  const items = getGalleryItems(locale);
+  const gallery = getGalleryCopy(locale);
+  const resources = getLandingResources(locale);
   const siteCopy = getCopy(locale);
   const editorialCopy = getEditorialCopy(locale);
   const structuredData = {
@@ -18,10 +25,10 @@ export function DoodleIdeasPage({ locale }: { locale: Locale }) {
     inLanguage: htmlLang(locale),
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: copy.featured.map((prompt, index) => ({
+      itemListElement: items.map((item, index) => ({
         "@type": "ListItem",
         position: index + 1,
-        item: { "@type": "ImageObject", name: prompt, contentUrl: `${SITE_URL}${IDEA_IMAGES[index]}`, description: prompt },
+        item: { "@type": "ImageObject", name: item.caption, contentUrl: `${SITE_URL}${item.image}`, description: item.prompt },
       })),
     },
   };
@@ -37,33 +44,18 @@ export function DoodleIdeasPage({ locale }: { locale: Locale }) {
           </nav>
         </details>
       </header>
-      <AndroidAppLink locale={locale} />
       <main className="ideas-page">
         <section className="ideas-hero">
-          <p className="eyebrow">{copy.eyebrow}</p>
-          <h1>{copy.title}</h1>
-          <p>{copy.description}</p>
-          <AttributionLink className="ideas-hero-link" href={`${localePath(locale)}#composer`}>{copy.start}</AttributionLink>
+          <h1>{gallery.title}</h1>
+          <p>{gallery.description}</p>
         </section>
-        <IdeaGallery locale={locale} copy={copy} />
-        <section className="quick-ideas" aria-labelledby="quick-ideas-title">
-          <div>
-            <p className="eyebrow">{copy.moreEyebrow}</p>
-            <h2 id="quick-ideas-title">{copy.moreTitle}</h2>
-            <p>{copy.moreBody}</p>
-          </div>
-          <ul>
-            {copy.quickIdeas.map((idea) => <li key={idea}><span>{idea}</span><AttributionLink href={`${localePath(locale)}?scene=${encodeURIComponent(idea)}#composer`} aria-label={`${copy.tryIdea}: ${idea}`}>{copy.tryIdea}</AttributionLink></li>)}
-          </ul>
-        </section>
-        <section className="ideas-guide">
-          <h2>{copy.guideTitle}</h2>
-          <p>{copy.guideBody}</p>
-          <AttributionLink href={`${localePath(locale)}#composer`}>{copy.guideCta}</AttributionLink>
-        </section>
-        <DrawingGuides locale={locale} />
+        <IdeaGallery locale={locale} items={items} labels={{ all: gallery.all, viewLarger: copy.viewLarger, tryIdea: copy.tryIdea, openTab: copy.openTab }} />
       </main>
       <footer className="site-footer ideas-footer">
+        <AndroidAppLink locale={locale} />
+        <nav className="ideas-footer-guides" aria-label={editorialCopy.nav.blog}>
+          {ARTICLE_SLUGS.map((slug, index) => <Link key={slug} href={getEditorialPath(locale, "blog", slug)}>{resources.guides[index]}</Link>)}
+        </nav>
         <nav aria-label={siteCopy.footer.contact}>
           <Link href={localePath(locale)}>{copy.generator}</Link><Link href={getEditorialPath(locale, "blog")}>{editorialCopy.nav.blog}</Link><Link href={getEditorialPath(locale, "for-ai")}>{editorialCopy.nav.forAi}</Link><Link href="/privacy">{siteCopy.footer.privacy}</Link><Link href="/terms">{siteCopy.footer.terms}</Link><Link href="/contact">{siteCopy.footer.contact}</Link>
         </nav>

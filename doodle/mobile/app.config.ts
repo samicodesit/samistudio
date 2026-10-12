@@ -25,6 +25,7 @@ if (!/^\d+$/.test(integrityCloudProjectNumber)) {
 
 const plugins: NonNullable<ExpoConfig["plugins"]> = [
   "./plugins/withDoodleLocalBuildTypes",
+  "./plugins/withDoodleSharedBundleInputs",
   "./plugins/withDoodleConfigurationChanges",
   "./plugins/withDoodleReleaseSigning",
   "expo-dev-client",
@@ -113,12 +114,13 @@ const config: NativeExpoConfig = {
   runtimeVersion: { policy: "appVersion" },
   android: {
     package: packageName,
-    versionCode: 10,
+    versionCode: 12,
     // Doodle uses the system picker for access to one selected photo. Keep
     // legacy save support for Android <= 12, while
     // preventing modern gallery and overlay permissions from entering the
     // release manifest through Expo or transitive libraries.
     blockedPermissions: [
+      "android.permission.READ_EXTERNAL_STORAGE",
       "android.permission.READ_MEDIA_IMAGES",
       "android.permission.READ_MEDIA_VISUAL_USER_SELECTED",
       "android.permission.SYSTEM_ALERT_WINDOW",

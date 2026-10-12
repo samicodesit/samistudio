@@ -12,6 +12,7 @@ export const NATIVE_STORAGE_KEYS = {
   trial: "doodle.native.trial",
   install: "doodle.native.install",
   locale: "doodle.native.locale",
+  purchaseHistory: "doodle.native.purchase-history",
 } as const;
 
 const ACCESS_TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
@@ -70,6 +71,28 @@ export class NativeSessionStore {
 
   async clearAccessToken(): Promise<void> {
     await this.storage.deleteItem(NATIVE_STORAGE_KEYS.access);
+  }
+
+  // A local boolean chooses refill copy. It is never an identity or analytics
+  // field. Older installations without this metadata remain unknown.
+  async getPurchaseHistoryHint(): Promise<boolean | undefined> {
+    try {
+      const raw = await this.storage.getItem(NATIVE_STORAGE_KEYS.purchaseHistory);
+      if (raw === "true" || raw === "false") return raw === "true";
+      if (raw !== null) return undefined;
+      const existing = await Promise.all([NATIVE_STORAGE_KEYS.install, NATIVE_STORAGE_KEYS.access, NATIVE_STORAGE_KEYS.trial].map(key => this.storage.getItem(key)));
+      if (existing.some(value => value !== null)) return undefined;
+      await this.setPurchaseHistoryHint(false);
+      return false;
+    } catch { return undefined; }
+  }
+
+  async setPurchaseHistoryHint(value: boolean): Promise<void> {
+    await this.storage.setItem(NATIVE_STORAGE_KEYS.purchaseHistory, String(value));
+  }
+
+  async clearPurchaseHistoryHint(): Promise<void> {
+    await this.storage.deleteItem(NATIVE_STORAGE_KEYS.purchaseHistory);
   }
 
   async getTrialToken(): Promise<string | null> {

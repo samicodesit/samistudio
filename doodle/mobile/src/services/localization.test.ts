@@ -62,4 +62,23 @@ describe("native localization adapter", () => {
     expect(getNativeUsageLabel("en", null, 1)).toBe("1 doodle left");
     expect(getNativeUsageLabel("en", 1, 0)).toBe("1 free doodle left");
   });
+  it("formats every supported locale with the Hermes plural polyfill and no Intl.Locale constructor", async () => {
+    const plural = Object.getOwnPropertyDescriptor(Intl, "PluralRules")!;
+    const locale = Object.getOwnPropertyDescriptor(Intl, "Locale")!;
+    try {
+      await import("@formatjs/intl-pluralrules/polyfill-force.js");
+      for (const code of ["en", "nl", "de", "fr", "es", "pt", "it", "ja", "ko", "ar"]) {
+        await import("@formatjs/intl-pluralrules/locale-data/" + code + ".js");
+      }
+      Object.defineProperty(Intl, "Locale", { value: undefined, configurable: true });
+      for (const code of SUPPORTED_LOCALES) {
+        expect(() => getNativeUsageLabel(code, 1, null)).not.toThrow();
+        expect(() => getNativeUsageLabel(code, null, 25)).not.toThrow();
+      }
+    } finally {
+      Object.defineProperty(Intl, "PluralRules", plural);
+      Object.defineProperty(Intl, "Locale", locale);
+    }
+  });
+
 });
