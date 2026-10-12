@@ -98,3 +98,10 @@ Reference-size AutoLister and Cryptik source versus browser comparisons were reg
 Sharpness remains bounded by the source photography. Project portrait art is 853x1844, desktop art 1505/1506x1045, wide art 1672x941. The original mobile hero photograph is only 416x932. It looks clean in the checked logical phone view, but this does not establish perfect photographic detail at 2x/3x density or on every physical device. Native site text is independently rendered. No artificial upscaling or new compression was used to imply extra detail.
 
 Evidence: `C:/Users/Sami/.codex/visualizations/2026/10/12/01a130b2-d18c-7ad1-a04f-0cce5bb3b5fd/samistudio/audit-2026-10-13/`. Retained final screenshots, source comparisons, viewport measurements and the laptop/phone polish review. Disposable slow server stopped; normal localhost:8090 preview retained. No production deployment performed.
+# Doodle artwork update, 13 October 2026
+
+Replaced the Doodle portrait, reference desktop and wide room photographs with dedicated ImageGen scenes using the owner's birthday puppy, pancake cooking, reading and gardening artwork. The generated compositions are encoded as lossless WebP. Their source prompts and supplied drawings are retained in assets/gallery/source; only the optimized scene for the visible layout is requested by the browser.
+
+Doodle's photographic scene stays stationary, including the note. Its native headline, description and link use the same staggered entrance as the other projects. The continuous scene replaces the old segmented room and note overlays.
+
+Reviewed the built page at 390 x 844 and 1280 x 720. The phone view has no horizontal overflow. The laptop photograph loads cleanly, with a straight panel edge and continuous floor. Switching from Doodle to both other mobile project scenes restores their three text plates correctly. The required studio checks passed: 19 tests. Push and production publication were explicitly authorized by the owner.

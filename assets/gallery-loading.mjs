@@ -1,9 +1,11 @@
 // Load the scene that is actually visible, never the other screen layouts.
+export const composedFor = (project, mode) => Boolean(project?.composedScene || (project?.mobileScene && mode === 'mobile'));
+
 export function projectAssets(project, mode) {
-  if (!project.composedScene) return ['./gallery/stage-background.webp', project.image];
+  if (!composedFor(project, mode)) return ['./gallery/stage-background.webp', project.image];
   if (mode === 'wide') return [project.wideImage];
   const mobile = mode === 'mobile';
-  return [mobile ? project.mobileImage : project.image, ...(mobile ? project.mobilePatches : project.patches)];
+  return [mobile ? project.mobileImage : project.image, ...((mobile ? project.mobilePatches : project.patches) || [])];
 }
 
 export function allowPrefetch(connection) {

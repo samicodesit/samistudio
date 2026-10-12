@@ -1,5 +1,5 @@
 import { getProject } from './project-data.mjs';
-import { projectAssets, allowPrefetch } from './gallery-loading.mjs';
+import { projectAssets, allowPrefetch, composedFor } from './gallery-loading.mjs';
 import { terminalPolygon, projectFromHash, stageLayout } from './gallery-geometry.mjs';
 
 const fullScreen = 'polygon(0% 0%,100% 0%,100% 100%,0% 100%)';
@@ -50,7 +50,7 @@ export function initProjectGallery({ onReturn }) {
   }
 
   function sceneMode(project) {
-    const compact = matchMedia(project.composedScene ? sceneCompactQuery : compactQuery).matches;
+    const compact = matchMedia(project.composedScene || project.mobileScene ? sceneCompactQuery : compactQuery).matches;
     return compact ? 'mobile' : matchMedia(wideQuery).matches ? 'wide' : 'desktop';
   }
 
@@ -61,13 +61,17 @@ export function initProjectGallery({ onReturn }) {
   }
 
   function setSceneImages(project) {
-    if (!project.composedScene) return;
+    if (!composedFor(project, sceneMode(project))) return;
     if (sceneMode(project) === 'wide') {
       environmentImage.src = assetUrl(project.wideImage);
     } else {
       composedScene.querySelectorAll('picture').forEach((picture, index) => {
-        picture.querySelector('source').srcset = assetUrl(index ? project.mobilePatches[index - 1] : project.mobileImage);
-        picture.querySelector('img').src = assetUrl(index ? project.patches[index - 1] : project.image);
+        const mobilePath = index ? project.mobilePatches?.[index - 1] : project.mobileImage;
+        const desktopPath = index ? project.patches?.[index - 1] : project.image;
+        if (index) picture.parentElement.hidden = !mobilePath && !desktopPath;
+        if (index && !mobilePath && !desktopPath) return;
+        picture.querySelector('source').srcset = assetUrl(mobilePath || desktopPath);
+        picture.querySelector('img').src = assetUrl(project.mobileScene && !project.composedScene ? mobilePath : desktopPath);
       });
       composedScene.querySelector('.composed-photo img').alt = project.imageAlt;
     }
@@ -101,10 +105,11 @@ export function initProjectGallery({ onReturn }) {
 
   function layout() {
     const project = getProject(active);
-    const compact = matchMedia(project?.composedScene ? sceneCompactQuery : compactQuery).matches;
-    const width = project?.composedScene ? (compact ? 853 : project.imageWidth) : 1505;
-    const height = project?.composedScene && compact ? 1844 : 1045;
-    const { scale, left, top } = compact && project?.composedScene
+    const compact = matchMedia(project?.composedScene || project?.mobileScene ? sceneCompactQuery : compactQuery).matches;
+    const composed = composedFor(project, compact ? 'mobile' : 'desktop');
+    const width = composed ? (compact ? 853 : project.imageWidth) : 1505;
+    const height = composed && compact ? 1844 : 1045;
+    const { scale, left, top } = compact && composed
       ? { scale: innerWidth / width, left: 0, top: 0 }
       : stageLayout(innerWidth, innerHeight, width, height);
     dialog.style.setProperty('--gallery-scale', String(scale));
@@ -114,7 +119,10 @@ export function initProjectGallery({ onReturn }) {
     dialog.style.setProperty('--stage-height', `${height}px`);
     dialog.style.setProperty('--mobile-stage-height', `${height * scale}px`);
     if (!active) return;
-    if (project.composedScene) {
+    dialog.dataset.scene = composed ? 'composed' : 'doodle';
+    composedScene.hidden = !composed;
+    referenceScene.hidden = !project.referenceCrop || composed;
+    if (composed) {
       setSceneImages(project);
       const wide = !compact && matchMedia(wideQuery).matches;
       environmentImage.parentElement.setAttribute('aria-hidden', String(!wide));
@@ -124,6 +132,12 @@ export function initProjectGallery({ onReturn }) {
     }
     environmentImage.parentElement.setAttribute('aria-hidden', 'true');
     environmentImage.alt = '';
+    if (project.referenceCrop) {
+      referenceScene.querySelector('img').src = assetUrl(project.image);
+      primaryImage.src = assetUrl(project.image);
+      artwork.src = assetUrl(project.artwork);
+      environmentImage.src = assetUrl('./gallery/stage-background.webp');
+    }
     if (compact) {
       if (project.referenceCrop) {
         const mobileScale = Math.min((innerWidth - 48) / 1100, .7);
@@ -214,8 +228,9 @@ export function initProjectGallery({ onReturn }) {
       resetMovement();
     }
     active = id;
+    const composed = composedFor(project, sceneMode(project));
     dialog.dataset.project = id;
-    dialog.dataset.scene = project.composedScene ? 'composed' : 'doodle';
+    dialog.dataset.scene = composed ? 'composed' : 'doodle';
     dialog.dataset.phase = 'opening';
     title.textContent = project.heading;
     if (project.descriptionLines) {
@@ -228,10 +243,10 @@ export function initProjectGallery({ onReturn }) {
     } else description.textContent = project.description;
     externalLink.href = project.href;
     externalLink.querySelector('.project-link-label').textContent = `Open ${project.title}`;
-    composedScene.hidden = !project.composedScene;
-    referenceScene.hidden = !project.referenceCrop;
-    if (project.referenceCrop) referenceScene.querySelector('img').src = assetUrl(project.image);
-    if (project.composedScene) {
+    composedScene.hidden = !composed;
+    referenceScene.hidden = !project.referenceCrop || composed;
+    if (project.referenceCrop && !composed) referenceScene.querySelector('img').src = assetUrl(project.image);
+    if (composed) {
       setSceneImages(project);
     } else {
       primaryImage.src = assetUrl(project.image);
@@ -241,11 +256,11 @@ export function initProjectGallery({ onReturn }) {
       artwork.src = assetUrl(project.artwork);
       artwork.alt = project.artworkAlt;
     }
-    if (!project.composedScene) environmentImage.src = assetUrl('./gallery/stage-background.webp');
+    if (!composed) environmentImage.src = assetUrl('./gallery/stage-background.webp');
     else if (matchMedia(wideQuery).matches) environmentImage.src = assetUrl(project.wideImage);
     environmentImage.loading = 'eager';
     try {
-      const images = project.composedScene ? (sceneMode(project) === 'wide' ? [environmentImage] : [...composedScene.querySelectorAll('img')])
+      const images = composed ? (sceneMode(project) === 'wide' ? [environmentImage] : [...composedScene.querySelectorAll('picture')].filter(picture => !picture.closest('[hidden]')).map(picture => picture.querySelector('img')))
         : [primaryImage, artwork, environmentImage, referenceScene.querySelector('img')];
       await Promise.all(images.map(image => image.decode()));
     } catch {
@@ -266,7 +281,7 @@ export function initProjectGallery({ onReturn }) {
       const easing = 'cubic-bezier(.2,.75,.12,1)';
       reveal = dialog.animate([{ clipPath: aperture() }, { clipPath: fullScreen }], { duration: project.composedScene ? 850 : 680, easing });
       movement = [];
-      if (project.composedScene) {
+      if (project.composedScene && !project.stationaryScene) {
         const camera = matchMedia(wideQuery).matches ? environmentImage : composedScene;
         movement = [camera].map(element =>
           element.animate([{ transform: 'scale(1.065)' }, { transform: 'scale(1)' }],

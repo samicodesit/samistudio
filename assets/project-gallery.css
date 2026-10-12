@@ -225,6 +225,10 @@
 .project-gallery[data-scene="composed"] .gallery-environment img,
 .project-gallery[data-scene="composed"] .project-primary,
 .project-gallery[data-scene="composed"] .project-secondary { display: none; }
+.project-gallery[data-scene="composed"] .gallery-reference-scene { display: none !important; }
+.project-gallery[data-project="doodle"][data-scene="composed"] .gallery-environment img { position: static; width: 100%; height: 100%; object-fit: cover; }
+.project-gallery[data-project="doodle"][data-scene="composed"] .gallery-environment::before,
+.project-gallery[data-project="doodle"][data-scene="composed"] .gallery-environment::after { display: none; }
 .project-gallery[data-project="autolister"] { background: #dcccbc; }
 .project-gallery[data-project="cryptik"] { background: #c7bcb3; }
 .project-gallery[data-scene="composed"] .gallery-header { position: absolute; top: 38px; left: 68px; right: 68px; margin: 0; }
@@ -310,4 +314,11 @@
   .project-gallery[data-scene="composed"] .project-link-label { position: relative; text-decoration: none; }
   .project-gallery[data-scene="composed"] .project-link-label::after { content: ''; position: absolute; left: 3px; right: -3px; height: 2px; bottom: -3px; background: currentColor; }
   .project-gallery[data-project="cryptik"] .project-link-label::after { bottom: -8px; }
+  .project-gallery[data-project="doodle"][data-scene="composed"] .gallery-header { top: 54px; left: 54px; right: 56px; }
+  .project-gallery[data-project="doodle"][data-scene="composed"] .gallery-wordmark { font-size: 50.5px; }
+  .project-gallery[data-project="doodle"][data-scene="composed"] .gallery-back { font-size: 26px; gap: 23px; }
+  .project-gallery[data-project="doodle"][data-scene="composed"] .project-caption { left: 54px; right: auto; top: 1460px; width: 730px; margin: 0; }
+  .project-gallery[data-project="doodle"][data-scene="composed"] .project-caption h2 { font-size: 128px; letter-spacing: -4.5px; }
+  .project-gallery[data-project="doodle"][data-scene="composed"] .project-caption p { max-width: 730px; font-size: 38px; line-height: 52px; margin: 16px 0 0 2px; letter-spacing: -.4px; }
+  .project-gallery[data-project="doodle"][data-scene="composed"] .project-link { margin: 18px 0 0 2px; font-size: 38px; }
 }

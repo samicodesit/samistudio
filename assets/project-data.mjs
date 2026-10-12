@@ -2,10 +2,12 @@ export const projects = Object.freeze([
   Object.freeze({
     id: 'doodle', title: 'Doodle', heading: 'Doodle.',
     description: 'Drawing ideas for cards, notes and journals.',
+    descriptionLines: ['Drawing ideas for cards,', 'notes and journals.'],
     href: 'https://doodle.samistudio.nl/',
-    image: './gallery/doodle-stage-reference.webp', imageAlt: 'The Doodle app, with a drawing prompt and a yellow cat holding a flower.',
-    artwork: './gallery/doodle-stage-reference.webp', artworkAlt: 'A pencil drawing of a dog holding a birthday balloon on yellow paper.',
-    imageWidth: 854, imageHeight: 728, referenceCrop: true,
+    image: './gallery/doodle-desktop-v2.webp', imageAlt: 'The Doodle app beside a birthday puppy note, with yellow drawings of cooking, reading and gardening.',
+    imageWidth: 1506, imageHeight: 1045, composedScene: true, stationaryScene: true,
+    mobileImage: './gallery/doodle-mobile-v2.webp',
+    wideImage: './gallery/doodle-room-wide-v2.webp',
   }),
   Object.freeze({
     id: 'autolister', title: 'AutoLister', heading: 'AutoLister.',
