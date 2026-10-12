@@ -59,6 +59,7 @@
 .scene-clear-back { --feather: 12px; left: 1251px; top: 38px; width: 230px; height: 58px; background-position: -1251px -38px; }
 .scene-clear-caption { --feather: 20px; left: 1100px; top: 548px; width: 381px; height: 287px; background-position: -1100px -548px; }
 .scene-clear-note { --feather: 28px; left: 794px; top: 266px; width: 370px; height: 424px; background-position: -794px -266px; }
+.scene-clear-note { display: none; }
 .gallery-header {
   position: absolute; top: 39px; left: 66px; right: 64px; z-index: 3;
   display: flex; justify-content: space-between; align-items: center;
@@ -113,12 +114,16 @@
 .project-gallery[data-project="doodle"] .project-primary .plane-depth { transform: none; }
 .project-gallery[data-project="doodle"] .project-secondary { z-index: 0; }
 .project-gallery[data-project="doodle"] .project-secondary .plane-depth { position: relative; }
+.project-gallery[data-project="doodle"] .project-secondary .plane-depth { transform: none !important; }
 .project-gallery[data-project="doodle"] .project-secondary .plane-depth::before {
   content: ''; position: absolute; left: -40px; top: -16px; width: 307px; height: 365px;
   background-image: url('./gallery/doodle-stage-reference.webp'); background-size: 1505px 1045px; background-position: -810px -285px;
   mask-image: linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 28px),transparent),linear-gradient(to bottom,transparent,#000 28px,#000 calc(100% - 45px),transparent);
   mask-composite: intersect;
 }
+/* The stationary note keeps its original photographic cast shadow. A second
+   room crop underneath it would introduce a rectangular lighting boundary. */
+.project-gallery[data-project="doodle"] .project-secondary .plane-depth::before { display: none !important; }
 .project-gallery[data-project="doodle"] .project-secondary .plane-surface {
   position: relative; background: transparent; box-shadow: none;
   clip-path: polygon(9.926% .365%,100% 10.949%,86.765% 100%,0% 87.956%);
