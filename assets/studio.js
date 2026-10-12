@@ -1,4 +1,6 @@
 import { KeySpring } from './key-spring.mjs';
+import { projectiveMatrix as quadMatrix } from './gallery-geometry.mjs';
+import { initProjectGallery } from './project-gallery.js';
 
 (() => {
   'use strict';
@@ -10,30 +12,24 @@ import { KeySpring } from './key-spring.mjs';
   const keys = [...document.querySelectorAll('.key')];
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const screens = [...document.querySelectorAll('.screen')];
-  const pages = { about: ['About', '1/3'], approach: ['Approach', '2/3'], contact: ['Contact', '3/3'] };
+  const pages = { about: ['About', '1/3'], work: ['Work', '2/3'], contact: ['Contact', '3/3'] };
   let current = 'about';
   let entranceAssetsReady = false;
   let entranceScheduled = false;
   const keyArtwork = new Image();
   keyArtwork.src = new URL(matchMedia('(max-width: 900px) and (orientation: portrait), (max-width: 599px)').matches
     ? './terminal-keycaps-mobile.webp' : './terminal-keycaps.webp', import.meta.url).href;
-  const fontSheet = document.querySelector('#studio-fonts');
-  const fontsReady = new Promise(resolve => {
-    if (fontSheet.sheet) resolve();
-    else {
-      fontSheet.addEventListener('load', resolve, { once: true });
-      fontSheet.addEventListener('error', resolve, { once: true });
-    }
-  }).then(() => Promise.allSettled([
-    ...[400, 450, 500, 600, 650, 700].map(weight => document.fonts.load(`${weight} 16px Inter`)),
-    document.fonts.load('400 16px "IBM Plex Mono"'),
-  ]));
+  const fontsReady = Promise.allSettled([
+    ...[400, 500].map(weight => document.fonts.load(`${weight} 16px Inter`)),
+    document.fonts.load('400 104px "DM Serif Display"'),
+  ]);
   Promise.allSettled([fontsReady, keyArtwork.decode()]).then(() => {
     entranceAssetsReady = true;
     layout();
   });
   function showView(view, focusElement) {
     if (!pages[view]) return;
+    if (view !== 'work') gallery.cancelPending();
     const changed = current !== view;
     current = view;
     document.querySelector('#display-title').textContent = pages[view][0];
@@ -48,6 +44,7 @@ import { KeySpring } from './key-spring.mjs';
     }
     if (focusElement) focusElement.focus({ preventScroll: true });
   }
+  const gallery = initProjectGallery({ onReturn: () => showView('work') });
   const fittedPhoto = document.createElement('canvas');
   fittedPhoto.width = 1260;
   fittedPhoto.height = 933;
@@ -66,6 +63,7 @@ import { KeySpring } from './key-spring.mjs';
   let activeSceneAsset = null;
   let pendingSceneAsset = null;
   let sceneLoadToken = 0;
+  let lastLayoutKey = '';
 
   function imageUrl(path) {
     return path ? new URL(path, import.meta.url).href : '';
@@ -168,20 +166,20 @@ import { KeySpring } from './key-spring.mjs';
       plate.height = 932;
       const plateContext = plate.getContext('2d');
       plateContext.drawImage(scenePhoto, 0, 0);
-      for (const side of [0, 1]) {
-        const gradient = context.createLinearGradient(0, top, 0, top + photoHeight);
-        for (let row = 0; row <= 16; row++) {
-          const y = Math.min(900, Math.round(row * 932 / 16));
-          const pixels = plateContext.getImageData(side ? 400 : 0, y, 16, 32).data;
-          const rgb = [0, 0, 0];
+      const gradient = context.createLinearGradient(0, top, 0, top + photoHeight);
+      for (let row = 0; row <= 16; row++) {
+        const y = Math.min(900, Math.round(row * 932 / 16));
+        const rgb = [0, 0, 0];
+        for (const side of [0, 400]) {
+          const pixels = plateContext.getImageData(side, y, 16, 32).data;
           for (let i = 0; i < pixels.length; i += 4) {
-            rgb.forEach((value, channel) => { rgb[channel] += pixels[i + channel] / 512; });
+            rgb.forEach((value, channel) => { rgb[channel] += pixels[i + channel] / 1024; });
           }
-          gradient.addColorStop(row / 16, `rgb(${rgb.map(Math.round).join(',')})`);
         }
-        context.fillStyle = gradient;
-        context.fillRect(side * width / 2, 0, width / 2 + 1, height);
+        gradient.addColorStop(row / 16, `rgb(${rgb.map(Math.round).join(',')})`);
       }
+      context.fillStyle = gradient;
+      context.fillRect(0, 0, width, height);
       plateContext.globalCompositeOperation = 'destination-in';
       const feather = plateContext.createLinearGradient(0, 0, 416, 0);
       feather.addColorStop(0, 'transparent');
@@ -189,6 +187,13 @@ import { KeySpring } from './key-spring.mjs';
       feather.addColorStop(396 / 416, 'black');
       feather.addColorStop(1, 'transparent');
       plateContext.fillStyle = feather;
+      plateContext.fillRect(0, 0, 416, 932);
+      const verticalFeather = plateContext.createLinearGradient(0, 0, 0, 932);
+      verticalFeather.addColorStop(0, 'transparent');
+      verticalFeather.addColorStop(40 / 932, 'black');
+      verticalFeather.addColorStop(892 / 932, 'black');
+      verticalFeather.addColorStop(1, 'transparent');
+      plateContext.fillStyle = verticalFeather;
       plateContext.fillRect(0, 0, 416, 932);
       context.drawImage(plate, left, top, photoWidth, photoHeight);
       scene.classList.add('is-ready');
@@ -214,37 +219,16 @@ import { KeySpring } from './key-spring.mjs';
     backdrop.parentElement.classList.add('is-ready');
   }
 
-  function quadMatrix(width, height, quad) {
-    const source = [[0, 0], [width, 0], [width, height], [0, height]];
-    const rows = source.flatMap(([x, y], i) => {
-      const [u, v] = quad[i];
-      return [[x, y, 1, 0, 0, 0, -u * x, -u * y, u], [0, 0, 0, x, y, 1, -v * x, -v * y, v]];
-    });
-    for (let column = 0; column < 8; column += 1) {
-      let pivot = column;
-      for (let row = column + 1; row < 8; row += 1) {
-        if (Math.abs(rows[row][column]) > Math.abs(rows[pivot][column])) pivot = row;
-      }
-      [rows[column], rows[pivot]] = [rows[pivot], rows[column]];
-      const divisor = rows[column][column];
-      for (let cell = column; cell < 9; cell += 1) rows[column][cell] /= divisor;
-      for (let row = 0; row < 8; row += 1) {
-        if (row === column) continue;
-        const factor = rows[row][column];
-        for (let cell = column; cell < 9; cell += 1) rows[row][cell] -= factor * rows[column][cell];
-      }
-    }
-    const [a, b, c, d, e, f, g, h] = rows.map(row => row[8]);
-    return `matrix3d(${a},${d},0,${g},${b},${e},0,${h},0,0,1,0,${c},${f},0,1)`;
-  }
-
   function layout() {
     if (!experience) return;
     const width = experience.clientWidth;
     const height = experience.clientHeight;
     const mobile = matchMedia('(max-width: 900px) and (orientation: portrait), (max-width: 599px)').matches;
-    if (mobile) clearBackdrop();
     if (!ensureSceneAsset(mobile)) return;
+    const layoutKey = [width, height, mobile, devicePixelRatio, activeSceneAsset.key, widePhoto.naturalWidth, entranceAssetsReady].join(':');
+    if (lastLayoutKey === layoutKey) return;
+    lastLayoutKey = layoutKey;
+    if (mobile) clearBackdrop();
     const scale = mobile
       ? Math.min(width / 416, height / 840, 1)
       : Math.min(width / 1260, height / 933);
@@ -274,7 +258,10 @@ import { KeySpring } from './key-spring.mjs';
     if (!entranceScheduled && entranceAssetsReady && (mobile || scene.classList.contains('is-ready'))) {
       entranceScheduled = true;
       // Commit the complete composition before starting one shared fade.
-      requestAnimationFrame(() => requestAnimationFrame(() => root.classList.remove('is-loading')));
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        root.classList.remove('is-loading');
+        gallery.ready();
+      }));
     }
   }
 

@@ -1,0 +1,35 @@
+export const projects = Object.freeze([
+  Object.freeze({
+    id: 'doodle', title: 'Doodle', heading: 'Doodle.',
+    description: 'Drawing ideas for cards, notes and journals.',
+    href: 'https://doodle.samistudio.nl/',
+    image: './gallery/doodle-stage-reference.webp', imageAlt: 'The Doodle app, with a drawing prompt and a yellow cat holding a flower.',
+    artwork: './gallery/doodle-stage-reference.webp', artworkAlt: 'A pencil drawing of a dog holding a birthday balloon on yellow paper.',
+    imageWidth: 854, imageHeight: 728, referenceCrop: true,
+  }),
+  Object.freeze({
+    id: 'autolister', title: 'AutoLister', heading: 'AutoLister.',
+    description: 'Listing titles and descriptions from your item photos.',
+    descriptionLines: ['Listing titles and descriptions', 'from your item photos.'],
+    href: 'https://autolister.app/',
+    image: './gallery/autolister-desktop.webp', imageAlt: 'AutoLister listing form beside a charcoal dress draped over a limestone plinth.',
+    mobileImage: './gallery/autolister-mobile.webp',
+    patches: ['wordmark', 'back', 'caption'].map(part => `./gallery/autolister-desktop-patch-${part}.webp`),
+    mobilePatches: ['wordmark', 'back', 'caption'].map(part => `./gallery/autolister-mobile-patch-${part}.webp`),
+    wideImage: './gallery/autolister-room-wide.webp',
+    imageWidth: 1505, imageHeight: 1045, composedScene: true,
+  }),
+  Object.freeze({
+    id: 'cryptik', title: 'Cryptik', heading: 'Cryptik.',
+    description: 'A word game to play with friends.',
+    href: 'https://www.cryptik.me/en',
+    image: './gallery/cryptik-desktop.webp', imageAlt: 'Blue and red Cryptik spies above a five-by-five grid of complete word cards on a dark stone table.',
+    mobileImage: './gallery/cryptik-mobile.webp',
+    patches: ['wordmark', 'back', 'caption'].map(part => `./gallery/cryptik-desktop-patch-${part}.webp`),
+    mobilePatches: ['wordmark', 'back', 'caption'].map(part => `./gallery/cryptik-mobile-patch-${part}.webp`),
+    wideImage: './gallery/cryptik-room-wide.webp',
+    imageWidth: 1506, imageHeight: 1045, composedScene: true,
+  }),
+]);
+
+export const getProject = id => projects.find(project => project.id === id);

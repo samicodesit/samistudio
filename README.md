@@ -1,6 +1,6 @@
 # Sami Studio
 
-Personal website for Sami, product designer and builder. The homepage is the interactive terminal design: **From idea to everyday.**
+Personal website for Sami, designer and developer. The homepage introduces Sami alongside an interactive terminal with About, Work, and Contact screens. Work opens spatial galleries for Doodle, AutoLister, and Cryptik.
 
 ## Website files
 
@@ -8,10 +8,17 @@ Personal website for Sami, product designer and builder. The homepage is the int
 - `assets/studio.css`: desktop and mobile layouts.
 - `assets/studio.js`: terminal screens, keys, sound and entrance behavior.
 - `assets/key-spring.mjs`: key motion.
+- `assets/project-gallery.js`: project opening, history, focus return, and gallery motion.
+- `assets/project-gallery.css`: the gallery stage and its phone layout.
+- `assets/project-data.mjs`: project descriptions, links, and image metadata.
+- `assets/gallery-geometry.mjs`: perspective placement and the terminal screen aperture.
+- `assets/gallery/`: real project images and generated stage artwork.
+- `assets/fonts/`: the two locally hosted fonts and their licenses.
+- `assets/icons/`: Phosphor navigation icons and their license.
 - `assets/terminal-*.webp`: the five desktop/mobile artwork files.
 - `favicon.svg`: website icon.
 
-These ten runtime files were recovered byte-for-byte from the working production deployment on 16 September 2026. Edit them here for subsequent changes; the deployment is no longer the only copy of the current homepage. No framework or package installation is required for the homepage.
+The original homepage and terminal artwork were recovered byte-for-byte from the working production deployment on 16 September 2026. The gallery builds on those sources. No framework or package installation is required for the homepage.
 
 ## Local preview and checks
 
@@ -20,10 +27,12 @@ From the repository root, with Node.js 20 or newer:
 ```bash
 node --test tests/studio.test.mjs
 node scripts/build-studio.mjs
-python3 -m http.server 8080 --directory dist
+node scripts/preview-studio.mjs
 ```
 
-Open `http://localhost:8080`. The build copies only the ten current homepage files into `dist/`; it does not publish repository documentation, credentials, tests or other applications. When adding a runtime asset, update the allowlist in `scripts/build-studio.mjs` and its tests.
+Open `http://localhost:8090`. The preview disables asset caching so edits appear immediately. The build copies only the explicit runtime allowlist into `dist/`; it does not publish repository documentation, credentials, tests or other applications. When adding a runtime asset, update the allowlist in `scripts/build-studio.mjs` and its tests.
+
+The project view opens from the terminal screen and returns to the selected row. Arrow keys select projects; Enter opens one; Escape closes it. Browser Back and Forward work with `#work/doodle`, `#work/autolister`, and `#work/cryptik`. Reduced-motion preferences disable the animated reveal and depth movement.
 
 ## Vercel
 

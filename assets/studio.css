@@ -1,7 +1,17 @@
+@font-face {
+  font-family: 'DM Serif Display'; font-style: normal; font-weight: 400;
+  font-display: swap; src: url('./fonts/dm-serif-display-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: Inter; font-style: normal; font-weight: 400 500;
+  font-display: swap; src: url('./fonts/inter-latin.woff2') format('woff2');
+}
 :root {
   color-scheme: light;
-  --plum: #2b1426;
-  --muted: #503c4b;
+  --ink: #20211e;
+  --muted: #44453f;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-text: Inter, Arial, sans-serif;
   --paper: #e7dfda;
   --scene-scale: 1;
   --scene-top: 0px;
@@ -9,8 +19,9 @@
   --photo-left: 0px;
   --scene-photo-width: 1686px;
   --scene-photo-height: 933px;
-  font-family: Inter, Arial, sans-serif;
-  color: var(--plum);
+  font-family: var(--font-text);
+  color: var(--ink);
+  font-optical-sizing: auto;
   background: #aa99a0;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -23,7 +34,7 @@ body { margin: 0; background: #ad9ba2; }
 a { color: inherit; text-decoration: none; }
 button, a { -webkit-tap-highlight-color: transparent; }
 button { font: inherit; }
-button:focus-visible, a:focus-visible { outline: 2px solid var(--plum); outline-offset: 7px; }
+button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 7px; }
 ::selection { background: #573242; color: #fff2e2; }
 .sr-only {
   position: absolute;
@@ -53,7 +64,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--plum); outline-
   position: relative;
   height: 100dvh;
   min-height: 0;
-  overflow: hidden;
+  overflow: clip;
   isolation: isolate;
   background: #ad9ba2;
 }
@@ -68,14 +79,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--plum); outline-
   justify-content: center;
   gap: 10px;
   background: #ad9ba2;
-  color: var(--plum);
-  font-family: Arial, sans-serif;
+  color: var(--ink);
+  font-family: var(--font-text);
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
   transition: opacity 300ms ease, visibility 0s 300ms;
 }
-.loading-screen > span { font-size: 24px; letter-spacing: -1px; }
+.loading-screen > span { font-family: var(--font-display); font-weight: 400; font-size: 28px; letter-spacing: -.5px; }
 .loading-screen small { font-size: 12px; color: var(--muted); }
 .is-loading .loading-screen { opacity: 1; visibility: visible; transition: none; }
 .scene {
@@ -119,9 +130,10 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--plum); outline-
 }
 .wordmark { display: flex; flex-direction: column; gap: 2px; }
 .wordmark > span {
-  font-size: clamp(22px, 2.06vw, 31px);
-  font-weight: 500;
-  letter-spacing: -1.25px;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 2.25vw, 34px);
+  font-weight: 400;
+  letter-spacing: -.5px;
   line-height: 1.15;
 }
 .wordmark small {
@@ -151,20 +163,23 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--plum); outline-
   transform: scale(var(--scene-scale));
   transform-origin: top left;
 }
-.introduction { position: absolute; left: var(--headline-left, 674px); top: 288px; width: 560px; }
+.introduction { position: absolute; left: var(--headline-left, 674px); top: 320px; width: 560px; }
 .introduction h1 {
   margin: 0;
+  font-family: var(--font-display);
   font-size: 104px;
-  line-height: .87;
-  letter-spacing: -6.8px;
-  font-weight: 650;
+  line-height: 1;
+  letter-spacing: -2.5px;
+  font-weight: 400;
   white-space: nowrap;
 }
 .introduction p {
-  margin: 38px 0 0 77px;
+  max-width: 420px;
+  margin: 24px 0 0;
   font-size: 22px;
-  line-height: 1.4;
-  letter-spacing: -.5px;
+  line-height: 1.5;
+  letter-spacing: -.25px;
+  text-wrap: pretty;
   color: var(--muted);
 }
 
@@ -191,7 +206,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--plum); outline-
   padding: 12px 26px 10px;
   overflow: hidden;
   color: #242520;
-  font-family: 'IBM Plex Mono', 'Courier New', monospace;
+  font-family: var(--font-text);
+  font-variant-numeric: tabular-nums;
   pointer-events: auto;
   user-select: text;
   transform-origin: 0 0;
@@ -230,7 +246,6 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--plum); outline-
 .screen { width: 100%; height: 100%; }
 .screen[hidden] { display: none; }
 .screen-copy { margin: 0; font-size: 26px; line-height: 1.2; letter-spacing: -.65px; }
-.screen[data-screen="approach"] .screen-copy { font-size: 25px; }
 .screen-copy::after {
   content: '';
   display: inline-block;
@@ -292,7 +307,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--plum); outline-
   place-items: center;
   transform-origin: 0 0;
   color: #eee4df;
-  font-family: Inter, Arial, sans-serif;
+  font-family: var(--font-text);
   font-size: 19px;
   font-weight: 400;
   letter-spacing: -.6px;
@@ -313,18 +328,16 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--plum); outline-
 .scene-photo { left: var(--scene-left); }
 .composition { left: var(--scene-left); top: var(--scene-top); width: 416px; height: 932px; }
 .site-header { top: calc(var(--scene-top) + 28px * var(--scene-scale)); left: calc(var(--scene-left) + 30px * var(--scene-scale)); right: auto; width: 356px; transform: scale(var(--scene-scale)); transform-origin: top left; }
-.wordmark > span { font-size: 20px; letter-spacing: -.9px; }
+.wordmark > span { font-size: 24px; letter-spacing: -.6px; }
 .wordmark small { font-size: 12px; line-height: 1.3; }
 .contact-link { gap: 5px; padding-top: 6px; font-size: 14px; }
 .introduction { left: 29px; top: 113px; width: 366px; }
-.introduction h1 { font-size: 58px; line-height: .91; letter-spacing: -3.3px; }
+.introduction h1 { font-size: 58px; line-height: 1; letter-spacing: -1.2px; }
 .introduction p { max-width: 330px; margin: 22px 0 0; font-size: 19px; line-height: 1.3; letter-spacing: -.45px; }
-.desktop-break { display: initial; }
 .display { width: 273px; height: 170px; padding: 11px 21px; }
 .display-topline { font-size: 11px; line-height: 17px; padding-bottom: 6px; }
 .display-stage { inset: 45px 21px 10px; }
 .screen-copy { font-size: 19px; line-height: 1.25; letter-spacing: -.4px; }
-.screen[data-screen="approach"] .screen-copy { font-size: 18px; }
 .key-about { left: 51px; top: 630px; width: 99px; height: 94px; }
 .keycap::before { background-image: url('./terminal-keycaps-mobile.webp'); background-size: 350px 100px; }
 .key-about .keycap { background-position: 0 0; clip-path: polygon(7% 5%, 87% 5%, 96% 12%, 97% 85%, 90% 95%, 7% 95%, 1% 86%, 1% 18%); }

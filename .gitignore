@@ -20,3 +20,6 @@ doodle/tmp/
 
 # Local Vercel project link and credentials
 .vercel/
+
+# Separate ChatGPT Sites source checkouts
+.sites/

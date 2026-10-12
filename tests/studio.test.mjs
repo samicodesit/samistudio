@@ -1,4 +1,6 @@
 import './og-image.test.mjs';
+import './gallery.test.mjs';
+import './gallery-loading.test.mjs';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFile, stat, mkdtemp, mkdir, cp, rm, readdir, writeFile } from 'node:fs/promises';
@@ -12,6 +14,19 @@ const runtimeFiles = [
   'assets/key-spring.mjs', 'assets/terminal-housing.webp',
   'assets/terminal-housing-mobile.webp', 'assets/terminal-keycaps.webp',
   'assets/terminal-keycaps-mobile.webp', 'assets/terminal-wide.webp',
+  'assets/project-gallery.js', 'assets/project-gallery.css', 'assets/project-data.mjs', 'assets/gallery-geometry.mjs', 'assets/gallery-loading.mjs',
+  'assets/gallery/stage-background.webp',
+  'assets/gallery/doodle-stage-reference.webp',
+  'assets/gallery/autolister-desktop.webp', 'assets/gallery/autolister-mobile.webp',
+  'assets/gallery/autolister-desktop-patch-wordmark.webp', 'assets/gallery/autolister-desktop-patch-back.webp', 'assets/gallery/autolister-desktop-patch-caption.webp',
+  'assets/gallery/autolister-mobile-patch-wordmark.webp', 'assets/gallery/autolister-mobile-patch-back.webp', 'assets/gallery/autolister-mobile-patch-caption.webp',
+  'assets/gallery/cryptik-desktop.webp', 'assets/gallery/cryptik-mobile.webp',
+  'assets/gallery/cryptik-desktop-patch-wordmark.webp', 'assets/gallery/cryptik-desktop-patch-back.webp', 'assets/gallery/cryptik-desktop-patch-caption.webp',
+  'assets/gallery/cryptik-mobile-patch-wordmark.webp', 'assets/gallery/cryptik-mobile-patch-back.webp', 'assets/gallery/cryptik-mobile-patch-caption.webp',
+  'assets/gallery/autolister-room-wide.webp', 'assets/gallery/cryptik-room-wide.webp',
+  'assets/fonts/dm-serif-display-latin.woff2', 'assets/fonts/inter-latin.woff2',
+  'assets/fonts/dmserifdisplay-OFL.txt', 'assets/fonts/inter-OFL.txt',
+  'assets/icons/caret-right.svg', 'assets/icons/arrow-left.svg', 'assets/icons/LICENSE.txt',
 ];
 const text = path => readFile(join(root, path), 'utf8');
 
@@ -36,14 +51,14 @@ async function walk(directory, prefix = '') {
 
 test('homepage and manifest describe the current studio', async () => {
   const html = await text('index.html');
-  assert.match(html, /<title>Sami Studio \| From idea to everyday<\/title>/);
+  assert.match(html, /<title>Sami Studio \| Websites and apps<\/title>/);
   assert.match(html, /id="terminal-display"/);
   assert.match(html, /data-view="about"/);
-  assert.match(html, /data-view="approach"/);
+  assert.match(html, /data-view="work"/);
   assert.match(html, /data-view="contact"/);
   assert.doesNotMatch(html, /Bespoke Presence|Crafting premium landing pages|cdn\.tailwindcss\.com/i);
   const manifest = JSON.parse(await text('site.webmanifest'));
-  assert.match(manifest.description, /digital products/);
+  assert.match(manifest.description, /websites and apps/);
   assert.doesNotMatch(manifest.description, /premium landing pages|elevate your digital presence/i);
   assert.equal(manifest.theme_color, '#ad9ba2');
 });
@@ -64,7 +79,8 @@ test('all runtime files exist and image formats are valid', async () => {
 });
 
 test('HTML, CSS and JavaScript relative asset references resolve locally', async () => {
-  for (const path of ['index.html', 'assets/studio.css', 'assets/studio.js', 'assets/key-spring.mjs']) {
+  for (const path of ['index.html', 'assets/studio.css', 'assets/studio.js', 'assets/key-spring.mjs',
+    'assets/project-gallery.css', 'assets/project-gallery.js', 'assets/project-data.mjs']) {
     const source = await text(path);
     const refs = [...source.matchAll(/["']((?:\.\/|\.\.\/)[^"'\s]+\.(?:mjs|js|css|webp|svg|png|woff2?))["']/g)];
     for (const [, ref] of refs) {

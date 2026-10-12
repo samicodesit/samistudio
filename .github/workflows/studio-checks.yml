@@ -10,6 +10,8 @@ on:
       - scripts/build-studio.mjs
       - tests/studio.test.mjs
       - tests/og-image.test.mjs
+      - tests/gallery.test.mjs
+      - tests/gallery-loading.test.mjs
       - site.webmanifest
       - vercel.json
       - .gitignore
@@ -24,6 +26,8 @@ on:
       - scripts/build-studio.mjs
       - tests/studio.test.mjs
       - tests/og-image.test.mjs
+      - tests/gallery.test.mjs
+      - tests/gallery-loading.test.mjs
       - site.webmanifest
       - vercel.json
       - .gitignore
@@ -44,5 +48,9 @@ jobs:
         run: |
           node --input-type=module --check < assets/studio.js
           node --check assets/key-spring.mjs
+          node --input-type=module --check < assets/project-gallery.js
+          node --check assets/project-data.mjs
+          node --check assets/gallery-geometry.mjs
+          node --check assets/gallery-loading.mjs
       - name: Build only the public homepage files
         run: node scripts/build-studio.mjs

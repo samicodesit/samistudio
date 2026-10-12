@@ -8,6 +8,19 @@ export const studioFiles = [
   'assets/key-spring.mjs', 'assets/terminal-housing.webp',
   'assets/terminal-housing-mobile.webp', 'assets/terminal-keycaps.webp',
   'assets/terminal-keycaps-mobile.webp', 'assets/terminal-wide.webp',
+  'assets/project-gallery.js', 'assets/project-gallery.css', 'assets/project-data.mjs', 'assets/gallery-geometry.mjs', 'assets/gallery-loading.mjs',
+  'assets/gallery/stage-background.webp',
+  'assets/gallery/doodle-stage-reference.webp',
+  'assets/gallery/autolister-desktop.webp', 'assets/gallery/autolister-mobile.webp',
+  'assets/gallery/autolister-desktop-patch-wordmark.webp', 'assets/gallery/autolister-desktop-patch-back.webp', 'assets/gallery/autolister-desktop-patch-caption.webp',
+  'assets/gallery/autolister-mobile-patch-wordmark.webp', 'assets/gallery/autolister-mobile-patch-back.webp', 'assets/gallery/autolister-mobile-patch-caption.webp',
+  'assets/gallery/cryptik-desktop.webp', 'assets/gallery/cryptik-mobile.webp',
+  'assets/gallery/cryptik-desktop-patch-wordmark.webp', 'assets/gallery/cryptik-desktop-patch-back.webp', 'assets/gallery/cryptik-desktop-patch-caption.webp',
+  'assets/gallery/cryptik-mobile-patch-wordmark.webp', 'assets/gallery/cryptik-mobile-patch-back.webp', 'assets/gallery/cryptik-mobile-patch-caption.webp',
+  'assets/gallery/autolister-room-wide.webp', 'assets/gallery/cryptik-room-wide.webp',
+  'assets/fonts/dm-serif-display-latin.woff2', 'assets/fonts/inter-latin.woff2',
+  'assets/fonts/dmserifdisplay-OFL.txt', 'assets/fonts/inter-OFL.txt',
+  'assets/icons/caret-right.svg', 'assets/icons/arrow-left.svg', 'assets/icons/LICENSE.txt',
 ];
 
 export async function buildStudio(root = fileURLToPath(new URL('../', import.meta.url))) {

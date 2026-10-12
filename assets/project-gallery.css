@@ -1,0 +1,308 @@
+.work-list { list-style: none; padding: 0; margin: -5px 0 0; }
+.work-row {
+  width: 100%; min-height: 42px; border: 0; padding: 3px 0;
+  display: flex; align-items: center; gap: 12px;
+  text-align: left; color: #242520; background: transparent;
+  font-size: 25px; line-height: 1.25; letter-spacing: -.6px;
+  cursor: pointer; touch-action: manipulation;
+}
+.work-row img { width: 15px; height: 15px; opacity: .42; transition: transform 140ms ease-out, opacity 140ms ease-out; }
+.work-row[data-selected="true"] img { opacity: 1; transform: translateX(3px); }
+.work-row[data-selected="true"] span { font-weight: 500; }
+.work-row:focus-visible { outline: 0; }
+.work-row:focus-visible span { text-decoration: underline; text-underline-offset: 5px; }
+.work-row[aria-busy="true"] { opacity: .65; }
+.work-status { margin: 3px 0 0 27px; font-size: 13px; line-height: 1.2; letter-spacing: -.15px; }
+.work-status:empty { display: none; }
+
+.project-gallery {
+  position: fixed; inset: 0; margin: 0; border: 0; padding: 0;
+  width: 100vw; height: 100dvh; max-width: none; max-height: none;
+  overflow: hidden; color: var(--ink); background: #d8c7cd;
+  font-family: var(--font-text); isolation: isolate;
+}
+.project-gallery::backdrop { background: transparent; }
+.project-gallery:focus { outline: none; }
+.gallery-environment { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.gallery-environment img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gallery-viewport { position: relative; width: 100%; height: 100%; overflow: clip; }
+.gallery-frame {
+  position: absolute; left: var(--gallery-left, 0px); top: var(--gallery-top, 0px);
+  width: 1505px; height: 1045px; transform: scale(var(--gallery-scale, 1));
+  transform-origin: top left;
+}
+
+.gallery-reference-scene { position: absolute; inset: 0; pointer-events: none; }
+.gallery-reference-scene > img { width: 1505px; height: 1045px; display: block; }
+.gallery-reference-scene[hidden] { display: none; }
+/* Continue the room at the reference scale. Cover sizing would move the floor
+   and lighting at both edges of the centered photograph. */
+.project-gallery[data-project="doodle"] .gallery-environment img {
+  position: absolute; left: var(--gallery-left); top: var(--gallery-top);
+  width: calc(1505px * var(--gallery-scale)); height: calc(1045px * var(--gallery-scale));
+}
+.project-gallery[data-project="doodle"] .gallery-environment::before,
+.project-gallery[data-project="doodle"] .gallery-environment::after {
+  content: ''; position: absolute; top: var(--gallery-top); bottom: 0;
+  width: calc(var(--gallery-left) + 2px); background-image: url('./gallery/stage-background.webp');
+  background-size: calc(1505px * var(--gallery-scale)) calc(1045px * var(--gallery-scale));
+  background-repeat: no-repeat; transform: scaleX(-1);
+}
+.project-gallery[data-project="doodle"] .gallery-environment::before { left: 0; background-position: left top; }
+.project-gallery[data-project="doodle"] .gallery-environment::after { right: 0; background-position: right top; }
+.gallery-reference-scene > div {
+  position: absolute; background-image: url('./gallery/stage-background.webp'); background-size: 1505px 1045px;
+  mask-image: linear-gradient(to right,transparent,#000 var(--feather),#000 calc(100% - var(--feather)),transparent),linear-gradient(to bottom,transparent,#000 var(--feather),#000 calc(100% - var(--feather)),transparent);
+  mask-composite: intersect;
+}
+.scene-clear-wordmark { --feather: 12px; left: 48px; top: 30px; width: 225px; height: 68px; background-position: -48px -30px; }
+.scene-clear-back { --feather: 12px; left: 1251px; top: 38px; width: 230px; height: 58px; background-position: -1251px -38px; }
+.scene-clear-caption { --feather: 20px; left: 1100px; top: 548px; width: 381px; height: 287px; background-position: -1100px -548px; }
+.scene-clear-note { --feather: 28px; left: 794px; top: 266px; width: 370px; height: 424px; background-position: -794px -266px; }
+.gallery-header {
+  position: absolute; top: 39px; left: 66px; right: 64px; z-index: 3;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.gallery-wordmark { font-family: var(--font-display); font-size: 34px; font-weight: 400; line-height: 1.2; letter-spacing: -.8px; }
+.gallery-back {
+  display: inline-flex; align-items: center; gap: 14px; min-height: 52px;
+  padding: 8px 0; border: 0; background: transparent; color: inherit;
+  font-size: 20px; letter-spacing: -.35px; cursor: pointer;
+}
+.gallery-back img { width: 30px; height: 30px; transition: transform 180ms cubic-bezier(.2,.75,.12,1); }
+.gallery-back:hover img { transform: translateX(-4px); }
+.project-primary, .project-secondary { position: absolute; left: 0; top: 0; margin: 0; transform-origin: 0 0; }
+.project-primary { width: 1000px; height: 900px; z-index: 1; }
+.project-secondary { width: 1000px; height: 1000px; z-index: 2; }
+.plane-enter, .plane-depth { width: 100%; height: 100%; }
+.project-primary .plane-depth { transform: translate3d(calc(var(--depth-x, 0px) * .45), calc(var(--depth-y, 0px) * .45), 0); }
+.project-secondary .plane-depth { transform: translate3d(calc(var(--depth-x, 0px) * 1.4), calc(var(--depth-y, 0px) * 1.4), 0); }
+.plane-surface { width: 100%; height: 100%; overflow: hidden; background: #ecece7; }
+.project-primary .plane-surface {
+  border: 2px solid #e7e7e1; border-radius: 13px;
+  box-shadow: -8px 13px 0 -5px #9b999480, -16px 31px 42px -9px #48353d46;
+}
+.project-secondary .plane-surface { box-shadow: -27px 31px 49px -12px #49383d50; }
+.plane-surface img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.project-caption { position: absolute; left: 1126px; top: 555px; width: 330px; z-index: 2; }
+.project-caption h2 { margin: 0; font-family: var(--font-display); font-size: 103px; font-weight: 400; line-height: 1.08; letter-spacing: -3.8px; white-space: nowrap; }
+.project-caption p { margin: 11px 0 0; font-size: 26px; line-height: 1.38; letter-spacing: -.75px; color: #6b676b; text-wrap: pretty; }
+.project-link { display: inline-flex; align-items: center; gap: 12px; margin-top: 20px; min-height: 52px; font-size: 22px; letter-spacing: -.5px; }
+.project-link-label { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 9px; }
+.project-link img { width: 26px; height: 26px; transform: rotate(180deg); transition: transform 180ms cubic-bezier(.2,.75,.12,1); }
+.project-link:hover img { transform: translateX(3px) rotate(180deg); }
+.project-gallery[data-project="autolister"] .project-caption h2 { font-size: 73px; letter-spacing: -2.7px; }
+.project-gallery[data-project="autolister"] .project-caption p { margin-top: 24px; }
+.project-gallery[data-project="cryptik"] .project-caption h2 { font-size: 100px; }
+.project-gallery[data-project="cryptik"] .project-caption { top: 480px; }
+.project-gallery[data-project="autolister"] .project-secondary .plane-surface,
+.project-gallery[data-project="cryptik"] .project-secondary .plane-surface { background: transparent; box-shadow: none; overflow: visible; }
+.project-gallery[data-project="autolister"] .project-secondary .plane-surface img,
+.project-gallery[data-project="cryptik"] .project-secondary .plane-surface img { object-fit: contain; }
+.project-gallery[data-project="cryptik"] .project-secondary .plane-depth { transform: none; }
+
+/* The photographed Doodle planes retain the approved artwork's original pixels.
+   Header, caption, navigation, and interaction remain native HTML. */
+.project-gallery[data-project="doodle"] .project-primary .plane-surface {
+  position: relative; border: 0; border-radius: 0; background: transparent; box-shadow: none;
+  clip-path: polygon(0% 0%,93.326% 16.071%,100% 89.423%,6.206% 99.725%);
+}
+.project-gallery[data-project="doodle"] .project-primary .plane-surface img {
+  position: absolute; width: 176.23%; height: 143.544%; left: -3.0445%; top: -28.9835%; max-width: none;
+}
+.project-gallery[data-project="doodle"] .project-primary .plane-depth { transform: none; }
+.project-gallery[data-project="doodle"] .project-secondary { z-index: 0; }
+.project-gallery[data-project="doodle"] .project-secondary .plane-depth { position: relative; }
+.project-gallery[data-project="doodle"] .project-secondary .plane-depth::before {
+  content: ''; position: absolute; left: -40px; top: -16px; width: 307px; height: 365px;
+  background-image: url('./gallery/doodle-stage-reference.webp'); background-size: 1505px 1045px; background-position: -810px -285px;
+  mask-image: linear-gradient(to right,transparent,#000 28px,#000 calc(100% - 28px),transparent),linear-gradient(to bottom,transparent,#000 28px,#000 calc(100% - 45px),transparent);
+  mask-composite: intersect;
+}
+.project-gallery[data-project="doodle"] .project-secondary .plane-surface {
+  position: relative; background: transparent; box-shadow: none;
+  clip-path: polygon(9.926% .365%,100% 10.949%,86.765% 100%,0% 87.956%);
+}
+.project-gallery[data-project="doodle"] .project-secondary .plane-surface img {
+  position: absolute; width: 553.309%; height: 381.387%; left: -312.5%; top: -109.854%; max-width: none;
+}
+
+@media (max-width: 900px) and (orientation: portrait), (max-width: 599px) {
+  .project-gallery[data-project="doodle"] .gallery-environment img { inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .project-gallery[data-project="doodle"] .gallery-environment::before,
+  .project-gallery[data-project="doodle"] .gallery-environment::after { display: none; }
+  .work-list { margin-top: -2px; }
+  .work-row { min-height: 32px; gap: 9px; font-size: 19px; letter-spacing: -.4px; padding: 2px 0; }
+  .work-row img { width: 12px; height: 12px; }
+  .work-status { margin: 2px 0 0 21px; font-size: 10px; }
+  .project-gallery { overflow-x: hidden; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none; }
+  .project-gallery::-webkit-scrollbar { display: none; }
+  .gallery-environment { position: fixed; }
+  .gallery-frame { position: relative; inset: auto; width: 100%; height: auto; min-height: 100dvh; transform: none; padding-bottom: max(40px, env(safe-area-inset-bottom)); }
+  .gallery-reference-scene { display: none; }
+  .project-gallery[data-project="doodle"] .project-primary,
+  .project-gallery[data-project="doodle"] .project-secondary { display: block; }
+  .project-gallery[data-project="doodle"] .project-secondary .plane-depth::before { display: none; }
+  .gallery-header { position: sticky; top: 0; left: auto; right: auto; padding: max(23px, env(safe-area-inset-top)) 24px 0; }
+  .gallery-wordmark { font-size: 24px; letter-spacing: -.6px; }
+  .gallery-back { gap: 7px; font-size: 15px; min-height: 48px; }
+  .gallery-back img { width: 21px; height: 21px; }
+  .project-primary { position: relative; width: calc(100% - 70px); height: auto; margin: 47px 0 0 24px; transform: rotate(-4deg); }
+  .project-primary .plane-surface { border-radius: 5px; border-width: 1px; box-shadow: -3px 5px 0 -2px #9b999480, -8px 14px 27px -7px #48353d46; }
+  .project-primary .plane-surface img { height: auto; }
+  .project-secondary { left: auto; right: 19px; top: var(--artwork-top, 290px); width: 112px; height: 112px; transform: rotate(7deg); }
+  .project-secondary .plane-surface { box-shadow: -10px 13px 21px -7px #49383d50; }
+  .plane-depth { transform: none !important; }
+  .project-caption { position: relative; inset: auto; width: auto; margin: 82px 24px 0; }
+  .project-caption h2 { font-size: 64px; letter-spacing: -2.3px; line-height: 1.08; }
+  .project-caption p { max-width: 310px; margin-top: 12px; font-size: 19px; line-height: 1.45; letter-spacing: -.45px; }
+  .project-link { margin-top: 19px; min-height: 50px; gap: 9px; font-size: 18px; }
+  .project-link img { width: 21px; height: 21px; }
+  .project-link-label { text-underline-offset: 6px; }
+  .project-gallery[data-project="autolister"] .project-caption h2 { font-size: 54px; letter-spacing: -2px; }
+  .project-gallery[data-project="autolister"] .project-caption p { margin-top: 12px; }
+  .project-gallery[data-project="cryptik"] .project-caption h2 { font-size: 64px; }
+  .project-gallery[data-project="cryptik"] .project-caption { top: auto; }
+  .project-gallery[data-project="cryptik"] .project-secondary { width: 150px; height: 100px; right: 11px; transform: none; }
+  .project-gallery[data-project="autolister"] .project-secondary { width: 130px; height: 195px; right: 5px; transform: rotate(7deg); }
+  .project-gallery[data-project="doodle"] .project-primary .plane-surface img { height: 143.544%; }
+  .project-gallery[data-project="doodle"] .project-secondary { width: 112px; height: 112px; transform: none; }
+  .project-gallery[data-project="doodle"] .gallery-frame { min-height: max(100dvh, calc(var(--doodle-caption-top) + 270px)); }
+  .project-gallery[data-project="doodle"] .gallery-reference-scene {
+    display: block; inset: auto; left: var(--doodle-mobile-left);
+    top: calc(100px - 150px * var(--doodle-mobile-scale)); width: 1505px; height: 1045px;
+    transform: scale(var(--doodle-mobile-scale)); transform-origin: top left;
+    clip-path: inset(150px 405px 0 0);
+    mask-image: linear-gradient(to right,transparent,#000 128px,#000 972px,transparent 1100px),linear-gradient(to bottom,transparent 150px,#000 278px,#000 945px,transparent);
+    mask-composite: intersect;
+  }
+  .project-gallery[data-project="doodle"] .project-primary { position: absolute; margin: 0; }
+  .project-gallery[data-project="doodle"] .project-caption { position: absolute; top: var(--doodle-caption-top); left: 24px; right: 24px; margin: 0; }
+  .project-gallery[data-project="doodle"] .project-secondary .plane-depth::before {
+    display: block; left: calc(-40px * var(--doodle-mobile-scale)); top: calc(-16px * var(--doodle-mobile-scale));
+    width: calc(307px * var(--doodle-mobile-scale)); height: calc(365px * var(--doodle-mobile-scale));
+    background-size: calc(1505px * var(--doodle-mobile-scale)) calc(1045px * var(--doodle-mobile-scale));
+    background-position: calc(-810px * var(--doodle-mobile-scale)) calc(-285px * var(--doodle-mobile-scale));
+    --note-feather: calc(28px * var(--doodle-mobile-scale));
+    mask-image: linear-gradient(to right,transparent,#000 var(--note-feather),#000 calc(100% - var(--note-feather)),transparent),linear-gradient(to bottom,transparent,#000 var(--note-feather),#000 calc(100% - var(--note-feather)),transparent);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .plane-depth { transform: none !important; }
+  .work-row img, .gallery-back img, .project-link img { transition: none; }
+}
+@media (forced-colors: active) {
+  .project-gallery { background: Canvas; color: CanvasText; }
+  .gallery-environment { display: none; }
+  .project-caption p { color: CanvasText; }
+  .work-row { color: ButtonText; }
+}
+
+/* Continuous approved photographic compositions. Only website text is replaced
+   by native HTML. Clean plates restore the stone behind those text regions. */
+.composed-scene { position: absolute; inset: 0; margin: 0; transform-origin: 42% 54%; pointer-events: none; }
+.composed-scene[hidden] { display: none; }
+.composed-photo, .composed-photo img { display: block; width: 100%; height: 100%; }
+.composed-clear {
+  position: absolute; left: var(--x); top: var(--y); width: var(--w); height: var(--h); overflow: hidden;
+  --feather: 12px;
+  mask-image: linear-gradient(to right,transparent,#000 var(--feather),#000 calc(100% - var(--feather)),transparent),linear-gradient(to bottom,transparent,#000 var(--feather),#000 calc(100% - var(--feather)),transparent);
+  mask-composite: intersect;
+}
+.composed-clear picture {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+}
+.composed-clear img { display: block; width: 100%; height: 100%; max-width: none; }
+.project-gallery[data-scene="composed"] { overflow: hidden; scrollbar-width: none; }
+.project-gallery[data-scene="composed"]::-webkit-scrollbar { display: none; }
+.project-gallery[data-scene="composed"] .gallery-viewport { height: 100%; }
+.project-gallery[data-scene="composed"] .gallery-frame { width: var(--stage-width); height: var(--stage-height); }
+.project-gallery[data-scene="composed"] .gallery-environment img,
+.project-gallery[data-scene="composed"] .project-primary,
+.project-gallery[data-scene="composed"] .project-secondary { display: none; }
+.project-gallery[data-project="autolister"] { background: #dcccbc; }
+.project-gallery[data-project="cryptik"] { background: #c7bcb3; }
+.project-gallery[data-scene="composed"] .gallery-header { position: absolute; top: 38px; left: 68px; right: 68px; margin: 0; }
+.project-gallery[data-scene="composed"] .gallery-wordmark { letter-spacing: -.3px; }
+.project-description-line { display: block; white-space: nowrap; }
+.project-gallery[data-scene="composed"] .composed-clear-wordmark { --x: 54px; --y: 36px; --w: 211px; --h: 62px; }
+.project-gallery[data-scene="composed"] .composed-clear-back { --x: 1264px; --y: 37px; --w: 187px; --h: 62px; }
+.project-gallery[data-project="autolister"] .composed-clear-caption { --x: 1108px; --y: 402px; --w: 372px; --h: 258px; --feather: 16px; }
+.project-gallery[data-project="cryptik"] .composed-clear-caption { --x: 937px; --y: 307px; --w: 439px; --h: 247px; --feather: 16px; }
+.project-gallery[data-project="autolister"] .project-caption { left: 1124px; top: 413px; width: 352px; }
+.project-gallery[data-project="autolister"] .project-caption h2 { font-size: 77px; letter-spacing: -4px; }
+.project-gallery[data-project="autolister"] .project-caption p { margin: 16px 0 0 20px; max-width: 330px; font-size: 26px; line-height: 31px; letter-spacing: -.9px; color: #747174; }
+.project-gallery[data-project="autolister"] .project-description-line { width: max-content; transform: scaleX(.915); transform-origin: left; }
+.project-gallery[data-project="autolister"] .project-link { margin: 21px 0 0 21px; font-size: 21.5px; letter-spacing: -.65px; }
+.project-gallery[data-project="cryptik"] .project-caption { left: 957px; top: 315px; width: 450px; }
+.project-gallery[data-project="cryptik"] .project-caption h2 { font-size: 94px; }
+.project-gallery[data-project="cryptik"] .project-caption p { white-space: nowrap; margin: 20px 0 0 2px; letter-spacing: -.6px; color: #4d4b4d; }
+.project-gallery[data-project="cryptik"] .project-link { margin: 17px 0 0 2px; font-size: 21px; }
+
+/* Widescreen uses one continuous photographic render, never stitched strips.
+   The approved aspect ratio keeps its original, lossless source photograph. */
+@media (min-width: 600px) and (min-aspect-ratio: 3/2) {
+  .project-gallery[data-project="doodle"] .gallery-reference-scene {
+    mask-image: linear-gradient(to right,transparent,#000 80px,#000 calc(100% - 80px),transparent);
+  }
+  .project-gallery[data-scene="composed"] .gallery-environment img { display: block; object-position: 50% 0; }
+  .project-gallery[data-scene="composed"] .composed-scene { display: none; }
+}
+
+@media (min-width: 600px) and (orientation: landscape) and (max-height: 600px) {
+  .project-gallery[data-scene="composed"] .gallery-wordmark { font-size: max(34px, calc(22px / var(--gallery-scale))); }
+  .project-gallery[data-scene="composed"] .gallery-back { font-size: max(20px, calc(14px / var(--gallery-scale))); min-height: calc(44px / var(--gallery-scale)); }
+  .project-gallery[data-scene="composed"] .gallery-back img { width: max(30px, calc(18px / var(--gallery-scale))); height: max(30px, calc(18px / var(--gallery-scale))); }
+  .project-gallery[data-scene="composed"] .project-caption { width: max(352px, calc(224px / var(--gallery-scale))); }
+  .project-gallery[data-project="cryptik"] .project-caption { width: max(450px, calc(224px / var(--gallery-scale))); }
+  .project-gallery[data-scene="composed"] .project-caption h2 { font-size: max(77px, calc(48px / var(--gallery-scale))); letter-spacing: calc(-1.8px / var(--gallery-scale)); }
+  .project-gallery[data-project="cryptik"] .project-caption h2 { font-size: max(94px, calc(48px / var(--gallery-scale))); }
+  .project-gallery[data-scene="composed"] .project-caption p { max-width: none; font-size: max(26px, calc(16px / var(--gallery-scale))); line-height: 1.28; }
+  .project-gallery[data-scene="composed"] .project-link { font-size: max(21px, calc(16px / var(--gallery-scale))); min-height: calc(44px / var(--gallery-scale)); }
+  .project-gallery[data-scene="composed"] .project-link img { width: max(26px, calc(20px / var(--gallery-scale))); height: max(26px, calc(20px / var(--gallery-scale))); }
+}
+
+@media (orientation: portrait), (max-width: 599px) {
+  .project-gallery[data-scene="composed"] { overflow-y: auto; overscroll-behavior: contain; }
+  .project-gallery[data-scene="composed"] .gallery-environment img { display: none; }
+  .gallery-viewport { height: auto; min-height: 100dvh; }
+  .project-gallery[data-scene="composed"] .gallery-viewport { height: var(--mobile-stage-height); min-height: 100dvh; }
+  .project-gallery[data-scene="composed"] .gallery-frame {
+    position: absolute; left: 0; top: 0; padding: 0; min-height: 0;
+    width: var(--stage-width); height: var(--stage-height);
+    transform: scale(var(--gallery-scale)); transform-origin: top left;
+  }
+  .project-gallery[data-scene="composed"] .gallery-header { position: absolute; top: 56px; left: 69px; right: 78px; padding: 0; margin: 0; }
+  .project-gallery[data-scene="composed"] .gallery-wordmark { font-size: 47.5px; letter-spacing: -1.2px; }
+  .project-gallery[data-scene="composed"] .gallery-back { position: relative; gap: 22px; font-size: 27.2px; min-height: 80px; letter-spacing: -.6px; }
+  .project-gallery[data-scene="composed"] .gallery-back img { width: 36px; height: 36px; }
+  .project-gallery[data-scene="composed"] .gallery-back::before { content: ''; position: absolute; inset: -20px 0; }
+  .project-gallery[data-project="cryptik"] .gallery-header { top: 54px; left: 51px; right: 56px; }
+  .project-gallery[data-project="cryptik"] .gallery-wordmark { font-size: 50.5px; }
+  .project-gallery[data-project="cryptik"] .gallery-back { font-size: 26px; gap: 23px; }
+  .project-gallery[data-project="autolister"] .composed-clear-wordmark { --x: 48px; --y: 49px; --w: 279px; --h: 81px; --feather: 18px; }
+  .project-gallery[data-project="autolister"] .composed-clear-back { --x: 540px; --y: 61px; --w: 253px; --h: 61px; }
+  .project-gallery[data-project="autolister"] .composed-clear-caption { --x: 43px; --y: 1363px; --w: 681px; --h: 378px; --feather: 22px; }
+  .project-gallery[data-project="cryptik"] .composed-clear-wordmark { --x: 32px; --y: 50px; --w: 302px; --h: 78px; --feather: 18px; }
+  .project-gallery[data-project="cryptik"] .composed-clear-back { --x: 574px; --y: 61px; --w: 238px; --h: 62px; }
+  .project-gallery[data-project="cryptik"] .composed-clear-caption { --x: 30px; --y: 1468px; --w: 645px; --h: 321px; --feather: 22px; }
+  .project-gallery[data-scene="composed"] .project-caption { position: absolute; width: 746px; margin: 0; }
+  .project-gallery[data-project="autolister"] .project-caption { left: 61px; top: 1367px; }
+  .project-gallery[data-project="cryptik"] .project-caption { left: 54px; top: 1486px; }
+  .project-gallery[data-scene="composed"] .project-caption h2 { font-size: 130px; line-height: 1.08; letter-spacing: -5px; }
+  .project-gallery[data-scene="composed"] .project-caption p { margin: 20px 0 0; max-width: 700px; font-size: 42px; line-height: 52px; letter-spacing: -1.2px; color: var(--ink); }
+  .project-gallery[data-project="autolister"] .project-caption h2 { letter-spacing: -5.8px; }
+  .project-gallery[data-project="autolister"] .project-caption p { max-width: 700px; font-size: 40.5px; margin: 16px 0 0 6px; letter-spacing: -.4px; }
+  .project-gallery[data-project="autolister"] .project-description-line { transform: none; }
+  .project-gallery[data-project="cryptik"] .project-caption h2 { font-size: 117px; }
+  .project-gallery[data-project="cryptik"] .project-caption p { font-size: 38px; margin: 19px 0 0 2px; white-space: nowrap; }
+  .project-gallery[data-scene="composed"] .project-link { font-size: 40px; min-height: 96px; margin: 32px 0 0; gap: 26px; letter-spacing: -1px; }
+  .project-gallery[data-project="autolister"] .project-link { margin: 15px 0 0 4px; }
+  .project-gallery[data-project="cryptik"] .project-link { margin: 2px 0 0 1px; font-size: 38px; letter-spacing: -1.1px; }
+  .project-gallery[data-scene="composed"] .project-link img { width: 46px; height: 46px; }
+  .project-gallery[data-scene="composed"] .project-link { position: relative; }
+  .project-gallery[data-scene="composed"] .project-link::before { content: ''; position: absolute; inset: -14px 0; }
+  .project-gallery[data-scene="composed"] .project-link-label { position: relative; text-decoration: none; }
+  .project-gallery[data-scene="composed"] .project-link-label::after { content: ''; position: absolute; left: 3px; right: -3px; height: 2px; bottom: -3px; background: currentColor; }
+  .project-gallery[data-project="cryptik"] .project-link-label::after { bottom: -8px; }
+}
