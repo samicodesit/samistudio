@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { projectiveMatrix, terminalPolygon, projectFromHash, stageLayout } from '../assets/gallery-geometry.mjs';
+import { projectiveMatrix, terminalPolygon, projectFromHash, stageLayout, mobileGalleryLayout } from '../assets/gallery-geometry.mjs';
 
 function project(matrix, x, y) {
   const values = matrix.slice(9, -1).split(',').map(Number);
@@ -50,4 +50,24 @@ test('a wider viewport preserves the reference aspect ratio and centers the scen
   assert.deepEqual(stageLayout(3010, 1045), { scale: 1, left: 752.5, top: 0 });
   assert.deepEqual(stageLayout(752.5, 522.5), { scale: .5, left: 0, top: 0 });
   assert.deepEqual(stageLayout(1506, 1045, 1506, 1045), { scale: 1, left: 0, top: 0 });
+});
+
+test('mobile artwork stays below navigation and remains scrollable above its action footer', () => {
+  for (const [width, height] of [[320, 480], [375, 559], [393, 676], [430, 800], [599, 320]]) {
+    for (const [artTop, artBottom] of [[385, 1465], [362, 1295], [477, 1690]]) {
+      const result = mobileGalleryLayout(width, height, 126, artTop, artBottom);
+      assert.equal(result.windowHeight + 126, height);
+      assert.ok(Math.abs((artTop + result.sceneTop) * result.scale - 72) < .001);
+      assert.ok(result.contentHeight >= (artBottom + result.sceneTop) * result.scale + 15.99);
+      assert.ok(result.contentHeight >= result.windowHeight);
+    }
+  }
+  const safeArea = mobileGalleryLayout(393, 676, 148, 385, 1465, 103);
+  assert.ok(Math.abs((385 + safeArea.sceneTop) * safeArea.scale - 103) < .001);
+});
+
+test('invalid mobile viewport dimensions cannot create an unusable photo window', () => {
+  assert.throws(() => mobileGalleryLayout(0, 676, 126, 385, 1465), RangeError);
+  assert.throws(() => mobileGalleryLayout(393, NaN, 126, 385, 1465), RangeError);
+  assert.throws(() => mobileGalleryLayout(393, 676, -1, 385, 1465), RangeError);
 });

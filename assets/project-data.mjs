@@ -8,6 +8,7 @@ export const projects = Object.freeze([
     imageWidth: 1506, imageHeight: 1045, composedScene: true, stationaryScene: true,
     mobileImage: './gallery/doodle-mobile-v2.webp',
     mobileStageHeight: 1470,
+    mobileArtTop: 385, mobileArtBottom: 1465,
     wideImage: './gallery/doodle-room-wide-v2.webp',
   }),
   Object.freeze({
@@ -18,6 +19,7 @@ export const projects = Object.freeze([
     image: './gallery/autolister-desktop.webp', imageAlt: 'AutoLister listing form beside a charcoal dress draped over a limestone plinth.',
     mobileImage: './gallery/autolister-mobile.webp',
     mobileStageHeight: 1390,
+    mobileArtTop: 362, mobileArtBottom: 1295,
     patches: ['wordmark', 'back', 'caption'].map(part => `./gallery/autolister-desktop-patch-${part}.webp`),
     mobilePatches: ['wordmark', 'back', 'caption'].map(part => `./gallery/autolister-mobile-patch-${part}.webp`),
     wideImage: './gallery/autolister-room-wide.webp',
@@ -30,6 +32,7 @@ export const projects = Object.freeze([
     image: './gallery/cryptik-desktop.webp', imageAlt: 'Blue and red Cryptik spies above a five-by-five grid of complete word cards on a dark stone table.',
     mobileImage: './gallery/cryptik-mobile-intro.webp',
     mobileStageHeight: 1680, mobileSceneTop: -90,
+    mobileArtTop: 477, mobileArtBottom: 1690,
     patches: ['wordmark', 'back', 'caption'].map(part => `./gallery/cryptik-desktop-patch-${part}.webp`),
     mobilePatches: [],
     wideImage: './gallery/cryptik-room-wide.webp',

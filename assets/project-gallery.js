@@ -1,6 +1,6 @@
 import { getProject } from './project-data.mjs';
 import { projectAssets, allowPrefetch, composedFor } from './gallery-loading.mjs';
-import { terminalPolygon, projectFromHash, stageLayout } from './gallery-geometry.mjs';
+import { terminalPolygon, projectFromHash, stageLayout, mobileGalleryLayout } from './gallery-geometry.mjs';
 
 const fullScreen = 'polygon(0% 0%,100% 0%,100% 100%,0% 100%)';
 const assetUrl = path => new URL(path, import.meta.url).href;
@@ -21,6 +21,8 @@ export function initProjectGallery({ onReturn }) {
   const referenceScene = dialog.querySelector('.gallery-reference-scene');
   const composedScene = dialog.querySelector('.composed-scene');
   const environmentImage = dialog.querySelector('.gallery-environment img');
+  const captionFrame = dialog.querySelector('.gallery-caption-frame');
+  const photoViewport = dialog.querySelector('.gallery-viewport');
   const back = dialog.querySelector('.gallery-back');
   const status = document.querySelector('#work-status');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -130,6 +132,16 @@ export function initProjectGallery({ onReturn }) {
     composedScene.hidden = !composed;
     referenceScene.hidden = !project.referenceCrop || composed;
     if (composed) {
+      photoViewport.tabIndex = compact ? 0 : -1;
+      if (compact) {
+        const visibleHeight = window.visualViewport?.height || innerHeight;
+        dialog.style.setProperty('--visible-height', `${visibleHeight}px`);
+        const mobile = mobileGalleryLayout(innerWidth, visibleHeight, captionFrame.getBoundingClientRect().height,
+          project.mobileArtTop, project.mobileArtBottom, dialog.querySelector('.gallery-header-frame').getBoundingClientRect().height + 12);
+        dialog.style.setProperty('--mobile-scene-top', `${mobile.sceneTop}px`);
+        dialog.style.setProperty('--mobile-art-window', `${mobile.windowHeight}px`);
+        dialog.style.setProperty('--mobile-stage-height', `${mobile.contentHeight}px`);
+      }
       setSceneImages(project);
       const wide = !compact && matchMedia(wideQuery).matches;
       environmentImage.parentElement.setAttribute('aria-hidden', String(!wide));
@@ -275,9 +287,10 @@ export function initProjectGallery({ onReturn }) {
       return;
     }
     if (token !== pending) return;
-    layout();
     if (!dialog.open) dialog.showModal();
+    layout();
     dialog.scrollTop = 0;
+    photoViewport.scrollTop = 0;
     dialog.focus({ preventScroll: true });
     if (!fromHistory) {
       baseHash = location.hash;

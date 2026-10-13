@@ -44,3 +44,17 @@ export function stageLayout(width, height, sceneWidth = 1505, sceneHeight = 1045
   const scale = Math.min(width / sceneWidth, height / sceneHeight);
   return { scale, left: (width - sceneWidth * scale) / 2, top: (height - sceneHeight * scale) / 2 };
 }
+
+// Trim unused upper wall while preserving every physical artwork pixel.
+// Short screens scroll the photograph; the readable action footer stays visible.
+export function mobileGalleryLayout(width, visibleHeight, captionHeight, artTop, artBottom, navigationHeight = 72) {
+  if (![width, visibleHeight, captionHeight, artTop, artBottom, navigationHeight].every(Number.isFinite)
+      || width <= 0 || visibleHeight <= 0 || captionHeight < 0 || navigationHeight < 0 || artBottom <= artTop) {
+    throw new RangeError('Invalid mobile gallery dimensions.');
+  }
+  const scale = width / 853;
+  const crop = Math.max(0, artTop - navigationHeight / scale);
+  const windowHeight = Math.max(0, visibleHeight - captionHeight);
+  const contentHeight = Math.max(windowHeight, (artBottom - crop) * scale + 16);
+  return { scale, sceneTop: -crop, windowHeight, contentHeight };
+}

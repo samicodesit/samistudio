@@ -26,11 +26,19 @@
 .gallery-environment { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
 .gallery-environment img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .gallery-viewport { position: relative; width: 100%; height: 100%; overflow: clip; }
+.gallery-viewport:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }
 .gallery-frame {
   position: absolute; left: var(--gallery-left, 0px); top: var(--gallery-top, 0px);
   width: 1505px; height: 1045px; transform: scale(var(--gallery-scale, 1));
   transform-origin: top left;
 }
+.gallery-scene-area { position: relative; width: 100%; height: 100%; overflow: clip; }
+.gallery-ui-frame {
+  position: absolute; left: var(--gallery-left, 0px); top: var(--gallery-top, 0px);
+  width: var(--stage-width, 1505px); height: var(--stage-height, 1045px);
+  transform: scale(var(--gallery-scale, 1)); transform-origin: top left; pointer-events: none;
+}
+.gallery-header, .project-caption { pointer-events: auto; }
 
 .gallery-reference-scene { position: absolute; inset: 0; pointer-events: none; }
 .gallery-reference-scene > img { width: 1505px; height: 1045px; display: block; }
@@ -324,50 +332,72 @@
   .project-gallery[data-project="doodle"][data-scene="composed"] .project-link { margin: 18px 0 0 2px; font-size: 38px; }
 }
 
-/* Phone introductions occupy the clear upper wall, independently of the
-   photograph's dimensions. Browser chrome can never push this copy below it. */
+/* The mobile photo scrolls independently of the readable, reachable footer. */
 @media (orientation: portrait), (max-width: 599px) {
+  .project-gallery[data-project][data-scene="composed"] {
+    --gallery-surface: #f4efe8;
+    height: var(--visible-height, 100dvh); overflow: hidden;
+  }
+  .project-gallery[data-project="doodle"][data-scene="composed"] { --gallery-surface: #f3ecee; }
+  .project-gallery[data-project="cryptik"][data-scene="composed"] { --gallery-surface: #eeede8; }
+  .project-gallery[data-project][data-scene="composed"] .gallery-viewport {
+    height: var(--mobile-art-window, 100dvh); min-height: 0; overflow-x: hidden; overflow-y: auto;
+    scrollbar-width: none; overscroll-behavior: contain; overflow-anchor: none; scroll-behavior: auto;
+  }
+  .project-gallery[data-scene="composed"] .gallery-viewport::-webkit-scrollbar { display: none; }
+  .project-gallery[data-scene="composed"] .gallery-scene-area { height: var(--mobile-stage-height); }
   .project-gallery[data-scene="composed"] .composed-scene {
     top: var(--mobile-scene-top, 0px); bottom: auto; height: 1844px;
   }
+  .project-gallery[data-scene="composed"] .gallery-ui-frame {
+    left: 0; right: 0; width: auto; height: auto; transform: none;
+  }
+  .project-gallery[data-scene="composed"] .gallery-header-frame { top: 0; z-index: 4; }
+  .project-gallery[data-scene="composed"] .gallery-header-frame::before {
+    content: ''; position: absolute; inset: 0 0 auto; height: 90px;
+    background: linear-gradient(var(--gallery-surface), color-mix(in srgb, var(--gallery-surface) 90%, transparent) 65%, transparent);
+  }
   .project-gallery[data-project][data-scene="composed"] .gallery-header {
-    top: calc(max(20px, env(safe-area-inset-top)) / var(--gallery-scale));
-    left: calc(24px / var(--gallery-scale)); right: calc(24px / var(--gallery-scale));
+    position: relative; inset: auto; margin: 0; padding: max(16px, env(safe-area-inset-top)) 24px 0;
   }
   .project-gallery[data-project][data-scene="composed"] .gallery-wordmark {
-    font-size: calc(24px / var(--gallery-scale)); letter-spacing: calc(-.6px / var(--gallery-scale));
+    font-size: 24px; letter-spacing: -.6px;
   }
   .project-gallery[data-project][data-scene="composed"] .gallery-back {
-    gap: calc(8px / var(--gallery-scale)); font-size: calc(13px / var(--gallery-scale));
-    min-height: calc(44px / var(--gallery-scale)); padding: 0; letter-spacing: 0;
+    gap: 8px; font-size: 13px; min-height: 44px; padding: 0; letter-spacing: 0;
   }
   .project-gallery[data-project][data-scene="composed"] .gallery-back img {
-    width: calc(19px / var(--gallery-scale)); height: calc(19px / var(--gallery-scale));
+    width: 19px; height: 19px;
+  }
+  .project-gallery[data-scene="composed"] .gallery-caption-frame { top: auto; bottom: 0; z-index: 5; }
+  .project-gallery[data-scene="composed"] .gallery-caption-frame::before {
+    content: ''; position: absolute; inset: -16px 0 100%; pointer-events: none;
+    background: linear-gradient(transparent, var(--gallery-surface));
   }
   .project-gallery[data-project][data-scene="composed"] .project-caption {
-    top: calc(max(66px, calc(env(safe-area-inset-top) + 46px)) / var(--gallery-scale));
-    left: calc(24px / var(--gallery-scale)); right: calc(24px / var(--gallery-scale));
-    width: auto; margin: 0;
+    position: relative; inset: auto; width: auto; margin: 0;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px;
+    padding: 16px 24px max(16px, env(safe-area-inset-bottom)); background: var(--gallery-surface);
   }
   .project-gallery[data-project][data-scene="composed"] .project-caption h2 {
-    font-size: calc(clamp(40px, 12vw, 50px) / var(--gallery-scale));
-    line-height: 1.06; letter-spacing: calc(-1.8px / var(--gallery-scale));
+    grid-column: 1; grid-row: 1; align-self: center;
+    font-size: clamp(32px, 10vw, 42px); line-height: 1.05; letter-spacing: -1.4px;
   }
   .project-gallery[data-project][data-scene="composed"] .project-caption p {
-    max-width: none; margin: calc(6px / var(--gallery-scale)) 0 0;
-    font-size: calc(16px / var(--gallery-scale)); line-height: calc(22px / var(--gallery-scale));
-    letter-spacing: calc(-.2px / var(--gallery-scale)); white-space: normal; color: var(--ink);
+    grid-column: 1 / -1; grid-row: 2; max-width: none; margin: 6px 0 0;
+    font-size: 16px; line-height: 22px; letter-spacing: -.2px; white-space: normal; color: var(--ink);
   }
   .project-gallery[data-project][data-scene="composed"] .project-description-line {
     width: auto; white-space: normal; transform: none;
   }
   .project-gallery[data-project][data-scene="composed"] .project-link {
-    position: absolute; top: calc(3px / var(--gallery-scale)); right: 0;
-    min-height: calc(44px / var(--gallery-scale)); margin: 0;
-    gap: calc(8px / var(--gallery-scale)); font-size: calc(14px / var(--gallery-scale)); letter-spacing: 0;
+    position: relative; inset: auto; grid-column: 2; grid-row: 1; align-self: center;
+    min-height: 48px; margin: 0; padding: 0 14px; border: 1px solid #24252035; border-radius: 28px;
+    gap: 10px; font-size: 14px; letter-spacing: 0;
   }
+  .project-gallery[data-scene="composed"] .project-link::before { display: none; }
   .project-gallery[data-project][data-scene="composed"] .project-link img {
-    width: calc(20px / var(--gallery-scale)); height: calc(20px / var(--gallery-scale));
+    width: 20px; height: 20px;
   }
   .project-gallery[data-scene="composed"] .project-link-short { display: inline; }
   .project-gallery[data-scene="composed"] .project-link-label {
@@ -375,5 +405,5 @@
     clip-path: inset(50%); white-space: nowrap;
   }
   .project-gallery[data-scene="composed"] .project-link-label::after { display: none; }
-  .project-gallery[data-scene="composed"] .project-link-short { text-decoration: underline; text-underline-offset: 4px; }
+  .project-gallery[data-scene="composed"] .project-link-short { text-decoration: none; }
 }
