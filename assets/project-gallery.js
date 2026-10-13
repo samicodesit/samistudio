@@ -1,11 +1,12 @@
 import { getProject } from './project-data.mjs';
 import { projectAssets, allowPrefetch, composedFor } from './gallery-loading.mjs';
-import { terminalPolygon, projectFromHash, stageLayout, mobileGalleryLayout } from './gallery-geometry.mjs';
+import { terminalPolygon, projectFromHash, stageLayout, coverGalleryLayout, portraitCoverLayout } from './gallery-geometry.mjs';
 
 const fullScreen = 'polygon(0% 0%,100% 0%,100% 100%,0% 100%)';
 const assetUrl = path => new URL(path, import.meta.url).href;
 const compactQuery = '(max-width: 900px) and (orientation: portrait), (max-width: 599px)';
 const sceneCompactQuery = '(orientation: portrait), (max-width: 599px)';
+const splitQuery = '(orientation: landscape) and (min-width: 600px) and (max-width: 1180px), (orientation: landscape) and (min-width: 600px) and (max-width: 1366px) and (min-height: 900px)';
 const wideQuery = '(min-width: 600px) and (min-aspect-ratio: 3/2)';
 
 export function initProjectGallery({ onReturn }) {
@@ -39,6 +40,7 @@ export function initProjectGallery({ onReturn }) {
   let position = [0, 0];
   let target = [0, 0];
   let prefetchTimer = 0;
+  let layoutFrame = 0;
 
   function load(path) {
     const url = assetUrl(path);
@@ -53,7 +55,9 @@ export function initProjectGallery({ onReturn }) {
 
   function sceneMode(project) {
     const compact = matchMedia(project.composedScene || project.mobileScene ? sceneCompactQuery : compactQuery).matches;
-    return compact ? 'mobile' : matchMedia(wideQuery).matches ? 'wide' : 'desktop';
+    return matchMedia(splitQuery).matches ? 'landscape'
+      : compact ? 'tablet'
+      : matchMedia(wideQuery).matches ? 'wide' : 'desktop';
   }
 
   function prepare(id, mode) {
@@ -71,10 +75,19 @@ export function initProjectGallery({ onReturn }) {
       composedScene.querySelectorAll('picture').forEach((picture, index) => {
         const mobilePath = index ? project.mobilePatches?.[index - 1] : project.mobileImage;
         const desktopPath = index ? project.patches?.[index - 1] : project.image;
-        const visiblePath = sceneMode(project) === 'mobile' ? mobilePath : desktopPath;
+        const visiblePath = sceneMode(project) === 'landscape' ? (index ? null : project.landscapeImage)
+          : sceneMode(project) === 'tablet' ? (index ? null : project.tabletImage)
+          : sceneMode(project) === 'mobile' ? mobilePath : desktopPath;
         if (index) picture.parentElement.hidden = !visiblePath;
         if (index && !visiblePath) return;
-        const source = picture.querySelector('source');
+        const source = picture.querySelector('source:not([data-variant])');
+        const landscapeSource = picture.querySelector('source[data-variant=landscape]');
+        if (landscapeSource) landscapeSource.media = sceneMode(project) === 'landscape' ? 'all' : 'not all';
+        if (landscapeSource && landscapeSource.srcset !== assetUrl(project.landscapeImage)) landscapeSource.srcset = assetUrl(project.landscapeImage);
+        const tabletSource = picture.querySelector('source[data-variant=tablet]');
+        if (tabletSource) tabletSource.media = sceneMode(project) === 'tablet' ? 'all' : 'not all';
+        source.media = sceneMode(project) === 'mobile' ? 'all' : 'not all';
+        if (tabletSource && tabletSource.srcset !== assetUrl(project.tabletImage)) tabletSource.srcset = assetUrl(project.tabletImage);
         const image = picture.querySelector('img');
         const srcset = assetUrl(mobilePath || desktopPath);
         const src = assetUrl(project.mobileScene && !project.composedScene ? mobilePath : desktopPath);
@@ -114,10 +127,14 @@ export function initProjectGallery({ onReturn }) {
   function layout() {
     const project = getProject(active);
     const compact = matchMedia(project?.composedScene || project?.mobileScene ? sceneCompactQuery : compactQuery).matches;
-    const composed = composedFor(project, compact ? 'mobile' : 'desktop');
-    const width = composed ? (compact ? 853 : project.imageWidth) : 1505;
-    const height = composed && compact ? (project.mobileStageHeight || 1844) : 1045;
-    const { scale, left, top } = compact && composed
+    const split = Boolean(project?.composedScene && matchMedia(splitQuery).matches);
+    const responsive = compact || split;
+    const composed = composedFor(project, responsive ? 'mobile' : 'desktop');
+    dialog.dataset.layout = responsive ? (split ? 'split' : 'stack') : 'desktop';
+    const tablet = project && sceneMode(project) === 'tablet';
+    const width = composed ? (responsive ? (split ? project.landscapeWidth : tablet ? project.tabletWidth : 853) : project.imageWidth) : 1505;
+    const height = composed && responsive ? (split ? project.landscapeHeight : tablet ? project.tabletHeight : 1844) : 1045;
+    const { scale, left, top } = responsive && composed
       ? { scale: innerWidth / width, left: 0, top: 0 }
       : stageLayout(innerWidth, innerHeight, width, height);
     dialog.style.setProperty('--gallery-scale', String(scale));
@@ -125,6 +142,8 @@ export function initProjectGallery({ onReturn }) {
     dialog.style.setProperty('--gallery-top', `${top}px`);
     dialog.style.setProperty('--stage-width', `${width}px`);
     dialog.style.setProperty('--stage-height', `${height}px`);
+    dialog.style.setProperty('--mobile-image-height', `${height}px`);
+    dialog.style.setProperty('--scene-feather', `${tablet ? project.tabletFeather : 10}px`);
     dialog.style.setProperty('--mobile-stage-height', `${height * scale}px`);
     dialog.style.setProperty('--mobile-scene-top', `${project?.mobileSceneTop || 0}px`);
     if (!active) return;
@@ -132,18 +151,25 @@ export function initProjectGallery({ onReturn }) {
     composedScene.hidden = !composed;
     referenceScene.hidden = !project.referenceCrop || composed;
     if (composed) {
-      photoViewport.tabIndex = compact ? 0 : -1;
-      if (compact) {
-        const visibleHeight = window.visualViewport?.height || innerHeight;
+      photoViewport.tabIndex = -1;
+      if (responsive) {
+        const visibleHeight = window.visualViewport && window.visualViewport.scale === 1 ? window.visualViewport.height : innerHeight;
         dialog.style.setProperty('--visible-height', `${visibleHeight}px`);
-        const mobile = mobileGalleryLayout(innerWidth, visibleHeight, captionFrame.getBoundingClientRect().height,
-          project.mobileArtTop, project.mobileArtBottom, dialog.querySelector('.gallery-header-frame').getBoundingClientRect().height + 12);
-        dialog.style.setProperty('--mobile-scene-top', `${mobile.sceneTop}px`);
-        dialog.style.setProperty('--mobile-art-window', `${mobile.windowHeight}px`);
-        dialog.style.setProperty('--mobile-stage-height', `${mobile.contentHeight}px`);
+        const navigationHeight = dialog.querySelector('.gallery-header-frame').getBoundingClientRect().height + 12;
+        const mobile = split ? coverGalleryLayout(innerWidth, visibleHeight, captionFrame.getBoundingClientRect().width,
+          project.landscapeBounds, width, height, navigationHeight)
+          : portraitCoverLayout(innerWidth, visibleHeight, captionFrame.getBoundingClientRect().height + 12,
+          project.portraitBounds, width, height, navigationHeight);
+        dialog.dataset.fitted = String(split || mobile.left > .5);
+        dialog.style.setProperty('--gallery-scale', String(mobile.scale));
+        dialog.style.setProperty('--gallery-left', `${mobile.left}px`);
+        dialog.style.setProperty('--gallery-top', `${mobile.top}px`);
+        dialog.style.setProperty('--mobile-scene-top', '0px');
+        dialog.style.setProperty('--mobile-art-window', `${visibleHeight}px`);
+        dialog.style.setProperty('--mobile-stage-height', `${visibleHeight}px`);
       }
       setSceneImages(project);
-      const wide = !compact && matchMedia(wideQuery).matches;
+      const wide = !responsive && matchMedia(wideQuery).matches;
       environmentImage.parentElement.setAttribute('aria-hidden', String(!wide));
       environmentImage.alt = wide ? project.imageAlt : '';
       if (wide && environmentImage.src !== assetUrl(project.wideImage)) environmentImage.src = assetUrl(project.wideImage);
@@ -188,6 +214,11 @@ export function initProjectGallery({ onReturn }) {
       secondary.style.width = '272px'; secondary.style.height = '274px';
       secondary.style.left = '850px'; secondary.style.top = '301px'; secondary.style.transform = 'none';
     }
+  }
+
+  function requestLayout() {
+    if (!dialog.open || layoutFrame) return;
+    layoutFrame = requestAnimationFrame(() => { layoutFrame = 0; layout(); });
   }
 
   function resetMovement() {
@@ -302,7 +333,7 @@ export function initProjectGallery({ onReturn }) {
       reveal = dialog.animate([{ clipPath: aperture() }, { clipPath: fullScreen }], { duration: project.composedScene ? 850 : 680, easing });
       movement = [];
       if (project.composedScene && !project.stationaryScene) {
-        const camera = matchMedia(wideQuery).matches ? environmentImage : composedScene;
+        const camera = sceneMode(project) === 'wide' ? environmentImage : composedScene;
         movement = [camera].map(element =>
           element.animate([{ transform: 'scale(1.065)' }, { transform: 'scale(1)' }],
             { duration: 1100, easing, fill: 'backwards' }));
@@ -384,8 +415,12 @@ export function initProjectGallery({ onReturn }) {
       rows.forEach(row => row.removeAttribute('aria-busy'));
     }
   });
-  window.addEventListener('resize', () => { reveal?.finish(); resetMovement(); layout(); }, { passive: true });
-  window.visualViewport?.addEventListener('resize', layout, { passive: true });
+  window.addEventListener('resize', () => { reveal?.finish(); resetMovement(); requestLayout(); }, { passive: true });
+  window.visualViewport?.addEventListener('resize', requestLayout, { passive: true });
+  const controlsObserver = new ResizeObserver(requestLayout);
+  controlsObserver.observe(captionFrame);
+  controlsObserver.observe(dialog.querySelector('.gallery-header-frame'));
+  document.fonts.ready.then(requestLayout);
   window.addEventListener('blur', resetMovement);
   reducedMotion.addEventListener('change', () => { reveal?.finish(); resetMovement(); });
   dialog.addEventListener('pointermove', event => {

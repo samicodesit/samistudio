@@ -17,10 +17,10 @@ test('portrait and reference views request only their photograph and three small
     const project = getProject(id);
     for (const mode of ['desktop', 'mobile']) {
       const assets = projectAssets(project, mode);
-      assert.equal(assets.length, 4);
-      assert.equal(new Set(assets).size, 4);
+      assert.equal(assets.length, mode === 'mobile' ? 5 : 4);
+      assert.equal(new Set(assets).size, assets.length);
       assert.equal(assets[0], mode === 'mobile' ? project.mobileImage : project.image);
-      assert.ok(assets.slice(1).every(path => path.includes(`-${mode}-patch-`)));
+      assert.ok(assets.slice(mode === 'mobile' ? 2 : 1).every(path => path.includes(`-${mode}-patch-`)));
     }
   }
 });
@@ -28,7 +28,7 @@ test('portrait and reference views request only their photograph and three small
 test('the clean Cryptik portrait does not download desktop text plates', async () => {
   const { projectAssets } = await import('../assets/gallery-loading.mjs');
   const project = getProject('cryptik');
-  assert.deepEqual(projectAssets(project, 'mobile'), ['./gallery/cryptik-mobile-intro.webp']);
+  assert.deepEqual(projectAssets(project, 'mobile'), ['./gallery/cryptik-mobile-intro.webp', project.mobileRoom]);
   assert.equal(projectAssets(project, 'desktop').length, 4);
 });
 
@@ -47,5 +47,23 @@ test('native text replacement patches stay within a 256 KiB per-scene budget', a
       const sizes = await Promise.all(patches.map(path => stat(new URL(`../assets/${path}`, import.meta.url))));
       assert.ok(sizes.reduce((total, file) => total + file.size, 0) < 256 * 1024);
     }
+  }
+});
+
+test('portrait phones and tablets request one continuous photograph only', async () => {
+  const { projectAssets } = await import('../assets/gallery-loading.mjs');
+  for (const id of ['doodle', 'autolister', 'cryptik']) {
+    const project = getProject(id);
+    assert.deepEqual(projectAssets(project, 'tablet'), [project.tabletImage]);
+    assert.ok((await stat(new URL(`../assets/${project.tabletImage}`, import.meta.url))).size < 768 * 1024);
+  }
+});
+
+test('landscape phones and tablets request one continuous photograph only', async () => {
+  const { projectAssets } = await import('../assets/gallery-loading.mjs');
+  for (const id of ['doodle', 'autolister', 'cryptik']) {
+    const project = getProject(id);
+    assert.deepEqual(projectAssets(project, 'landscape'), [project.landscapeImage]);
+    assert.ok((await stat(new URL(`../assets/${project.landscapeImage}`, import.meta.url))).size < 768 * 1024);
   }
 });

@@ -45,16 +45,65 @@ export function stageLayout(width, height, sceneWidth = 1505, sceneHeight = 1045
   return { scale, left: (width - sceneWidth * scale) / 2, top: (height - sceneHeight * scale) / 2 };
 }
 
-// Trim unused upper wall while preserving every physical artwork pixel.
-// Short screens scroll the photograph; the readable action footer stays visible.
-export function mobileGalleryLayout(width, visibleHeight, captionHeight, artTop, artBottom, navigationHeight = 72) {
-  if (![width, visibleHeight, captionHeight, artTop, artBottom, navigationHeight].every(Number.isFinite)
-      || width <= 0 || visibleHeight <= 0 || captionHeight < 0 || navigationHeight < 0 || artBottom <= artTop) {
+// Fit the physical artwork, not the unused wall around it. Header and caption
+// sizes come from the rendered UI, including browser safe-area padding.
+export function mobileGalleryLayout(width, visibleHeight, captionHeight, artTop, artBottom, navigationHeight = 72, sourceWidth = 853) {
+  if (![width, visibleHeight, captionHeight, artTop, artBottom, navigationHeight, sourceWidth].every(Number.isFinite)
+      || width <= 0 || visibleHeight <= 0 || captionHeight < 0 || navigationHeight < 0 || sourceWidth <= 0 || artBottom <= artTop) {
     throw new RangeError('Invalid mobile gallery dimensions.');
   }
-  const scale = width / 853;
-  const crop = Math.max(0, artTop - navigationHeight / scale);
-  const windowHeight = Math.max(0, visibleHeight - captionHeight);
-  const contentHeight = Math.max(windowHeight, (artBottom - crop) * scale + 16);
-  return { scale, sceneTop: -crop, windowHeight, contentHeight };
+  const availableHeight = Math.max(1, visibleHeight - captionHeight - navigationHeight);
+  const scale = Math.min(width / sourceWidth, availableHeight / (artBottom - artTop));
+  const artworkHeight = (artBottom - artTop) * scale;
+  const artworkTop = navigationHeight + (availableHeight - artworkHeight) / 2;
+  return {
+    scale,
+    left: (width - sourceWidth * scale) / 2,
+    sceneTop: artworkTop / scale - artTop,
+    windowHeight: visibleHeight,
+    contentHeight: visibleHeight,
+  };
+}
+
+// A dedicated wider photograph fills the viewport. Pan only through empty room
+// around its measured artwork; clamping prevents exposing an image boundary.
+export function coverGalleryLayout(width, height, captionWidth, bounds, sceneWidth, sceneHeight, navigationHeight = 72) {
+  const [left, top, right, bottom] = bounds;
+  if (![width, height, captionWidth, ...bounds, sceneWidth, sceneHeight, navigationHeight].every(Number.isFinite)
+      || width <= captionWidth || height <= navigationHeight || right <= left || bottom <= top || sceneWidth <= 0 || sceneHeight <= 0) {
+    throw new RangeError('Invalid cover gallery dimensions.');
+  }
+  const targetX = (width - captionWidth - 16) / 2;
+  const targetY = (navigationHeight + height - 16) / 2;
+  const centerX = (left + right) / 2;
+  const centerY = (top + bottom) / 2;
+  const cover = Math.max(width / sceneWidth, height / sceneHeight);
+  const scale = Math.max(cover, Math.min(targetY / centerY, height / (bottom - top)));
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  const photoLeft = clamp(targetX - centerX * scale, width - sceneWidth * scale, 0);
+  const protectedLeft = 16;
+  return {
+    scale,
+    left: clamp(Math.max(photoLeft, protectedLeft - left * scale), width - sceneWidth * scale, 0),
+    top: clamp(targetY - centerY * scale, height - sceneHeight * scale, 0),
+  };
+}
+
+// The protected artwork fits between controls while the surrounding photograph
+// always covers the viewport. Only empty room can move outside the crop.
+export function portraitCoverLayout(width, height, captionHeight, bounds, sceneWidth, sceneHeight, navigationHeight = 72) {
+  const [left, top, right, bottom] = bounds;
+  if (![width, height, captionHeight, ...bounds, sceneWidth, sceneHeight, navigationHeight].every(Number.isFinite)
+      || width <= 0 || height <= navigationHeight + captionHeight || right <= left || bottom <= top || sceneWidth <= 0 || sceneHeight <= 0) {
+    throw new RangeError('Invalid portrait camera dimensions.');
+  }
+  const available = height - captionHeight - navigationHeight;
+  const fit = Math.min((width - 32) / (right - left), available / (bottom - top));
+  const scale = Math.max(width / sceneWidth, height / sceneHeight, fit);
+  const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+  return {
+    scale,
+    left: clamp(width / 2 - (left + right) / 2 * scale, width - sceneWidth * scale, 0),
+    top: clamp(navigationHeight + available / 2 - (top + bottom) / 2 * scale, height - sceneHeight * scale, 0),
+  };
 }

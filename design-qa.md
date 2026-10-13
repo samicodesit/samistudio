@@ -1,6 +1,30 @@
+# Studio glass and fluid scenes, October 13, 2026
+
+Local acceptance: passed for the checked phone, tablet and desktop matrix. Production push and deployment were authorized in the portfolio handoff. The older report below describes superseded layouts.
+
+The selected target is exec-b3b84238-7eb4-412d-8387-36ec6a57d67d.png from the prior chat. The final UI uses a feathered 12% tinted, 16px blurred optical veil behind native DM Serif Display and Inter text, one horizontal divider and an unboxed Open link. The physical artwork is centered between measured controls. Desktop retains the existing approved layout.
+
+## Continuous photographs
+
+The inherited P1 reproduced by opening 390x844 and resizing to 390x676: the cached tall photo shrank within a separately generated room and exposed rectangular side boundaries. The final portrait camera uses one oversized continuous photograph per project. It fits protected artwork and clamps the photograph to cover every viewport edge. There is no separate portrait wallpaper, edge feathering or assembled room. Height changes reuse that same photograph. Landscape uses the existing dedicated continuous photographs. The new images are faithful photographic adaptations, not literal pixel-identical outpaints of every original object.
+
+## Evidence and checks
+
+Evidence directory: C:/Users/Sami/.codex/visualizations/2026/10/13/samistudio-continuous-final/. Chrome captures and checks.json supersede the mismatched in-app browser captures. Chrome reported device pixel ratio 1 and the exact requested CSS viewport sizes.
+
+All three projects were checked at 320x480, 375x559, 393x676, 390x844, 442x958, 768x1024, 820x1180, 1024x1366, 844x390, 1024x768, 1366x1024 and 1280x720. Descriptions and links stayed above the fold, images loaded, and the gallery had no horizontal or vertical scroll. All responsive photographs covered all four viewport edges. The desktop reference uses its original environment layer and is evaluated separately. Contact sheets were inspected for photographic seams, missing objects and distortion. Cryptik retains both spy faces and the complete five-by-five word card grid; table bases can naturally leave the landscape crop.
+
+Each project was also opened at 390x844 and resized to 390x676 without reloading. Saved browser-bar captures show no photograph boundary. Rotation switched each scene to its landscape source. Back and Escape restored Work and the selected row; arrow keys and Enter selected and reopened a project; Tab reached Back and Open; browser Back/Forward closed and reopened the gallery. The Doodle external link opened the correct new tab. All three destination URLs and noopener/noreferrer behavior were checked. Chrome console had no errors or warnings during the interaction sequence.
+
+The responsive controls use 44px Back and 48px Open hit targets, measured native header/caption heights, visualViewport at scale 1, safe-area padding on all sides, and reduced-motion/transparency fallbacks. Native iOS Safari, actual browser chrome and nonzero hardware safe-area insets were not available. Height changes are desktop browser viewport simulations, not physical-device certification.
+
+The required studio suite passes 28 tests, including a failing-then-passing regression for continuous portrait coverage and single-photo loading. Runtime packaging remains an explicit 52-file allowlist. Only the active portrait or landscape photograph is loaded, and SaveData/slow-connection settings disable speculative downloads. No dependency was added. Final syntax, build, isolated worktree tests and production verification are recorded in the release chat.
+
+## Historical review
+
 # Studio visual review, October 12, 2026
 
-Final result: passed for local review. Gallery production publication remains unauthorized. Owner acceptance is pending.
+Historical local review, superseded by the October 13 report above.
 
 This assessment compares the four selected AutoLister and corrected Cryptik references with the rendered implementation. It does not claim literal pixel identity for browser text or every possible viewport.
 

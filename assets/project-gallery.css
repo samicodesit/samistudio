@@ -332,113 +332,128 @@
   .project-gallery[data-project="doodle"][data-scene="composed"] .project-link { margin: 18px 0 0 2px; font-size: 38px; }
 }
 
-/* The mobile photo scrolls independently of the readable, reachable footer. */
-@media (orientation: portrait), (max-width: 599px) {
+/* The photo fills one measured artwork window. Glass is a feathered optical
+   veil behind native text, with no card boundary or separate button surface. */
+@media (orientation: portrait), (max-width: 599px), (orientation: landscape) and (min-width: 600px) and (max-width: 1180px), (orientation: landscape) and (min-width: 600px) and (max-width: 1366px) and (min-height: 900px) {
   .project-gallery[data-project][data-scene="composed"] {
     --gallery-surface: #f4efe8;
+    --caption-inset: clamp(24px, 4vw, 48px);
+    --caption-bottom-space: clamp(24px, 8svh, 64px);
+    --caption-left: max(var(--caption-inset), env(safe-area-inset-left));
+    --caption-right: max(var(--caption-inset), env(safe-area-inset-right));
     height: var(--visible-height, 100dvh); overflow: hidden;
   }
   .project-gallery[data-project="doodle"][data-scene="composed"] { --gallery-surface: #f3ecee; }
   .project-gallery[data-project="cryptik"][data-scene="composed"] { --gallery-surface: #eeede8; }
+  .project-gallery[data-project][data-scene="composed"] .gallery-environment img { display: none; }
   .project-gallery[data-project][data-scene="composed"] .gallery-viewport {
-    height: var(--mobile-art-window, 100dvh); min-height: 0; overflow-x: hidden; overflow-y: auto;
-    scrollbar-width: none; overscroll-behavior: contain; overflow-anchor: none; scroll-behavior: auto;
+    height: var(--mobile-art-window, 100dvh); min-height: 0; overflow: clip;
   }
-  .project-gallery[data-scene="composed"] .gallery-viewport::-webkit-scrollbar { display: none; }
   .project-gallery[data-scene="composed"] .gallery-scene-area { height: var(--mobile-stage-height); }
+  .project-gallery[data-project][data-scene="composed"] .gallery-frame {
+    left: var(--gallery-left); top: var(--gallery-top); width: var(--stage-width); height: var(--mobile-image-height);
+    transform: scale(var(--gallery-scale)); transform-origin: top left; mask-image: none;
+  }
   .project-gallery[data-scene="composed"] .composed-scene {
-    top: var(--mobile-scene-top, 0px); bottom: auto; height: 1844px;
+    top: 0; bottom: auto; height: var(--mobile-image-height); mask-image: none;
   }
   .project-gallery[data-scene="composed"] .gallery-ui-frame {
     left: 0; right: 0; width: auto; height: auto; transform: none;
   }
   .project-gallery[data-scene="composed"] .gallery-header-frame { top: 0; z-index: 4; }
-  .project-gallery[data-scene="composed"] .gallery-header-frame::before {
-    content: ''; position: absolute; inset: 0 0 auto; height: 90px;
-    background: linear-gradient(var(--gallery-surface), color-mix(in srgb, var(--gallery-surface) 90%, transparent) 65%, transparent);
-  }
+  .project-gallery[data-scene="composed"] .gallery-header-frame::before { display: none; }
   .project-gallery[data-project][data-scene="composed"] .gallery-header {
-    position: relative; inset: auto; margin: 0; padding: max(16px, env(safe-area-inset-top)) 24px 0;
+    position: relative; inset: auto; margin: 0; padding: max(16px, env(safe-area-inset-top)) var(--caption-right) 0 var(--caption-left);
   }
-  .project-gallery[data-project][data-scene="composed"] .gallery-wordmark {
-    font-size: 24px; letter-spacing: -.6px;
-  }
+  .project-gallery[data-project][data-scene="composed"] .gallery-wordmark { font-size: 24px; letter-spacing: -.6px; }
   .project-gallery[data-project][data-scene="composed"] .gallery-back {
     gap: 8px; font-size: 13px; min-height: 44px; padding: 0; letter-spacing: 0;
   }
-  .project-gallery[data-project][data-scene="composed"] .gallery-back img {
-    width: 19px; height: 19px;
-  }
+  .project-gallery[data-project][data-scene="composed"] .gallery-back img { width: 19px; height: 19px; }
   .project-gallery[data-scene="composed"] .gallery-caption-frame { top: auto; bottom: 0; z-index: 5; }
   .project-gallery[data-scene="composed"] .gallery-caption-frame::before {
-    content: ''; position: absolute; inset: -16px 0 100%; pointer-events: none;
-    background: linear-gradient(transparent, var(--gallery-surface));
+    content: ''; position: absolute; inset: -52px 0 0; pointer-events: none;
+    background: color-mix(in srgb, var(--gallery-surface) 12%, transparent);
+    -webkit-backdrop-filter: blur(16px) saturate(.95); backdrop-filter: blur(16px) saturate(.95);
+    mask-image: linear-gradient(transparent, #000 52px);
   }
   .project-gallery[data-project][data-scene="composed"] .project-caption {
     position: relative; inset: auto; width: auto; margin: 0;
     display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px;
-    padding: 16px 24px max(16px, env(safe-area-inset-bottom)); background: var(--gallery-surface);
+    padding: 22px var(--caption-right) max(var(--caption-bottom-space), env(safe-area-inset-bottom)) var(--caption-left); background: transparent;
+  }
+  .project-gallery[data-scene="composed"] .project-caption::before {
+    content: ''; position: absolute; top: 0; left: var(--caption-left); right: var(--caption-right);
+    height: 1px; background: #24252035; box-shadow: 0 1px 0 #ffffff4d;
   }
   .project-gallery[data-project][data-scene="composed"] .project-caption h2 {
     grid-column: 1; grid-row: 1; align-self: center;
-    font-size: clamp(32px, 10vw, 42px); line-height: 1.05; letter-spacing: -1.4px;
+    font-size: clamp(32px, 9.5vw, 42px); line-height: 1.05; letter-spacing: -1.4px;
   }
   .project-gallery[data-project][data-scene="composed"] .project-caption p {
-    grid-column: 1 / -1; grid-row: 2; max-width: none; margin: 6px 0 0;
-    font-size: 16px; line-height: 22px; letter-spacing: -.2px; white-space: normal; color: var(--ink);
-  }
-  .project-gallery[data-project][data-scene="composed"] .project-description-line {
-    width: auto; white-space: normal; transform: none;
-  }
-  .project-gallery[data-project][data-scene="composed"] .project-link {
-    position: relative; inset: auto; grid-column: 2; grid-row: 1; align-self: center;
-    min-height: 48px; margin: 0; padding: 0 14px; border: 1px solid #24252035; border-radius: 28px;
-    gap: 10px; font-size: 14px; letter-spacing: 0;
-  }
-  .project-gallery[data-scene="composed"] .project-link::before { display: none; }
-  .project-gallery[data-project][data-scene="composed"] .project-link img {
-    width: 20px; height: 20px;
-  }
-  .project-gallery[data-scene="composed"] .project-link-short { display: inline; }
-  .project-gallery[data-scene="composed"] .project-link-label {
-    position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden;
-    clip-path: inset(50%); white-space: nowrap;
-  }
-  .project-gallery[data-scene="composed"] .project-link-label::after { display: none; }
-  .project-gallery[data-scene="composed"] .project-link-short { text-decoration: none; }
-}
-
-/* Landscape phones keep the wide photograph and a reachable side footer. */
-@media (orientation: landscape) and (min-width: 600px) and (max-width: 1024px) and (max-height: 500px) {
-  .project-gallery[data-project][data-scene="composed"] { --gallery-surface: #f4efe8; }
-  .project-gallery[data-project="doodle"][data-scene="composed"] { --gallery-surface: #f3ecee; }
-  .project-gallery[data-project="cryptik"][data-scene="composed"] { --gallery-surface: #eeede8; }
-  .project-gallery[data-scene="composed"] .gallery-caption-frame {
-    left: auto; top: auto; right: 0; bottom: 0; width: min(320px, 50vw); height: auto;
-    transform: none; z-index: 5;
-  }
-  .project-gallery[data-project][data-scene="composed"] .project-caption {
-    position: relative; inset: auto; width: auto; margin: 0; padding: 16px max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) 16px;
-    display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px;
-    background: var(--gallery-surface);
-  }
-  .project-gallery[data-project][data-scene="composed"] .project-caption h2 {
-    grid-column: 1; grid-row: 1; align-self: center; font-size: 30px; line-height: 1.05; letter-spacing: -1px;
-  }
-  .project-gallery[data-project][data-scene="composed"] .project-caption p {
-    grid-column: 1 / -1; grid-row: 2; max-width: none; margin: 6px 0 0;
-    font-size: 14px; line-height: 20px; letter-spacing: -.1px; color: var(--ink); white-space: normal;
+    grid-column: 1 / -1; grid-row: 2; max-width: none; margin: 8px 0 0;
+    font-size: 15px; line-height: 21px; letter-spacing: -.2px; white-space: normal; color: var(--ink);
   }
   .project-gallery[data-project][data-scene="composed"] .project-description-line { width: auto; white-space: normal; transform: none; }
   .project-gallery[data-project][data-scene="composed"] .project-link {
     position: relative; inset: auto; grid-column: 2; grid-row: 1; align-self: center;
-    min-height: 48px; margin: 0; padding: 0 14px; border: 1px solid #24252035; border-radius: 28px;
-    gap: 10px; font-size: 14px; letter-spacing: 0;
+    min-height: 48px; min-width: 80px; margin: 0; padding: 0; border: 0; border-radius: 0;
+    justify-content: flex-end; gap: 12px; font-size: 15px; letter-spacing: 0;
   }
-  .project-gallery[data-project][data-scene="composed"] .project-link img { width: 20px; height: 20px; }
-  .project-gallery[data-scene="composed"] .project-link-short { display: inline; }
+  .project-gallery[data-scene="composed"] .project-link::before { display: none; }
+  .project-gallery[data-project][data-scene="composed"] .project-link img { width: 22px; height: 22px; }
+  .project-gallery[data-scene="composed"] .project-link-short { display: inline; text-decoration: none; }
   .project-gallery[data-scene="composed"] .project-link-label {
     position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
   }
   .project-gallery[data-scene="composed"] .project-link-label::after { display: none; }
+}
+
+@media (orientation: portrait) and (min-width: 600px) {
+  .project-gallery[data-project][data-scene="composed"] .gallery-wordmark { font-size: 30px; }
+  .project-gallery[data-project][data-scene="composed"] .gallery-back { font-size: 16px; }
+  .project-gallery[data-project][data-scene="composed"] .project-caption { padding-top: 28px; padding-bottom: max(var(--caption-bottom-space), env(safe-area-inset-bottom)); }
+  .project-gallery[data-project][data-scene="composed"] .project-caption h2 { font-size: 48px; }
+  .project-gallery[data-project][data-scene="composed"] .project-caption p { font-size: 18px; line-height: 25px; }
+  .project-gallery[data-project][data-scene="composed"] .project-link { font-size: 18px; }
+}
+
+/* The same responsive photography is art-directed into a separate left stage
+   on landscape tablets and phones. The right caption never covers the art. */
+.project-gallery[data-project][data-layout="split"] { height: var(--visible-height, 100dvh); }
+.project-gallery[data-scene="composed"][data-layout="split"] .composed-scene { display: block; }
+.project-gallery[data-scene="composed"][data-layout="split"] .gallery-environment::before,
+.project-gallery[data-scene="composed"][data-layout="split"] .gallery-environment::after { display: none; }
+.project-gallery[data-scene="composed"][data-layout="split"] .gallery-caption-frame {
+  left: auto; right: 0; width: clamp(300px, 30vw, 360px);
+}
+.project-gallery[data-project][data-layout="split"] .project-caption { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+.project-gallery[data-project][data-layout="split"] .project-caption h2 { font-size: clamp(30px, 2.8vw, 36px); }
+.project-gallery[data-project][data-layout="split"] .project-caption p { font-size: 15px; line-height: 21px; }
+
+@media (orientation: portrait) and (max-height: 600px) {
+  .project-gallery[data-project][data-scene="composed"] .project-caption { padding-top: 14px; padding-bottom: max(18px, env(safe-area-inset-bottom)); }
+  .project-gallery[data-project][data-scene="composed"] .project-caption h2 { font-size: 32px; padding-right: 90px; grid-column: 1 / -1; }
+  .project-gallery[data-project][data-scene="composed"] .project-link { position: absolute; top: 8px; right: var(--caption-right); }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .project-gallery[data-scene="composed"] .gallery-caption-frame::before { background: #f4efe8e6; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .project-gallery[data-scene="composed"] .gallery-caption-frame::before {
+    background: #f4efe8; -webkit-backdrop-filter: none; backdrop-filter: none; mask-image: none;
+  }
+}
+
+/* Full-bleed landscape photographs need no backdrop extensions or edge masks. */
+.project-gallery[data-scene="composed"][data-layout="split"] .gallery-environment img { display: none; }
+.project-gallery[data-scene="composed"][data-layout="split"] .gallery-frame {
+  top: var(--gallery-top); mask-image: none;
+}
+.project-gallery[data-scene="composed"][data-layout="split"] .composed-scene { top: 0; mask-image: none; }
+@media (orientation: landscape) and (max-width: 700px) {
+  .project-gallery[data-scene="composed"][data-layout="split"] .gallery-caption-frame { width: 260px; }
+  .project-gallery[data-project][data-layout="split"] .project-caption h2 { font-size: 24px; }
+  .project-gallery[data-project][data-layout="split"] .project-caption p { font-size: 14px; line-height: 20px; }
 }

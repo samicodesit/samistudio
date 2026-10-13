@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { projectiveMatrix, terminalPolygon, projectFromHash, stageLayout, mobileGalleryLayout } from '../assets/gallery-geometry.mjs';
+import { projectiveMatrix, terminalPolygon, projectFromHash, stageLayout, mobileGalleryLayout, coverGalleryLayout } from '../assets/gallery-geometry.mjs';
 
 function project(matrix, x, y) {
   const values = matrix.slice(9, -1).split(',').map(Number);
@@ -52,22 +52,78 @@ test('a wider viewport preserves the reference aspect ratio and centers the scen
   assert.deepEqual(stageLayout(1506, 1045, 1506, 1045), { scale: 1, left: 0, top: 0 });
 });
 
-test('mobile artwork stays below navigation and remains scrollable above its action footer', () => {
-  for (const [width, height] of [[320, 480], [375, 559], [393, 676], [430, 800], [599, 320]]) {
+test('each portrait composition fits and centers between measured controls', () => {
+  for (const [width, height] of [[320, 480], [375, 559], [393, 676], [390, 844], [442, 958], [600, 960], [768, 1024], [820, 1180], [1024, 1366]]) {
     for (const [artTop, artBottom] of [[385, 1465], [362, 1295], [477, 1690]]) {
-      const result = mobileGalleryLayout(width, height, 126, artTop, artBottom);
-      assert.equal(result.windowHeight + 126, height);
-      assert.ok(Math.abs((artTop + result.sceneTop) * result.scale - 72) < .001);
-      assert.ok(result.contentHeight >= (artBottom + result.sceneTop) * result.scale + 15.99);
-      assert.ok(result.contentHeight >= result.windowHeight);
+      const layout = mobileGalleryLayout(width, height, 140, artTop, artBottom);
+      const top = (artTop + layout.sceneTop) * layout.scale;
+      const bottom = (artBottom + layout.sceneTop) * layout.scale;
+      const freeAbove = top - 72;
+      const freeBelow = height - 140 - bottom;
+      assert.ok(top >= 72 - .001, `artwork touches navigation at ${width}x${height}`);
+      assert.ok(bottom <= height - 140 + .001, `artwork touches caption at ${width}x${height}`);
+      assert.ok(Math.abs(freeAbove - freeBelow) < .001, 'unbalanced vertical space');
+      assert.ok(layout.scale * 853 <= width + .001, 'horizontal artwork clipping');
+      assert.equal(layout.contentHeight, height, 'unnecessary photograph scroll');
     }
   }
-  const safeArea = mobileGalleryLayout(393, 676, 148, 385, 1465, 103);
-  assert.ok(Math.abs((385 + safeArea.sceneTop) * safeArea.scale - 103) < .001);
+});
+
+test('browser bars and safe navigation resize the artwork without hiding controls', () => {
+  const expanded = mobileGalleryLayout(393, 676, 160, 385, 1465, 103);
+  const collapsed = mobileGalleryLayout(393, 780, 160, 385, 1465, 103);
+  assert.ok(expanded.scale < collapsed.scale);
+  assert.ok((385 + expanded.sceneTop) * expanded.scale >= 103);
+  assert.ok((1465 + expanded.sceneTop) * expanded.scale <= 516.001);
 });
 
 test('invalid mobile viewport dimensions cannot create an unusable photo window', () => {
   assert.throws(() => mobileGalleryLayout(0, 676, 126, 385, 1465), RangeError);
   assert.throws(() => mobileGalleryLayout(393, NaN, 126, 385, 1465), RangeError);
   assert.throws(() => mobileGalleryLayout(393, 676, -1, 385, 1465), RangeError);
+});
+
+test('dedicated tablet artwork fits short phones and both portrait tablet sizes', () => {
+  for (const [width, height] of [[320, 480], [393, 676], [768, 1024], [820, 1180], [1024, 1366]]) {
+    for (const [top, bottom] of [[286, 1225], [334, 1220], [236, 1355]]) {
+      const layout = mobileGalleryLayout(width, height, 160, top, bottom, 72, 1086);
+      assert.ok((top + layout.sceneTop) * layout.scale >= 71.999);
+      assert.ok((bottom + layout.sceneTop) * layout.scale <= height - 160 + .001);
+      assert.ok(layout.scale * 1086 <= width + .001);
+    }
+  }
+});
+
+test('landscape cameras cover the screen without exposing edges or clipping key artwork', () => {
+  for (const [width, height] of [[667, 375], [844, 390], [1024, 768], [1180, 820], [1366, 1024]]) {
+    for (const bounds of [[130, 246, 954, 776], [150, 216, 1050, 762], [126, 120, 958, 780]]) {
+      const captionWidth = width <= 700 ? 260 : Math.min(360, Math.max(300, width * .3));
+      const layout = coverGalleryLayout(width, height, captionWidth, bounds, 1672, 941);
+      const [left, top, right, bottom] = bounds;
+      assert.ok(layout.left <= .001 && layout.top <= .001);
+      assert.ok(layout.left + 1672 * layout.scale >= width - .001);
+      assert.ok(layout.top + 941 * layout.scale >= height - .001);
+      assert.ok(layout.left + left * layout.scale >= -.001);
+      assert.ok(layout.left + right * layout.scale <= width + .001);
+      assert.ok(layout.top + top * layout.scale >= -.001);
+      assert.ok(layout.top + bottom * layout.scale <= height + .001);
+    }
+  }
+});
+
+test('one portrait photograph covers all edges while fitting the protected artwork', async () => {
+  const { portraitCoverLayout } = await import('../assets/gallery-geometry.mjs');
+  for (const [w, h] of [[320,480], [375,559], [390,676], [390,844], [442,958], [600,700], [768,1024], [820,1180], [1024,1366]]) {
+    for (const bounds of [[280,363,800,1045], [204,445,887,1070], [256,489,770,1104]]) {
+      const layout = portraitCoverLayout?.(w,h,160,bounds,1024,1536,72);
+      assert.ok(layout, 'continuous portrait camera is missing');
+      assert.ok(layout.left <= .001 && layout.top <= .001);
+      assert.ok(layout.left + 1024 * layout.scale >= w - .001, 'right photo edge exposed');
+      assert.ok(layout.top + 1536 * layout.scale >= h - .001, 'lower photo edge exposed');
+      assert.ok(layout.left + bounds[0] * layout.scale >= -.001);
+      assert.ok(layout.left + bounds[2] * layout.scale <= w + .001);
+      assert.ok(layout.top + bounds[1] * layout.scale >= 71.999);
+      assert.ok(layout.top + bounds[3] * layout.scale <= h - 160 + .001);
+    }
+  }
 });

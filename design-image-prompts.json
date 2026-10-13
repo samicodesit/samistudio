@@ -1,6 +1,6 @@
 {
   "tool": "built-in ImageGen",
-  "purpose": "Clean text plates and continuous widescreen adaptations for Sami Studio",
+  "purpose": "Native studio typography, approved photographs and continuous responsive room framing",
   "notes": "Reference-sized scenes preserve the selected photographs. Wider renders are responsive adaptations, not pixel-identical copies of the narrower photographs.",
   "prompts": {
     "auto-desktop": "Use case: precise-object-edit. Image 1 is the edit target, an approved desktop landscape portfolio composition. Remove ONLY the website overlay typography and navigation: \"Sami Studio\" in the top left, the left arrow and \"Back to work\" at the top right, \"AutoLister.\" project headline, the accompanying short project description, and \"Open AutoLister\" with its underline and right arrow. Restore the photographed wall/floor stone and exact lighting where that overlay text was, so native HTML typography can be placed there. Keep all physical photographic objects, silhouettes, panel edges, contact shadows, materials, colors, frame dimensions and camera framing EXACTLY unchanged. Keep all text INSIDE the physical app panel or on game word cards EXACTLY unchanged. This is not a redesign. Do not move, remove, repaint, recrop, resize, or invent any other objects. No web-overlay text anywhere. Output exactly the same aspect ratio and composition as input.",
@@ -9,5 +9,80 @@
     "cryptik-mobile": "Use case: precise-object-edit. Image 1 is the edit target, an approved mobile portrait portfolio composition. Remove ONLY the website overlay typography and navigation: \"Sami Studio\" in the top left, the left arrow and \"Back to work\" at the top right, \"Cryptik.\" project headline, the accompanying short project description, and \"Open Cryptik\" with its underline and right arrow. Restore the photographed wall/floor stone and exact lighting where that overlay text was, so native HTML typography can be placed there. Keep all physical photographic objects, silhouettes, panel edges, contact shadows, materials, colors, frame dimensions and camera framing EXACTLY unchanged. Keep all text INSIDE the physical app panel or on game word cards EXACTLY unchanged. This is not a redesign. Do not move, remove, repaint, recrop, resize, or invent any other objects. No web-overlay text anywhere. Output exactly the same aspect ratio and composition as input.",
     "autolister-wide": "Use case: precise-object-edit. Asset type: responsive photographic room extension. Image 1 is the edit target: an approved clean portfolio warm ivory limestone atelier, foliage at the far left, the charcoal dress, listing panel and stone plinth. OUTPAINT only to the LEFT and RIGHT to produce a 16:9 landscape image. The original image is approximately 1505 x 1045. Keep the original central 1505 x 1045 photographic composition at its EXACT current scale, placement, colors and perspective, centered inside a wider approximately 1858 x 1045 canvas. Add approximately 176 pixels of room to each side. This means adding canvas, NOT stretching, zooming, shrinking, cropping or repositioning existing objects. Extend the existing wall architecture, light, floor and foliage where appropriate with physically continuous photography. Do NOT duplicate any main panels, garments, cards, tables, plinths, or objects. No new decorative objects or lights. Keep all text inside the pictured product unchanged. No portfolio overlay typography or navigation. The original center must remain unchanged. Output aspect ratio 16:9.",
     "cryptik-wide": "Use case: precise-object-edit. Asset type: responsive photographic room extension. Image 1 is the edit target: an approved clean portfolio cool ivory limestone room, the spy artwork and word-card stone table. OUTPAINT only to the LEFT and RIGHT to produce a 16:9 landscape image. The original image is approximately 1505 x 1045. Keep the original central 1505 x 1045 photographic composition at its EXACT current scale, placement, colors and perspective, centered inside a wider approximately 1858 x 1045 canvas. Add approximately 176 pixels of room to each side. This means adding canvas, NOT stretching, zooming, shrinking, cropping or repositioning existing objects. Extend the existing wall architecture, light, floor and foliage where appropriate with physically continuous photography. Do NOT duplicate any main panels, garments, cards, tables, plinths, or objects. No new decorative objects or lights. Keep all text inside the pictured product unchanged. No portfolio overlay typography or navigation. The original center must remain unchanged. Output aspect ratio 16:9."
-  }
+  },
+  "portrait_room_2026_10_13": {
+    "tool": "built-in ImageGen",
+    "actual_size": [
+      1024,
+      1536
+    ],
+    "format": "WebP quality 96, method 6",
+    "notes": "Continuous photographs replace the fitted photo plus mismatched room strategy. Generated subject details are faithful adaptations, not guaranteed unchanged source pixels.",
+    "assets": [
+      {
+        "runtime": "assets/gallery/doodle-portrait-room.webp",
+        "source": "C:/Users/Sami/.codex/generated_images/01a134b4-57df-74b2-ad0b-3589b5faa0f8/exec-186cb1b5-9a1e-4a7e-91f0-1e727006bc98.png",
+        "reference": "assets/gallery/doodle-mobile-v2.webp",
+        "bounds": [
+          280,
+          363,
+          800,
+          1045
+        ]
+      },
+      {
+        "runtime": "assets/gallery/autolister-portrait-room.webp",
+        "source": "C:/Users/Sami/.codex/generated_images/01a134b4-57df-74b2-ad0b-3589b5faa0f8/exec-605a5401-8dba-4c07-844a-e23dacb7cf05.png",
+        "reference": "assets/gallery/autolister-tablet.webp",
+        "bounds": [
+          204,
+          445,
+          887,
+          1070
+        ]
+      },
+      {
+        "runtime": "assets/gallery/cryptik-portrait-room.webp",
+        "source": "C:/Users/Sami/.codex/generated_images/01a134b4-57df-74b2-ad0b-3589b5faa0f8/exec-71868b8e-fbd7-4037-bc84-6657bab58c0e.png",
+        "reference": "assets/gallery/cryptik-tablet.webp",
+        "bounds": [
+          256,
+          489,
+          770,
+          1104
+        ]
+      }
+    ],
+    "brief": "Outpaint the surrounding empty room into one continuous 2:3 portrait photograph. Preserve each project object, text, lighting, material and perspective. Center the full subject group with ample empty room above, below and at both sides for responsive camera movement. No seams, pasted rectangles, gradients, new objects or portfolio overlay text. Cryptik must retain both spies and all twenty-five cards in the exact five-by-five grid."
+  },
+  "selected_glass_reference": "C:/Users/Sami/.codex/generated_images/01a130b2-d18c-7ad1-a04f-0cce5bb3b5fd/exec-b3b84238-7eb4-412d-8387-36ec6a57d67d.png",
+  "responsive_landscape_provenance": [
+    {
+      "runtime": "assets/gallery/doodle-landscape.webp",
+      "source": "C:/Users/Sami/.codex/generated_images/01a130b2-d18c-7ad1-a04f-0cce5bb3b5fd/exec-8ae399f2-6988-4884-bcf1-005e62902889.png",
+      "actual_size": [
+        1672,
+        941
+      ],
+      "tool": "built-in ImageGen"
+    },
+    {
+      "runtime": "assets/gallery/autolister-landscape.webp",
+      "source": "C:/Users/Sami/.codex/generated_images/01a130b2-d18c-7ad1-a04f-0cce5bb3b5fd/exec-ab5d9be0-1d63-4c2a-8840-c3ab22420910.png",
+      "actual_size": [
+        1672,
+        941
+      ],
+      "tool": "built-in ImageGen"
+    },
+    {
+      "runtime": "assets/gallery/cryptik-landscape.webp",
+      "source": "C:/Users/Sami/.codex/generated_images/01a130b2-d18c-7ad1-a04f-0cce5bb3b5fd/exec-134a90cd-3f5d-4a31-a14e-1b2446156520.png",
+      "actual_size": [
+        1672,
+        941
+      ],
+      "tool": "built-in ImageGen"
+    }
+  ]
 }

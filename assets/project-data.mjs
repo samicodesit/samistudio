@@ -1,6 +1,6 @@
 export const projects = Object.freeze([
   Object.freeze({
-    id: 'doodle', title: 'Doodle', heading: 'Doodle.',
+    id: 'doodle', landscapeImage: './gallery/doodle-landscape.webp', landscapeWidth: 1672, landscapeHeight: 941, landscapeBounds: [130, 246, 954, 776], tabletArtLeft: 172, tabletArtRight: 980, portraitBounds: [280, 363, 800, 1045], tabletImage: './gallery/doodle-portrait-room.webp', tabletWidth: 1024, tabletHeight: 1536, tabletArtTop: 286, tabletArtBottom: 1225, tabletFeather: 70, mobileRoom: './gallery/doodle-mobile-room.webp', title: 'Doodle', heading: 'Doodle.',
     description: 'Drawing ideas for cards, notes and journals.',
     descriptionLines: ['Drawing ideas for cards,', 'notes and journals.'],
     href: 'https://doodle.samistudio.nl/',
@@ -12,7 +12,7 @@ export const projects = Object.freeze([
     wideImage: './gallery/doodle-room-wide-v2.webp',
   }),
   Object.freeze({
-    id: 'autolister', title: 'AutoLister', heading: 'AutoLister.',
+    id: 'autolister', landscapeImage: './gallery/autolister-landscape.webp', landscapeWidth: 1672, landscapeHeight: 941, landscapeBounds: [150, 216, 1050, 762], tabletArtLeft: 106, tabletArtRight: 1078, portraitBounds: [204, 445, 887, 1070], tabletImage: './gallery/autolister-portrait-room.webp', tabletWidth: 1024, tabletHeight: 1536, tabletArtTop: 334, tabletArtBottom: 1220, tabletFeather: 12, mobileRoom: './gallery/autolister-mobile-room.webp', title: 'AutoLister', heading: 'AutoLister.',
     description: 'Listing titles and descriptions from your item photos.',
     descriptionLines: ['Listing titles and descriptions', 'from your item photos.'],
     href: 'https://autolister.app/',
@@ -26,7 +26,7 @@ export const projects = Object.freeze([
     imageWidth: 1505, imageHeight: 1045, composedScene: true,
   }),
   Object.freeze({
-    id: 'cryptik', title: 'Cryptik', heading: 'Cryptik.',
+    id: 'cryptik', landscapeImage: './gallery/cryptik-landscape.webp', landscapeWidth: 1672, landscapeHeight: 941, landscapeBounds: [126, 120, 958, 780], tabletArtLeft: 30, tabletArtRight: 1055, portraitBounds: [256, 489, 770, 1104], tabletImage: './gallery/cryptik-portrait-room.webp', tabletWidth: 1024, tabletHeight: 1536, tabletArtTop: 453, tabletArtBottom: 1230, tabletFeather: 24, mobileRoom: './gallery/cryptik-mobile-room.webp', title: 'Cryptik', heading: 'Cryptik.',
     description: 'A word game to play with friends.',
     href: 'https://www.cryptik.me/en',
     image: './gallery/cryptik-desktop.webp', imageAlt: 'Blue and red Cryptik spies above a five-by-five grid of complete word cards on a dark stone table.',
