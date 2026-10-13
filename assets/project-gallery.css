@@ -407,3 +407,38 @@
   .project-gallery[data-scene="composed"] .project-link-label::after { display: none; }
   .project-gallery[data-scene="composed"] .project-link-short { text-decoration: none; }
 }
+
+/* Landscape phones keep the wide photograph and a reachable side footer. */
+@media (orientation: landscape) and (min-width: 600px) and (max-width: 1024px) and (max-height: 500px) {
+  .project-gallery[data-project][data-scene="composed"] { --gallery-surface: #f4efe8; }
+  .project-gallery[data-project="doodle"][data-scene="composed"] { --gallery-surface: #f3ecee; }
+  .project-gallery[data-project="cryptik"][data-scene="composed"] { --gallery-surface: #eeede8; }
+  .project-gallery[data-scene="composed"] .gallery-caption-frame {
+    left: auto; top: auto; right: 0; bottom: 0; width: min(320px, 50vw); height: auto;
+    transform: none; z-index: 5;
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-caption {
+    position: relative; inset: auto; width: auto; margin: 0; padding: 16px max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) 16px;
+    display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px;
+    background: var(--gallery-surface);
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-caption h2 {
+    grid-column: 1; grid-row: 1; align-self: center; font-size: 30px; line-height: 1.05; letter-spacing: -1px;
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-caption p {
+    grid-column: 1 / -1; grid-row: 2; max-width: none; margin: 6px 0 0;
+    font-size: 14px; line-height: 20px; letter-spacing: -.1px; color: var(--ink); white-space: normal;
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-description-line { width: auto; white-space: normal; transform: none; }
+  .project-gallery[data-project][data-scene="composed"] .project-link {
+    position: relative; inset: auto; grid-column: 2; grid-row: 1; align-self: center;
+    min-height: 48px; margin: 0; padding: 0 14px; border: 1px solid #24252035; border-radius: 28px;
+    gap: 10px; font-size: 14px; letter-spacing: 0;
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-link img { width: 20px; height: 20px; }
+  .project-gallery[data-scene="composed"] .project-link-short { display: inline; }
+  .project-gallery[data-scene="composed"] .project-link-label {
+    position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
+  }
+  .project-gallery[data-scene="composed"] .project-link-label::after { display: none; }
+}
