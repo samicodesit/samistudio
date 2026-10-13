@@ -5,7 +5,7 @@ import { stat } from 'node:fs/promises';
 
 test('widescreen opening requests only the visible photographic room', async () => {
   const { projectAssets } = await import('../assets/gallery-loading.mjs');
-  for (const id of ['autolister', 'cryptik']) {
+  for (const id of ['doodle', 'autolister', 'cryptik']) {
     const project = getProject(id);
     assert.deepEqual(projectAssets(project, 'wide'), [project.wideImage]);
   }
@@ -13,7 +13,7 @@ test('widescreen opening requests only the visible photographic room', async () 
 
 test('portrait and reference views request only their photograph and three small patches', async () => {
   const { projectAssets } = await import('../assets/gallery-loading.mjs');
-  for (const id of ['autolister', 'cryptik']) {
+  for (const id of ['autolister']) {
     const project = getProject(id);
     for (const mode of ['desktop', 'mobile']) {
       const assets = projectAssets(project, mode);
@@ -23,6 +23,13 @@ test('portrait and reference views request only their photograph and three small
       assert.ok(assets.slice(1).every(path => path.includes(`-${mode}-patch-`)));
     }
   }
+});
+
+test('the clean Cryptik portrait does not download desktop text plates', async () => {
+  const { projectAssets } = await import('../assets/gallery-loading.mjs');
+  const project = getProject('cryptik');
+  assert.deepEqual(projectAssets(project, 'mobile'), ['./gallery/cryptik-mobile-intro.webp']);
+  assert.equal(projectAssets(project, 'desktop').length, 4);
 });
 
 test('data saving and slow connections disable speculative project requests', async () => {

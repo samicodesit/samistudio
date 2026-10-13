@@ -105,3 +105,12 @@ Replaced the Doodle portrait, reference desktop and wide room photographs with d
 Doodle's photographic scene stays stationary, including the note. Its native headline, description and link use the same staggered entrance as the other projects. The continuous scene replaces the old segmented room and note overlays.
 
 Reviewed the built page at 390 x 844 and 1280 x 720. The phone view has no horizontal overflow. The laptop photograph loads cleanly, with a straight panel edge and continuous floor. Switching from Doodle to both other mobile project scenes restores their three text plates correctly. The required studio checks passed: 19 tests. Push and production publication were explicitly authorized by the owner.
+# Mobile browser fold correction, 13 October 2026
+
+The previous portrait layout placed copy at fixed coordinates near the bottom of an 1844-pixel photograph. A real browser with expanded controls provides a shorter visible viewport than the tall mockup, so the project introduction could disappear below the fold.
+
+All three portrait views now place the native title and description on the upper wall, with a visible Open link beside the title. Copy uses readable viewport-independent sizes and safe-area spacing. The scene's scroll extent follows the photographed artwork rather than leaving the old caption area empty. Dynamic viewport sizing and visualViewport resize updates handle browser controls; unchanged image sources are not reassigned during those updates. Opening any project resets its scroll position.
+
+Doodle's existing supplied artwork and stationary note are preserved. Cryptik uses a clean dedicated mobile photograph with room for the introduction and no text replacement plates. Its original mobile assets remain as design references and are omitted from the runtime build. Desktop compositions and copy positions are preserved.
+
+Checked the built introductions at 393 x 676, matching the uploaded browser's content area, plus 375 x 559 and 320 x 480 phone views and a 599 x 320 landscape view. Doodle's title starts at 66 pixels and its description finishes at approximately 166 pixels in the 393 x 676 view. Its Open link is fully visible with a 44-pixel target. AutoLister and Cryptik introductions also fit above the fold without horizontal overflow. Studio verification passed 20 tests.

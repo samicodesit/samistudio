@@ -89,6 +89,7 @@
 .project-caption h2 { margin: 0; font-family: var(--font-display); font-size: 103px; font-weight: 400; line-height: 1.08; letter-spacing: -3.8px; white-space: nowrap; }
 .project-caption p { margin: 11px 0 0; font-size: 26px; line-height: 1.38; letter-spacing: -.75px; color: #6b676b; text-wrap: pretty; }
 .project-link { display: inline-flex; align-items: center; gap: 12px; margin-top: 20px; min-height: 52px; font-size: 22px; letter-spacing: -.5px; }
+.project-link-short { display: none; }
 .project-link-label { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 9px; }
 .project-link img { width: 26px; height: 26px; transform: rotate(180deg); transition: transform 180ms cubic-bezier(.2,.75,.12,1); }
 .project-link:hover img { transform: translateX(3px) rotate(180deg); }
@@ -321,4 +322,58 @@
   .project-gallery[data-project="doodle"][data-scene="composed"] .project-caption h2 { font-size: 128px; letter-spacing: -4.5px; }
   .project-gallery[data-project="doodle"][data-scene="composed"] .project-caption p { max-width: 730px; font-size: 38px; line-height: 52px; margin: 16px 0 0 2px; letter-spacing: -.4px; }
   .project-gallery[data-project="doodle"][data-scene="composed"] .project-link { margin: 18px 0 0 2px; font-size: 38px; }
+}
+
+/* Phone introductions occupy the clear upper wall, independently of the
+   photograph's dimensions. Browser chrome can never push this copy below it. */
+@media (orientation: portrait), (max-width: 599px) {
+  .project-gallery[data-scene="composed"] .composed-scene {
+    top: var(--mobile-scene-top, 0px); bottom: auto; height: 1844px;
+  }
+  .project-gallery[data-project][data-scene="composed"] .gallery-header {
+    top: calc(max(20px, env(safe-area-inset-top)) / var(--gallery-scale));
+    left: calc(24px / var(--gallery-scale)); right: calc(24px / var(--gallery-scale));
+  }
+  .project-gallery[data-project][data-scene="composed"] .gallery-wordmark {
+    font-size: calc(24px / var(--gallery-scale)); letter-spacing: calc(-.6px / var(--gallery-scale));
+  }
+  .project-gallery[data-project][data-scene="composed"] .gallery-back {
+    gap: calc(8px / var(--gallery-scale)); font-size: calc(13px / var(--gallery-scale));
+    min-height: calc(44px / var(--gallery-scale)); padding: 0; letter-spacing: 0;
+  }
+  .project-gallery[data-project][data-scene="composed"] .gallery-back img {
+    width: calc(19px / var(--gallery-scale)); height: calc(19px / var(--gallery-scale));
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-caption {
+    top: calc(max(66px, calc(env(safe-area-inset-top) + 46px)) / var(--gallery-scale));
+    left: calc(24px / var(--gallery-scale)); right: calc(24px / var(--gallery-scale));
+    width: auto; margin: 0;
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-caption h2 {
+    font-size: calc(clamp(40px, 12vw, 50px) / var(--gallery-scale));
+    line-height: 1.06; letter-spacing: calc(-1.8px / var(--gallery-scale));
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-caption p {
+    max-width: none; margin: calc(6px / var(--gallery-scale)) 0 0;
+    font-size: calc(16px / var(--gallery-scale)); line-height: calc(22px / var(--gallery-scale));
+    letter-spacing: calc(-.2px / var(--gallery-scale)); white-space: normal; color: var(--ink);
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-description-line {
+    width: auto; white-space: normal; transform: none;
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-link {
+    position: absolute; top: calc(3px / var(--gallery-scale)); right: 0;
+    min-height: calc(44px / var(--gallery-scale)); margin: 0;
+    gap: calc(8px / var(--gallery-scale)); font-size: calc(14px / var(--gallery-scale)); letter-spacing: 0;
+  }
+  .project-gallery[data-project][data-scene="composed"] .project-link img {
+    width: calc(20px / var(--gallery-scale)); height: calc(20px / var(--gallery-scale));
+  }
+  .project-gallery[data-scene="composed"] .project-link-short { display: inline; }
+  .project-gallery[data-scene="composed"] .project-link-label {
+    position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden;
+    clip-path: inset(50%); white-space: nowrap;
+  }
+  .project-gallery[data-scene="composed"] .project-link-label::after { display: none; }
+  .project-gallery[data-scene="composed"] .project-link-short { text-decoration: underline; text-underline-offset: 4px; }
 }
