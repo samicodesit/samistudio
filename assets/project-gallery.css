@@ -464,9 +464,9 @@
 }
 
 
-/* Three real pages on a native scroll track. The fixed header never becomes a snapshot. */
+/* Fixed repeated pages on a native track. The header stays within its gesture area. */
 .gallery-shell {
-  position: fixed; inset: 0; width: 100vw; height: var(--visible-height, 100dvh);
+  position: fixed; inset: 0; width: 100vw; height: 100dvh;
   max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
   overflow: hidden; background: #d8c7cd; color: var(--ink); font-family: var(--font-text);
 }
@@ -498,6 +498,9 @@
   display: block; position: absolute; top: 45%; left: 15%; right: 15%; text-align: center; font-size: 14px;
 }
 .gallery-chrome { z-index: 10; }
+.gallery-track > .gallery-chrome {
+  position: sticky; flex: 0 0 0; height: 0; min-height: 0; overflow: visible;
+}
 .gallery-chrome .gallery-wordmark { letter-spacing: -.3px; }
 .gallery-chrome .gallery-header { position: absolute; top: 38px; left: 68px; right: 68px; padding: 0; margin: 0; }
 .gallery-chrome .gallery-header::before {
@@ -567,3 +570,11 @@
 @media (forced-colors: active) {
   .gallery-panel::before { background: Canvas; border-color: CanvasText; box-shadow: none; }
 }
+
+/* During a viewport switch, retain the last decoded artwork until the complete
+   replacement set is ready. Media queries must not expose an empty image node. */
+.gallery-panel[data-project][data-scene][data-art="photo"] .composed-scene { display: block; }
+.gallery-panel[data-project][data-scene][data-art="photo"] .gallery-environment img { display: none; }
+.gallery-panel[data-project][data-scene][data-art="wide"] .composed-scene { display: none; }
+.gallery-panel[data-project][data-scene][data-art="wide"] .gallery-environment img { display: block; }
+.gallery-panel[data-art] .composed-photo img { object-fit: cover; }

@@ -6,6 +6,7 @@ import { initProjectGallery } from './project-gallery.js';
   'use strict';
   const root = document.documentElement;
   const experience = document.querySelector('.experience');
+  const projectDialog = document.querySelector('#project-gallery');
   const scene = document.querySelector('.scene');
   const scenePhoto = document.querySelector('.scene-photo');
   const display = document.querySelector('#terminal-display');
@@ -44,7 +45,7 @@ import { initProjectGallery } from './project-gallery.js';
     }
     if (focusElement) focusElement.focus({ preventScroll: true });
   }
-  const gallery = initProjectGallery({ onReturn: () => showView('work') });
+  const gallery = initProjectGallery({ onReturn: () => { showView('work'); layout(); } });
   const fittedPhoto = document.createElement('canvas');
   fittedPhoto.width = 1260;
   fittedPhoto.height = 933;
@@ -220,7 +221,7 @@ import { initProjectGallery } from './project-gallery.js';
   }
 
   function layout() {
-    if (!experience) return;
+    if (!experience || (projectDialog.open && projectDialog.dataset.phase !== 'closing')) return;
     const width = experience.clientWidth;
     const height = experience.clientHeight;
     const mobile = matchMedia('(max-width: 900px) and (orientation: portrait), (max-width: 599px)').matches;

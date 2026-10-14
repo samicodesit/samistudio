@@ -13,6 +13,8 @@ on:
       - tests/gallery.test.mjs
       - tests/gallery-loading.test.mjs
       - tests/gallery-startup.test.mjs
+      - tests/gallery-navigation.test.mjs
+      - tests/hero-background.test.mjs
       - site.webmanifest
       - vercel.json
       - .gitignore
@@ -30,6 +32,8 @@ on:
       - tests/gallery.test.mjs
       - tests/gallery-loading.test.mjs
       - tests/gallery-startup.test.mjs
+      - tests/gallery-navigation.test.mjs
+      - tests/hero-background.test.mjs
       - site.webmanifest
       - vercel.json
       - .gitignore
@@ -54,5 +58,6 @@ jobs:
           node --check assets/project-data.mjs
           node --check assets/gallery-geometry.mjs
           node --check assets/gallery-loading.mjs
+          node --check assets/gallery-navigation.mjs
       - name: Build only the public homepage files
         run: node scripts/build-studio.mjs

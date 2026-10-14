@@ -1,6 +1,6 @@
 import { getProject } from './project-data.mjs';
 import { projectAssets, allowPrefetch } from './gallery-loading.mjs';
-import { galleryOrder, settledSlot } from './gallery-navigation.mjs';
+import { gallerySequence, centerSlot, settledSlot } from './gallery-navigation.mjs';
 import { terminalPolygon, projectFromHash, stageLayout, coverGalleryLayout, portraitCoverLayout } from './gallery-geometry.mjs';
 
 const assetUrl = path => new URL(path, import.meta.url).href;
@@ -20,11 +20,12 @@ export function initProjectGallery({ onReturn }) {
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const template = document.querySelector('#gallery-page-template');
   const cache = new Map();
-  const panels = new Map();
-  let active = null, selected = 0, pending = 0, height = 0;
+  const panels = [];
+  let active = null, currentSlot = -1, selected = 0, pending = 0, height = 0;
   let ownsHistoryEntry = false, baseHash = '';
-  let rebasing = false, touching = false;
-  let resizeFrame = 0, scrollFrame = 0, settleTimer = 0, prefetchTimer = 0, neighborTimer = 0;
+  let touching = false, layoutPending = false;
+  let resizeFrame = 0, scrollFrame = 0, settleTimer = 0, prefetchTimer = 0;
+  let refreshingMode = null;
   let reveal = null, movement = [];
 
   function mode() {
@@ -49,6 +50,10 @@ export function initProjectGallery({ onReturn }) {
     return Promise.all(projectAssets(getProject(id), selectedMode).map(path => load(path, priority)));
   }
 
+  function prepareAll(selectedMode = mode(), priority = 'low') {
+    return Promise.all(ids.map(id => prepare(id, selectedMode, priority)));
+  }
+
   function select(index, focus = false) {
     selected = (index + rows.length) % rows.length;
     rows.forEach((row, i) => {
@@ -58,26 +63,27 @@ export function initProjectGallery({ onReturn }) {
     if (focus) rows[selected].focus({ preventScroll: true });
   }
 
-  function prefetch(id) {
+  function prefetch() {
     clearTimeout(prefetchTimer);
-    if (allowPrefetch(navigator.connection)) prefetchTimer = setTimeout(() => prepare(id).catch(() => {}), 220);
+    if (allowPrefetch(navigator.connection)) prefetchTimer = setTimeout(() => prepareAll().catch(() => {}), 220);
   }
 
-  function createPanel(id) {
+  function createPanel(id, slot) {
     const project = getProject(id);
     const element = template.content.firstElementChild.cloneNode(true);
     element.dataset.project = id;
+    element.dataset.slot = String(slot);
     element.querySelector('.composed-scene').hidden = false;
     element.dataset.ready = 'false';
     element.inert = true;
     element.setAttribute('aria-hidden', 'true');
     element.querySelectorAll('source, .gallery-reference-scene, .project-primary, .project-secondary').forEach(node => node.remove());
     const title = element.querySelector('h2');
-    title.id = `project-title-${id}`;
+    title.id = `project-title-${id}-${slot}`;
     title.textContent = project.heading;
     element.setAttribute('aria-labelledby', title.id);
     const description = element.querySelector('.project-caption p');
-    description.id = `project-description-${id}`;
+    description.id = `project-description-${id}-${slot}`;
     if (project.descriptionLines) {
       description.replaceChildren(...project.descriptionLines.map((line, index) => {
         const span = document.createElement('span');
@@ -88,6 +94,7 @@ export function initProjectGallery({ onReturn }) {
     } else description.textContent = project.description;
     const link = element.querySelector('.project-link');
     link.href = project.href;
+    link.addEventListener('click', () => setActive(slot));
     link.querySelector('.project-link-label').textContent = `Open ${project.title}`;
     const spinner = document.createElement('span');
     spinner.className = 'gallery-scene-loader';
@@ -99,7 +106,7 @@ export function initProjectGallery({ onReturn }) {
       environment: element.querySelector('.gallery-environment img'),
       patches: [...element.querySelectorAll('.composed-clear')],
       loadedMode: null, loading: null, version: 0 };
-    panels.set(id, panel);
+    panels.push(panel);
     track.append(element);
     return panel;
   }
@@ -109,7 +116,7 @@ export function initProjectGallery({ onReturn }) {
     if (panel.loadedMode === selectedMode || panel.failedMode === selectedMode) return;
     if (panel.loading?.mode === selectedMode) return panel.loading.promise;
     const version = ++panel.version;
-    panel.element.dataset.ready = 'false';
+    if (!panel.loadedMode) panel.element.dataset.ready = 'false';
     panel.element.setAttribute('aria-busy','true');
     panel.element.querySelector('.gallery-scene-loader').textContent = '';
     const promise = (async () => {
@@ -133,6 +140,7 @@ export function initProjectGallery({ onReturn }) {
         await Promise.all(images.map(image => image.decode()));
         if (version !== panel.version) return;
         panel.loadedMode = selectedMode;
+        panel.element.dataset.art = wide ? 'wide' : 'photo';
         panel.element.dataset.ready = 'true';
         panel.element.removeAttribute('aria-busy');
       } catch {
@@ -149,123 +157,119 @@ export function initProjectGallery({ onReturn }) {
     return promise;
   }
 
-  function setActive(id, updateHistory = true) {
-    const changed = active !== id;
-    if (!changed) return;
-    const oldPanel = panels.get(active);
+  function setActive(slot, updateHistory = true) {
+    if (currentSlot === slot && active !== null) return;
+    const oldPanel = panels[currentSlot];
+    const id = panels[slot].project.id;
+    const changedProject = active !== id;
+    currentSlot = slot;
     active = id;
     dialog.dataset.project = id;
     select(ids.indexOf(id));
-    announcement.textContent = `${getProject(id).title}. ${ids.indexOf(id) + 1} of ${ids.length}.`;
-    for (const [key, panel] of panels) {
-      panel.element.inert = key !== id;
-      panel.element.setAttribute('aria-hidden', String(key !== id));
-    }
+    if (changedProject) announcement.textContent = `${getProject(id).title}. ${ids.indexOf(id) + 1} of ${ids.length}.`;
     if (oldPanel?.element.contains(document.activeElement)) track.focus({ preventScroll: true });
-    if (updateHistory) history.replaceState(ownsHistoryEntry ? { studioProject: id } : history.state, '', `#work/${id}`);
+    panels.forEach((panel, index) => {
+      panel.element.inert = index !== slot;
+      panel.element.setAttribute('aria-hidden', String(index !== slot));
+      panel.link.tabIndex = index === slot ? 0 : -1;
+    });
+    if (updateHistory && changedProject) history.replaceState(ownsHistoryEntry ? { studioProject: id } : history.state, '', `#work/${id}`);
   }
 
-  function resumeTrack() {
-    track.style.scrollSnapType = '';
-    rebasing = false;
-    if (!dialog.open || dialog.dataset.phase !== 'open') return;
-    // Native scrolling can finish while the rebase guard is active. Always
-    // inspect the final position after unlocking, even if no new event arrives.
-    dialog.dataset.scrolling = String(Math.abs(track.scrollTop - height) > 1);
+  function syncVisiblePanels() {
+    if (height <= 0) return;
+    const first = Math.floor(track.scrollTop / height);
+    const last = Math.floor((track.scrollTop + track.clientHeight - 1) / height);
+    panels.forEach((panel,index) => {
+      const hidden = index < first || index > last;
+      if (hidden && panel.element.contains(document.activeElement)) track.focus({preventScroll:true});
+      if (panel.element.inert !== hidden) panel.element.inert = hidden;
+      if (panel.element.getAttribute('aria-hidden') !== String(hidden)) panel.element.setAttribute('aria-hidden',String(hidden));
+    });
+  }
+
+  function queueSettlement() {
     clearTimeout(settleTimer);
-    settleTimer = setTimeout(settle, 180);
-  }
-
-  function rebase(id = active) {
-    rebasing = true;
-    track.style.scrollSnapType = 'none';
-    const order = galleryOrder(ids, id);
-    for (const key of order) track.append(panels.get(key).element);
-    track.scrollTo({ top: height, behavior: 'instant' });
-    dialog.dataset.scrolling = 'false';
-    requestAnimationFrame(resumeTrack);
+    if (dialog.open && dialog.dataset.phase === 'open') settleTimer = setTimeout(settle, 180);
   }
 
   function settle() {
-    if (rebasing || touching || !dialog.open || dialog.dataset.phase !== 'open') return;
-    // WebKit can report a bounced offset outside the real scroll range.
-    // Normalize it before deciding which scene must become the center.
-    const offset = Math.max(0, Math.min(track.scrollTop, height * (track.children.length - 1)));
-    const slot = settledSlot(offset, height);
-    if (slot === null) return;
-    const id = track.children[slot].dataset.project;
-    setActive(id);
-    if (slot !== 1) rebase(id);
-    else dialog.dataset.scrolling = 'false';
+    if (touching || !dialog.open || dialog.dataset.phase !== 'open' || height <= 0) return;
+    const offset = Math.max(0, Math.min(track.scrollTop, height * (panels.length - 1)));
+    let slot = settledSlot(offset, height, panels.length);
+    if (slot === null && !layoutPending) return;
+    // Viewport changes are fitted only after native input is quiet. Preserve
+    // the currently visible copy instead of resizing snap distances mid-drag.
+    if (slot === null) slot = Math.round(offset / height);
+    const previousHeight = height;
+    if (layoutPending) { layoutPending = false; layout(); }
+    setActive(slot);
+    dialog.dataset.scrolling = 'false';
+    const target = centerSlot(slot, ids.length);
+    if (target === slot && height === previousHeight) return;
+    // Every copy is decoded before opening. Wrapping has no asynchronous
+    // loading or DOM mutation that could later interrupt a newer gesture.
+    if (panels[target].loadedMode !== panels[slot].loadedMode) return;
+    track.scrollTo({ top: target * height, behavior: 'instant' });
+    setActive(target, false);
   }
 
-  function scheduleNeighbors() {
-    clearTimeout(neighborTimer);
-    if (!allowPrefetch(navigator.connection)) return;
-    const token = pending;
-    // Leave the first paint and entrance free of adjacent-scene decode work.
-    neighborTimer = setTimeout(async () => {
-      for (const id of galleryOrder(ids, active).filter(id => id !== active)) {
-        if (token !== pending || !dialog.open || dialog.dataset.phase !== 'open') return;
-        await ensurePanel(panels.get(id), 'low');
-      }
-    }, 1400);
+  function refreshScenes(selectedMode) {
+    if (refreshingMode === selectedMode || panels.every(panel => panel.loadedMode === selectedMode)) return;
+    refreshingMode = selectedMode;
+    // Keep existing artwork visible during an orientation change. Prepare the
+    // complete new layout before switching any image, including all loop copies.
+    prepareAll(selectedMode).then(async () => {
+      if (selectedMode !== mode()) return;
+      await Promise.all(panels.map(panel => ensurePanel(panel)));
+      queueSettlement();
+    }).catch(() => { /* Existing decoded artwork remains usable offline. */ })
+      .finally(() => { if (refreshingMode === selectedMode) refreshingMode = null; });
   }
 
   function layout() {
     if (!dialog.open || !active) return;
-    const progress = height > 0 ? Math.max(0, Math.min(2, track.scrollTop / height)) : 1;
-    const wasMoving = touching || dialog.dataset.scrolling === 'true';
     const selectedMode = mode();
     const responsive = selectedMode === 'landscape' || selectedMode === 'tablet';
-    const viewportHeight = window.visualViewport?.scale === 1 ? window.visualViewport.height : innerHeight;
-    dialog.style.setProperty('--visible-height', `${Math.round(viewportHeight)}px`);
-    // Use the rendered scrollport, not an independent viewport estimate. Every
-    // panel and snap offset must share exactly the same integer CSS height.
     height = track.clientHeight;
-    const visibleHeight = height;
     track.style.setProperty('--gallery-page-height', `${height}px`);
     dialog.dataset.layout = selectedMode === 'landscape' ? 'split' : responsive ? 'stack' : 'desktop';
-    for (const panel of panels.values()) {
-      const { element, project } = panel;
-      element.dataset.layout = dialog.dataset.layout;
+    panels.forEach(panel => { panel.element.dataset.layout = dialog.dataset.layout; });
+
+    // Batch all geometry reads before writing scene styles. Three copies of a
+    // project share one camera, avoiding repeated forced layouts during resize.
+    const navigation = responsive ? chrome.getBoundingClientRect().height + 12 : 0;
+    const captions = responsive ? ids.map((_,index) => panels[ids.length + index].caption.getBoundingClientRect()) : [];
+    const styles = new Map(ids.map((id,index) => {
+      const project = getProject(id);
       const width = selectedMode === 'landscape' ? project.landscapeWidth : selectedMode === 'tablet' ? project.tabletWidth : project.imageWidth;
       const photoHeight = selectedMode === 'landscape' ? project.landscapeHeight : selectedMode === 'tablet' ? project.tabletHeight : 1045;
-      const props = { '--stage-width': `${width}px`, '--stage-height': `${photoHeight}px`, '--mobile-image-height': `${photoHeight}px`,
-        '--visible-height': `${visibleHeight}px`, '--mobile-art-window': `${visibleHeight}px`, '--mobile-stage-height': `${visibleHeight}px` };
-      let camera = stageLayout(innerWidth, visibleHeight, width, photoHeight);
-      if (responsive) {
-        const navigation = chrome.getBoundingClientRect().height + 12;
-        camera = selectedMode === 'landscape'
-          ? coverGalleryLayout(innerWidth, visibleHeight, panel.caption.getBoundingClientRect().width,
-            project.landscapeBounds, width, photoHeight, navigation)
-          : portraitCoverLayout(innerWidth, visibleHeight, panel.caption.getBoundingClientRect().height + 12,
-            project.portraitBounds, width, photoHeight, navigation);
-      }
-      Object.assign(props, { '--gallery-scale': camera.scale, '--gallery-left': `${camera.left}px`, '--gallery-top': `${camera.top}px` });
-      for (const [key,value] of Object.entries(props)) element.style.setProperty(key,value);
-      if (project.id === active) {
-        const headerCamera = stageLayout(innerWidth, visibleHeight, project.imageWidth, 1045);
-        dialog.style.setProperty('--gallery-scale', String(headerCamera.scale));
-        dialog.style.setProperty('--gallery-left', `${headerCamera.left}px`);
-        dialog.style.setProperty('--gallery-top', `${headerCamera.top}px`);
-        dialog.style.setProperty('--stage-width', `${project.imageWidth}px`);
-        dialog.style.setProperty('--stage-height', '1045px');
-      }
-      if (panel.loadedMode !== selectedMode && project.id === active) ensurePanel(panel, 'high');
+      const camera = selectedMode === 'landscape'
+        ? coverGalleryLayout(innerWidth, height, captions[index].width, project.landscapeBounds, width, photoHeight, navigation)
+        : selectedMode === 'tablet'
+          ? portraitCoverLayout(innerWidth, height, captions[index].height + 12, project.portraitBounds, width, photoHeight, navigation)
+          : stageLayout(innerWidth, height, width, photoHeight);
+      return [id, { '--stage-width': `${width}px`, '--stage-height': `${photoHeight}px`, '--mobile-image-height': `${photoHeight}px`,
+        '--visible-height': `${height}px`, '--mobile-art-window': `${height}px`, '--mobile-stage-height': `${height}px`,
+        '--gallery-scale': camera.scale, '--gallery-left': `${camera.left}px`, '--gallery-top': `${camera.top}px` }];
+    }));
+    for (const panel of panels) {
+      for (const [key,value] of Object.entries(styles.get(panel.project.id))) panel.element.style.setProperty(key,value);
     }
-    if (wasMoving && dialog.dataset.phase === 'open') {
-      rebasing = true;
-      track.style.scrollSnapType = 'none';
-      track.scrollTo({top: progress * height, behavior:'instant'});
-      requestAnimationFrame(resumeTrack);
-    } else rebase();
-    scheduleNeighbors();
+    const project = getProject(active);
+    const header = stageLayout(innerWidth, height, project.imageWidth, 1045);
+    for (const [key,value] of Object.entries({ '--gallery-scale': header.scale, '--gallery-left': `${header.left}px`,
+      '--gallery-top': `${header.top}px`, '--stage-width': `${project.imageWidth}px`, '--stage-height': '1045px' })) dialog.style.setProperty(key,value);
+    refreshScenes(selectedMode);
   }
 
   function requestLayout() {
     if (!dialog.open || resizeFrame) return;
-    resizeFrame = requestAnimationFrame(() => { resizeFrame = 0; layout(); });
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = 0;
+      layoutPending = true;
+      queueSettlement();
+    });
   }
 
   function aperture() {
@@ -282,6 +286,7 @@ export function initProjectGallery({ onReturn }) {
   async function open(id, fromHistory = false) {
     if (!getProject(id)) return;
     const token = ++pending;
+    clearTimeout(settleTimer);
     clearTimeout(prefetchTimer);
     stopMovement();
     select(ids.indexOf(id));
@@ -289,25 +294,34 @@ export function initProjectGallery({ onReturn }) {
     rows[selected].setAttribute('aria-busy','true');
     status.classList.add('sr-only');
     status.textContent = `Loading ${getProject(id).title}.`;
-    let selectedMode = mode();
     try {
-      await prepare(id, selectedMode, 'high');
-      while (token === pending && selectedMode !== mode()) { selectedMode = mode(); await prepare(id, selectedMode, 'high'); }
+      while (token === pending) {
+        const selectedMode = mode();
+        await prepareAll(selectedMode, 'high');
+        if (token !== pending) return;
+        if (selectedMode !== mode()) continue;
+        if (!panels.length) gallerySequence(ids).forEach(createPanel);
+        panels.forEach(panel => { panel.failedMode = null; });
+        await Promise.all(panels.map(panel => ensurePanel(panel, 'high')));
+        if (token !== pending) return;
+        if (selectedMode !== mode()) continue;
+        if (panels.some(panel => panel.loadedMode !== selectedMode)) throw new Error('Scene decode failed');
+        break;
+      }
     } catch {
       if (token === pending) { clearLoading(); status.classList.remove('sr-only'); status.textContent = 'Preview unavailable. Please try again.'; }
       return;
     }
     if (token !== pending) return;
-    if (!panels.size) ids.forEach(createPanel);
-    panels.get(id).failedMode = null;
-    await ensurePanel(panels.get(id), 'high');
-    if (token !== pending) return;
+    const start = ids.length + ids.indexOf(id);
     clearLoading();
     const wasOpen = dialog.open;
-    setActive(id, false);
+    touching = false; layoutPending = false;
+    setActive(start, false);
     dialog.dataset.phase = 'opening';
     if (!wasOpen) dialog.showModal();
     layout();
+    track.scrollTo({top: currentSlot * height, behavior:'instant'});
     track.focus({ preventScroll: true });
     if (!fromHistory) {
       if (wasOpen) history.replaceState(ownsHistoryEntry ? {studioProject:id} : history.state,'',`#work/${id}`);
@@ -315,10 +329,11 @@ export function initProjectGallery({ onReturn }) {
     } else ownsHistoryEntry = history.state?.studioProject === id;
     // Entrance motion is decorative. Native scrolling is ready immediately.
     dialog.dataset.phase = 'open';
+    queueSettlement();
     if (!reducedMotion.matches && !wasOpen) {
       const easing = 'cubic-bezier(.2,.75,.12,1)';
-      reveal = dialog.animate([{clipPath:aperture()},{clipPath:fullScreen}],{duration:850,easing});
-      const panel = panels.get(id);
+      reveal = dialog.animate([{opacity:0},{opacity:1}],{duration:420,easing});
+      const panel = panels[start];
       [panel.title,panel.description,panel.link].forEach((element,index) => movement.push(element.animate([
         {transform:`translateY(${[64,34,22][index]}px)`,opacity:0},{transform:'translateY(0)',opacity:1}
       ],{duration:[780,650,580][index],delay:[260,430,540][index],easing,fill:'backwards'})));
@@ -330,16 +345,15 @@ export function initProjectGallery({ onReturn }) {
     if (!dialog.open || dialog.dataset.phase === 'closing') return;
     const token = ++pending;
     dialog.dataset.phase = 'closing';
-    touching = false;
+    touching = false; layoutPending = false;
     clearTimeout(settleTimer);
-    clearTimeout(neighborTimer);
     stopMovement(); clearLoading(); onReturn();
     if (!reducedMotion.matches) {
       reveal = dialog.animate([{clipPath:fullScreen},{clipPath:aperture()}],{duration:480,easing:'cubic-bezier(.55,0,.7,.3)'});
       try { await reveal.finished; } catch { /* Interrupted by resize. */ }
     }
     if (token !== pending) return;
-    dialog.close(); dialog.dataset.phase = 'closed'; active = null;
+    dialog.close(); dialog.dataset.phase = 'closed'; active = null; currentSlot = -1;
     rows[selected].focus({preventScroll:true});
   }
 
@@ -350,40 +364,42 @@ export function initProjectGallery({ onReturn }) {
   }
 
   track.addEventListener('scroll', () => {
-    if (rebasing || dialog.dataset.phase !== 'open') return;
-    stopMovement();
-    clearTimeout(settleTimer);
-    settleTimer = setTimeout(settle, 180);
+    if (dialog.dataset.phase !== 'open') return;
+    queueSettlement();
     if (scrollFrame) return;
     scrollFrame = requestAnimationFrame(() => {
       scrollFrame = 0;
-      dialog.dataset.scrolling = String(Math.abs(track.scrollTop-height) > 1);
-      for (const slot of [Math.floor(track.scrollTop/height),Math.ceil(track.scrollTop/height)]) {
-        const visible = track.children[slot];
-        if (visible) ensurePanel(panels.get(visible.dataset.project),'high');
-      }
+      syncVisiblePanels();
+      dialog.dataset.scrolling = String(Math.abs(track.scrollTop - currentSlot * height) > 1);
     });
-  },{passive:true});
-  track.addEventListener('scrollend', settle);
-  track.addEventListener('wheel', stopMovement, {passive:true});
-  track.addEventListener('touchstart', () => { touching = true; stopMovement(); },{passive:true});
+  }, {passive:true});
+  track.addEventListener('scrollend', queueSettlement);
+  track.addEventListener('wheel', () => { stopMovement(); queueSettlement(); }, {passive:true});
+  track.addEventListener('touchstart', () => {
+    touching = true; clearTimeout(settleTimer); stopMovement();
+  }, {passive:true});
   window.addEventListener('touchend', event => {
-    touching = event.touches.length > 0;
-    clearTimeout(settleTimer); settleTimer = setTimeout(settle,180);
-  },{passive:true});
-  window.addEventListener('touchcancel', () => { touching = false; clearTimeout(settleTimer); settleTimer = setTimeout(settle,180); },{passive:true});
+    touching = event.touches.length > 0; queueSettlement();
+  }, {passive:true});
+  window.addEventListener('touchcancel', () => { touching = false; queueSettlement(); }, {passive:true});
   track.addEventListener('keydown', event => {
     if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('a,button')) return;
     const direction = ['ArrowDown','PageDown'].includes(event.key) ? 1 : ['ArrowUp','PageUp'].includes(event.key) ? -1 : 0;
-    if (direction) { stopMovement(); event.preventDefault(); if (!event.repeat) track.scrollTo({top:(direction>0?2:0)*height,behavior:reducedMotion.matches?'instant':'smooth'}); }
+    if (!direction) return;
+    event.preventDefault();
+    if (event.repeat) return;
+    stopMovement();
+    const target = Math.max(0, Math.min(panels.length - 1, Math.round(track.scrollTop / height) + direction));
+    track.scrollTo({top:target * height, behavior:reducedMotion.matches?'instant':'smooth'});
+    queueSettlement();
   });
   back.addEventListener('click',requestClose);
   dialog.addEventListener('cancel',event=>{event.preventDefault();requestClose();});
   rows.forEach((row,index)=>{
     const loader=document.createElement('span'); loader.className='terminal-loader'; loader.setAttribute('aria-hidden','true'); row.append(loader);
-    row.addEventListener('pointerenter',()=>{select(index);prefetch(row.dataset.project);});
+    row.addEventListener('pointerenter',()=>{select(index);prefetch();});
     row.addEventListener('pointerleave',()=>clearTimeout(prefetchTimer));
-    row.addEventListener('focus',()=>{select(index);prefetch(row.dataset.project);});
+    row.addEventListener('focus',()=>{select(index);prefetch();});
     row.addEventListener('blur',()=>clearTimeout(prefetchTimer));
     row.addEventListener('click',()=>open(row.dataset.project));
     row.addEventListener('keydown',event=>{
@@ -398,14 +414,17 @@ export function initProjectGallery({ onReturn }) {
     else { ++pending; clearLoading(); ownsHistoryEntry=false; close(); }
   });
   window.addEventListener('keydown',event=>{if(event.key==='Escape'&&!dialog.open){++pending;clearLoading();}});
-  window.addEventListener('resize',()=>{reveal?.finish();requestLayout();},{passive:true});
+  window.addEventListener('resize',requestLayout,{passive:true});
   window.visualViewport?.addEventListener('resize',()=>{if(window.visualViewport.scale===1)requestLayout();},{passive:true});
   reducedMotion.addEventListener('change',()=>{stopMovement();requestLayout();});
   const observer=new ResizeObserver(requestLayout); observer.observe(chrome);
   document.fonts.ready.then(requestLayout);
   select(0);
   return {
-    ready(){const id=projectFromHash(location.hash);if(id){baseHash='';onReturn();open(id,true);}},
+    ready(){
+      if (allowPrefetch(navigator.connection)) prepareAll().catch(() => {});
+      const id=projectFromHash(location.hash);if(id){baseHash='';onReturn();open(id,true);}
+    },
     cancelPending(){clearTimeout(prefetchTimer);if(!dialog.open){++pending;clearLoading();}}
   };
 }

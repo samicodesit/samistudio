@@ -1,3 +1,4 @@
+import './hero-background.test.mjs';
 import './gallery-startup.test.mjs';
 import './gallery-navigation.test.mjs';
 import './og-image.test.mjs';

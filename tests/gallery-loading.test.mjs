@@ -32,10 +32,10 @@ test('the clean Cryptik portrait does not download desktop text plates', async (
   assert.equal(projectAssets(project, 'desktop').length, 4);
 });
 
-test('data saving and slow connections disable speculative project requests', async () => {
+test('data saving disables background loading; other connections warm the current scenes', async () => {
   const { allowPrefetch } = await import('../assets/gallery-loading.mjs');
   assert.equal(allowPrefetch({ saveData: true, effectiveType: '4g' }), false);
-  for (const effectiveType of ['slow-2g', '2g', '3g']) assert.equal(allowPrefetch({ effectiveType }), false);
+  for (const effectiveType of ['slow-2g', '2g', '3g']) assert.equal(allowPrefetch({ effectiveType }), true);
   assert.equal(allowPrefetch({ effectiveType: '4g' }), true);
   assert.equal(allowPrefetch(undefined), true);
 });

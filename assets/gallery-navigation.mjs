@@ -1,12 +1,14 @@
-// Keep three real scenes in a ring: previous, current, next.
-export function galleryOrder(ids, active) {
-  const index = ids.indexOf(active);
-  return [-1, 0, 1].map(offset => ids[(index + offset + ids.length) % ids.length]);
+// Static snap targets: one complete project cycle on either side of the center.
+export function gallerySequence(ids) {
+  return [...ids, ...ids, ...ids];
 }
 
-// Never rebase a track while a finger or native snap is between pages.
-export function settledSlot(offset, height) {
+export function centerSlot(slot, projectCount) {
+  return projectCount + ((slot % projectCount) + projectCount) % projectCount;
+}
+
+export function settledSlot(offset, height, panelCount) {
   if (!Number.isFinite(offset) || !Number.isFinite(height) || height <= 0) return null;
-  const index = Math.round(offset / height);
-  return index >= 0 && index <= 2 && Math.abs(offset - index * height) <= .75 ? index : null;
+  const slot = Math.round(offset / height);
+  return slot >= 0 && slot < panelCount && Math.abs(offset - slot * height) <= .75 ? slot : null;
 }

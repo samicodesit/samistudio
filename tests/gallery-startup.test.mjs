@@ -4,21 +4,22 @@ import { readFile } from 'node:fs/promises';
 import { runInNewContext } from 'node:vm';
 import { getProject } from '../assets/project-data.mjs';
 import { projectAssets, allowPrefetch } from '../assets/gallery-loading.mjs';
-import { galleryOrder, settledSlot } from '../assets/gallery-navigation.mjs';
+import { gallerySequence, centerSlot, settledSlot } from '../assets/gallery-navigation.mjs';
 import * as geometry from '../assets/gallery-geometry.mjs';
 
 // Run the real controller with animations deliberately held unfinished. This
 // models the opening period independently of animation or device frame rate.
-async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, extraTail=0}={}) {
-  const requests = [], animations = [], frames = [], timers = new Map();
+async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, extraTail=0,reduced=false,slowProject=null,autoOpen=true}={}) {
+  const requests = [], animations = [], frames = [], scrollWrites = [], measurements = [], timers = new Map();
   let timerId = 0;
+  const decodeGates=[]; let selectedLayout='tablet';
   class Element {
     constructor() {
       this.dataset = {}; this.children = []; this.nodes = new Map(); this.attrs = new Map();
-      this.listeners = new Map(); this.style = {setProperty() {}}; this.classList = {add() {},remove() {}};
+      this.listeners = new Map(); this.style = {values:new Map(),setProperty(key,value){this.values.set(key,value);},getPropertyValue(key){return this.values.get(key);}}; this.classList = {add() {},remove() {}};
       this.scrollTop = 0; this.open = false;
     }
-    querySelector(key) { if (!this.nodes.has(key)) this.nodes.set(key,new Element()); return this.nodes.get(key); }
+    querySelector(key) { if (!this.nodes.has(key)) this.nodes.set(key,new Element()); this.nodes.get(key).parentElement=this; this.nodes.get(key).debugKey=key; return this.nodes.get(key); }
     querySelectorAll() { return []; }
     addEventListener(key,fn) { const list=this.listeners.get(key)||[]; list.push(fn); this.listeners.set(key,list); }
     emit(key,event={}) { for (const fn of this.listeners.get(key)||[]) fn(event); }
@@ -26,12 +27,13 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
     get offsetTop() { return this.parentElement?.children.indexOf(this)*this.parentElement.clientHeight || 0; }
     setAttribute(key,value) { this.attrs.set(key,value); }
     removeAttribute(key) { this.attrs.delete(key); }
-    getBoundingClientRect() { return {width:393,height:72}; }
+    getAttribute(key) { return this.attrs.get(key) ?? null; }
+    getBoundingClientRect() { measurements.push(this.debugKey); return {width:393,height:72}; }
     contains() { return false; }
     focus() {}
     replaceChildren() {}
     decode() { return Promise.resolve(); }
-    scrollTo({top}) { this.scrollTop=top; }
+    scrollTo({top}) { scrollWrites.push(top); this.scrollTop=top; }
     showModal() { this.open=true; }
     close() { this.open=false; }
     cloneNode() { return new Element(); }
@@ -54,141 +56,236 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
   Object.defineProperty(track,'scrollHeight',{get:()=>track.children.length*track.clientHeight+extraTail});
   const window=new Element(); window.visualViewport={scale:1,height:viewportHeight,addEventListener(){}};
   const context={document,window,navigator:{connection:{effectiveType:'4g'}},innerWidth:393,innerHeight:711,
-    URL,console, getProject,projectAssets,allowPrefetch,galleryOrder,settledSlot,...geometry,
-    matchMedia:query=>({matches:query.includes('orientation: portrait'),addEventListener(){}}),
+    URL,console, getProject,projectAssets,allowPrefetch,gallerySequence,centerSlot,settledSlot,...geometry,
+    matchMedia:query=>({matches:query.includes('prefers-reduced-motion') ? reduced : query.includes('orientation: portrait') ? selectedLayout==='tablet' : query.includes('orientation: landscape') ? selectedLayout==='landscape' : query.includes('min-aspect-ratio') && selectedLayout==='wide',addEventListener(){}}),
     getComputedStyle:()=>({getPropertyValue:()=>''}),
     requestAnimationFrame:fn=>{frames.push(fn);return frames.length;},
     setTimeout:(fn,delay)=>{timers.set(++timerId,{fn,delay});return timerId;},clearTimeout:id=>timers.delete(id),
     ResizeObserver:class {observe() {}},
-    Image:class {set src(value){requests.push(value);} decode(){return Promise.resolve();}},
-    history:{state:null,pushState(){},replaceState(){}},location:{hash:'',pathname:'/',search:''}};
+    Image:class {set src(value){this.path=value;requests.push(value);} decode(){return slowProject && this.path.includes(slowProject) ? new Promise(resolve=>decodeGates.push(resolve)) : Promise.resolve();}},
+    history:{state:null,entries:[],pushState(state,_,hash){this.state=state;this.entries.push({state,hash});},replaceState(state,_,hash){this.state=state;this.entries[this.entries.length-1]={state,hash};},back(){this.state=null;context.location.hash="";window.emit("popstate");}},location:{hash:'',pathname:'/',search:''}};
   const source=(await readFile(new URL('../assets/project-gallery.js',import.meta.url),'utf8'))
     .replace(/^import .*;\r?\n/gm,'').replace('export function initProjectGallery','function initProjectGallery')
     .replace('import.meta.url',"'https://studio.test/assets/project-gallery.js'");
-  runInNewContext(`${source}\ninitProjectGallery({onReturn(){}});`,context);
-  const flush=async()=>{for(let i=0;i<30;i++)await Promise.resolve();};
-  rows[0].emit('click'); await flush();
+  runInNewContext(`${source}\ncontroller=initProjectGallery({onReturn(){}});`,context);
+  const flush=async()=>{for(let i=0;i<80;i++)await Promise.resolve();};
+  if(autoOpen) rows[0].emit('click'); await flush();
   return {dialog:document.querySelector('#project-gallery'),track:document.querySelector('#project-gallery').querySelector('.gallery-track'),
-    requests,animations,frames,timers,flush,window,
+    requests,animations,frames,timers,flush,window,scrollWrites,measurements,rows,controller:context.controller,history:context.history,
+    releaseDecodes(){decodeGates.splice(0).forEach(resolve=>resolve());},
+    blockProject(id){slowProject=id;},
+    setLayout(value){selectedLayout=value;context.innerWidth=value==='landscape'?844:393;window.emit('resize');},
     flushFrames(){let count=0;while(frames.length && count++<10)frames.splice(0).forEach(fn=>fn());},
-    async runSettlement(){const timer=[...timers.values()].find(timer=>timer.delay===180); assert.ok(timer); await timer.fn(); await flush();}};
+    takeSettlement(){const entry=[...timers.entries()].find(([,timer])=>timer.delay===180); assert.ok(entry,'settlement is queued after native input');timers.delete(entry[0]);return entry[1].fn;},
+    async runSettlement(){await this.takeSettlement()();await flush();}};
 }
 
-test('first visible scene accepts scrolling while entrance animations are unfinished', async()=>{
-  const {dialog,animations}=await galleryFixture();
-  assert.equal(dialog.open,true);
-  assert.ok(animations.length>0,'exercise a real animated entrance');
-  assert.equal(dialog.dataset.phase,'open','animation completion must not gate scrolling');
+const H=711;
+
+test('first visible scene scrolls while entrance animations remain unfinished',async()=>{
+  const {dialog,track,animations}=await galleryFixture();
+  assert.equal(dialog.open,true); assert.equal(dialog.dataset.phase,'open');
+  assert.equal(track.scrollTop,3*H); assert.equal(track.children.length,9);
+  assert.ok(animations.length>0);
 });
 
-test('touch and wheel interrupt the decorative entrance without swallowing input',async()=>{
-  for(const type of ['touchstart','wheel']) {
-    const {track,animations,flush}=await galleryFixture();
-    let prevented=false;
-    track.emit(type,{preventDefault(){prevented=true;}}); await flush();
-    assert.ok(animations.every(a=>a.cancelled),`${type} must release the aperture and caption animations`);
+test('wheel and touch interrupt decorative motion without consuming native input',async()=>{
+  for(const event of ['wheel','touchstart']) {
+    const {track,animations}=await galleryFixture(); let prevented=false;
+    track.emit(event,{preventDefault(){prevented=true;}});
+    assert.ok(animations.every(animation=>animation.cancelled));
     assert.equal(prevented,false);
   }
 });
 
-test('first opening does not eagerly decode every neighboring scene',async()=>{
-  const {requests}=await galleryFixture();
-  assert.ok(requests.length>0);
-  assert.ok(requests.every(url=>url.includes('doodle')),requests.join('\n'));
+test('opening prepares all projects for the current layout only',async()=>{
+  const {requests,track}=await galleryFixture();
+  assert.equal(new Set(requests).size,3);
+  assert.ok(requests.every(path=>path.includes('portrait-room')));
+  assert.ok(track.children.every(panel=>panel.dataset.ready==='true'));
 });
 
-
-test('keyboard navigation works before entrance animations finish',async()=>{
-  const {track,animations}=await galleryFixture();
-  let prevented=false;
-  track.emit('keydown',{key:'ArrowDown',target:{closest(){return null;}},preventDefault(){prevented=true;}});
-  assert.equal(track.scrollTop,1422);
-  assert.equal(prevented,true);
-  assert.ok(animations.every(a=>a.cancelled));
-});
-
-test('closing invalidates scheduled neighboring-scene work',async()=>{
-  const {dialog,requests,timers,flush}=await galleryFixture();
-  const background=[...timers.values()].find(timer=>timer.delay===1400);
-  assert.ok(background,'neighbors are queued after the entrance');
-  const before=requests.length;
-  dialog.emit('cancel',{preventDefault(){}});
-  await background.fn(); await flush();
-  assert.equal(requests.length,before);
-  assert.equal(dialog.dataset.phase,'closing');
-});
-
-
-for (const [label,offset,project] of [['bottom',1610,'autolister'],['top',-188,'cryptik']]) {
-  test(`Safari ${label} overscroll recovers the infinite ring without a scrollend event`,async()=>{
-    const fixture=await galleryFixture();
-    const {track,dialog,window,flushFrames,runSettlement}=fixture;
-    flushFrames();
-    track.emit('touchstart');
-    track.scrollTop=offset;
-    track.emit('scroll'); flushFrames();
-    assert.equal(dialog.dataset.project,'doodle','never reorder under an active finger');
-    window.emit('touchend',{touches:[]});
-    await runSettlement(); flushFrames();
-    assert.equal(dialog.dataset.project,project);
-    assert.equal(track.scrollTop,711,'restore a full scene with a neighbor in both directions');
-  });
-}
-
-test('loop uses the rendered track height when the viewport measurement differs',async()=>{
-  const {track,dialog,flushFrames}=await galleryFixture({viewportHeight:711,trackHeight:700});
-  flushFrames();
-  assert.equal(track.scrollTop,700);
-  track.scrollTop=1400; track.emit('scrollend'); flushFrames();
-  assert.equal(dialog.dataset.project,'autolister');
-  assert.equal(track.scrollTop,700);
-});
-
-test('multiple full touch cycles never leave an endpoint in either direction',async()=>{
-  const {track,dialog,window,flushFrames,runSettlement}=await galleryFixture();
-  flushFrames();
-  for(const [offset,expected] of [[1422,'autolister'],[1422,'cryptik'],[1422,'doodle'],[1422,'autolister'],[0,'doodle'],[0,'cryptik'],[0,'autolister'],[0,'doodle']]) {
-    track.emit('touchstart'); track.scrollTop=offset; track.emit('scroll'); flushFrames();
-    window.emit('touchend',{touches:[]}); await runSettlement(); flushFrames();
-    assert.equal(dialog.dataset.project,expected);
-    assert.equal(track.scrollTop,711);
-    assert.equal(track.children.length,3);
+test('ordinary scroll keeps snap targets and native position untouched',async()=>{
+  const f=await galleryFixture(); f.flushFrames();
+  const original=[...f.track.children]; f.scrollWrites.length=0;
+  for(const [slot,id] of [[4,'autolister'],[5,'cryptik'],[4,'autolister'],[3,'doodle']]) {
+    f.track.scrollTop=slot*H; f.track.emit('scroll'); f.flushFrames(); f.track.emit('scrollend');
+    await f.runSettlement();
+    assert.equal(f.dialog.dataset.project,id);
+    assert.equal(f.scrollWrites.length,0);
+    assert.ok(f.track.children.every((node,index)=>node===original[index]));
   }
 });
 
+test('repeated wraps preserve order and relocate only an identical idle copy',async()=>{
+  const f=await galleryFixture(); f.flushFrames();
+  const original=[...f.track.children];
+  for(const direction of [1,1,1,1,1,1,-1,-1,-1,-1,-1,-1]) {
+    const from=f.track.scrollTop/H, slot=from+direction;
+    const expected=f.track.children[slot].dataset.project;
+    f.track.emit('touchstart'); f.track.scrollTop=slot*H; f.track.emit('scroll'); f.flushFrames();
+    const held=f.track.scrollTop;
+    f.window.emit('touchend',{touches:[]}); await f.runSettlement(); f.flushFrames();
+    assert.equal(f.dialog.dataset.project,expected);
+    assert.equal(f.track.children[f.track.scrollTop/H].dataset.project,expected);
+    assert.ok(f.track.children.every((node,index)=>node===original[index]));
+    if(slot>=3&&slot<6) assert.equal(f.track.scrollTop,held);
+    else assert.equal(f.track.scrollTop,centerSlot(slot,3)*H);
+  }
+});
 
-test('browser-bar resizing never carries a bounced offset beyond the new track',async()=>{
-  const {track,dialog,window,flushFrames,runSettlement}=await galleryFixture();
-  flushFrames();
-  track.emit('touchstart'); track.scrollTop=1610; track.emit('scroll'); flushFrames();
-  track.clientHeight=780; window.visualViewport.height=780;
-  window.emit('resize'); flushFrames();
-  assert.ok(track.scrollTop<=1560,'resize must clamp overscroll before preserving progress');
-  window.emit('touchend',{touches:[]}); await runSettlement(); flushFrames();
-  assert.equal(dialog.dataset.project,'autolister');
-  assert.equal(track.scrollTop,780);
+test('a finger down or partial native movement cannot trigger relocation',async()=>{
+  const f=await galleryFixture(); f.flushFrames(); f.scrollWrites.length=0;
+  f.track.emit('touchstart'); f.track.scrollTop=6*H; f.track.emit('scrollend');
+  await f.runSettlement(); assert.equal(f.scrollWrites.length,0);
+  f.track.scrollTop=5.4*H; f.window.emit('touchend',{touches:[]}); await f.runSettlement();
+  assert.equal(f.scrollWrites.length,0);
+});
+
+test('viewport resize during touch or wheel never writes scroll corrections',async()=>{
+  for(const event of ['touchstart','wheel']) {
+    const f=await galleryFixture(); f.flushFrames(); f.scrollWrites.length=0;
+    f.track.emit(event); f.track.scrollTop=3.4*H; f.track.emit('scroll'); f.flushFrames();
+    f.track.clientHeight=780; f.window.visualViewport.height=780; f.window.emit('resize'); f.flushFrames();
+    assert.equal(f.scrollWrites.length,0);
+    assert.equal(f.track.scrollTop,3.4*H);
+    // Model the browser completing its native re-snap after layout.
+    f.track.scrollTop=4*H; f.window.emit('touchend',{touches:[]}); f.track.emit('scrollend');
+    await f.runSettlement(); assert.equal(f.dialog.dataset.project,'autolister');
+    assert.ok(f.scrollWrites.length<=1,'only the final idle fit may align the same project');
+  }
+});
+
+test('terminal loading waits for every scene before showing the gallery',async()=>{
+  const f=await galleryFixture({slowProject:'autolister'});
+  assert.equal(f.dialog.open,false);assert.equal(f.rows[0].attrs.get('aria-busy'),'true');
+  f.releaseDecodes();await f.flush();
+  assert.equal(f.dialog.open,true);
+  assert.ok(f.track.children.every(panel=>panel.dataset.ready==='true'));
+});
+
+test('cancelling terminal loading prevents a stale open after late decoding',async()=>{
+  const f=await galleryFixture({slowProject:'autolister'});
+  f.controller.cancelPending();f.releaseDecodes();await f.flush();
+  assert.equal(f.dialog.open,false);
+  f.rows[2].emit('click');await f.flush();
+  assert.equal(f.dialog.dataset.project,'cryptik');
+});
+
+test('boundary overscroll recovers without scrollend, including a stale extra extent',async()=>{
+  for(const [slot,id] of [[-1,'doodle'],[9,'cryptik']]) {
+    const f=await galleryFixture({extraTail:188});f.flushFrames();
+    f.track.emit('touchstart');f.track.scrollTop=slot*H;f.track.emit('scroll');f.flushFrames();
+    f.window.emit('touchend',{touches:[]});await f.runSettlement();
+    assert.equal(f.dialog.dataset.project,id);
+    assert.equal(f.track.scrollTop,id==='doodle'?3*H:5*H);
+  }
+});
+
+test('keyboard moves one physical page and reduced motion uses no animation',async()=>{
+  const f=await galleryFixture({reduced:true});f.flushFrames();
+  f.track.emit('keydown',{key:'ArrowDown',target:{closest(){return null;}},preventDefault(){}});
+  assert.equal(f.track.scrollTop,4*H);assert.equal(f.animations.length,0);
+  f.track.emit('scrollend');await f.runSettlement();assert.equal(f.dialog.dataset.project,'autolister');
+});
+
+test('one history entry survives a full loop and Back returns to the terminal',async()=>{
+  const f=await galleryFixture({reduced:true});f.flushFrames();
+  for(const slot of [4,5,6]) {f.track.scrollTop=slot*H;f.track.emit('scrollend');await f.runSettlement();}
+  assert.equal(f.history.entries.length,1);
+  f.dialog.emit('cancel',{preventDefault(){}});await f.flush();
+  assert.equal(f.dialog.open,false);
+  f.rows[2].emit('click');await f.flush();f.flushFrames();
+  assert.equal(f.dialog.dataset.project,'cryptik');assert.equal(f.track.scrollTop,5*H);
+});
+
+test('closing cancels queued wrap work and reopening preserves readiness',async()=>{
+  const f=await galleryFixture({reduced:true});f.flushFrames();
+  f.track.scrollTop=6*H;f.track.emit('scrollend');
+  f.dialog.emit('cancel',{preventDefault(){}});await f.flush();
+  const writes=f.scrollWrites.length;
+  assert.equal(f.dialog.open,false);assert.equal(f.scrollWrites.length,writes);
+  f.rows[1].emit('click');await f.flush();
+  assert.equal(f.dialog.dataset.project,'autolister');
+  assert.ok(f.track.children.every(panel=>panel.dataset.ready==='true'));
+});
+
+test('every scene copy is decoded before the gallery becomes visible',async()=>{
+  const f=await galleryFixture();
+  assert.equal(f.track.children.filter(node=>node.dataset.ready==='true').length,9);
+});
+
+test('terminal-ready starts warming all three current-layout scenes before a click',async()=>{
+  const f=await galleryFixture({autoOpen:false});
+  f.controller.ready();await f.flush();
+  for(const id of ['doodle','autolister','cryptik']) assert.ok(f.requests.some(url=>url.includes(id)),id);
+  assert.equal(f.dialog.open,false);
 });
 
 
-test('a stale native scroll extent cannot become an extra blank project',async()=>{
-  const {track,dialog,window,flushFrames,runSettlement}=await galleryFixture({extraTail:188});
-  flushFrames();
-  track.emit('touchstart'); track.scrollTop=1610; track.emit('scroll'); flushFrames();
-  window.emit('touchend',{touches:[]}); await runSettlement(); flushFrames();
-  assert.equal(dialog.dataset.project,'autolister');
-  assert.equal(track.scrollTop,711);
+test('an orientation change during loading prepares the new layout before opening',async()=>{
+  const f=await galleryFixture({slowProject:'autolister'});
+  f.setLayout('landscape');f.releaseDecodes();await f.flush();
+  assert.equal(f.dialog.open,false);
+  f.releaseDecodes();await f.flush();
+  assert.equal(f.dialog.open,true);
+  assert.ok(f.track.children.every(panel=>panel.querySelector('.composed-photo img').src.includes('landscape')));
+});
+
+test('orientation refresh retains existing images until all new artwork is prepared',async()=>{
+  const f=await galleryFixture();f.flushFrames();f.scrollWrites.length=0;
+  f.blockProject('autolister');f.setLayout('landscape');f.flushFrames();await f.runSettlement();await f.flush();
+  assert.ok(f.track.children.every(panel=>panel.dataset.ready==='true'));
+  assert.ok(f.track.children.every(panel=>panel.querySelector('.composed-photo img').src.includes('portrait-room')));
+  f.releaseDecodes();await f.flush();
+  assert.ok(f.track.children.every(panel=>panel.querySelector('.composed-photo img').src.includes('landscape')));
+  assert.equal(f.scrollWrites.length,0);
 });
 
 
-test('a native scroll arriving during recentering is settled after the track unlocks',async()=>{
-  const {track,dialog,flushFrames,runSettlement}=await galleryFixture();
-  flushFrames();
-  track.scrollTop=1422; track.emit('scrollend');
-  assert.equal(dialog.dataset.project,'autolister');
-  // A second native gesture reaches the edge before the rebase RAF completes.
-  // Its scroll and scrollend events are deliberately ignored by the busy guard.
-  track.scrollTop=1422; track.emit('scroll'); track.emit('scrollend');
-  flushFrames(); await runSettlement(); flushFrames();
-  assert.equal(dialog.dataset.project,'cryptik');
-  assert.equal(track.scrollTop,711);
+test('crossing to widescreen retains the previous render until the wide set is decoded',async()=>{
+  const f=await galleryFixture();f.flushFrames();
+  f.blockProject('autolister');f.setLayout('wide');f.flushFrames();await f.runSettlement();await f.flush();
+  assert.ok(f.track.children.every(panel=>panel.dataset.art==='photo'));
+  assert.ok(f.track.children.every(panel=>panel.dataset.ready==='true'));
+  f.releaseDecodes();await f.flush();
+  assert.ok(f.track.children.every(panel=>panel.dataset.art==='wide'));
+});
+
+
+test('browser-bar height changes cannot resize pages underneath an active gesture',async()=>{
+  const f=await galleryFixture();f.flushFrames();
+  f.track.emit('touchstart');f.track.scrollTop=4*H;f.track.emit('scroll');f.flushFrames();
+  f.track.clientHeight=780;f.window.visualViewport.height=780;f.window.emit('resize');f.flushFrames();
+  assert.equal(f.track.style.getPropertyValue('--gallery-page-height'),`${H}px`);
+  f.window.emit('touchend',{touches:[]});await f.runSettlement();f.flushFrames();
+  assert.equal(f.track.style.getPropertyValue('--gallery-page-height'),'780px');
+  assert.equal(f.dialog.dataset.project,'autolister');
+  assert.equal(f.track.scrollTop,4*780);
+});
+
+
+test('opening scroll placement does not cancel the entrance before it can render',async()=>{
+  const f=await galleryFixture();
+  f.track.emit('scroll');f.flushFrames();
+  assert.ok(f.animations.every(animation=>!animation.cancelled));
+});
+
+
+test('layout measures each project caption once instead of repeating work for every copy',async()=>{
+  const f=await galleryFixture();
+  assert.equal(f.measurements.filter(key=>key==='.gallery-chrome').length,1);
+  assert.equal(f.measurements.filter(key=>key==='.gallery-caption-frame').length,3);
+});
+
+
+test('both visible scenes remain clickable during a scroll transition',async()=>{
+  const f=await galleryFixture();f.flushFrames();
+  f.track.scrollTop=3.6*H;f.track.emit('scroll');f.flushFrames();
+  assert.equal(f.track.children[3].inert,false);
+  assert.equal(f.track.children[4].inert,false);
+  assert.equal(f.track.children[0].inert,true);
+  f.track.children[4].querySelector('.project-link').emit('click');
+  assert.equal(f.dialog.dataset.project,'autolister');
+  assert.equal(f.history.state.studioProject,'autolister');
 });
