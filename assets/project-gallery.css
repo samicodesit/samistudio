@@ -479,7 +479,6 @@
   -webkit-overflow-scrolling: touch; touch-action: pan-y pinch-zoom;
 }
 .gallery-track::-webkit-scrollbar { display: none; }
-.gallery-shell[data-phase="opening"] .gallery-track,
 .gallery-shell[data-phase="closing"] .gallery-track { overflow-y: hidden; }
 .gallery-track:focus { outline: none; }
 .gallery-track > .gallery-panel[data-project][data-scene] {

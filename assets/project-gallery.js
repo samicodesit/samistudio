@@ -24,7 +24,7 @@ export function initProjectGallery({ onReturn }) {
   let active = null, selected = 0, pending = 0, height = 0;
   let ownsHistoryEntry = false, baseHash = '';
   let rebasing = false, touching = false;
-  let resizeFrame = 0, scrollFrame = 0, settleTimer = 0, prefetchTimer = 0;
+  let resizeFrame = 0, scrollFrame = 0, settleTimer = 0, prefetchTimer = 0, neighborTimer = 0;
   let reveal = null, movement = [];
 
   function mode() {
@@ -185,6 +185,19 @@ export function initProjectGallery({ onReturn }) {
     else dialog.dataset.scrolling = 'false';
   }
 
+  function scheduleNeighbors() {
+    clearTimeout(neighborTimer);
+    if (!allowPrefetch(navigator.connection)) return;
+    const token = pending;
+    // Leave the first paint and entrance free of adjacent-scene decode work.
+    neighborTimer = setTimeout(async () => {
+      for (const id of galleryOrder(ids, active).filter(id => id !== active)) {
+        if (token !== pending || !dialog.open || dialog.dataset.phase !== 'open') return;
+        await ensurePanel(panels.get(id), 'low');
+      }
+    }, 1400);
+  }
+
   function layout() {
     if (!dialog.open || !active) return;
     const progress = height > 0 ? track.scrollTop / height : 1;
@@ -221,7 +234,7 @@ export function initProjectGallery({ onReturn }) {
         dialog.style.setProperty('--stage-width', `${project.imageWidth}px`);
         dialog.style.setProperty('--stage-height', '1045px');
       }
-      if (panel.loadedMode !== selectedMode && (project.id === active || allowPrefetch(navigator.connection))) ensurePanel(panel, project.id === active ? 'high' : 'low');
+      if (panel.loadedMode !== selectedMode && project.id === active) ensurePanel(panel, 'high');
     }
     if (wasMoving && dialog.dataset.phase === 'open') {
       rebasing = true;
@@ -229,6 +242,7 @@ export function initProjectGallery({ onReturn }) {
       track.scrollTo({top: progress * height, behavior:'instant'});
       requestAnimationFrame(() => { track.style.scrollSnapType = ''; rebasing = false; });
     } else rebase();
+    scheduleNeighbors();
   }
 
   function requestLayout() {
@@ -244,7 +258,7 @@ export function initProjectGallery({ onReturn }) {
       mobile: matchMedia(compactQuery).matches }, { width: innerWidth, height: innerHeight });
   }
 
-  function stopMovement() { reveal?.cancel(); movement.forEach(animation => animation.cancel()); movement = []; }
+  function stopMovement() { reveal?.cancel(); reveal = null; movement.forEach(animation => animation.cancel()); movement = []; }
   function clearLoading() { status.textContent = ''; rows.forEach(row => row.removeAttribute('aria-busy')); }
 
   async function open(id, fromHistory = false) {
@@ -281,6 +295,8 @@ export function initProjectGallery({ onReturn }) {
       if (wasOpen) history.replaceState(ownsHistoryEntry ? {studioProject:id} : history.state,'',`#work/${id}`);
       else { baseHash = location.hash; history.pushState({studioProject:id},'',`#work/${id}`); ownsHistoryEntry = true; }
     } else ownsHistoryEntry = history.state?.studioProject === id;
+    // Entrance motion is decorative. Native scrolling is ready immediately.
+    dialog.dataset.phase = 'open';
     if (!reducedMotion.matches && !wasOpen) {
       const easing = 'cubic-bezier(.2,.75,.12,1)';
       reveal = dialog.animate([{clipPath:aperture()},{clipPath:fullScreen}],{duration:850,easing});
@@ -288,9 +304,8 @@ export function initProjectGallery({ onReturn }) {
       [panel.title,panel.description,panel.link].forEach((element,index) => movement.push(element.animate([
         {transform:`translateY(${[64,34,22][index]}px)`,opacity:0},{transform:'translateY(0)',opacity:1}
       ],{duration:[780,650,580][index],delay:[260,430,540][index],easing,fill:'backwards'})));
-      try { await Promise.all([reveal,...movement].map(animation => animation.finished)); } catch { /* Interrupted by close or resize. */ }
+      Promise.all([reveal,...movement].map(animation => animation.finished)).catch(() => { /* Input can interrupt the entrance. */ });
     }
-    if (token === pending && dialog.open && dialog.dataset.phase !== 'closing') dialog.dataset.phase = 'open';
   }
 
   async function close() {
@@ -299,6 +314,7 @@ export function initProjectGallery({ onReturn }) {
     dialog.dataset.phase = 'closing';
     touching = false;
     clearTimeout(settleTimer);
+    clearTimeout(neighborTimer);
     stopMovement(); clearLoading(); onReturn();
     if (!reducedMotion.matches) {
       reveal = dialog.animate([{clipPath:fullScreen},{clipPath:aperture()}],{duration:480,easing:'cubic-bezier(.55,0,.7,.3)'});
@@ -317,6 +333,7 @@ export function initProjectGallery({ onReturn }) {
 
   track.addEventListener('scroll', () => {
     if (rebasing || dialog.dataset.phase !== 'open') return;
+    stopMovement();
     clearTimeout(settleTimer);
     settleTimer = setTimeout(settle, 180);
     if (scrollFrame) return;
@@ -330,7 +347,8 @@ export function initProjectGallery({ onReturn }) {
     });
   },{passive:true});
   track.addEventListener('scrollend', settle);
-  track.addEventListener('touchstart', () => { touching = true; },{passive:true});
+  track.addEventListener('wheel', stopMovement, {passive:true});
+  track.addEventListener('touchstart', () => { touching = true; stopMovement(); },{passive:true});
   window.addEventListener('touchend', event => {
     touching = event.touches.length > 0;
     clearTimeout(settleTimer); settleTimer = setTimeout(settle,180);
@@ -339,7 +357,7 @@ export function initProjectGallery({ onReturn }) {
   track.addEventListener('keydown', event => {
     if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('a,button')) return;
     const direction = ['ArrowDown','PageDown'].includes(event.key) ? 1 : ['ArrowUp','PageUp'].includes(event.key) ? -1 : 0;
-    if (direction) { event.preventDefault(); if (!event.repeat) track.scrollTo({top:(direction>0?2:0)*height,behavior:reducedMotion.matches?'instant':'smooth'}); }
+    if (direction) { stopMovement(); event.preventDefault(); if (!event.repeat) track.scrollTo({top:(direction>0?2:0)*height,behavior:reducedMotion.matches?'instant':'smooth'}); }
   });
   back.addEventListener('click',requestClose);
   dialog.addEventListener('cancel',event=>{event.preventDefault();requestClose();});

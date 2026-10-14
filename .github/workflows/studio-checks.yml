@@ -12,6 +12,7 @@ on:
       - tests/og-image.test.mjs
       - tests/gallery.test.mjs
       - tests/gallery-loading.test.mjs
+      - tests/gallery-startup.test.mjs
       - site.webmanifest
       - vercel.json
       - .gitignore
@@ -28,6 +29,7 @@ on:
       - tests/og-image.test.mjs
       - tests/gallery.test.mjs
       - tests/gallery-loading.test.mjs
+      - tests/gallery-startup.test.mjs
       - site.webmanifest
       - vercel.json
       - .gitignore

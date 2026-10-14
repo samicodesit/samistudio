@@ -185,3 +185,12 @@ Fidelity surfaces: existing native fonts, type weights, wrapping and text are pr
 Browser checks: all three phone boundaries at 393 x 711 showed the four-pixel separator during motion and hid it at rest. Each remained pointer-events:none and the native track remained exactly three pages. Tablet check at 820 x 1180 retained the same material treatment without outer overflow. Laptop rest check at 1280 x 720 hid the edge. Real mouse-wheel snapping, Back to work, reopening and returning to a settled scene passed, with no console errors.
 
 Final result: passed.
+
+
+## 2026-10-14: First-open scroll responsiveness
+
+- Root cause: gallery scrolling stayed disabled until the aperture and all caption entrance animations finished. The longest caption ran for 1120 ms, with no interactive escape when animation completion was delayed.
+- Enabled native scrolling immediately after the prepared scene is shown. Wheel, touch and keyboard input cancel the decorative entrance using passive input listeners where appropriate.
+- Deferred neighboring-scene preloading for 1400 ms and serialized their image decode instead of starting all scenes during the first paint. Visible neighbors still load on demand during native scrolling. No new runtime dependency or image download added.
+- Five controller regression tests hold animation promises unfinished and cover immediate readiness, wheel/touch interruption, keyboard input, deferred downloads and cancellation on close. The original controller failed the three initial regressions; the fix passes all five.
+- Verification: 36 tests, browser module syntax checks and the 53-file production build passed. Chrome browser checks at 393x711 and 844x390 covered input during the entrance, forward and reverse project navigation, resize, close and reopen. A real iPhone Safari session was unavailable, so physical-device touch performance is not claimed verified.
