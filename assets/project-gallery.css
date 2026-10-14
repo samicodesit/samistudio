@@ -379,7 +379,7 @@
   .project-gallery[data-scene="composed"] .gallery-caption-frame::before {
     content: ''; position: absolute; inset: -52px 0 0; pointer-events: none;
     background: color-mix(in srgb, var(--gallery-surface) 12%, transparent);
-    -webkit-backdrop-filter: blur(16px) saturate(.95); backdrop-filter: blur(16px) saturate(.95);
+    -webkit-backdrop-filter: blur(8px) saturate(.98); backdrop-filter: blur(8px) saturate(.98);
     mask-image: linear-gradient(transparent, #000 52px);
   }
   .project-gallery[data-project][data-scene="composed"] .project-caption {
@@ -463,54 +463,95 @@
   .project-gallery[data-project][data-layout="split"] .project-caption p { font-size: 14px; line-height: 20px; }
 }
 
-/* Navigation lives on the glass; the photographed scenes stay untouched. */
-.project-gallery { touch-action: pan-x pinch-zoom; overscroll-behavior: none; }
-.project-gallery .gallery-header::before {
+
+/* Three real pages on a native scroll track. The fixed header never becomes a snapshot. */
+.gallery-shell {
+  position: fixed; inset: 0; width: 100vw; height: var(--visible-height, 100dvh);
+  max-width: none; max-height: none; margin: 0; padding: 0; border: 0;
+  overflow: hidden; background: #d8c7cd; color: var(--ink); font-family: var(--font-text);
+}
+.gallery-shell::backdrop { background: transparent; }
+.gallery-shell:focus { outline: none; }
+.gallery-track {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  overflow-x: hidden; overflow-y: auto; scroll-snap-type: y mandatory;
+  overscroll-behavior-y: contain; overflow-anchor: none; scrollbar-width: none;
+  -webkit-overflow-scrolling: touch; touch-action: pan-y pinch-zoom;
+}
+.gallery-track::-webkit-scrollbar { display: none; }
+.gallery-shell[data-phase="opening"] .gallery-track,
+.gallery-shell[data-phase="closing"] .gallery-track { overflow-y: hidden; }
+.gallery-track:focus { outline: none; }
+.gallery-track > .gallery-panel[data-project][data-scene] {
+  position: relative; inset: auto; width: 100%; height: 100%; min-height: 0;
+  flex: 0 0 100%; margin: 0; overflow: clip; scroll-snap-align: start; scroll-snap-stop: always;
+  contain: layout paint style; overflow-anchor: none; touch-action: pan-y pinch-zoom;
+}
+.gallery-panel .gallery-environment { position: absolute; }
+.gallery-panel[data-ready="false"] .composed-scene { visibility: hidden; }
+.gallery-scene-loader { display: none; }
+.gallery-panel[data-ready="false"] .gallery-scene-loader {
+  display: block; position: absolute; top: 46%; left: calc(50% - 9px);
+  width: 18px; height: 18px; border: 1px solid #24252030; border-top-color: currentColor;
+  border-radius: 50%; animation: terminal-processing 1s linear infinite;
+}
+.gallery-panel[data-ready="error"] .gallery-scene-loader {
+  display: block; position: absolute; top: 45%; left: 15%; right: 15%; text-align: center; font-size: 14px;
+}
+.gallery-chrome { z-index: 10; }
+.gallery-chrome .gallery-wordmark { letter-spacing: -.3px; }
+.gallery-chrome .gallery-header { position: absolute; top: 38px; left: 68px; right: 68px; padding: 0; margin: 0; }
+.gallery-chrome .gallery-header::before {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
-  inset: -40px -66px -28px -66px;
-  background: #f4efe82e;
-  -webkit-backdrop-filter: blur(16px) saturate(.95); backdrop-filter: blur(16px) saturate(.95);
+  inset: -40px -66px -22px; background: #f4efe819;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   mask-image: linear-gradient(#000 45%, transparent), linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
   mask-composite: intersect;
 }
-.project-gallery .gallery-header::after {
+.gallery-chrome .gallery-header::after {
   content: ''; position: absolute; left: 0; right: 0; bottom: -10px; height: 1px;
   pointer-events: none; background: #24252026; box-shadow: 0 1px 0 #ffffff35;
 }
 @media (orientation: portrait), (max-width: 599px),
   (orientation: landscape) and (min-width: 600px) and (max-width: 1180px),
-  (orientation: landscape) and (min-width: 600px) and (max-width: 1366px) and (min-height: 900px) {
-  .project-gallery[data-project][data-scene="composed"] .gallery-header::before {
-    inset: 0 0 -32px; background: color-mix(in srgb, var(--gallery-surface) 22%, transparent);
-    mask-image: linear-gradient(#000 calc(100% - 32px), transparent);
+  (orientation: landscape) and (max-width: 1366px) and (min-height: 900px) {
+  .gallery-chrome { left: 0; right: 0; top: 0; width: auto; height: auto; transform: none; }
+  .gallery-chrome .gallery-header {
+    --chrome-inset: clamp(24px, 4vw, 48px);
+    position: relative; inset: auto;
+    padding: max(16px, env(safe-area-inset-top)) max(var(--chrome-inset), env(safe-area-inset-right)) 0 max(var(--chrome-inset), env(safe-area-inset-left));
   }
-  .project-gallery[data-project][data-scene="composed"] .gallery-header::after {
-    left: var(--caption-left); right: var(--caption-right); bottom: -8px;
+  .gallery-chrome .gallery-header::before {
+    inset: 0 0 -22px; background: #f4efe81a;
+    mask-image: linear-gradient(#000 calc(100% - 22px), transparent);
   }
+  .gallery-chrome .gallery-header::after {
+    left: max(var(--chrome-inset), env(safe-area-inset-left)); right: max(var(--chrome-inset), env(safe-area-inset-right)); bottom: -8px;
+  }
+  .gallery-chrome .gallery-wordmark { font-size: 24px; letter-spacing: -.6px; }
+  .gallery-chrome .gallery-back { gap: 8px; font-size: 13px; min-height: 44px; padding: 0; letter-spacing: 0; }
+  .gallery-chrome .gallery-back img { width: 19px; height: 19px; }
+}
+@media (orientation: portrait) and (min-width: 600px) {
+  .gallery-chrome .gallery-wordmark { font-size: 30px; }
+  .gallery-chrome .gallery-back { font-size: 16px; }
 }
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .project-gallery[data-project][data-scene] .gallery-header::before { background: #f4efe8cc; }
+  .gallery-chrome .gallery-header::before { background: #f4efe8cc; }
 }
 @media (prefers-reduced-transparency: reduce) {
-  .project-gallery[data-project][data-scene] .gallery-header::before {
-    background: #f4efe8e6; -webkit-backdrop-filter: none; backdrop-filter: none;
-  }
+  .gallery-chrome .gallery-header::before { background: #f4efe8e6; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
-/* Native snapshots retain both fully decoded scenes through the directional handoff. */
-html.gallery-cycling { view-transition-name: none; }
-html.gallery-cycling .project-gallery { view-transition-name: project-scene; }
-html.gallery-cycling .gallery-header { view-transition-name: project-header; }
-::view-transition { pointer-events: none; }
-::view-transition-group(project-scene) { animation-duration: 520ms; }
-::view-transition-image-pair(project-scene) { isolation: isolate; }
-::view-transition-old(project-scene) { animation: project-leave 420ms cubic-bezier(.4,0,.2,1) both; mix-blend-mode: normal; }
-::view-transition-new(project-scene) { animation: project-arrive 520ms cubic-bezier(.16,1,.3,1) both; mix-blend-mode: normal; }
-::view-transition-group(project-header), ::view-transition-old(project-header), ::view-transition-new(project-header) { animation: none; }
-::view-transition-old(project-header) { display: none; }
-@keyframes project-leave {
-  to { opacity: 0; transform: translateY(calc(var(--project-direction, 1) * -10vh)); }
+@media (prefers-reduced-motion: reduce) {
+  .gallery-panel[data-ready="false"] .gallery-scene-loader { animation: none; }
 }
-@keyframes project-arrive {
-  from { opacity: 0; transform: translateY(calc(var(--project-direction, 1) * 14vh)); }
-  to { opacity: 1; transform: translateY(0); }
+@media (forced-colors: active) {
+  .gallery-shell { background: Canvas; color: CanvasText; }
+  .gallery-chrome .gallery-header::before { background: Canvas; -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+@media (orientation: landscape) and (min-width: 1181px) and (max-height: 600px) {
+  .gallery-shell[data-layout="desktop"] .gallery-wordmark { font-size: max(34px, calc(22px / var(--gallery-scale))); }
+  .gallery-shell[data-layout="desktop"] .gallery-back { font-size: max(20px, calc(14px / var(--gallery-scale))); min-height: calc(44px / var(--gallery-scale)); }
+  .gallery-shell[data-layout="desktop"] .gallery-back img { width: max(30px, calc(18px / var(--gallery-scale))); height: max(30px, calc(18px / var(--gallery-scale))); }
 }
