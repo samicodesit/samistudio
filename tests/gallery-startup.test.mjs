@@ -9,7 +9,7 @@ import * as geometry from '../assets/gallery-geometry.mjs';
 
 // Run the real controller with animations deliberately held unfinished. This
 // models the opening period independently of animation or device frame rate.
-async function galleryFixture() {
+async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, extraTail=0}={}) {
   const requests = [], animations = [], frames = [], timers = new Map();
   let timerId = 0;
   class Element {
@@ -22,7 +22,8 @@ async function galleryFixture() {
     querySelectorAll() { return []; }
     addEventListener(key,fn) { const list=this.listeners.get(key)||[]; list.push(fn); this.listeners.set(key,list); }
     emit(key,event={}) { for (const fn of this.listeners.get(key)||[]) fn(event); }
-    append(child) { this.children=this.children.filter(node=>node!==child); this.children.push(child); }
+    append(child) { this.children=this.children.filter(node=>node!==child); this.children.push(child); child.parentElement=this; }
+    get offsetTop() { return this.parentElement?.children.indexOf(this)*this.parentElement.clientHeight || 0; }
     setAttribute(key,value) { this.attrs.set(key,value); }
     removeAttribute(key) { this.attrs.delete(key); }
     getBoundingClientRect() { return {width:393,height:72}; }
@@ -48,7 +49,10 @@ async function galleryFixture() {
   document.fonts={ready:Promise.resolve()};
   document.documentElement=new Element();
   document.querySelector('#gallery-page-template').content={firstElementChild:new Element()};
-  const window=new Element(); window.visualViewport={scale:1,height:711,addEventListener(){}};
+  const track=document.querySelector('#project-gallery').querySelector('.gallery-track');
+  track.clientHeight=trackHeight;
+  Object.defineProperty(track,'scrollHeight',{get:()=>track.children.length*track.clientHeight+extraTail});
+  const window=new Element(); window.visualViewport={scale:1,height:viewportHeight,addEventListener(){}};
   const context={document,window,navigator:{connection:{effectiveType:'4g'}},innerWidth:393,innerHeight:711,
     URL,console, getProject,projectAssets,allowPrefetch,galleryOrder,settledSlot,...geometry,
     matchMedia:query=>({matches:query.includes('orientation: portrait'),addEventListener(){}}),
@@ -65,7 +69,9 @@ async function galleryFixture() {
   const flush=async()=>{for(let i=0;i<30;i++)await Promise.resolve();};
   rows[0].emit('click'); await flush();
   return {dialog:document.querySelector('#project-gallery'),track:document.querySelector('#project-gallery').querySelector('.gallery-track'),
-    requests,animations,frames,timers,flush};
+    requests,animations,frames,timers,flush,window,
+    flushFrames(){let count=0;while(frames.length && count++<10)frames.splice(0).forEach(fn=>fn());},
+    async runSettlement(){const timer=[...timers.values()].find(timer=>timer.delay===180); assert.ok(timer); await timer.fn(); await flush();}};
 }
 
 test('first visible scene accepts scrolling while entrance animations are unfinished', async()=>{
@@ -110,4 +116,65 @@ test('closing invalidates scheduled neighboring-scene work',async()=>{
   await background.fn(); await flush();
   assert.equal(requests.length,before);
   assert.equal(dialog.dataset.phase,'closing');
+});
+
+
+for (const [label,offset,project] of [['bottom',1610,'autolister'],['top',-188,'cryptik']]) {
+  test(`Safari ${label} overscroll recovers the infinite ring without a scrollend event`,async()=>{
+    const fixture=await galleryFixture();
+    const {track,dialog,window,flushFrames,runSettlement}=fixture;
+    flushFrames();
+    track.emit('touchstart');
+    track.scrollTop=offset;
+    track.emit('scroll'); flushFrames();
+    assert.equal(dialog.dataset.project,'doodle','never reorder under an active finger');
+    window.emit('touchend',{touches:[]});
+    await runSettlement(); flushFrames();
+    assert.equal(dialog.dataset.project,project);
+    assert.equal(track.scrollTop,711,'restore a full scene with a neighbor in both directions');
+  });
+}
+
+test('loop uses the rendered track height when the viewport measurement differs',async()=>{
+  const {track,dialog,flushFrames}=await galleryFixture({viewportHeight:711,trackHeight:700});
+  flushFrames();
+  assert.equal(track.scrollTop,700);
+  track.scrollTop=1400; track.emit('scrollend'); flushFrames();
+  assert.equal(dialog.dataset.project,'autolister');
+  assert.equal(track.scrollTop,700);
+});
+
+test('multiple full touch cycles never leave an endpoint in either direction',async()=>{
+  const {track,dialog,window,flushFrames,runSettlement}=await galleryFixture();
+  flushFrames();
+  for(const [offset,expected] of [[1422,'autolister'],[1422,'cryptik'],[1422,'doodle'],[1422,'autolister'],[0,'doodle'],[0,'cryptik'],[0,'autolister'],[0,'doodle']]) {
+    track.emit('touchstart'); track.scrollTop=offset; track.emit('scroll'); flushFrames();
+    window.emit('touchend',{touches:[]}); await runSettlement(); flushFrames();
+    assert.equal(dialog.dataset.project,expected);
+    assert.equal(track.scrollTop,711);
+    assert.equal(track.children.length,3);
+  }
+});
+
+
+test('browser-bar resizing never carries a bounced offset beyond the new track',async()=>{
+  const {track,dialog,window,flushFrames,runSettlement}=await galleryFixture();
+  flushFrames();
+  track.emit('touchstart'); track.scrollTop=1610; track.emit('scroll'); flushFrames();
+  track.clientHeight=780; window.visualViewport.height=780;
+  window.emit('resize'); flushFrames();
+  assert.ok(track.scrollTop<=1560,'resize must clamp overscroll before preserving progress');
+  window.emit('touchend',{touches:[]}); await runSettlement(); flushFrames();
+  assert.equal(dialog.dataset.project,'autolister');
+  assert.equal(track.scrollTop,780);
+});
+
+
+test('a stale native scroll extent cannot become an extra blank project',async()=>{
+  const {track,dialog,window,flushFrames,runSettlement}=await galleryFixture({extraTail:188});
+  flushFrames();
+  track.emit('touchstart'); track.scrollTop=1610; track.emit('scroll'); flushFrames();
+  window.emit('touchend',{touches:[]}); await runSettlement(); flushFrames();
+  assert.equal(dialog.dataset.project,'autolister');
+  assert.equal(track.scrollTop,711);
 });

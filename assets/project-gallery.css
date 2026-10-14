@@ -475,15 +475,15 @@
 .gallery-track {
   width: 100%; height: 100%; display: flex; flex-direction: column;
   overflow-x: hidden; overflow-y: auto; scroll-snap-type: y mandatory;
-  overscroll-behavior-y: contain; overflow-anchor: none; scrollbar-width: none;
+  overscroll-behavior-y: none; overflow-anchor: none; scrollbar-width: none;
   -webkit-overflow-scrolling: touch; touch-action: pan-y pinch-zoom;
 }
 .gallery-track::-webkit-scrollbar { display: none; }
 .gallery-shell[data-phase="closing"] .gallery-track { overflow-y: hidden; }
 .gallery-track:focus { outline: none; }
 .gallery-track > .gallery-panel[data-project][data-scene] {
-  position: relative; inset: auto; width: 100%; height: 100%; min-height: 0;
-  flex: 0 0 100%; margin: 0; overflow: clip; scroll-snap-align: start; scroll-snap-stop: always;
+  position: relative; inset: auto; width: 100%; height: var(--gallery-page-height, 100%); min-height: 0;
+  flex: 0 0 var(--gallery-page-height, 100%); margin: 0; overflow: clip; scroll-snap-align: start; scroll-snap-stop: always;
   contain: layout paint style; overflow-anchor: none; touch-action: pan-y pinch-zoom;
 }
 .gallery-panel .gallery-environment { position: absolute; }

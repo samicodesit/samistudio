@@ -177,7 +177,10 @@ export function initProjectGallery({ onReturn }) {
 
   function settle() {
     if (rebasing || touching || !dialog.open || dialog.dataset.phase !== 'open') return;
-    const slot = settledSlot(track.scrollTop, height);
+    // WebKit can report a bounced offset outside the real scroll range.
+    // Normalize it before deciding which scene must become the center.
+    const offset = Math.max(0, Math.min(track.scrollTop, height * (track.children.length - 1)));
+    const slot = settledSlot(offset, height);
     if (slot === null) return;
     const id = track.children[slot].dataset.project;
     setActive(id);
@@ -200,13 +203,17 @@ export function initProjectGallery({ onReturn }) {
 
   function layout() {
     if (!dialog.open || !active) return;
-    const progress = height > 0 ? track.scrollTop / height : 1;
+    const progress = height > 0 ? Math.max(0, Math.min(2, track.scrollTop / height)) : 1;
     const wasMoving = touching || dialog.dataset.scrolling === 'true';
     const selectedMode = mode();
     const responsive = selectedMode === 'landscape' || selectedMode === 'tablet';
-    const visibleHeight = window.visualViewport?.scale === 1 ? window.visualViewport.height : innerHeight;
-    height = visibleHeight;
-    dialog.style.setProperty('--visible-height', `${visibleHeight}px`);
+    const viewportHeight = window.visualViewport?.scale === 1 ? window.visualViewport.height : innerHeight;
+    dialog.style.setProperty('--visible-height', `${Math.round(viewportHeight)}px`);
+    // Use the rendered scrollport, not an independent viewport estimate. Every
+    // panel and snap offset must share exactly the same integer CSS height.
+    height = track.clientHeight;
+    const visibleHeight = height;
+    track.style.setProperty('--gallery-page-height', `${height}px`);
     dialog.dataset.layout = selectedMode === 'landscape' ? 'split' : responsive ? 'stack' : 'desktop';
     for (const panel of panels.values()) {
       const { element, project } = panel;

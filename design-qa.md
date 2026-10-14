@@ -194,3 +194,15 @@ Final result: passed.
 - Deferred neighboring-scene preloading for 1400 ms and serialized their image decode instead of starting all scenes during the first paint. Visible neighbors still load on demand during native scrolling. No new runtime dependency or image download added.
 - Five controller regression tests hold animation promises unfinished and cover immediate readiness, wheel/touch interruption, keyboard input, deferred downloads and cancellation on close. The original controller failed the three initial regressions; the fix passes all five.
 - Verification: 36 tests, browser module syntax checks and the 53-file production build passed. Chrome browser checks at 393x711 and 844x390 covered input during the entrance, forward and reverse project navigation, resize, close and reopen. A real iPhone Safari session was unavailable, so physical-device touch performance is not claimed verified.
+
+## 2026-10-14: Mobile infinite-loop boundary recovery
+
+The owner supplied an iPhone Safari screenshot showing AutoLister followed by a large empty tail. The previous Chrome-only verification was insufficient.
+
+Settlement rejected positions outside a 0.75 px snap tolerance without recovery. Safari can report scrollTop beyond its native extent during bounce (https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollTop). Controller tests reproduced failure with overscroll at both ends, disagreement between rendered and viewport heights, and resizing while overscrolled.
+
+Changes: disable boundary bounce; clamp settlement to the logical three-panel extent; clamp progress during resize; measure the rendered scrollport and give all three panels exactly that integer height. Native passive scrolling and the original scenes remain.
+
+Six new regression cases cover boundary recovery without scrollend, differing height measurements, repeated touch cycles in both directions, resizing during overscroll and a stale extra scroll extent. These simulate controller conditions and do not execute Safari. Complete suite: 42 tests.
+
+Chrome QA at 393x711: two forward loops and one reverse loop using native wheel input. Resize during movement to 393x620 retained the active project, recentered to 620 px and measured every panel at 620 px. Expansion to 393x780 retained the active project. Physical iPhone Safari verification is unavailable and is not claimed.
