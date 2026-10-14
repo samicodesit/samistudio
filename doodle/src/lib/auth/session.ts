@@ -1,64 +1,78 @@
-import { createHmac, createHash, timingSafeEqual } from "node:crypto";
-import { SESSION_TTL_SECONDS } from "@/lib/app-config";
+import "server-only";
 
-export const SESSION_COOKIE_NAME = "doodle_session";
+import { createHmac, timingSafeEqual } from "node:crypto";
+import { cookies } from "next/headers";
+import type { NextResponse } from "next/server";
+import { isPaidAccountActive } from "@/lib/billing/credits";
+import { required } from "@/lib/env";
+import { getNativeBearer, getNativeSessionUser } from "@/lib/native-session";
 
-const SESSION_PREFIX = "doodle:";
+const COOKIE_NAME = "doodle_session";
+const TTL_SECONDS = 2_592_000;
+const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const IDENTITY_KEY_PATTERN = /^[a-f0-9]{64}$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+$/;
+const BASE64URL_PATTERN = /^[A-Za-z0-9_-]+$/;
 
-function digest(value: string): Buffer {
-  return createHash("sha256").update(value).digest();
+export type AuthProvider = "google" | "apple";
+export type SessionUser = { id: string; identityKey: string; email: string | null; provider?: AuthProvider; appleAuthenticatedAt?: number };
+type SessionPayload = SessionUser & { exp: number };
+
+function sign(body: string) {
+  return createHmac("sha256", required("SESSION_SECRET")).update(body).digest("base64url");
 }
 
-function signature(payload: string, secret: string): string {
-  return createHmac("sha256", secret).update(payload).digest("base64url");
+function cookieOptions(maxAge: number) {
+  return { httpOnly: true, sameSite: "lax" as const, path: "/", secure: process.env.NODE_ENV === "production", maxAge };
 }
 
-export function verifyPassphrase(passphrase: string, expected: string): boolean {
-  const actualDigest = digest(passphrase);
-  const expectedDigest = digest(expected);
-  return timingSafeEqual(actualDigest, expectedDigest);
+function sessionValue(user: SessionUser) {
+  const body = Buffer.from(JSON.stringify({ ...user, exp: Math.floor(Date.now() / 1000) + TTL_SECONDS })).toString("base64url");
+  return `${body}.${sign(body)}`;
 }
 
-export function createSessionToken(
-  secret: string,
-  now = Math.floor(Date.now() / 1000),
-): string {
-  const expiresAt = now + SESSION_TTL_SECONDS;
-  const payload = `${SESSION_PREFIX}${expiresAt}`;
-  return `${payload}.${signature(payload, secret)}`;
-}
+function verifiedPayload(value: string | undefined): SessionPayload | null {
+  const [body, providedSignature, extra] = value?.split(".") ?? [];
+  if (!body || !providedSignature || extra || !BASE64URL_PATTERN.test(body) || !BASE64URL_PATTERN.test(providedSignature)) return null;
+  const expected = Buffer.from(sign(body));
+  const provided = Buffer.from(providedSignature);
+  if (expected.length !== provided.length || !timingSafeEqual(expected, provided)) return null;
 
-export function verifySessionToken(
-  token: string,
-  secret: string,
-  now = Math.floor(Date.now() / 1000),
-): boolean {
-  const separator = token.lastIndexOf(".");
-  if (separator <= 0) return false;
-
-  const payload = token.slice(0, separator);
-  const providedSignature = token.slice(separator + 1);
-  const expectedSignature = signature(payload, secret);
-  const providedBytes = Buffer.from(providedSignature);
-  const expectedBytes = Buffer.from(expectedSignature);
-  if (providedBytes.length !== expectedBytes.length) return false;
-
-  let validSignature = false;
   try {
-    validSignature = timingSafeEqual(providedBytes, expectedBytes);
+    const payload: unknown = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
+    if (!payload || typeof payload !== "object") return null;
+    const { id, identityKey, email, exp } = payload as Partial<SessionPayload>;
+    if (
+      typeof id !== "string" || !UUID_PATTERN.test(id) ||
+      typeof identityKey !== "string" || !IDENTITY_KEY_PATTERN.test(identityKey) ||
+      typeof email !== "string" || email.length > 254 || !EMAIL_PATTERN.test(email) ||
+      typeof exp !== "number" || !Number.isSafeInteger(exp) || exp <= Math.floor(Date.now() / 1000)
+    ) return null;
+    return { id, identityKey, email, exp };
   } catch {
-    return false;
+    return null;
   }
-  if (!validSignature || !payload.startsWith(SESSION_PREFIX)) return false;
-
-  const expiresAt = Number(payload.slice(SESSION_PREFIX.length));
-  return Number.isInteger(expiresAt) && expiresAt > now;
 }
 
-export const SESSION_COOKIE_OPTIONS = {
-  httpOnly: true,
-  sameSite: "strict" as const,
-  secure: process.env.NODE_ENV === "production",
-  path: "/",
-  maxAge: SESSION_TTL_SECONDS,
-};
+export function setSessionCookie(response: NextResponse, user: SessionUser) {
+  response.cookies.set(COOKIE_NAME, sessionValue(user), cookieOptions(TTL_SECONDS));
+}
+
+export function clearSessionCookie(response: NextResponse) {
+  response.cookies.set(COOKIE_NAME, "", cookieOptions(0));
+}
+
+export async function getCurrentUser(request?: Request): Promise<SessionUser | null> {
+  if (request) {
+    const accessToken = getNativeBearer(request);
+    if (accessToken !== undefined) {
+      if (!accessToken) return null;
+      const nativeUser = await getNativeSessionUser(accessToken);
+      if (!nativeUser || !(await isPaidAccountActive(nativeUser.id))) return null;
+      return nativeUser;
+    }
+  }
+  const payload = verifiedPayload((await cookies()).get(COOKIE_NAME)?.value);
+  if (!payload || !(await isPaidAccountActive(payload.id))) return null;
+  return { id: payload.id, identityKey: payload.identityKey, email: payload.email };
+}

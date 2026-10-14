@@ -1,7 +1,11 @@
 import OpenAI from "openai";
+import { providerFailure, type ProviderFailure } from "@/lib/diagnostics/provider";
 import { normalizeScene } from "@/lib/scenes/scene";
-import { SIMPLE_PROFILE } from "./profile";
+import { generationProfile } from "./profile";
+import { isDetailLevel, PROMPT_VERSIONS, type DetailLevel } from "./detail-level";
 import { buildDoodlePrompt } from "./prompt";
+import { correctPaperColor } from "./paper-color";
+import type { PaperCorrectionMetadata } from "./paper-color-metadata";
 
 export interface ImageClient {
   generate(input: {
@@ -16,12 +20,13 @@ export interface ImageClient {
 export interface GeneratedDoodle {
   bytes: Uint8Array;
   mimeType: "image/png";
+  paperCorrection?: PaperCorrectionMetadata;
 }
 
 export type GenerationErrorKind = "refused" | "timeout" | "malformed" | "upstream";
 
 export class GenerationError extends Error {
-  constructor(readonly kind: GenerationErrorKind, message: string) {
+  constructor(readonly kind: GenerationErrorKind, message: string, readonly diagnostics: ProviderFailure = {}) {
     super(message);
     this.name = "GenerationError";
   }
@@ -66,22 +71,36 @@ function productionClient(): ImageClient {
   };
 }
 
-export async function generateDoodle(scene: string, client: ImageClient = productionClient()): Promise<GeneratedDoodle> {
+export async function generateDoodle(scene: string, client: ImageClient | undefined = undefined, detailLevel: DetailLevel = "simple"): Promise<GeneratedDoodle> {
+  if (!isDetailLevel(detailLevel)) throw new Error("Invalid detail level");
   const normalizedScene = normalizeScene(scene);
+  const profile = generationProfile(detailLevel);
+  const imageClient = client ?? productionClient();
+
+  if (process.env.NODE_ENV === "production") {
+    console.info("[doodle-generation-profile]", {
+      detailLevel,
+      promptVersion: PROMPT_VERSIONS[detailLevel],
+      model: profile.model,
+      quality: profile.quality,
+      size: profile.size,
+    });
+  }
 
   let response: { data: Array<{ b64_json?: string | null }> };
   try {
-    response = await client.generate({
-      model: SIMPLE_PROFILE.model,
-      prompt: buildDoodlePrompt(normalizedScene, SIMPLE_PROFILE),
+    response = await imageClient.generate({
+      model: profile.model,
+      prompt: buildDoodlePrompt(normalizedScene, profile),
       n: 1,
-      size: SIMPLE_PROFILE.size,
-      quality: SIMPLE_PROFILE.quality,
+      size: profile.size,
+      quality: profile.quality,
     });
   } catch (error) {
-    if (isTimeout(error)) throw new GenerationError("timeout", "The image request timed out.");
-    if (isRefusal(error)) throw new GenerationError("refused", "The image request was refused.");
-    throw new GenerationError("upstream", "The image request failed.");
+    const diagnostics = providerFailure(error);
+    if (isTimeout(error)) throw new GenerationError("timeout", "The image request timed out.", diagnostics);
+    if (isRefusal(error)) throw new GenerationError("refused", "The image request was refused.", diagnostics);
+    throw new GenerationError("upstream", "The image request failed.", diagnostics);
   }
 
   const encoded = response.data?.[0]?.b64_json;
@@ -95,7 +114,8 @@ export async function generateDoodle(scene: string, client: ImageClient = produc
     if (bytes.length < pngSignature.length || !pngSignature.every((byte, index) => bytes[index] === byte)) {
       throw new Error("invalid PNG");
     }
-    return { bytes, mimeType: "image/png" };
+    const corrected = await correctPaperColor(bytes);
+    return { bytes: corrected.bytes, mimeType: "image/png", paperCorrection: corrected.metadata };
   } catch {
     throw new GenerationError("malformed", "The image response was invalid.");
   }

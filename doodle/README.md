@@ -1,30 +1,41 @@
 # Doodle
 
-Private, mobile-first sticky-note doodle generation for `doodle.samistudio.nl`.
+Public, mobile-first sticky-note doodle generation. Prompts and generated images stay in browser memory only.
 
 ## Local development
 
-1. Copy `.env.example` to `.env.local` and fill `DOODLE_PASSWORD`, `SESSION_SECRET`, and the Doodle project `OPENAI_API_KEY`.
-2. Run `npm run dev`.
-3. Run `npm test`, `npm run typecheck`, and `npm run lint`.
+Copy `.env.example` to `.env.local`, run `npm install`, then `npm run dev`.
 
-The app keeps prompts and generated images in browser memory only. The root Sami Studio site is separate from this Next.js app.
+```dotenv
+SESSION_SECRET=
+OPENAI_API_KEY=
+KV_REST_API_URL=
+KV_REST_API_TOKEN=
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
+STRIPE_SECRET_KEY=
+STRIPE_WEBHOOK_SECRET=
+STRIPE_DOODLE_PRICE_ID=
+```
 
-## Paid checks
+Create one Google Web client with these authorized JavaScript origins:
 
-`npm run test:real` makes one low-quality Image API request and is skipped by the normal test command. `npm run eval:prompt` makes eight sequential requests and writes numbered PNGs under `tmp/prompt-eval/`. Both commands incur Doodle-project API costs and are never run by CI.
+```text
+https://doodle.samistudio.nl
+http://localhost:3000
+http://127.0.0.1:3100
+```
 
-## Production shape
+Google verifies the user server-side; Doodle stores only a signed HttpOnly session and Redis HMAC identity map. Redis atomically manages paid-credit holds, fulfillment, account deletion, and Stripe idempotency. Two anonymous generations remain free.
 
-- Vercel project: `doodle`
-- Production URL: `https://doodle.samistudio.nl`
-- Vercel fallback URL: `https://doodle-puce.vercel.app`
-- Git root directory when the repository is connected: `doodle/`
-- Image model: `gpt-image-1-mini`
-- Image quality: `low`
+Run `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`, and `npm run test:e2e` before release.
 
-## Deployment checklist
+The default browser suite covers legacy checkout. Run the current three-pack checkout tests separately with `PLAYWRIGHT_WEB_PACKS_ENABLED=true npm run test:e2e -- e2e/web-credit-packs.spec.ts`. For production-server browser tests, build with the matching `STRIPE_PACKS_CHECKOUT_ENABLED` value first, because the page receives that flag during the build. Play billing fixtures simulate an installed window; a copied `runtime=play` URL in a regular browser intentionally does not enable store billing.
 
-The app was deployed directly to the `doodle` Vercel project on 2026-08-20 with encrypted production environment variables. The custom domain is a CNAME managed in Netlify DNS, so the existing apex site remains unchanged. Production authentication, security headers, and one real low-quality image generation were verified successfully.
+## Stripe
 
-The Vercel project is not yet connected to Git. When it is connected to the existing `samistudio` repository, set its root directory to `doodle/` before enabling automatic deployments.
+Web checkout keeps the existing fixed-price Stripe flow and sends `automatic_tax: { enabled: true }`. This describes the request made by the application. It does not confirm that a VAT or other Stripe Tax registration is active in the Stripe account; that status was not verified in this release check. Confirm the Stripe Tax setup and registration status before release. Configure the webhook at `https://doodle.samistudio.nl/api/stripe/webhook` for `checkout.session.completed` and `checkout.session.async_payment_succeeded`.
+
+Eligible Apple devices can use the on-site Apple Pay button powered by Stripe Express Checkout. Set `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` to the publishable key that matches `STRIPE_SECRET_KEY`, and register `doodle.samistudio.nl` as a Payment Method Domain in both Stripe test mode and live mode. Hosted Checkout remains available for cards, promotion codes, and browsers without Apple Pay.
+
+Release verification: 14 billing unit tests, 4 Elements route tests, 2 Apple Pay component tests, 12 purchase dialog tests, and 5 mocked Playwright purchase and account scenarios passed. No live Stripe Checkout Session was created, and Stripe Tax registration was not verified.

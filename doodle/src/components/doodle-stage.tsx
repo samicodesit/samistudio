@@ -2,6 +2,10 @@
 
 /* eslint-disable @next/next/no-img-element -- generated images are browser-owned object URLs. */
 import Image from "next/image";
+import { Maximize2 } from "lucide-react";
+import { DoodleWaitingCard } from "./doodle-waiting-card";
+import type { DoodleCopy, Locale } from "@/lib/i18n";
+import { DoodleGridFrame } from "./doodle-grid-frame";
 
 type StageStatus = "idle" | "generating" | "ready" | "error";
 
@@ -9,23 +13,26 @@ interface DoodleStageProps {
   status: StageStatus;
   imageUrl: string | null;
   error: string | null;
+  onInspect?: () => void;
+  copy: DoodleCopy["stage"];
+  referenceImage?: string;
+  referenceAlt?: string;
+  locale?: Locale;
+  gridEnabled?: boolean;
+  onToggleGrid?: () => void;
 }
 
-export function DoodleStage({ status, imageUrl, error }: DoodleStageProps) {
-  if (status === "generating") {
-    return (
-      <div className="doodle-stage doodle-stage-loading" role="status" aria-live="polite">
-        <span className="loading-mark" aria-hidden="true" />
-        <span>Drawing your doodle...</span>
-      </div>
-    );
-  }
+export function DoodleStage({ status, imageUrl, error, onInspect, copy, referenceImage, referenceAlt, locale = "en", gridEnabled = false, onToggleGrid }: DoodleStageProps) {
+  if (status === "generating") return <DoodleWaitingCard copy={copy} />;
 
   if (status === "ready" && imageUrl) {
     return (
-      <div className="doodle-stage doodle-stage-result">
-        <img src={imageUrl} alt="Generated sticky-note doodle" />
-      </div>
+      <DoodleGridFrame className="grid-result-wrap" locale={locale} enabled={gridEnabled} onToggle={onToggleGrid}>
+      <button className="doodle-stage doodle-stage-result" type="button" onClick={onInspect} aria-label={copy.viewLarger}>
+        <img src={imageUrl} alt={copy.generatedAlt} />
+        <span className="stage-inspect-label" aria-hidden="true"><Maximize2 size={20} /></span>
+      </button>
+      </DoodleGridFrame>
     );
   }
 
@@ -38,14 +45,21 @@ export function DoodleStage({ status, imageUrl, error }: DoodleStageProps) {
   }
 
   return (
-    <div className="doodle-stage doodle-stage-reference">
+    <button
+      className="doodle-stage doodle-stage-reference doodle-stage-result"
+      type="button"
+      onClick={onInspect}
+      aria-label={referenceAlt ?? copy.referenceAria}
+    >
       <Image
-        src="/references/doodle-reference-kiss.png"
-        alt="Simple sticky-note doodle of two cats kissing upside down"
+        src={referenceImage ?? "/references/doodle-reference-kiss.png"}
+        alt={referenceAlt ?? copy.referenceAlt}
         width={1024}
         height={1024}
+        sizes={referenceImage ? "(max-width: 699px) calc(100vw - 40px), 280px" : undefined}
         priority
       />
-    </div>
+      <span className="stage-inspect-label" aria-hidden="true"><Maximize2 size={20} /></span>
+    </button>
   );
 }

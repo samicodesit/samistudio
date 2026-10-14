@@ -1,0 +1,20 @@
+import { beforeEach, expect, it, vi } from "vitest";
+import { NextRequest } from "next/server";
+import { POST } from "./route";
+vi.mock("server-only", () => ({}));
+const mocks = vi.hoisted(() => ({ register: vi.fn(), limit: vi.fn(), bearer: vi.fn(), user: vi.fn(), trial: vi.fn(), validTrial: vi.fn() }));
+vi.mock("@/lib/apple-attestation", () => ({ registerAppleKey: mocks.register, AppleAttestationInvalidError: class AppleAttestationInvalidError extends Error {} }));
+vi.mock("@/lib/native-session", () => ({ getNativeBearer: mocks.bearer }));
+vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.user }));
+vi.mock("@/lib/generation/free-allowance", () => ({ getTrialIdentity: mocks.trial, isValidTrialToken: mocks.validTrial }));
+vi.mock("@/lib/generation/generation-limit", () => ({ checkNativeChallengeLimit: mocks.limit }));
+const id = "11111111-1111-4111-8111-111111111111", account = "22222222-2222-4222-8222-222222222222";
+const body = { installId: id, keyId: Buffer.alloc(32, 1).toString("base64"), challenge: "a".repeat(43), attestation: "signed-Apple-proof" };
+function req(value: unknown = body, headers: Record<string,string> = {}) { return new NextRequest("https://doodle.samistudio.nl/api/native/attestation/apple/register", { method: "POST", headers: { origin: "https://doodle.samistudio.nl", "content-type": "application/json", "x-doodle-client": "native-ios", ...headers }, body: JSON.stringify(value) }); }
+beforeEach(() => { Object.values(mocks).forEach(m => m.mockReset()); mocks.register.mockResolvedValue({ registered: true }); mocks.limit.mockResolvedValue("allowed"); mocks.bearer.mockReturnValue(undefined); mocks.user.mockResolvedValue({ id: account }); mocks.validTrial.mockReturnValue(true); mocks.trial.mockReturnValue({ id: account }); });
+it("binds a guest key to its installation and exposes no proof material", async () => { const r=await POST(req()); expect(r.status).toBe(200); expect(await r.json()).toEqual({ registered: true }); expect(mocks.register).toHaveBeenCalledWith({ ...body, principal: `install:${id}` }); });
+it("uses the verified account rather than a client-supplied principal", async () => { mocks.bearer.mockReturnValue("valid"); const r=await POST(req()); expect(r.status).toBe(200); expect(mocks.register).toHaveBeenCalledWith({ ...body, principal: `account:${account}` }); expect((await POST(req({ ...body, principal: "someone-else" }))).status).toBe(400); });
+it("uses the signed trial principal", async () => { const r=await POST(req(body,{"x-doodle-trial-token":"signed-trial"})); expect(r.status).toBe(200); expect(mocks.register).toHaveBeenCalledWith({ ...body, principal: `trial:${account}` }); });
+it("rejects cross-origin, mixed identities and malformed authorization", async () => { expect((await POST(req(body,{origin:"https://evil.test"}))).status).toBe(403); mocks.bearer.mockReturnValue("token"); expect((await POST(req(body,{"x-doodle-trial-token":"trial"}))).status).toBe(400); mocks.bearer.mockReturnValue(null); expect((await POST(req())).status).toBe(401); expect(mocks.register).not.toHaveBeenCalled(); });
+it("fails closed on provider or database outage", async () => { mocks.register.mockRejectedValue(new Error("provider unavailable")); const r=await POST(req()); expect(r.status).toBe(503); expect(await r.json()).toEqual({error:"native_generation_unavailable"}); });
+it("applies the existing challenge rate limit before registration", async () => { mocks.limit.mockResolvedValue("rate_limited"); expect((await POST(req())).status).toBe(429); expect(mocks.register).not.toHaveBeenCalled(); });

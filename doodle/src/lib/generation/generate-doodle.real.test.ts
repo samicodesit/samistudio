@@ -7,7 +7,7 @@ import { generateDoodle } from "./generate-doodle";
 dotenv.config({ path: ".env.local" });
 
 describe.skipIf(process.env.RUN_REAL_IMAGE_TEST !== "1")("real Doodle image access", () => {
-  it("generates a low-quality PNG through the Doodle project", async () => {
+  it("generates a PNG through the configured Doodle project", async () => {
     const result = await generateDoodle("A cat holding one small umbrella");
     expect(result.mimeType).toBe("image/png");
     expect(result.bytes.byteLength).toBeGreaterThan(0);

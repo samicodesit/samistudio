@@ -1,0 +1,12 @@
+{
+  "approval_date": "2026-10-14",
+  "status": "Approved asset. Metadata and aliases prepared. Not deployed.",
+  "asset": "public/social/doodle-og-2026-10-14.png",
+  "source": "marketing-assets/og-concepts-2026-10-14/your-idea-doodled-v7-consistent-color.png",
+  "sha256": "3564fddf3ed091e8a3a219606a2776e329ff3fc5b5bdd05d4b234e64f4e82e93",
+  "dimensions": [
+    1200,
+    630
+  ],
+  "provenance": "Built-in image_gen, followed by deterministic headline-color normalization. Owner approved completed v7."
+}

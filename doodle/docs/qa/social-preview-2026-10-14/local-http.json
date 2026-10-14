@@ -1,0 +1,555 @@
+{
+  "base": "http://127.0.0.1:3108",
+  "passed": true,
+  "page_checks": [
+    {
+      "path": "/",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/"
+    },
+    {
+      "path": "/doodle-ideas",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/doodle-ideas"
+    },
+    {
+      "path": "/blog",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/blog"
+    },
+    {
+      "path": "/for-ai",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/for-ai"
+    },
+    {
+      "path": "/blog/card-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/blog/card-doodles"
+    },
+    {
+      "path": "/blog/lunchbox-notes",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/blog/lunchbox-notes"
+    },
+    {
+      "path": "/blog/journal-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/blog/journal-doodles"
+    },
+    {
+      "path": "/nl",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/nl"
+    },
+    {
+      "path": "/nl/doodle-ideas",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/nl/doodle-ideas"
+    },
+    {
+      "path": "/nl/blog",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/nl/blog"
+    },
+    {
+      "path": "/nl/for-ai",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/nl/for-ai"
+    },
+    {
+      "path": "/nl/blog/card-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/nl/blog/card-doodles"
+    },
+    {
+      "path": "/nl/blog/lunchbox-notes",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/nl/blog/lunchbox-notes"
+    },
+    {
+      "path": "/nl/blog/journal-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/nl/blog/journal-doodles"
+    },
+    {
+      "path": "/de",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/de"
+    },
+    {
+      "path": "/de/doodle-ideas",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/de/doodle-ideas"
+    },
+    {
+      "path": "/de/blog",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/de/blog"
+    },
+    {
+      "path": "/de/for-ai",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/de/for-ai"
+    },
+    {
+      "path": "/de/blog/card-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/de/blog/card-doodles"
+    },
+    {
+      "path": "/de/blog/lunchbox-notes",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/de/blog/lunchbox-notes"
+    },
+    {
+      "path": "/de/blog/journal-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/de/blog/journal-doodles"
+    },
+    {
+      "path": "/fr",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/fr"
+    },
+    {
+      "path": "/fr/doodle-ideas",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/fr/doodle-ideas"
+    },
+    {
+      "path": "/fr/blog",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/fr/blog"
+    },
+    {
+      "path": "/fr/for-ai",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/fr/for-ai"
+    },
+    {
+      "path": "/fr/blog/card-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/fr/blog/card-doodles"
+    },
+    {
+      "path": "/fr/blog/lunchbox-notes",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/fr/blog/lunchbox-notes"
+    },
+    {
+      "path": "/fr/blog/journal-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/fr/blog/journal-doodles"
+    },
+    {
+      "path": "/es",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/es"
+    },
+    {
+      "path": "/es/doodle-ideas",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/es/doodle-ideas"
+    },
+    {
+      "path": "/es/blog",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/es/blog"
+    },
+    {
+      "path": "/es/for-ai",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/es/for-ai"
+    },
+    {
+      "path": "/es/blog/card-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/es/blog/card-doodles"
+    },
+    {
+      "path": "/es/blog/lunchbox-notes",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/es/blog/lunchbox-notes"
+    },
+    {
+      "path": "/es/blog/journal-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/es/blog/journal-doodles"
+    },
+    {
+      "path": "/pt-br",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/pt-br"
+    },
+    {
+      "path": "/pt-br/doodle-ideas",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/pt-br/doodle-ideas"
+    },
+    {
+      "path": "/pt-br/blog",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/pt-br/blog"
+    },
+    {
+      "path": "/pt-br/for-ai",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/pt-br/for-ai"
+    },
+    {
+      "path": "/pt-br/blog/card-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/pt-br/blog/card-doodles"
+    },
+    {
+      "path": "/pt-br/blog/lunchbox-notes",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/pt-br/blog/lunchbox-notes"
+    },
+    {
+      "path": "/pt-br/blog/journal-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/pt-br/blog/journal-doodles"
+    },
+    {
+      "path": "/it",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/it"
+    },
+    {
+      "path": "/it/doodle-ideas",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/it/doodle-ideas"
+    },
+    {
+      "path": "/it/blog",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/it/blog"
+    },
+    {
+      "path": "/it/for-ai",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/it/for-ai"
+    },
+    {
+      "path": "/it/blog/card-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/it/blog/card-doodles"
+    },
+    {
+      "path": "/it/blog/lunchbox-notes",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/it/blog/lunchbox-notes"
+    },
+    {
+      "path": "/it/blog/journal-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/it/blog/journal-doodles"
+    },
+    {
+      "path": "/ja",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ja"
+    },
+    {
+      "path": "/ja/doodle-ideas",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ja/doodle-ideas"
+    },
+    {
+      "path": "/ja/blog",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ja/blog"
+    },
+    {
+      "path": "/ja/for-ai",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ja/for-ai"
+    },
+    {
+      "path": "/ja/blog/card-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ja/blog/card-doodles"
+    },
+    {
+      "path": "/ja/blog/lunchbox-notes",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ja/blog/lunchbox-notes"
+    },
+    {
+      "path": "/ja/blog/journal-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ja/blog/journal-doodles"
+    },
+    {
+      "path": "/ko",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ko"
+    },
+    {
+      "path": "/ko/doodle-ideas",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ko/doodle-ideas"
+    },
+    {
+      "path": "/ko/blog",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ko/blog"
+    },
+    {
+      "path": "/ko/for-ai",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ko/for-ai"
+    },
+    {
+      "path": "/ko/blog/card-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ko/blog/card-doodles"
+    },
+    {
+      "path": "/ko/blog/lunchbox-notes",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ko/blog/lunchbox-notes"
+    },
+    {
+      "path": "/ko/blog/journal-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ko/blog/journal-doodles"
+    },
+    {
+      "path": "/ar",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ar"
+    },
+    {
+      "path": "/ar/doodle-ideas",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ar/doodle-ideas"
+    },
+    {
+      "path": "/ar/blog",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ar/blog"
+    },
+    {
+      "path": "/ar/for-ai",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ar/for-ai"
+    },
+    {
+      "path": "/ar/blog/card-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ar/blog/card-doodles"
+    },
+    {
+      "path": "/ar/blog/lunchbox-notes",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ar/blog/lunchbox-notes"
+    },
+    {
+      "path": "/ar/blog/journal-doodles",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/ar/blog/journal-doodles"
+    },
+    {
+      "path": "/privacy",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/privacy"
+    },
+    {
+      "path": "/terms",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/terms"
+    },
+    {
+      "path": "/refund",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/refund"
+    },
+    {
+      "path": "/contact",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/contact"
+    },
+    {
+      "path": "/delete-account",
+      "agent": "Twitterbot/1.0",
+      "canonical": "https://doodle.samistudio.nl/delete-account"
+    },
+    {
+      "path": "/",
+      "agent": "facebookexternalhit/1.1",
+      "canonical": "https://doodle.samistudio.nl/"
+    },
+    {
+      "path": "/nl",
+      "agent": "facebookexternalhit/1.1",
+      "canonical": "https://doodle.samistudio.nl/nl"
+    },
+    {
+      "path": "/doodle-ideas",
+      "agent": "facebookexternalhit/1.1",
+      "canonical": "https://doodle.samistudio.nl/doodle-ideas"
+    },
+    {
+      "path": "/blog/card-doodles",
+      "agent": "facebookexternalhit/1.1",
+      "canonical": "https://doodle.samistudio.nl/blog/card-doodles"
+    },
+    {
+      "path": "/privacy",
+      "agent": "facebookexternalhit/1.1",
+      "canonical": "https://doodle.samistudio.nl/privacy"
+    },
+    {
+      "path": "/",
+      "agent": "LinkedInBot/1.0",
+      "canonical": "https://doodle.samistudio.nl/"
+    },
+    {
+      "path": "/nl",
+      "agent": "LinkedInBot/1.0",
+      "canonical": "https://doodle.samistudio.nl/nl"
+    },
+    {
+      "path": "/doodle-ideas",
+      "agent": "LinkedInBot/1.0",
+      "canonical": "https://doodle.samistudio.nl/doodle-ideas"
+    },
+    {
+      "path": "/blog/card-doodles",
+      "agent": "LinkedInBot/1.0",
+      "canonical": "https://doodle.samistudio.nl/blog/card-doodles"
+    },
+    {
+      "path": "/privacy",
+      "agent": "LinkedInBot/1.0",
+      "canonical": "https://doodle.samistudio.nl/privacy"
+    },
+    {
+      "path": "/",
+      "agent": "Slackbot-LinkExpanding 1.0",
+      "canonical": "https://doodle.samistudio.nl/"
+    },
+    {
+      "path": "/nl",
+      "agent": "Slackbot-LinkExpanding 1.0",
+      "canonical": "https://doodle.samistudio.nl/nl"
+    },
+    {
+      "path": "/doodle-ideas",
+      "agent": "Slackbot-LinkExpanding 1.0",
+      "canonical": "https://doodle.samistudio.nl/doodle-ideas"
+    },
+    {
+      "path": "/blog/card-doodles",
+      "agent": "Slackbot-LinkExpanding 1.0",
+      "canonical": "https://doodle.samistudio.nl/blog/card-doodles"
+    },
+    {
+      "path": "/privacy",
+      "agent": "Slackbot-LinkExpanding 1.0",
+      "canonical": "https://doodle.samistudio.nl/privacy"
+    },
+    {
+      "path": "/",
+      "agent": "Discordbot/2.0",
+      "canonical": "https://doodle.samistudio.nl/"
+    },
+    {
+      "path": "/nl",
+      "agent": "Discordbot/2.0",
+      "canonical": "https://doodle.samistudio.nl/nl"
+    },
+    {
+      "path": "/doodle-ideas",
+      "agent": "Discordbot/2.0",
+      "canonical": "https://doodle.samistudio.nl/doodle-ideas"
+    },
+    {
+      "path": "/blog/card-doodles",
+      "agent": "Discordbot/2.0",
+      "canonical": "https://doodle.samistudio.nl/blog/card-doodles"
+    },
+    {
+      "path": "/privacy",
+      "agent": "Discordbot/2.0",
+      "canonical": "https://doodle.samistudio.nl/privacy"
+    },
+    {
+      "path": "/",
+      "agent": "WhatsApp/2.0",
+      "canonical": "https://doodle.samistudio.nl/"
+    },
+    {
+      "path": "/nl",
+      "agent": "WhatsApp/2.0",
+      "canonical": "https://doodle.samistudio.nl/nl"
+    },
+    {
+      "path": "/doodle-ideas",
+      "agent": "WhatsApp/2.0",
+      "canonical": "https://doodle.samistudio.nl/doodle-ideas"
+    },
+    {
+      "path": "/blog/card-doodles",
+      "agent": "WhatsApp/2.0",
+      "canonical": "https://doodle.samistudio.nl/blog/card-doodles"
+    },
+    {
+      "path": "/privacy",
+      "agent": "WhatsApp/2.0",
+      "canonical": "https://doodle.samistudio.nl/privacy"
+    }
+  ],
+  "redirects": [
+    {
+      "path": "/x",
+      "status": 307,
+      "destination": "/?utm_source=x&utm_medium=organic_social&utm_campaign=doodle_web_launch"
+    },
+    {
+      "path": "/reddit",
+      "status": 307,
+      "destination": "/?utm_source=reddit&utm_medium=organic_social&utm_campaign=doodle_web_launch"
+    },
+    {
+      "path": "/pinterest",
+      "status": 307,
+      "destination": "/?utm_source=pinterest&utm_medium=organic_social&utm_campaign=doodle_web_launch"
+    },
+    {
+      "path": "/instagram",
+      "status": 307,
+      "destination": "/?utm_source=instagram&utm_medium=organic_social&utm_campaign=doodle_web_launch"
+    },
+    {
+      "path": "/tiktok",
+      "status": 307,
+      "destination": "/?utm_source=tiktok&utm_medium=organic_social&utm_campaign=doodle_web_launch"
+    },
+    {
+      "path": "/facebook",
+      "status": 307,
+      "destination": "/?utm_source=facebook&utm_medium=organic_social&utm_campaign=doodle_web_launch"
+    },
+    {
+      "path": "/linkedin",
+      "status": 307,
+      "destination": "/?utm_source=linkedin&utm_medium=organic_social&utm_campaign=doodle_web_launch"
+    },
+    {
+      "path": "/threads",
+      "status": 307,
+      "destination": "/?utm_source=threads&utm_medium=organic_social&utm_campaign=doodle_web_launch"
+    },
+    {
+      "path": "/bluesky",
+      "status": 307,
+      "destination": "/?utm_source=bluesky&utm_medium=organic_social&utm_campaign=doodle_web_launch"
+    }
+  ],
+  "image_sha256": "3564fddf3ed091e8a3a219606a2776e329ff3fc5b5bdd05d4b234e64f4e82e93",
+  "approved_image_bytes": 726817
+}

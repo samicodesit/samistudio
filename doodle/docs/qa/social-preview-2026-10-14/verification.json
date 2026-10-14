@@ -1,0 +1,37 @@
+{
+  "date": "2026-10-14",
+  "runtime": "Node 24.21.0, Next.js 16.3.8",
+  "web_tests": {
+    "passed": 1119,
+    "failed": 0,
+    "skipped": 1,
+    "skip_reason": "Paid real image generation is opt-in."
+  },
+  "native_tests": {
+    "passed": 182,
+    "failed": 0
+  },
+  "typecheck": {
+    "web": "passed, including recovered administrative scripts and browser tests",
+    "native": "passed"
+  },
+  "changed_metadata_lint": "passed",
+  "production_build": {
+    "status": "passed",
+    "static_pages": 87,
+    "environment": "Linux build candidate. 476 web source and approved asset files byte-identical to consolidation; supporting source copied before build. Direct Windows-worktree build cannot use the dependency symlink outside Turbopack filesystem root."
+  },
+  "crawler_http": {
+    "page_checks_passed": 100,
+    "channel_redirects_passed": 9,
+    "approved_png_hash_match": true
+  },
+  "source_audit": "No unexpected runtime changes against recovered deployment. PEM validation markers and explicit dummy fixtures reviewed; no private-key payloads. No credentials, signing material or build artifacts staged.",
+  "whitespace_review": "Inherited whitespace in recovered native source and original font licenses preserved. No formatting rewrite included.",
+  "unverified": [
+    "Browser end-to-end execution",
+    "Current physical-device and store-installed flows",
+    "Social-network cache refresh and rendered cards after publication"
+  ],
+  "release_status": "Not deployed, not merged to main, no Android or iOS build/submission."
+}

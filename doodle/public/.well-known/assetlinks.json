@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "nl.samistudio.doodle",
+      "sha256_cert_fingerprints": [
+        "BD:31:BE:25:A8:57:3C:65:E0:02:06:AE:E4:CA:47:2B:59:BF:A4:0A:CD:25:72:89:EA:49:39:58:84:91:3E:64"
+      ]
+    }
+  }
+]

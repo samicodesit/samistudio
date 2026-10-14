@@ -1,0 +1,61 @@
+import { readNativeJson } from "@/lib/native-contracts";
+import { PLAY_PACK_IDS, type PlayPackId } from "@/lib/billing/play-catalog";
+import { hasSameOrigin } from "@/lib/auth/same-origin";
+import { createPackElementsCheckout } from "@/lib/billing/checkout";
+import { hasLocale } from "@/lib/i18n";
+import { getCurrentUser } from "@/lib/auth/session";
+import { checkBotId } from "botid/server";
+import { NextRequest, NextResponse } from "next/server";
+import { trackOperation } from "@/lib/usage-metrics";
+
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+export async function POST(request: NextRequest) {
+  if (!hasSameOrigin(request)) {
+    return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  }
+  if ((await checkBotId()).isBot) {
+    return NextResponse.json({ error: "bot_detected" }, { status: 403 });
+  }
+
+  let body: unknown;
+  try {
+    body = await readNativeJson(request, 1024);
+  } catch {
+    return NextResponse.json({ error: "invalid_locale" }, { status: 400 });
+  }
+  const locale =
+    typeof body === "object" && body !== null && "locale" in body
+      ? body.locale
+      : undefined;
+  if (typeof locale !== "string" || !hasLocale(locale)) {
+    return NextResponse.json({ error: "invalid_locale" }, { status: 400 });
+  }
+
+  const selected = body as Record<string,unknown>;
+  const wantsPack = "productId" in selected || "expectedCredits" in selected;
+  if (wantsPack && (!PLAY_PACK_IDS.includes(selected.productId as PlayPackId) || !Number.isInteger(selected.expectedCredits) || Object.keys(selected).some(k=>!["locale","productId","expectedCredits"].includes(k)))) return NextResponse.json({error:"invalid_pack"},{status:400});
+  const user = await getCurrentUser();
+  if (!user) {
+    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const checkout = await createPackElementsCheckout({
+      userId: user.id,
+      email: user.email,
+      locale,
+      origin: request.nextUrl.origin,
+      ...(wantsPack ? {productId:selected.productId as PlayPackId,expectedCredits:selected.expectedCredits as number} : {}),
+    });
+    trackOperation({ metric: "wallet_setup", channel: "web", outcome: checkout.client_secret ? "created" : "error", actor: `account:${user.id}`, email: user.email });
+    return checkout.client_secret
+      ? NextResponse.json({ clientSecret: checkout.client_secret })
+      : NextResponse.json({ error: "billing_unavailable" }, { status: 503 });
+  } catch (error) {
+    if (error instanceof Error && error.message === "offer_changed") return NextResponse.json({error:"offer_changed"},{status:409});
+    trackOperation({ metric: "wallet_setup", channel: "web", outcome: "error", actor: `account:${user.id}`, email: user.email });
+    return NextResponse.json({ error: "billing_unavailable" }, { status: 503 });
+  }
+}
