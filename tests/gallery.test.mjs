@@ -127,3 +127,62 @@ test('one portrait photograph covers all edges while fitting the protected artwo
     }
   }
 });
+
+test('the atelier camera uses the photograph dimensions without stretching or exposed edges', async () => {
+  const { coverStageLayout } = await import('../assets/gallery-geometry.mjs');
+  assert.equal(typeof coverStageLayout, 'function');
+  for (const [width, height] of [[1280,720], [1440,900], [1440,1024], [1920,1080], [2560,1080], [3440,1440]]) {
+    const camera = coverStageLayout(width, height, 1672, 941);
+    assert.ok(camera.left <= .001 && camera.top <= .001);
+    assert.ok(camera.left + 1672 * camera.scale >= width - .001);
+    assert.ok(camera.top + 941 * camera.scale >= height - .001);
+    for (const [x,y] of [[240,170], [270,822], [1115,775], [1258,360]]) {
+      assert.ok(camera.left + x * camera.scale >= -.001);
+      assert.ok(camera.left + x * camera.scale <= width + .001);
+      assert.ok(camera.top + y * camera.scale >= -.001);
+      assert.ok(camera.top + y * camera.scale <= height + .001);
+    }
+  }
+  assert.throws(() => coverStageLayout(0,720,1672,941), RangeError);
+});
+
+test('the actual atelier portrait keeps the full panel and note between native controls', async () => {
+  const { getProject } = await import('../assets/project-data.mjs');
+  const { portraitCoverLayout } = await import('../assets/gallery-geometry.mjs');
+  const project = getProject('doodle');
+  const [left,top,right,bottom] = project.portraitBounds;
+  for (const [width,height] of [[320,480],[320,568],[375,559],[393,676],[393,711],[390,844],[442,958],[600,700],[768,1024],[820,1180],[1024,1366]]) {
+    const caption = width >= 600 ? (height <= 800 ? 180 : 210) : 160;
+    const navigation = width >= 600 && height > 800 ? 86 : 72;
+    const camera = portraitCoverLayout(width,height,caption,project.portraitBounds,project.tabletWidth,project.tabletHeight,navigation);
+    assert.ok(camera.top + top * camera.scale >= navigation - .001, `${width}x${height}: header collision`);
+    assert.ok(camera.top + bottom * camera.scale <= height - caption + .001, `${width}x${height}: footer collision`);
+    assert.ok(camera.left + left * camera.scale >= -.001);
+    assert.ok(camera.left + right * camera.scale <= width + .001);
+  }
+});
+
+test('the extended ultrawide room keeps the photographed panel and note below the shared header', async () => {
+  const { getProject } = await import('../assets/project-data.mjs');
+  const { coverStageLayout } = await import('../assets/gallery-geometry.mjs');
+  const project=getProject('doodle');
+  for(const [width,height] of [[1920,960],[2560,1080],[3440,1440]]) {
+    const camera=coverStageLayout(width,height,project.panoramaWidth,project.panoramaHeight);
+    const header=stageLayout(width,height);
+    const headerBottom=header.top+90*header.scale;
+    assert.ok(camera.top+176*camera.scale >= headerBottom+12);
+    assert.ok(camera.top+720*camera.scale <= height-12);
+  }
+});
+
+test('portrait framing includes the table front when space permits, without hiding the real artwork on short screens', async()=>{
+  const { portraitCoverLayout }=await import('../assets/gallery-geometry.mjs');
+  const bounds=[230,278,780,989];
+  for(const [width,height,caption] of [[393,711,189],[390,844,196],[320,480,128],[600,700,172]]) {
+    const camera=portraitCoverLayout(width,height,caption,bounds,992,1586,72,1196);
+    assert.ok(camera.top+bounds[1]*camera.scale >= 72-.001);
+    assert.ok(camera.top+bounds[3]*camera.scale <= height-caption+.001);
+    // The controller reserves another12px before the native caption itself.
+    if(width===393||height===844) assert.ok(camera.top+1214*camera.scale <= height-caption+12+.001,'table front lies behind the caption');
+  }
+});

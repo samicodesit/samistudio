@@ -45,6 +45,16 @@ export function stageLayout(width, height, sceneWidth = 1505, sceneHeight = 1045
   return { scale, left: (width - sceneWidth * scale) / 2, top: (height - sceneHeight * scale) / 2 };
 }
 
+// A continuous photograph and its native caption use the same camera. The
+// slight upward crop protects the board's tabletop contact on ultrawide screens.
+export function coverStageLayout(width, height, sceneWidth, sceneHeight) {
+  if (![width,height,sceneWidth,sceneHeight].every(value => Number.isFinite(value) && value > 0)) {
+    throw new RangeError('Invalid photograph dimensions.');
+  }
+  const scale = Math.max(width / sceneWidth, height / sceneHeight);
+  return { scale, left: (width - sceneWidth * scale) / 2, top: (height - sceneHeight * scale) * .52 };
+}
+
 // Fit the physical artwork, not the unused wall around it. Header and caption
 // sizes come from the rendered UI, including browser safe-area padding.
 export function mobileGalleryLayout(width, visibleHeight, captionHeight, artTop, artBottom, navigationHeight = 72, sourceWidth = 853) {
@@ -91,19 +101,23 @@ export function coverGalleryLayout(width, height, captionWidth, bounds, sceneWid
 
 // The protected artwork fits between controls while the surrounding photograph
 // always covers the viewport. Only empty room can move outside the crop.
-export function portraitCoverLayout(width, height, captionHeight, bounds, sceneWidth, sceneHeight, navigationHeight = 72) {
+export function portraitCoverLayout(width, height, captionHeight, bounds, sceneWidth, sceneHeight, navigationHeight = 72, surfaceBottom = bounds[3]) {
   const [left, top, right, bottom] = bounds;
-  if (![width, height, captionHeight, ...bounds, sceneWidth, sceneHeight, navigationHeight].every(Number.isFinite)
+  if (![width, height, captionHeight, ...bounds, sceneWidth, sceneHeight, navigationHeight, surfaceBottom].every(Number.isFinite)
       || width <= 0 || height <= navigationHeight + captionHeight || right <= left || bottom <= top || sceneWidth <= 0 || sceneHeight <= 0) {
     throw new RangeError('Invalid portrait camera dimensions.');
   }
   const available = height - captionHeight - navigationHeight;
-  const fit = Math.min((width - 32) / (right - left), available / (bottom - top));
-  const scale = Math.max(width / sceneWidth, height / sceneHeight, fit);
+  const cover = Math.max(width / sceneWidth, height / sceneHeight);
+  // A supporting tabletop is part of the composition when there is room for
+  // it. On short screens, keep the actual product protected before furniture.
+  const framingBottom = Math.max(bottom, Math.min(surfaceBottom, top + available / cover));
+  const fit = Math.min((width - 32) / (right - left), available / (framingBottom - top));
+  const scale = Math.max(cover, fit);
   const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
   return {
     scale,
     left: clamp(width / 2 - (left + right) / 2 * scale, width - sceneWidth * scale, 0),
-    top: clamp(navigationHeight + available / 2 - (top + bottom) / 2 * scale, height - sceneHeight * scale, 0),
+    top: clamp(navigationHeight + available / 2 - (top + framingBottom) / 2 * scale, height - sceneHeight * scale, 0),
   };
 }

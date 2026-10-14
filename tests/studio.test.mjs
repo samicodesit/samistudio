@@ -19,6 +19,7 @@ const runtimeFiles = [
   'assets/terminal-keycaps-mobile.webp', 'assets/terminal-wide.webp',
   'assets/project-gallery.js', 'assets/project-gallery.css', 'assets/project-data.mjs', 'assets/gallery-geometry.mjs', 'assets/gallery-loading.mjs', 'assets/gallery-navigation.mjs',
   'assets/gallery/stage-background.webp',
+  'assets/gallery/doodle-atelier-desktop.webp', 'assets/gallery/doodle-atelier-portrait-room.webp', 'assets/gallery/doodle-atelier-landscape.webp', 'assets/gallery/doodle-atelier-panorama.webp',
   'assets/gallery/doodle-landscape.webp', 'assets/gallery/autolister-landscape.webp', 'assets/gallery/cryptik-landscape.webp',
   'assets/gallery/doodle-portrait-room.webp', 'assets/gallery/autolister-portrait-room.webp', 'assets/gallery/cryptik-portrait-room.webp',
   'assets/gallery/doodle-mobile-room.webp', 'assets/gallery/autolister-mobile-room.webp', 'assets/gallery/cryptik-mobile-room.webp',

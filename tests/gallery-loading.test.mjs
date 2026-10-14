@@ -67,3 +67,15 @@ test('landscape phones and tablets request one continuous photograph only', asyn
     assert.ok((await stat(new URL(`../assets/${project.landscapeImage}`, import.meta.url))).size < 768 * 1024);
   }
 });
+
+test('Doodle reuses one current-layout atelier plate without obsolete patches or room requests', async () => {
+  const { projectAssets } = await import('../assets/gallery-loading.mjs');
+  const project = getProject('doodle');
+  for (const mode of ['desktop','wide','panorama','tablet','landscape','mobile']) {
+    const assets = projectAssets(project,mode);
+    assert.equal(assets.length,1);
+    assert.ok(assets[0].includes('doodle-atelier-'));
+    assert.ok((await stat(new URL(`../assets/${assets[0]}`,import.meta.url))).size < 512 * 1024);
+  }
+  assert.deepEqual(projectAssets(project,'desktop'),projectAssets(project,'wide'));
+});

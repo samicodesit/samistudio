@@ -28,7 +28,7 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
     setAttribute(key,value) { this.attrs.set(key,value); }
     removeAttribute(key) { this.attrs.delete(key); }
     getAttribute(key) { return this.attrs.get(key) ?? null; }
-    getBoundingClientRect() { measurements.push(this.debugKey); return {width:393,height:72}; }
+    getBoundingClientRect() { measurements.push(this.debugKey); return {width:393,height:this.debugKey==='.gallery-chrome'?0:this.debugKey==='.gallery-header'?60:72}; }
     contains() { return false; }
     focus() {}
     replaceChildren() {}
@@ -57,7 +57,7 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
   const window=new Element(); window.visualViewport={scale:1,height:viewportHeight,addEventListener(){}};
   const context={document,window,navigator:{connection:{effectiveType:'4g'}},innerWidth:393,innerHeight:711,
     URL,console, getProject,projectAssets,allowPrefetch,gallerySequence,centerSlot,settledSlot,...geometry,
-    matchMedia:query=>({matches:query.includes('prefers-reduced-motion') ? reduced : query.includes('orientation: portrait') ? selectedLayout==='tablet' : query.includes('orientation: landscape') ? selectedLayout==='landscape' : query.includes('min-aspect-ratio') && selectedLayout==='wide',addEventListener(){}}),
+    matchMedia:query=>({matches:query.includes('prefers-reduced-motion') ? reduced : query.includes('orientation: portrait') ? selectedLayout==='tablet' : query.includes('orientation: landscape') ? selectedLayout==='landscape' : query.includes('min-aspect-ratio: 2/1') ? selectedLayout==='panorama' : query.includes('min-aspect-ratio') && selectedLayout==='wide',addEventListener(){}}),
     getComputedStyle:()=>({getPropertyValue:()=>''}),
     requestAnimationFrame:fn=>{frames.push(fn);return frames.length;},
     setTimeout:(fn,delay)=>{timers.set(++timerId,{fn,delay});return timerId;},clearTimeout:id=>timers.delete(id),
@@ -75,6 +75,7 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
     releaseDecodes(){decodeGates.splice(0).forEach(resolve=>resolve());},
     blockProject(id){slowProject=id;},
     setLayout(value){selectedLayout=value;context.innerWidth=value==='landscape'?844:393;window.emit('resize');},
+    setViewport(width,height){context.innerWidth=width;context.innerHeight=height;track.clientHeight=height;window.emit('resize');},
     flushFrames(){let count=0;while(frames.length && count++<10)frames.splice(0).forEach(fn=>fn());},
     takeSettlement(){const entry=[...timers.entries()].find(([,timer])=>timer.delay===180); assert.ok(entry,'settlement is queued after native input');timers.delete(entry[0]);return entry[1].fn;},
     async runSettlement(){await this.takeSettlement()();await flush();}};
@@ -274,8 +275,16 @@ test('opening scroll placement does not cancel the entrance before it can render
 
 test('layout measures each project caption once instead of repeating work for every copy',async()=>{
   const f=await galleryFixture();
-  assert.equal(f.measurements.filter(key=>key==='.gallery-chrome').length,1);
+  assert.equal(f.measurements.filter(key=>key==='.gallery-header').length,1);
   assert.equal(f.measurements.filter(key=>key==='.gallery-caption-frame').length,3);
+});
+
+test('a zero-height sticky wrapper cannot place the artwork behind its visible header',async()=>{
+  const f=await galleryFixture({autoOpen:false});
+  f.setViewport(600,700);f.rows[0].emit('click');await f.flush();
+  const panel=f.track.children[0],scale=+panel.style.getPropertyValue('--gallery-scale');
+  const top=+panel.style.getPropertyValue('--gallery-top').replace('px','');
+  assert.ok(top + getProject('doodle').portraitBounds[1]*scale >= 72-.001);
 });
 
 
@@ -288,4 +297,28 @@ test('both visible scenes remain clickable during a scroll transition',async()=>
   f.track.children[4].querySelector('.project-link').emit('click');
   assert.equal(f.dialog.dataset.project,'autolister');
   assert.equal(f.history.state.studioProject,'autolister');
+});
+
+test('the new photograph dimensions do not move the shared website header',async()=>{
+  const f=await galleryFixture({autoOpen:false});
+  f.setLayout('desktop');f.rows[0].emit('click');await f.flush();
+  assert.equal(f.track.children[0].style.getPropertyValue('--stage-width'),'1672px');
+  assert.equal(f.track.children[0].style.getPropertyValue('--stage-height'),'941px');
+  assert.equal(f.track.children[1].style.getPropertyValue('--stage-height'),'1045px');
+  const before=f.dialog.style.getPropertyValue('--stage-width');
+  f.track.scrollTop=4*H;f.track.emit('scroll');await f.runSettlement();
+  assert.equal(f.dialog.style.getPropertyValue('--stage-width'),before);
+  assert.equal(before,'1505px');
+});
+
+test('ultrawide prepares its extended room while ordinary laptops retain the approved photograph',async()=>{
+  for(const mode of ['wide','panorama']) {
+    const f=await galleryFixture({autoOpen:false});
+    f.setLayout(mode);f.rows[0].emit('click');await f.flush();
+    assert.equal(f.dialog.open,true);
+    assert.ok(f.track.children.every(panel=>panel.dataset.ready==='true'));
+    const expected=mode==='panorama'?'doodle-atelier-panorama.webp':'doodle-atelier-desktop.webp';
+    assert.ok(f.requests.some(path=>path.endsWith(expected)));
+    assert.ok(!f.requests.some(path=>path.includes(mode==='panorama'?'doodle-atelier-desktop.webp':'doodle-atelier-panorama.webp')));
+  }
 });

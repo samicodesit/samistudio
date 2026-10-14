@@ -262,6 +262,16 @@
 .project-gallery[data-project="cryptik"] .project-caption p { white-space: nowrap; margin: 20px 0 0 2px; letter-spacing: -.6px; color: #4d4b4d; }
 .project-gallery[data-project="cryptik"] .project-link { margin: 17px 0 0 2px; font-size: 21px; }
 
+/* The atelier has a wide desktop photograph and its own native caption camera.
+   Portrait and split layouts below retain the shared glass and text geometry. */
+.project-gallery[data-project="doodle"][data-scene="composed"] .project-caption { left: min(var(--atelier-caption-x, 1234px), calc((100vw - var(--gallery-left) - 32px) / var(--gallery-scale) - 360px)); top: 431px; width: 360px; }
+.project-gallery[data-project="doodle"][data-scene="composed"] .project-caption h2 { font-size: 92px; letter-spacing: -3.4px; }
+.project-gallery[data-project="doodle"][data-scene="composed"] .project-caption p { margin: 0; font-size: 24px; line-height: 31px; letter-spacing: -.65px; }
+.project-gallery[data-project="doodle"][data-scene="composed"] .project-link { margin: 10px 0 0; font-size: 22px; }
+.project-gallery[data-project="doodle"][data-scene="composed"] .project-link-short { display: inline; text-decoration: underline; text-underline-offset: 9px; text-decoration-thickness: 1px; }
+.project-gallery[data-project="doodle"][data-scene="composed"] .project-link-label { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.project-gallery[data-project="doodle"][data-scene="composed"] .gallery-environment img { object-position: 50% 52%; }
+
 /* Widescreen uses one continuous photographic render, never stitched strips.
    The approved aspect ratio keeps its original, lossless source photograph. */
 @media (min-width: 600px) and (min-aspect-ratio: 3/2) {
@@ -348,7 +358,7 @@
     --caption-right: max(var(--caption-inset), env(safe-area-inset-right));
     height: var(--visible-height, 100dvh); overflow: hidden;
   }
-  .project-gallery[data-project="doodle"][data-scene="composed"] { --gallery-surface: #f3ecee; }
+  .project-gallery[data-project="doodle"][data-scene="composed"] { --gallery-surface: #f4efe8; }
   .project-gallery[data-project="cryptik"][data-scene="composed"] { --gallery-surface: #eeede8; }
   .project-gallery[data-project][data-scene="composed"] .gallery-environment img { display: none; }
   .project-gallery[data-project][data-scene="composed"] .gallery-viewport {
@@ -397,7 +407,7 @@
   }
   .project-gallery[data-project][data-scene="composed"] .project-caption p {
     grid-column: 1 / -1; grid-row: 2; max-width: none; margin: 8px 0 0;
-    font-size: 15px; line-height: 21px; letter-spacing: -.2px; white-space: normal; color: var(--ink);
+    font-size: 15px; line-height: 21px; min-block-size: 2lh; letter-spacing: -.2px; white-space: normal; color: var(--ink);
   }
   .project-gallery[data-project][data-scene="composed"] .project-description-line { width: auto; white-space: normal; transform: none; }
   .project-gallery[data-project][data-scene="composed"] .project-link {
@@ -407,7 +417,7 @@
   }
   .project-gallery[data-scene="composed"] .project-link::before { display: none; }
   .project-gallery[data-project][data-scene="composed"] .project-link img { width: 22px; height: 22px; }
-  .project-gallery[data-scene="composed"] .project-link-short { display: inline; text-decoration: none; }
+  .project-gallery[data-project][data-scene="composed"] .project-link-short { display: inline; text-decoration: none; }
   .project-gallery[data-scene="composed"] .project-link-label {
     position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap;
   }
@@ -421,6 +431,10 @@
   .project-gallery[data-project][data-scene="composed"] .project-caption h2 { font-size: 48px; }
   .project-gallery[data-project][data-scene="composed"] .project-caption p { font-size: 18px; line-height: 25px; }
   .project-gallery[data-project][data-scene="composed"] .project-link { font-size: 18px; }
+}
+
+@media (orientation: portrait) and (min-width: 600px) and (max-height: 800px) {
+  .project-gallery[data-project][data-scene="composed"] .project-caption { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
 }
 
 /* The same responsive photography is art-directed into a separate left stage
@@ -439,7 +453,7 @@
 @media (orientation: portrait) and (max-height: 600px) {
   .project-gallery[data-project][data-scene="composed"] .project-caption { padding-top: 14px; padding-bottom: max(18px, env(safe-area-inset-bottom)); }
   .project-gallery[data-project][data-scene="composed"] .project-caption h2 { font-size: 32px; padding-right: 90px; grid-column: 1 / -1; }
-  .project-gallery[data-project][data-scene="composed"] .project-link { position: absolute; top: 8px; right: var(--caption-right); }
+  .project-gallery[data-project][data-scene="composed"] .project-link { position: absolute; top: -7px; right: var(--caption-right); }
 }
 
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
@@ -499,7 +513,7 @@
 }
 .gallery-chrome { z-index: 10; }
 .gallery-track > .gallery-chrome {
-  position: sticky; flex: 0 0 0; height: 0; min-height: 0; overflow: visible;
+  position: sticky; top: 0; left: 0; width: 100%; flex: 0 0 0; height: 0; min-height: 0; overflow: visible;
 }
 .gallery-chrome .gallery-wordmark { letter-spacing: -.3px; }
 .gallery-chrome .gallery-header { position: absolute; top: 38px; left: 68px; right: 68px; padding: 0; margin: 0; }
@@ -518,6 +532,7 @@
   (orientation: landscape) and (min-width: 600px) and (max-width: 1180px),
   (orientation: landscape) and (max-width: 1366px) and (min-height: 900px) {
   .gallery-chrome { left: 0; right: 0; top: 0; width: auto; height: auto; transform: none; }
+  .gallery-chrome .gallery-header-frame { left: 0; right: 0; top: 0; width: auto; height: auto; transform: none; }
   .gallery-chrome .gallery-header {
     --chrome-inset: clamp(24px, 4vw, 48px);
     position: relative; inset: auto;

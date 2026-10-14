@@ -84,5 +84,94 @@
       ],
       "tool": "built-in ImageGen"
     }
-  ]
+  ],
+  "doodle_atelier_20261014": {
+    "tool": "built-in ImageGen",
+    "selected_desktop": "exec-90b9b69e-587b-4659-a856-832a237140bf.png",
+    "selected_mobile": "exec-ea819524-65f5-49fc-b8df-83c198a18bf1.png",
+    "notes": "The desktop retains the approved wide app. Portrait and landscape are art-directed continuous room adaptations. Portfolio header, captions, links, glass and dividers are native HTML/CSS. Desktop flower detail uses original live SVG references and the requested green check. No image or sticky-note motion was added.",
+    "sources": [
+      {
+        "runtime": "assets/gallery/doodle-atelier-desktop.webp",
+        "master": "exec-45e28131-5ef5-4552-b78a-9c3f629d64c2.png",
+        "dimensions": [
+          1672,
+          941
+        ],
+        "prompt": "Precision removal of outer Sami Studio header, Back navigation, divider and right Doodle caption/link from selected desktop. Restore matching plaster only. Preserve the entire wide app, flower levels/green check, board, note, oak, window, contact shadows and framing."
+      },
+      {
+        "runtime": "assets/gallery/doodle-atelier-portrait-room.webp",
+        "master": "exec-9e3341bd-8831-4a5c-b45f-2bd631190d19.png",
+        "dimensions": [
+          992,
+          1586
+        ],
+        "parent": "exec-d031b8b2-c847-49c6-a63e-a56ab5146100.png",
+        "protected_bounds": [
+          230,
+          278,
+          780,
+          989
+        ],
+        "prompt": "Remove all outer website text from selected mobile scene; retain compact app and grounded board. Adapt to a continuous room canvas with protected art, window, oak desk, note and stationery. Outpaint room to the right and below, with no extra objects or website text, to permit safe responsive camera panning on short phones."
+      },
+      {
+        "runtime": "assets/gallery/doodle-atelier-landscape.webp",
+        "master": "exec-5570e2ab-6405-42c4-bd4e-f42f8e5eb4f1.png",
+        "dimensions": [
+          1672,
+          941
+        ],
+        "protected_bounds": [
+          218,
+          264,
+          1037,
+          775
+        ],
+        "prompt": "Same atelier and actual wide desktop interface, including the original three flower levels and green check, with complete grounded board/note grouping left of quiet plaster. Slightly wider camera for landscape touchscreens. Preserve materials, window, table, stationery and lighting. No portfolio header, caption, link or divider."
+      },
+      {
+        "runtime": "assets/gallery/doodle-atelier-panorama.webp",
+        "master": "exec-44948d79-c5fa-4aab-aa0f-a66e38792352.png",
+        "dimensions": [
+          1842,
+          854
+        ],
+        "prompt": "Outpaint the selected clean desktop atelier sideways into an ultrawide continuous room. Preserve the full grounded wide desktop product, flower levels/green check, wall note, window, oak, notebook and pencils; add only lateral room. No portfolio text, vertical crop, new props or seams. Used only on desktop screens at least2:1; ordinary laptops keep the approved reference photograph."
+      }
+    ],
+    "encoding": "Pillow WebP quality96, method6, original room dimensions. Authentic source artwork is projectively placed at4x local resolution and antialiased once; scripts/prepare-doodle-atelier.py.",
+    "native_chrome": "Shared header blur6px and feathered caption blur8px saturate(.98), 12percent surface tint. Existing reduced-transparency and forced-colors fallbacks retained.",
+    "portrait_framing": "Protect the full panel/note, then include the tabletop front through sourcey1196 where space permits. The final shadow falls within the12px caption clearance. On short screens retain product visibility first. Captions keep the shared6px header/8px footer glass.",
+    "original_artwork": {
+      "reason": "User explicitly requires the exact original drawings, without generative reinterpretation.",
+      "source_directory": "design-assets/doodle-originals",
+      "cat_url": "https://doodle.samistudio.nl/landing/flower-cat.webp",
+      "flower_urls": [
+        "https://doodle.samistudio.nl/detail/simple.svg",
+        "https://doodle.samistudio.nl/detail/medium.svg",
+        "https://doodle.samistudio.nl/detail/detailed.svg"
+      ],
+      "user_artwork": [
+        "birthday-puppy.png",
+        "cooking.png",
+        "reading.png",
+        "gardening.png"
+      ],
+      "placement": "Original source artwork, not model-redrawn illustrations. The original board silhouette occludes the puppy paper. Photographic edges, contact shadow and room stay unchanged.",
+      "sha256": {
+        "birthday-puppy.png": "1df2e5d238f9017f8ca653112e038bea6055b9bdf62f4270ccdadab67070c0e7",
+        "cooking.png": "f39c94a26743f2c9dc1ff5997873af4dc25a9cadfc43b84b83d7d3c80693517e",
+        "flower-cat.webp": "730ce6b528588498b4486a2880b4302c2a40d518d1cdeea143678ff720bb514a",
+        "flower-detailed.svg": "53f588c8c0d714d50646683a66f8e06d4b47bb9c5c4ff7b4bd8f02c84bd1c506",
+        "flower-levels.png": "91175ace953af1aec34bbbb98e6d928e8f30c5e6550cc06af6b87c0768e192be",
+        "flower-medium.svg": "e5877c9e0018dafa3d832599d6dd444b1e8c63344884abc724f7ade28a279545",
+        "flower-simple.svg": "6a05fc5ba956b497fcacf87cc787401408ea8a4b7792033a376727383f8a9cef",
+        "gardening.png": "120865ce4d174829d453e5fd701140e2aa5ea6e18a9dadefbb0695659ab5fe56",
+        "reading.png": "89485d25d85a768590b6f0d1fa8db0c7d72c55ff06690db935e0f04705d5b85b"
+      }
+    },
+    "footer_geometry": "Responsive captions reserve two line-heights of description space across all three projects. Short portrait tablet padding is shared, not Doodle-specific. Title, divider and Open align between projects at matching viewport sizes."
+  }
 }

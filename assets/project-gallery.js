@@ -1,7 +1,7 @@
 import { getProject } from './project-data.mjs';
 import { projectAssets, allowPrefetch } from './gallery-loading.mjs';
 import { gallerySequence, centerSlot, settledSlot } from './gallery-navigation.mjs';
-import { terminalPolygon, projectFromHash, stageLayout, coverGalleryLayout, portraitCoverLayout } from './gallery-geometry.mjs';
+import { terminalPolygon, projectFromHash, stageLayout, coverStageLayout, coverGalleryLayout, portraitCoverLayout } from './gallery-geometry.mjs';
 
 const assetUrl = path => new URL(path, import.meta.url).href;
 const compactQuery = '(max-width: 900px) and (orientation: portrait), (max-width: 599px)';
@@ -12,6 +12,7 @@ export function initProjectGallery({ onReturn }) {
   const dialog = document.querySelector('#project-gallery');
   const track = dialog.querySelector('.gallery-track');
   const chrome = dialog.querySelector('.gallery-chrome');
+  const headerContent = chrome.querySelector('.gallery-header');
   const back = dialog.querySelector('.gallery-back');
   const announcement = dialog.querySelector('#gallery-current');
   const rows = [...document.querySelectorAll('.work-row')];
@@ -31,6 +32,7 @@ export function initProjectGallery({ onReturn }) {
   function mode() {
     return matchMedia(splitQuery).matches ? 'landscape'
       : matchMedia('(orientation: portrait), (max-width: 599px)').matches ? 'tablet'
+      : matchMedia('(min-width: 1181px) and (min-aspect-ratio: 2/1)').matches ? 'panorama'
       : matchMedia('(min-width: 600px) and (min-aspect-ratio: 3/2)').matches ? 'wide' : 'desktop';
   }
 
@@ -123,12 +125,12 @@ export function initProjectGallery({ onReturn }) {
       try {
         await prepare(panel.project.id, selectedMode, priority);
         if (version !== panel.version || selectedMode !== mode()) return;
-        const wide = selectedMode === 'wide';
+        const wide = selectedMode === 'wide' || selectedMode === 'panorama';
         const path = selectedMode === 'tablet' ? panel.project.tabletImage
           : selectedMode === 'landscape' ? panel.project.landscapeImage : panel.project.image;
         panel.environment.parentElement.setAttribute('aria-hidden', String(!wide));
         panel.environment.alt = wide ? panel.project.imageAlt : '';
-        if (wide) { panel.environment.loading = 'eager'; panel.environment.src = assetUrl(panel.project.wideImage); }
+        if (wide) { panel.environment.loading = 'eager'; panel.environment.src = assetUrl(selectedMode === 'panorama' ? panel.project.panoramaImage || panel.project.wideImage : panel.project.wideImage); }
         else { panel.photo.src = assetUrl(path); panel.photo.alt = panel.project.imageAlt; }
         panel.patches.forEach((patch, index) => {
           const path = selectedMode === 'desktop' ? panel.project.patches?.[index] : null;
@@ -238,28 +240,30 @@ export function initProjectGallery({ onReturn }) {
 
     // Batch all geometry reads before writing scene styles. Three copies of a
     // project share one camera, avoiding repeated forced layouts during resize.
-    const navigation = responsive ? chrome.getBoundingClientRect().height + 12 : 0;
+    const navigation = responsive ? headerContent.getBoundingClientRect().height + 12 : 0;
     const captions = responsive ? ids.map((_,index) => panels[ids.length + index].caption.getBoundingClientRect()) : [];
     const styles = new Map(ids.map((id,index) => {
       const project = getProject(id);
-      const width = selectedMode === 'landscape' ? project.landscapeWidth : selectedMode === 'tablet' ? project.tabletWidth : project.imageWidth;
-      const photoHeight = selectedMode === 'landscape' ? project.landscapeHeight : selectedMode === 'tablet' ? project.tabletHeight : 1045;
+      const panoramic = selectedMode === 'panorama' && project.panoramaImage;
+      const width = selectedMode === 'landscape' ? project.landscapeWidth : selectedMode === 'tablet' ? project.tabletWidth : panoramic ? project.panoramaWidth : project.imageWidth;
+      const photoHeight = selectedMode === 'landscape' ? project.landscapeHeight : selectedMode === 'tablet' ? project.tabletHeight : panoramic ? project.panoramaHeight : project.imageHeight;
       const camera = selectedMode === 'landscape'
         ? coverGalleryLayout(innerWidth, height, captions[index].width, project.landscapeBounds, width, photoHeight, navigation)
         : selectedMode === 'tablet'
-          ? portraitCoverLayout(innerWidth, height, captions[index].height + 12, project.portraitBounds, width, photoHeight, navigation)
-          : stageLayout(innerWidth, height, width, photoHeight);
+          ? portraitCoverLayout(innerWidth, height, captions[index].height + 12, project.portraitBounds, width, photoHeight, navigation, project.portraitSurfaceBottom)
+          : (project.coverScene ? coverStageLayout : stageLayout)(innerWidth, height, width, photoHeight);
       return [id, { '--stage-width': `${width}px`, '--stage-height': `${photoHeight}px`, '--mobile-image-height': `${photoHeight}px`,
         '--visible-height': `${height}px`, '--mobile-art-window': `${height}px`, '--mobile-stage-height': `${height}px`,
-        '--gallery-scale': camera.scale, '--gallery-left': `${camera.left}px`, '--gallery-top': `${camera.top}px` }];
+        '--gallery-scale': camera.scale, '--gallery-left': `${camera.left}px`, '--gallery-top': `${camera.top}px`,
+        '--atelier-caption-x': `${panoramic ? 1400 : 1234}px` }];
     }));
     for (const panel of panels) {
       for (const [key,value] of Object.entries(styles.get(panel.project.id))) panel.element.style.setProperty(key,value);
     }
-    const project = getProject(active);
-    const header = stageLayout(innerWidth, height, project.imageWidth, 1045);
+    // Website chrome belongs to the gallery, not to a photograph's dimensions.
+    const header = stageLayout(innerWidth, height);
     for (const [key,value] of Object.entries({ '--gallery-scale': header.scale, '--gallery-left': `${header.left}px`,
-      '--gallery-top': `${header.top}px`, '--stage-width': `${project.imageWidth}px`, '--stage-height': '1045px' })) dialog.style.setProperty(key,value);
+      '--gallery-top': `${header.top}px`, '--stage-width': '1505px', '--stage-height': '1045px' })) dialog.style.setProperty(key,value);
     refreshScenes(selectedMode);
   }
 
@@ -417,7 +421,7 @@ export function initProjectGallery({ onReturn }) {
   window.addEventListener('resize',requestLayout,{passive:true});
   window.visualViewport?.addEventListener('resize',()=>{if(window.visualViewport.scale===1)requestLayout();},{passive:true});
   reducedMotion.addEventListener('change',()=>{stopMovement();requestLayout();});
-  const observer=new ResizeObserver(requestLayout); observer.observe(chrome);
+  const observer=new ResizeObserver(requestLayout); observer.observe(headerContent);
   document.fonts.ready.then(requestLayout);
   select(0);
   return {

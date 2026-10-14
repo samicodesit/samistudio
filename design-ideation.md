@@ -37,3 +37,10 @@ Built-in ImageGen prepared clean text plates. Shared prompt: remove only the web
 Two continuous widescreen rooms were generated from the clean desktop images. Prompt: extend left/right to 16:9; preserve the products and styling; add no principal objects or portfolio text. AutoLister: `exec-99d05b79-bb0b-43d5-8feb-fb4fb5fdffcf.png`. Cryptik: `exec-53e6862f-4221-4257-858d-00cc4087cb15.png`. Stitching these onto the original was rejected because of seams. The full continuous renders are used on wider screens with native typography. They are responsive adaptations, not pixel-identical copies of the narrower approved photos.
 
 Project-bound assets are in `assets/gallery/`. `scripts/prepare-stage-assets.py` records source/output mappings and verifies lossless encoding. Exact generation prompts are saved in `design-image-prompts.json`. No API or CLI generation fallback was used. Original PNG sources are retained.
+
+
+## 2026-10-15: Approved Doodle atelier
+
+The final Doodle setting is a sunlit creative atelier with an oak worktable, plaster wall, olive foliage, linen notebook and graphite pencils. Its wide desktop app is the dominant piece; mobile uses the compact app. The panel is supported by the tabletop and leans against the wall. A stationary birthday puppy paper sits behind the panel. The room differs from AutoLister's garment styling area and Cryptik's stone game room while sharing warm light and natural materials.
+
+The owner requires authentic artwork. The final preparation uses the real flower-cat, the four owner-supplied yellow drawings, and actual three flower-detail SVGs. Generative redraws were replaced before release. Native portfolio typography, glass, navigation, responsive footer geometry and existing continuous scroll behavior remain shared. Source mappings, artwork hashes and encoding are recorded in design-image-prompts.json and scripts/prepare-doodle-atelier.py.
