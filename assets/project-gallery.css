@@ -555,3 +555,16 @@
   .gallery-shell[data-layout="desktop"] .gallery-back { font-size: max(20px, calc(14px / var(--gallery-scale))); min-height: calc(44px / var(--gallery-scale)); }
   .gallery-shell[data-layout="desktop"] .gallery-back img { width: max(30px, calc(18px / var(--gallery-scale))); height: max(30px, calc(18px / var(--gallery-scale))); }
 }
+
+/* A shallow stone edge separates rooms while they pass through the viewport. */
+.gallery-panel::before {
+  content: ''; position: absolute; z-index: 8; top: 0; left: 0; right: 0;
+  height: 4px; box-sizing: border-box; pointer-events: none; opacity: 0;
+  background: #d8c1aaad;
+  border-top: 1px solid #fffdf5b3; border-bottom: 1px solid #78533477;
+  box-shadow: 0 2px 2px #39271c80, 0 7px 12px #5133215c, 0 20px 28px -8px #51332147;
+}
+.gallery-shell[data-scrolling="true"] .gallery-panel::before { opacity: 1; }
+@media (forced-colors: active) {
+  .gallery-panel::before { background: Canvas; border-color: CanvasText; box-shadow: none; }
+}

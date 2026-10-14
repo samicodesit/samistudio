@@ -170,3 +170,18 @@ Validation: the complete studio suite passes 31 tests, including replacement tes
 All three scenes passed caption, header and Open-link containment, centered-track and no-outer-overflow checks at 320 x 480, 844 x 390, 820 x 1180, 1280 x 720 and 1280 x 900. Each gallery contains exactly three panels.
 
 Browser behavior references: [CSS scroll snap](https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Scroll_snap), [scroll-snap-stop](https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/scroll-snap-stop), [scrollend](https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollend_event).
+
+
+# Material project separator, 14 October 2026
+
+Selected visual target: the second displayed separator concept, exec-2e4c1cf1-c962-4169-9495-d58fa495cebc.png. The owner chose the version without additional text, then requested a more noticeable but elegant shadow.
+
+Implemented a four-pixel warm stone edge with a fine highlight, darker contact line, tight contact shadow and two broader cast shadows. It is an absolute, non-interactive pseudo-element on each of the three existing project panels. It appears during the existing scrolling state and is hidden when a scene settles. No new text, image assets, layout spacing, animation, event handling or scroll behavior was added. Forced-colors mode uses native Canvas and CanvasText with no shadow.
+
+Design QA: compared the selected concept and the rendered AutoLister-to-Cryptik seam in one normalized side-by-side image at 393 x 711. The first pass was too pale and shallow. Warmed the rim and deepened the contact and cast shadows in response to owner feedback, then captured and compared again. The final shadow is intentionally stronger than the original concept.
+
+Fidelity surfaces: existing native fonts, type weights, wrapping and text are preserved. The separator has zero layout footprint, so caption and artwork spacing are unchanged. The warm highlight and shadow match the selected material direction. Original photographic artwork and image quality are preserved; differences in the generated concept's artwork and type are outside this separator-only scope. No extra chapter label, number, navigation or content block was added.
+
+Browser checks: all three phone boundaries at 393 x 711 showed the four-pixel separator during motion and hid it at rest. Each remained pointer-events:none and the native track remained exactly three pages. Tablet check at 820 x 1180 retained the same material treatment without outer overflow. Laptop rest check at 1280 x 720 hid the edge. Real mouse-wheel snapping, Back to work, reopening and returning to a settled scene passed, with no console errors.
+
+Final result: passed.
