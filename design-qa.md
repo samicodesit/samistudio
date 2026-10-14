@@ -206,3 +206,9 @@ Changes: disable boundary bounce; clamp settlement to the logical three-panel ex
 Six new regression cases cover boundary recovery without scrollend, differing height measurements, repeated touch cycles in both directions, resizing during overscroll and a stale extra scroll extent. These simulate controller conditions and do not execute Safari. Complete suite: 42 tests.
 
 Chrome QA at 393x711: two forward loops and one reverse loop using native wheel input. Resize during movement to 393x620 retained the active project, recentered to 620 px and measured every panel at 620 px. Expansion to 393x780 retained the active project. Physical iPhone Safari verification is unavailable and is not claimed.
+
+### Follow-up found during production verification
+
+An immediate native wheel scroll on the newly deployed build reached the next panel while active metadata stayed on the previous project and scrolling stayed false. The event had arrived during the rebase guard, and unlocking did not schedule any later inspection. At a native boundary another gesture produces no movement, leaving no event to recover the ring.
+
+Added resumeTrack to both rebase paths. Unlocking now refreshes the moving state and queues the existing settlement fallback, even if all native events arrived while busy. The additional regression failed before this change because no recovery timer existed, then passed. Complete suite: 43 tests. Local browser checks reproduced first-open forward and reverse input timing and both recovered to a centered scene.

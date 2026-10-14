@@ -165,6 +165,17 @@ export function initProjectGallery({ onReturn }) {
     if (updateHistory) history.replaceState(ownsHistoryEntry ? { studioProject: id } : history.state, '', `#work/${id}`);
   }
 
+  function resumeTrack() {
+    track.style.scrollSnapType = '';
+    rebasing = false;
+    if (!dialog.open || dialog.dataset.phase !== 'open') return;
+    // Native scrolling can finish while the rebase guard is active. Always
+    // inspect the final position after unlocking, even if no new event arrives.
+    dialog.dataset.scrolling = String(Math.abs(track.scrollTop - height) > 1);
+    clearTimeout(settleTimer);
+    settleTimer = setTimeout(settle, 180);
+  }
+
   function rebase(id = active) {
     rebasing = true;
     track.style.scrollSnapType = 'none';
@@ -172,7 +183,7 @@ export function initProjectGallery({ onReturn }) {
     for (const key of order) track.append(panels.get(key).element);
     track.scrollTo({ top: height, behavior: 'instant' });
     dialog.dataset.scrolling = 'false';
-    requestAnimationFrame(() => { track.style.scrollSnapType = ''; rebasing = false; });
+    requestAnimationFrame(resumeTrack);
   }
 
   function settle() {
@@ -247,7 +258,7 @@ export function initProjectGallery({ onReturn }) {
       rebasing = true;
       track.style.scrollSnapType = 'none';
       track.scrollTo({top: progress * height, behavior:'instant'});
-      requestAnimationFrame(() => { track.style.scrollSnapType = ''; rebasing = false; });
+      requestAnimationFrame(resumeTrack);
     } else rebase();
     scheduleNeighbors();
   }

@@ -178,3 +178,17 @@ test('a stale native scroll extent cannot become an extra blank project',async()
   assert.equal(dialog.dataset.project,'autolister');
   assert.equal(track.scrollTop,711);
 });
+
+
+test('a native scroll arriving during recentering is settled after the track unlocks',async()=>{
+  const {track,dialog,flushFrames,runSettlement}=await galleryFixture();
+  flushFrames();
+  track.scrollTop=1422; track.emit('scrollend');
+  assert.equal(dialog.dataset.project,'autolister');
+  // A second native gesture reaches the edge before the rebase RAF completes.
+  // Its scroll and scrollend events are deliberately ignored by the busy guard.
+  track.scrollTop=1422; track.emit('scroll'); track.emit('scrollend');
+  flushFrames(); await runSettlement(); flushFrames();
+  assert.equal(dialog.dataset.project,'cryptik');
+  assert.equal(track.scrollTop,711);
+});
