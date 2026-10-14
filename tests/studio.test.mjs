@@ -1,3 +1,4 @@
+import './gallery-navigation.test.mjs';
 import './og-image.test.mjs';
 import './gallery.test.mjs';
 import './gallery-loading.test.mjs';
@@ -14,7 +15,7 @@ const runtimeFiles = [
   'assets/key-spring.mjs', 'assets/terminal-housing.webp',
   'assets/terminal-housing-mobile.webp', 'assets/terminal-keycaps.webp',
   'assets/terminal-keycaps-mobile.webp', 'assets/terminal-wide.webp',
-  'assets/project-gallery.js', 'assets/project-gallery.css', 'assets/project-data.mjs', 'assets/gallery-geometry.mjs', 'assets/gallery-loading.mjs',
+  'assets/project-gallery.js', 'assets/project-gallery.css', 'assets/project-data.mjs', 'assets/gallery-geometry.mjs', 'assets/gallery-loading.mjs', 'assets/gallery-navigation.mjs',
   'assets/gallery/stage-background.webp',
   'assets/gallery/doodle-landscape.webp', 'assets/gallery/autolister-landscape.webp', 'assets/gallery/cryptik-landscape.webp',
   'assets/gallery/doodle-portrait-room.webp', 'assets/gallery/autolister-portrait-room.webp', 'assets/gallery/cryptik-portrait-room.webp',

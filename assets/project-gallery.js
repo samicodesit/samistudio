@@ -1,3 +1,4 @@
+import { createWheelGesture, swipeDirection, adjacentProject } from './gallery-navigation.mjs';
 import { getProject } from './project-data.mjs';
 import { projectAssets, allowPrefetch, composedFor } from './gallery-loading.mjs';
 import { terminalPolygon, projectFromHash, stageLayout, coverGalleryLayout, portraitCoverLayout } from './gallery-geometry.mjs';
@@ -41,6 +42,17 @@ export function initProjectGallery({ onReturn }) {
   let target = [0, 0];
   let prefetchTimer = 0;
   let layoutFrame = 0;
+  let cycling = false;
+  let viewTransition = null;
+  let touch = null;
+  const wheelGesture = createWheelGesture();
+  const projectIds = rows.map(row => row.dataset.project);
+  rows.forEach(row => {
+    const loader = document.createElement('span');
+    loader.className = 'terminal-loader';
+    loader.setAttribute('aria-hidden', 'true');
+    row.append(loader);
+  });
 
   function load(path) {
     const url = assetUrl(path);
@@ -241,10 +253,11 @@ export function initProjectGallery({ onReturn }) {
     } else frame = 0;
   }
 
-  async function open(id, fromHistory = false) {
+  async function open(id, fromHistory = false, direction = 0) {
     const project = getProject(id);
     if (!project) return;
     const token = ++pending;
+    const wasOpen = dialog.open;
     clearTimeout(prefetchTimer);
     rows.forEach(row => row.removeAttribute('aria-busy'));
     if (dialog.dataset.phase === 'closing') {
@@ -254,7 +267,9 @@ export function initProjectGallery({ onReturn }) {
     }
     select(rows.findIndex(row => row.dataset.project === id));
     rows[selected].setAttribute('aria-busy', 'true');
-    status.textContent = `Opening ${project.title}…`;
+    status.classList.add('sr-only');
+    status.textContent = `Loading ${project.title}.`;
+    if (wasOpen) dialog.setAttribute('aria-busy', 'true');
     try {
       let mode = sceneMode(project);
       await prepare(id, mode);
@@ -265,7 +280,9 @@ export function initProjectGallery({ onReturn }) {
       }
     } catch {
       if (token === pending) {
+        status.classList.remove('sr-only');
         status.textContent = 'Preview unavailable. Please try again.';
+        dialog.removeAttribute('aria-busy');
         rows.forEach(row => row.removeAttribute('aria-busy'));
       }
       return;
@@ -277,62 +294,89 @@ export function initProjectGallery({ onReturn }) {
       reveal?.cancel();
       resetMovement();
     }
-    active = id;
-    const composed = composedFor(project, sceneMode(project));
-    dialog.dataset.project = id;
-    dialog.dataset.scene = composed ? 'composed' : 'doodle';
-    dialog.dataset.phase = 'opening';
-    title.textContent = project.heading;
-    if (project.descriptionLines) {
-      description.replaceChildren(...project.descriptionLines.map((line, index) => {
-        const span = document.createElement('span');
-        span.className = 'project-description-line';
-        span.textContent = `${index ? ' ' : ''}${line}`;
-        return span;
-      }));
-    } else description.textContent = project.description;
-    externalLink.href = project.href;
-    externalLink.querySelector('.project-link-label').textContent = `Open ${project.title}`;
-    composedScene.hidden = !composed;
-    referenceScene.hidden = !project.referenceCrop || composed;
-    if (project.referenceCrop && !composed) referenceScene.querySelector('img').src = assetUrl(project.image);
-    if (composed) {
-      setSceneImages(project);
-    } else {
-      primaryImage.src = assetUrl(project.image);
-      primaryImage.alt = project.imageAlt;
-      primaryImage.width = project.imageWidth;
-      primaryImage.height = project.imageHeight;
-      artwork.src = assetUrl(project.artwork);
-      artwork.alt = project.artworkAlt;
-    }
-    if (!composed) environmentImage.src = assetUrl('./gallery/stage-background.webp');
-    else if (matchMedia(wideQuery).matches) environmentImage.src = assetUrl(project.wideImage);
-    environmentImage.loading = 'eager';
-    try {
-      const images = composed ? (sceneMode(project) === 'wide' ? [environmentImage] : [...composedScene.querySelectorAll('picture')].filter(picture => !picture.closest('[hidden]')).map(picture => picture.querySelector('img')))
-        : [primaryImage, artwork, environmentImage, referenceScene.querySelector('img')];
-      await Promise.all(images.map(image => image.decode()));
-    } catch {
-      if (token === pending) status.textContent = 'Preview unavailable. Please try again.';
-      return;
-    }
-    if (token !== pending) return;
-    if (!dialog.open) dialog.showModal();
-    layout();
-    dialog.scrollTop = 0;
-    photoViewport.scrollTop = 0;
-    dialog.focus({ preventScroll: true });
+    const updateScene = async () => {
+      if (token !== pending) return;
+      active = id;
+      const composed = composedFor(project, sceneMode(project));
+      dialog.dataset.project = id;
+      dialog.dataset.scene = composed ? 'composed' : 'doodle';
+      dialog.dataset.phase = 'opening';
+      title.textContent = project.heading;
+      if (project.descriptionLines) {
+        description.replaceChildren(...project.descriptionLines.map((line, index) => {
+          const span = document.createElement('span');
+          span.className = 'project-description-line';
+          span.textContent = `${index ? ' ' : ''}${line}`;
+          return span;
+        }));
+      } else description.textContent = project.description;
+      externalLink.href = project.href;
+      externalLink.querySelector('.project-link-label').textContent = `Open ${project.title}`;
+      composedScene.hidden = !composed;
+      referenceScene.hidden = !project.referenceCrop || composed;
+      if (project.referenceCrop && !composed) referenceScene.querySelector('img').src = assetUrl(project.image);
+      if (composed) {
+        setSceneImages(project);
+      } else {
+        primaryImage.src = assetUrl(project.image);
+        primaryImage.alt = project.imageAlt;
+        primaryImage.width = project.imageWidth;
+        primaryImage.height = project.imageHeight;
+        artwork.src = assetUrl(project.artwork);
+        artwork.alt = project.artworkAlt;
+      }
+      if (!composed) environmentImage.src = assetUrl('./gallery/stage-background.webp');
+      else if (matchMedia(wideQuery).matches) environmentImage.src = assetUrl(project.wideImage);
+      environmentImage.loading = 'eager';
+      try {
+        const images = composed ? (sceneMode(project) === 'wide' ? [environmentImage] : [...composedScene.querySelectorAll('picture')].filter(picture => !picture.closest('[hidden]')).map(picture => picture.querySelector('img')))
+          : [primaryImage, artwork, environmentImage, referenceScene.querySelector('img')];
+        await Promise.all(images.map(image => image.decode()));
+      } catch {
+        if (token === pending) {
+          status.classList.remove('sr-only');
+          status.textContent = 'Preview unavailable. Please try again.';
+        }
+        return;
+      }
+      if (token !== pending) return;
+      if (!dialog.open) dialog.showModal();
+      layout();
+      dialog.scrollTop = 0;
+      photoViewport.scrollTop = 0;
+      if (!wasOpen) dialog.focus({ preventScroll: true });
+    };
+    const nativeTransition = direction && !reducedMotion.matches && document.startViewTransition;
+    if (nativeTransition) {
+      document.documentElement.classList.add('gallery-cycling');
+      document.documentElement.style.setProperty('--project-direction', direction);
+      viewTransition = document.startViewTransition(updateScene);
+      // A skipped snapshot must still complete the real DOM update.
+      viewTransition.ready.catch(() => {});
+      await viewTransition.updateCallbackDone;
+    } else await updateScene();
+    dialog.removeAttribute('aria-busy');
+    if (token !== pending || !dialog.open) return;
     if (!fromHistory) {
-      baseHash = location.hash;
-      history.pushState({ studioProject: id }, '', `#work/${id}`);
-      ownsHistoryEntry = true;
+      if (wasOpen) {
+        history.replaceState(ownsHistoryEntry ? { studioProject: id } : history.state, '', `#work/${id}`);
+      } else {
+        baseHash = location.hash;
+        history.pushState({ studioProject: id }, '', `#work/${id}`);
+        ownsHistoryEntry = true;
+      }
     } else ownsHistoryEntry = history.state?.studioProject === id;
-    if (!reducedMotion.matches) {
+    if (nativeTransition) {
+      try { await viewTransition.finished; } catch { /* Navigation can skip a snapshot. */ }
+      document.documentElement.classList.remove('gallery-cycling');
+      viewTransition = null;
+    } else if (!reducedMotion.matches) {
       const easing = 'cubic-bezier(.2,.75,.12,1)';
-      reveal = dialog.animate([{ clipPath: aperture() }, { clipPath: fullScreen }], { duration: project.composedScene ? 850 : 680, easing });
+      reveal = direction
+        ? photoViewport.animate([{ opacity: .4, transform: `translateY(${direction * 60}px)` }, { opacity: 1, transform: 'none' }], { duration: 430, easing })
+        : dialog.animate([{ clipPath: aperture() }, { clipPath: fullScreen }], { duration: project.composedScene ? 850 : 680, easing });
       movement = [];
-      if (project.composedScene && !project.stationaryScene) {
+      if (!direction && project.composedScene && !project.stationaryScene) {
         const camera = sceneMode(project) === 'wide' ? environmentImage : composedScene;
         movement = [camera].map(element =>
           element.animate([{ transform: 'scale(1.065)' }, { transform: 'scale(1)' }],
@@ -342,7 +386,7 @@ export function initProjectGallery({ onReturn }) {
         movement.push(element.animate([
           { transform: `translateY(${[64, 34, 22][index]}px)`, opacity: 0 },
           { transform: 'translateY(0)', opacity: 1 },
-        ], { duration: [780, 650, 580][index], delay: [260, 430, 540][index], easing, fill: 'backwards' }));
+        ], { duration: direction ? 430 : [780, 650, 580][index], delay: direction ? 0 : [260, 430, 540][index], easing, fill: 'backwards' }));
       });
       try { await Promise.all([reveal, ...movement].map(animation => animation.finished)); }
       catch { /* Close, resize, or reduced motion can finish the transition early. */ }
@@ -354,6 +398,11 @@ export function initProjectGallery({ onReturn }) {
     if (!dialog.open || dialog.dataset.phase === 'closing') return;
     const token = ++pending;
     dialog.dataset.phase = 'closing';
+    viewTransition?.skipTransition();
+    document.documentElement.classList.remove('gallery-cycling');
+    dialog.removeAttribute('aria-busy');
+    rows.forEach(row => row.removeAttribute('aria-busy'));
+    touch = null;
     reveal?.cancel();
     resetMovement();
     onReturn();
@@ -380,6 +429,38 @@ export function initProjectGallery({ onReturn }) {
       close();
     }
   }
+
+  async function cycle(direction) {
+    if (cycling || !dialog.open || dialog.dataset.phase !== 'open') return;
+    cycling = true;
+    try { await open(adjacentProject(projectIds, active, direction), false, direction); }
+    finally { cycling = false; }
+  }
+
+  dialog.addEventListener('wheel', event => {
+    if (event.ctrlKey || window.visualViewport?.scale > 1) return;
+    const direction = wheelGesture(event, performance.now(), !cycling && dialog.dataset.phase === 'open');
+    if (direction) cycle(direction);
+  }, { passive: true });
+  dialog.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'mouse') return;
+    if (!event.isPrimary) { touch = null; return; }
+    if (cycling || dialog.dataset.phase !== 'open' || event.target.closest('a, button') || window.visualViewport?.scale > 1) return;
+    touch = { id: event.pointerId, x: event.clientX, y: event.clientY, at: performance.now() };
+    dialog.setPointerCapture(event.pointerId);
+  });
+  dialog.addEventListener('pointerup', event => {
+    if (!touch || touch.id !== event.pointerId) return;
+    const direction = swipeDirection(event.clientX - touch.x, event.clientY - touch.y, performance.now() - touch.at, innerHeight);
+    touch = null;
+    if (direction) cycle(direction);
+  });
+  dialog.addEventListener('pointercancel', () => { touch = null; });
+  dialog.addEventListener('keydown', event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('a, button')) return;
+    const direction = ['ArrowDown','PageDown'].includes(event.key) ? 1 : ['ArrowUp','PageUp'].includes(event.key) ? -1 : 0;
+    if (direction) { event.preventDefault(); if (!event.repeat) cycle(direction); }
+  });
 
   rows.forEach((row, index) => {
     row.addEventListener('pointerenter', () => { select(index); prefetch(row.dataset.project); });
@@ -415,14 +496,14 @@ export function initProjectGallery({ onReturn }) {
       rows.forEach(row => row.removeAttribute('aria-busy'));
     }
   });
-  window.addEventListener('resize', () => { reveal?.finish(); resetMovement(); requestLayout(); }, { passive: true });
-  window.visualViewport?.addEventListener('resize', requestLayout, { passive: true });
+  window.addEventListener('resize', () => { touch = null; viewTransition?.skipTransition(); reveal?.finish(); resetMovement(); requestLayout(); }, { passive: true });
+  window.visualViewport?.addEventListener('resize', () => { touch = null; viewTransition?.skipTransition(); requestLayout(); }, { passive: true });
   const controlsObserver = new ResizeObserver(requestLayout);
   controlsObserver.observe(captionFrame);
   controlsObserver.observe(dialog.querySelector('.gallery-header-frame'));
   document.fonts.ready.then(requestLayout);
   window.addEventListener('blur', resetMovement);
-  reducedMotion.addEventListener('change', () => { reveal?.finish(); resetMovement(); });
+  reducedMotion.addEventListener('change', () => { viewTransition?.skipTransition(); reveal?.finish(); resetMovement(); });
   dialog.addEventListener('pointermove', event => {
     if (!finePointer.matches || reducedMotion.matches || getProject(active)?.composedScene || matchMedia(compactQuery).matches || dialog.dataset.phase !== 'open') return;
     target = [(event.clientX / innerWidth - .5) * 14, (event.clientY / innerHeight - .5) * 8];
