@@ -23,6 +23,7 @@ const runtimeFiles = [
   'assets/terminal-housing-mobile.webp', 'assets/terminal-keycaps.webp',
   'assets/terminal-keycaps-mobile.webp', 'assets/terminal-wide.webp',
   'assets/project-gallery.js', 'assets/project-gallery.css', 'assets/project-data.mjs', 'assets/gallery-geometry.mjs', 'assets/gallery-loading.mjs', 'assets/gallery-navigation.mjs',
+  'assets/terminal-art/doodle.png', 'assets/terminal-art/autolister.png', 'assets/terminal-art/cryptik.png',
   'assets/gallery/stage-background.webp',
   'assets/gallery/doodle-atelier-desktop.webp', 'assets/gallery/doodle-atelier-portrait-room.webp', 'assets/gallery/doodle-atelier-landscape.webp', 'assets/gallery/doodle-atelier-panorama.webp',
   'assets/gallery/doodle-landscape.webp', 'assets/gallery/autolister-landscape.webp', 'assets/gallery/cryptik-landscape.webp',
