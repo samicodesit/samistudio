@@ -134,3 +134,21 @@ export function fitMobileTerminal(width,height,introductionBottom,safeBottom=0) 
   if(scale<=0)throw new RangeError('The device has no available height.');
   return {scale,left:(width-416*scale)/2,top:deviceTop-365*scale};
 }
+
+// Fit the photographed casing (x20..677) into the device grid column.
+// headlineRatio is the measured headline width divided by its font size.
+export function fitDesktopTerminal(width,height,headlineRatio) {
+  if(![width,height,headlineRatio].every(value=>Number.isFinite(value)&&value>0)) {
+    throw new RangeError('Invalid desktop composition dimensions.');
+  }
+  const laptop=width<1280,margin=laptop?48:64,gap=laptop?48:64;
+  const contentWidth=Math.min(1280,width-2*margin);
+  const columnWidth=(contentWidth-gap)*.55,copyWidth=(contentWidth-gap)*.45;
+  const desiredWidth=laptop?Math.max(400,Math.min(520,width*.42)):Math.max(480,Math.min(640,width*.4));
+  const scale=Math.min(desiredWidth/657,columnWidth/657,height*(laptop?.65:.7)/589);
+  const start=(width-contentWidth)/2;
+  const headlineSize=Math.min(laptop?56:Math.max(64,Math.min(96,width*.055)),(copyWidth-1)/headlineRatio);
+  return {scale,left:start+(columnWidth-657*scale)/2-20*scale,top:height/2-531.5*scale,
+    copyLeft:start+columnWidth+gap,copyWidth,headlineSize,deviceHeight:589*scale,
+    deviceWidth:657*scale,contentWidth,columnWidth,gap,margin};
+}
