@@ -1,6 +1,7 @@
 import { KeySpring } from './key-spring.mjs';
-import { projectiveMatrix as quadMatrix } from './gallery-geometry.mjs';
+import { projectiveMatrix as quadMatrix, fitMobileTerminal } from './gallery-geometry.mjs';
 import { initProjectGallery } from './project-gallery.js';
+import { initTerminalControls } from './terminal-controls.mjs';
 
 (() => {
   'use strict';
@@ -13,8 +14,6 @@ import { initProjectGallery } from './project-gallery.js';
   const keys = [...document.querySelectorAll('.key')];
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const screens = [...document.querySelectorAll('.screen')];
-  const pages = { about: ['About', '1/3'], work: ['Work', '2/3'], contact: ['Contact', '3/3'] };
-  let current = 'about';
   let entranceAssetsReady = false;
   let entranceScheduled = false;
   const keyArtwork = new Image();
@@ -28,24 +27,15 @@ import { initProjectGallery } from './project-gallery.js';
     entranceAssetsReady = true;
     layout();
   });
-  function showView(view, focusElement) {
-    if (!pages[view]) return;
-    if (view !== 'work') gallery.cancelPending();
-    const changed = current !== view;
-    current = view;
-    document.querySelector('#display-title').textContent = pages[view][0];
-    document.querySelector('#display-number').textContent = pages[view][1];
-    screens.forEach(screen => { screen.hidden = screen.dataset.screen !== view; });
-    keys.forEach(key => key.setAttribute('aria-pressed', String(key.dataset.view === view)));
-    document.querySelector('#display-announcement').textContent = pages[view][0] + ', ' + pages[view][1].replace('/', ' of ');
-    if (changed && !reducedMotion.matches) {
-      display.classList.remove('is-changing');
-      void display.offsetWidth;
-      display.classList.add('is-changing');
-    }
-    if (focusElement) focusElement.focus({ preventScroll: true });
-  }
-  const gallery = initProjectGallery({ onReturn: () => { showView('work'); layout(); } });
+  let gallery;
+  const terminalControls = initTerminalControls({display,keys,screens,
+    pilot:document.querySelector('.pilot-light'),reducedMotion,isVisible:()=>!projectDialog.open,
+    onPage:direction=>gallery?.page(direction),onOpen:()=>gallery?.openSelected(),onLeaveWork:()=>gallery?.cancelPending()});
+  const showView=(view,focusElement)=>terminalControls.show(view,focusElement);
+  gallery = initProjectGallery({
+    onReturn:()=>{showView('work');layout();},
+    onSelect:(index,total)=>terminalControls.projectChanged(index,total),
+  });
   const fittedPhoto = document.createElement('canvas');
   fittedPhoto.width = 1260;
   fittedPhoto.height = 933;
@@ -149,7 +139,7 @@ import { initProjectGallery } from './project-gallery.js';
     widePhoto.src = imageUrl('./terminal-wide.webp');
   }
 
-  function paintBackdrop(width, height, scale, mobile) {
+  function paintBackdrop(width, height, scale, mobile, sceneOffsetLeft, sceneOffsetTop) {
     if (mobile) {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       backdrop.width = Math.round(width * dpr);
@@ -158,8 +148,8 @@ import { initProjectGallery } from './project-gallery.js';
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       const photoWidth = 416 * scale;
       const photoHeight = 932 * scale;
-      const left = (width - photoWidth) / 2;
-      const top = Math.max(0, (height - 840 * scale) / 2);
+      const left = sceneOffsetLeft ?? (width - photoWidth) / 2;
+      const top = sceneOffsetTop ?? Math.max(0, (height - 840 * scale) / 2);
       // Average the room's edge colours instead of stretching individual
       // texture pixels into visible horizontal bands.
       const plate = document.createElement('canvas');
@@ -226,20 +216,34 @@ import { initProjectGallery } from './project-gallery.js';
     const height = experience.clientHeight;
     const mobile = matchMedia('(max-width: 900px) and (orientation: portrait), (max-width: 599px)').matches;
     if (!ensureSceneAsset(mobile)) return;
-    const layoutKey = [width, height, mobile, devicePixelRatio, activeSceneAsset.key, widePhoto.naturalWidth, entranceAssetsReady].join(':');
+    const safeBottom=mobile?(parseFloat(getComputedStyle(experience).paddingBottom)||0):0;
+    const headerBottom=mobile?document.querySelector('.site-header').getBoundingClientRect().bottom:0;
+    const layoutKey = [width, height, mobile, safeBottom, headerBottom, devicePixelRatio, activeSceneAsset.key, widePhoto.naturalWidth, entranceAssetsReady].join(':');
     if (lastLayoutKey === layoutKey) return;
     lastLayoutKey = layoutKey;
     if (mobile) clearBackdrop();
-    const scale = mobile
-      ? Math.min(width / 416, height / 840, 1)
-      : Math.min(width / 1260, height / 933);
-    const sceneLeft = mobile ? (width - 416 * scale) / 2 : (width - 1260 * scale) * .12;
-    const sceneTop = mobile ? Math.max(0, (height - 840 * scale) / 2) : (height - 933 * scale) / 2;
-    root.style.setProperty('--scene-scale', String(scale));
-    root.style.setProperty('--scene-left', `${sceneLeft}px`);
-    root.style.setProperty('--scene-top', `${sceneTop}px`);
-    root.style.setProperty('--photo-left', `${sceneLeft}px`);
-    root.style.setProperty('--headline-left', `${674 + Math.max(0, width - 1260 * scale) * .63 / scale}px`);
+    let scale,sceneLeft,sceneTop;
+    if(mobile){
+      const textScale=Math.min(width/416,height/840,1);
+      root.style.setProperty('--hero-text-scale',String(textScale));
+      root.style.setProperty('--hero-intro-top',`${Math.max(headerBottom+24,113*textScale)}px`);
+      const introductionBottom=document.querySelector('.introduction').getBoundingClientRect().bottom;
+      const fit=fitMobileTerminal(width,height,introductionBottom,safeBottom);
+      ({scale,left:sceneLeft,top:sceneTop}=fit);
+    }else{
+      scale=Math.min(width/1260,height/933);
+      sceneLeft=(width-1260*scale)*.12;sceneTop=(height-933*scale)/2;
+    }
+    root.style.setProperty('--scene-scale',String(scale));
+    root.style.setProperty('--scene-left',`${sceneLeft}px`);
+    root.style.setProperty('--scene-top',`${sceneTop}px`);
+    root.style.setProperty('--photo-left',`${sceneLeft}px`);
+    if(!mobile){
+      const headlineWidth=document.querySelector('#headline').offsetWidth;
+      const preferred=674+Math.max(0,width-1260*scale)*.63/scale;
+      const rightLimit=(width-sceneLeft-28)/scale-headlineWidth;
+      root.style.setProperty('--headline-left',`${Math.min(preferred,rightLimit)}px`);
+    }
     display.style.transform = mobile
       ? quadMatrix(273, 170, [[73, 419], [346, 419], [346, 588], [73, 588]])
       : quadMatrix(360, 214, [[169, 335], [526, 306], [568, 508], [209, 549]]);
@@ -254,8 +258,8 @@ import { initProjectGallery } from './project-gallery.js';
     });
     if (!mobile) {
       ensureWidePhoto();
-      paintBackdrop(width, height, scale, mobile);
-    } else paintBackdrop(width, height, scale, mobile);
+      paintBackdrop(width, height, scale, mobile, sceneLeft, sceneTop);
+    } else paintBackdrop(width, height, scale, mobile, sceneLeft, sceneTop);
     if (!entranceScheduled && entranceAssetsReady && (mobile || scene.classList.contains('is-ready'))) {
       entranceScheduled = true;
       // Commit the complete composition before starting one shared fade.
@@ -323,7 +327,7 @@ import { initProjectGallery } from './project-gallery.js';
 
     function renderSpring() {
       const position = spring.position;
-      cap.style.setProperty('--travel', position.toFixed(5));
+      key.style.setProperty('--travel', position.toFixed(5));
       key.dataset.stroke = position.toFixed(3);
       if (!actuated && position >= .45 && spring.target === 1) {
         actuated = true;
@@ -351,6 +355,7 @@ import { initProjectGallery } from './project-gallery.js';
       if (spring.target === 1) return;
       clearTimeout(releaseTimer);
       pressedAt = performance.now();
+      terminalControls.pulse();
       actuated = false;
       spring.setPressed(true);
       key.classList.add('is-down');
@@ -417,6 +422,7 @@ import { initProjectGallery } from './project-gallery.js';
   });
 
   window.addEventListener('resize', layout, { passive: true });
+  window.visualViewport?.addEventListener('resize',()=>{if(window.visualViewport.scale===1)layout();},{passive:true});
   window.addEventListener('blur', () => mechanisms.forEach(mechanism => mechanism.reset()));
   new ResizeObserver(layout).observe(experience);
   layout();

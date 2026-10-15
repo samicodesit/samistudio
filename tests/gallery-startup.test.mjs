@@ -9,7 +9,7 @@ import * as geometry from '../assets/gallery-geometry.mjs';
 
 // Run the real controller with animations deliberately held unfinished. This
 // models the opening period independently of animation or device frame rate.
-async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, extraTail=0,reduced=false,slowProject=null,autoOpen=true}={}) {
+async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, extraTail=0,reduced=false,slowProject=null,failedProject=null,autoOpen=true}={}) {
   const requests = [], animations = [], frames = [], scrollWrites = [], measurements = [], timers = new Map();
   let timerId = 0;
   const decodeGates=[]; let selectedLayout='tablet';
@@ -45,7 +45,7 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
     }
   }
   const document = new Element();
-  const rows = ['doodle','autolister','cryptik'].map(id=>{const row=new Element();row.dataset.project=id;return row;});
+  const rows = ['doodle','autolister','cryptik'].map(id=>{const row=new Element();row.dataset.project=id;row.querySelector('.work-summary').textContent=`Description for ${id}.`;return row;});
   document.querySelectorAll=()=>rows;
   document.createElement=()=>new Element();
   document.fonts={ready:Promise.resolve()};
@@ -62,7 +62,7 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
     requestAnimationFrame:fn=>{frames.push(fn);return frames.length;},
     setTimeout:(fn,delay)=>{timers.set(++timerId,{fn,delay});return timerId;},clearTimeout:id=>timers.delete(id),
     ResizeObserver:class {observe() {}},
-    Image:class {set src(value){this.path=value;requests.push(value);} decode(){return slowProject && this.path.includes(slowProject) ? new Promise(resolve=>decodeGates.push(resolve)) : Promise.resolve();}},
+    Image:class {set src(value){this.path=value;requests.push(value);} decode(){if(failedProject&&this.path.includes(failedProject))return Promise.reject(new Error('Offline'));return slowProject && this.path.includes(slowProject) ? new Promise(resolve=>decodeGates.push(resolve)) : Promise.resolve();}},
     history:{state:null,entries:[],pushState(state,_,hash){this.state=state;this.entries.push({state,hash});},replaceState(state,_,hash){this.state=state;this.entries[this.entries.length-1]={state,hash};},back(){this.state=null;context.location.hash="";window.emit("popstate");}},location:{hash:'',pathname:'/',search:''}};
   const source=(await readFile(new URL('../assets/project-gallery.js',import.meta.url),'utf8'))
     .replace(/^import .*;\r?\n/gm,'').replace('export function initProjectGallery','function initProjectGallery')
@@ -321,4 +321,38 @@ test('ultrawide prepares its extended room while ordinary laptops retain the app
     assert.ok(f.requests.some(path=>path.endsWith(expected)));
     assert.ok(!f.requests.some(path=>path.includes(mode==='panorama'?'doodle-atelier-desktop.webp':'doodle-atelier-panorama.webp')));
   }
+});
+
+
+test('terminal paging exposes one project and wraps without opening a gallery',async()=>{
+  const f=await galleryFixture({autoOpen:false});
+  assert.equal(typeof f.controller.page,'function');
+  assert.deepEqual(f.rows.map(row=>row.hidden),[false,true,true]);
+  f.controller.page(1);
+  assert.deepEqual(f.rows.map(row=>row.hidden),[true,false,true]);
+  assert.equal(f.dialog.open,false);
+  f.controller.page(-2);
+  assert.deepEqual(f.rows.map(row=>row.hidden),[true,true,false]);
+  f.rows[2].emit('click');await f.flush();
+  assert.equal(f.dialog.dataset.project,'cryptik');
+});
+
+
+test('paging while a project is loading cancels the stale open',async()=>{
+  const f=await galleryFixture({autoOpen:false,slowProject:'cryptik'});
+  f.rows[0].emit('click');await f.flush();
+  f.controller.page(1);f.releaseDecodes();await f.flush();
+  assert.equal(f.dialog.open,false);
+  assert.deepEqual(f.rows.map(row=>row.hidden),[true,false,true]);
+  assert.equal(f.rows[0].attrs.has('aria-busy'),false);
+});
+
+test('a failed scene load shows retry feedback on the existing description line and paging restores the copy',async()=>{
+  const f=await galleryFixture({autoOpen:false,failedProject:'cryptik'});
+  f.rows[0].emit('click');await f.flush();
+  assert.equal(f.dialog.open,false);
+  assert.match(f.rows[0].querySelector('.work-summary').textContent,/try again/i);
+  f.controller.page(1);
+  assert.equal(f.rows[0].querySelector('.work-summary').textContent,'Description for doodle.');
+  assert.equal(f.rows[1].querySelector('.work-summary').textContent,'Description for autolister.');
 });

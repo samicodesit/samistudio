@@ -8,7 +8,7 @@ const compactQuery = '(max-width: 900px) and (orientation: portrait), (max-width
 const splitQuery = '(orientation: landscape) and (min-width: 600px) and (max-width: 1180px), (orientation: landscape) and (max-width: 1366px) and (min-height: 900px)';
 const fullScreen = 'polygon(0% 0%,100% 0%,100% 100%,0% 100%)';
 
-export function initProjectGallery({ onReturn }) {
+export function initProjectGallery({ onReturn, onSelect }) {
   const dialog = document.querySelector('#project-gallery');
   const track = dialog.querySelector('.gallery-track');
   const chrome = dialog.querySelector('.gallery-chrome');
@@ -17,6 +17,8 @@ export function initProjectGallery({ onReturn }) {
   const announcement = dialog.querySelector('#gallery-current');
   const rows = [...document.querySelectorAll('.work-row')];
   const ids = rows.map(row => row.dataset.project);
+  const summaries = rows.map(row => row.querySelector('.work-summary'));
+  const summaryCopy = summaries.map(summary => summary?.textContent);
   const status = document.querySelector('#work-status');
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const template = document.querySelector('#gallery-page-template');
@@ -61,7 +63,10 @@ export function initProjectGallery({ onReturn }) {
     rows.forEach((row, i) => {
       row.dataset.selected = String(i === selected);
       row.tabIndex = i === selected ? 0 : -1;
+      row.hidden = i !== selected;
+      if (row.parentElement?.tagName === 'LI') row.parentElement.hidden = i !== selected;
     });
+    onSelect?.(selected, rows.length);
     if (focus) rows[selected].focus({ preventScroll: true });
   }
 
@@ -285,7 +290,7 @@ export function initProjectGallery({ onReturn }) {
   }
 
   function stopMovement() { reveal?.cancel(); reveal = null; movement.forEach(animation => animation.cancel()); movement = []; }
-  function clearLoading() { status.textContent = ''; rows.forEach(row => row.removeAttribute('aria-busy')); }
+  function clearLoading() { status.textContent = ''; rows.forEach((row,index) => { row.removeAttribute('aria-busy'); if (summaries[index]) summaries[index].textContent = summaryCopy[index]; }); }
 
   async function open(id, fromHistory = false) {
     if (!getProject(id)) return;
@@ -313,7 +318,7 @@ export function initProjectGallery({ onReturn }) {
         break;
       }
     } catch {
-      if (token === pending) { clearLoading(); status.classList.remove('sr-only'); status.textContent = 'Preview unavailable. Please try again.'; }
+      if (token === pending) { clearLoading(); status.classList.add('sr-only'); status.textContent = 'Preview unavailable. Please try again.'; if (summaries[selected]) summaries[selected].textContent = 'Could not load. Try again.'; }
       return;
     }
     if (token !== pending) return;
@@ -425,6 +430,8 @@ export function initProjectGallery({ onReturn }) {
   document.fonts.ready.then(requestLayout);
   select(0);
   return {
+    openSelected(){return open(rows[selected].dataset.project);},
+    page(direction){ if (!dialog.open) { ++pending; clearLoading(); select(selected + direction); prefetch(); } },
     ready(){
       if (allowPrefetch(navigator.connection)) prepareAll().catch(() => {});
       const id=projectFromHash(location.hash);if(id){baseHash='';onReturn();open(id,true);}

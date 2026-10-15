@@ -1,3 +1,5 @@
+import './terminal-layout.test.mjs';
+import './terminal-controls.test.mjs';
 import './hero-background.test.mjs';
 import './gallery-startup.test.mjs';
 import './gallery-navigation.test.mjs';
@@ -7,14 +9,14 @@ import './gallery-loading.test.mjs';
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFile, stat, mkdtemp, mkdir, cp, rm, readdir, writeFile } from 'node:fs/promises';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, join, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const runtimeFiles = [
   'index.html', 'favicon.svg', 'og-image.jpg', 'assets/studio.css', 'assets/studio.js',
-  'assets/key-spring.mjs', 'assets/terminal-housing.webp',
+  'assets/key-spring.mjs', 'assets/terminal-controls.mjs', 'assets/terminal-housing.webp',
   'assets/terminal-housing-mobile.webp', 'assets/terminal-keycaps.webp',
   'assets/terminal-keycaps-mobile.webp', 'assets/terminal-wide.webp',
   'assets/project-gallery.js', 'assets/project-gallery.css', 'assets/project-data.mjs', 'assets/gallery-geometry.mjs', 'assets/gallery-loading.mjs', 'assets/gallery-navigation.mjs',
@@ -93,7 +95,7 @@ test('HTML, CSS and JavaScript relative asset references resolve locally', async
     for (const [, ref] of refs) {
       const target = resolve(dirname(join(root, path)), ref);
       assert.ok((await stat(target)).isFile(), `${path}: missing ${ref}`);
-      assert.ok(runtimeFiles.includes(target.slice(root.length)), `${ref} excluded from deployment`);
+      assert.ok(runtimeFiles.includes(relative(root, target).replaceAll('\\', '/')), `${ref} excluded from deployment`);
     }
   }
 });

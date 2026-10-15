@@ -121,3 +121,16 @@ export function portraitCoverLayout(width, height, captionHeight, bounds, sceneW
     top: clamp(navigationHeight + available / 2 - (top + framingBottom) / 2 * scale, height - sceneHeight * scale, 0),
   };
 }
+
+// Fit the real mobile casing (source y365..790), not its empty photograph.
+// The headline keeps its existing responsive size; only the device scales.
+export function fitMobileTerminal(width,height,introductionBottom,safeBottom=0) {
+  if(![width,height,introductionBottom,safeBottom].every(Number.isFinite)
+    ||width<=0||height<=introductionBottom+44||safeBottom<0) {
+    throw new RangeError('The device needs space below the introduction.');
+  }
+  const deviceTop=introductionBottom+32;
+  const scale=Math.min(width/416,1,(height-safeBottom-12-deviceTop)/425);
+  if(scale<=0)throw new RangeError('The device has no available height.');
+  return {scale,left:(width-416*scale)/2,top:deviceTop-365*scale};
+}

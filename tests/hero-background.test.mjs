@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { runInNewContext } from 'node:vm';
+import { fitMobileTerminal } from '../assets/gallery-geometry.mjs';
 
 test('terminal canvas rests while the gallery is visible and resumes for closing',async()=>{
   const source=await readFile(new URL('../assets/studio.js',import.meta.url),'utf8');
@@ -12,7 +13,8 @@ test('terminal canvas rests while the gallery is visible and resumes for closing
       matchMedia:()=>({matches:true}),ensureSceneAsset:()=>true,devicePixelRatio:1,
       activeSceneAsset:{key:'mobile'},widePhoto:{naturalWidth:0},entranceAssetsReady:true,entranceScheduled:true,
       lastLayoutKey:'',clearBackdrop(){},paintBackdrop(){paints++;},root:{style:{setProperty(){}}},
-      display:{style:{}},quadMatrix:()=>'',keys:[],scene:{classList:{contains:()=>true}}};
+      document:{querySelector:selector=>({getBoundingClientRect:()=>({bottom:selector==='.site-header'?60:276})})},
+      getComputedStyle:()=>({paddingBottom:'0px'}),fitMobileTerminal,display:{style:{}},quadMatrix:()=>'',keys:[],scene:{classList:{contains:()=>true}}};
     runInNewContext(`${layout}\nlayout();`,context);
     assert.equal(paints,expected,`${open}/${phase}`);
   }
