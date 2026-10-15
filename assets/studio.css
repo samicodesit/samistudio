@@ -267,6 +267,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-o
   touch-action: manipulation;
   isolation: isolate;
 }
+/* The stationary opening occludes the cap, label and shadow at any depth. */
+.key-socket {
+  position: absolute;
+  inset: 0;
+  display: block;
+  clip-path: var(--socket-outline);
+  pointer-events: none;
+}
 .keycap {
   position: absolute;
   inset: 0;
@@ -306,12 +314,12 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-o
   pointer-events: none;
   white-space: nowrap;
 }
-.key-work { left: 200px; top: 590px; width: 143px; height: 130px; }
+.key-work { --socket-outline: url(#terminal-socket-work); left: 200px; top: 590px; width: 143px; height: 130px; }
 .key-work .keycap { background-position: -200px -590px; }
-.key-about { left: 333px; top: 574px; width: 146px; height: 129px; }
+.key-about { --socket-outline: url(#terminal-socket-about); left: 333px; top: 574px; width: 146px; height: 129px; }
 .key-about .keycap { background-position: -333px -574px; }
 .key-work, .key-about { --key-outline: url(#terminal-key-outline); }
-.key-contact { left: 473px; top: 560px; width: 146px; height: 125px; }
+.key-contact { --socket-outline: url(#terminal-socket-contact); left: 473px; top: 560px; width: 146px; height: 125px; }
 .key-contact .keycap { background-position: -473px -560px; }
 .key-contact { --key-outline: polygon(11% 16%, 76% 4%, 85% 8%, 94% 40%, 99% 78%, 94% 91%, 23% 98%, 13% 93%, 1% 32%, 3% 23%); }
 .key { --key-depth: var(--travel, 0); filter: none; }
@@ -330,13 +338,13 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-o
 .display-topline { font-size: 11px; line-height: 17px; padding-bottom: 6px; }
 .display-stage { inset: 45px 21px 10px; }
 .screen-copy { font-size: 19px; line-height: 1.25; letter-spacing: -.4px; }
-.key-work { left: 51px; top: 630px; width: 98px; height: 94px; }
+.key-work { --socket-outline: url(#terminal-socket-mobile-work); left: 51px; top: 630px; width: 98px; height: 94px; }
 .keycap::before { background-image: url('./terminal-keycaps-mobile.webp'); background-size: 350px 100px; }
-.key-about { left: 156px; top: 630px; width: 98px; height: 94px; }
+.key-about { --socket-outline: url(#terminal-socket-mobile-about); left: 156px; top: 630px; width: 98px; height: 94px; }
 .key-work, .key-about { --key-outline: inset(3px 4px 7px 4px round 11px); }
 .key-work .keycap, .key-about .keycap { background-position: -105px 0; }
 .key-work .keycap::before, .key-about .keycap::before { background-position: -105px 0; }
-.key-contact { left: 261px; top: 630px; width: 98px; height: 94px; }
+.key-contact { --socket-outline: url(#terminal-socket-mobile-contact); left: 261px; top: 630px; width: 98px; height: 94px; }
 .key-contact { --key-outline: inset(3px 1px 5px 1px round 11px); }
 .key-contact .keycap { background-position: -210px 0; }
 .key-contact .keycap::before { background-position: -210px 0; }
