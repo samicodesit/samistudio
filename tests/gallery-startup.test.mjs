@@ -28,7 +28,7 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
     setAttribute(key,value) { this.attrs.set(key,value); }
     removeAttribute(key) { this.attrs.delete(key); }
     getAttribute(key) { return this.attrs.get(key) ?? null; }
-    getBoundingClientRect() { measurements.push(this.debugKey); return {width:393,height:this.debugKey==='.gallery-chrome'?0:this.debugKey==='.gallery-header'?60:72}; }
+    getBoundingClientRect() { measurements.push(this.debugKey); const height=this.debugKey==='.gallery-chrome'?0:this.debugKey==='.gallery-header'?60:72; return {width:393,height,top:0,bottom:height}; }
     contains() { return false; }
     focus() {}
     replaceChildren() {}
@@ -116,6 +116,33 @@ test('ordinary scroll keeps snap targets and native position untouched',async()=
     assert.equal(f.scrollWrites.length,0);
     assert.ok(f.track.children.every((node,index)=>node===original[index]));
   }
+});
+
+test('the room edge disappears behind the header before snapping, with no change after settlement',async()=>{
+  const f=await galleryFixture();f.flushFrames();f.scrollWrites.length=0;
+  const incoming=f.track.children[4];
+  const values=[];
+  for(const remaining of [150,80,50,20,4,0]){
+    f.track.scrollTop=4*H-remaining;f.track.emit('scroll');f.flushFrames();
+    values.push(+incoming.style.getPropertyValue('--room-edge-opacity'));
+  }
+  assert.equal(values[0],1,'the separator remains fully visible between scenes');
+  assert.ok(values[2]>0&&values[2]<1,'it fades naturally while passing behind the header');
+  assert.ok(values.every((value,index)=>Number.isFinite(value)&&(!index||value<=values[index-1])));
+  assert.equal(values.at(-1),0,'no shadow remains at the top when the page lands');
+  const before=incoming.style.getPropertyValue('--room-edge-opacity');
+  f.track.emit('scrollend');await f.runSettlement();f.flushFrames();
+  assert.equal(incoming.style.getPropertyValue('--room-edge-opacity'),before);
+  assert.equal(f.scrollWrites.length,0,'the visual fix cannot move the native scroll position');
+});
+
+test('a loop relocation clears the destination edge synchronously before the next paint',async()=>{
+  const f=await galleryFixture();f.flushFrames();
+  f.track.scrollTop=2*H;f.track.emit('scroll');f.flushFrames();
+  assert.equal(+f.track.children[5].style.getPropertyValue('--room-edge-opacity'),1);
+  f.track.emit('scrollend');await f.runSettlement();
+  assert.equal(f.track.scrollTop,5*H);
+  assert.equal(+f.track.children[5].style.getPropertyValue('--room-edge-opacity'),0);
 });
 
 test('repeated wraps preserve order and relocate only an identical idle copy',async()=>{

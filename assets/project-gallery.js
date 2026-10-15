@@ -26,7 +26,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
   const panels = [];
   let active = null, currentSlot = -1, selected = 0, pending = 0, height = 0;
   let ownsHistoryEntry = false, baseHash = '';
-  let touching = false, layoutPending = false;
+  let touching = false, layoutPending = false, edgeClearance = 96;
   let resizeFrame = 0, scrollFrame = 0, settleTimer = 0, prefetchTimer = 0;
   let refreshingMode = null;
   let reveal = null, movement = [];
@@ -201,6 +201,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
       slot = centerSlot(slot, ids.length);
       track.scrollTo({top:slot * height, behavior:'instant'});
       setActive(slot, false);
+      syncVisiblePanels();
     }
     track.scrollTo({top:(slot + 1) * height, behavior:reducedMotion.matches?'instant':'smooth'});
     queueSettlement();
@@ -208,10 +209,17 @@ export function initProjectGallery({ onReturn, onSelect }) {
 
   function syncVisiblePanels() {
     if (height <= 0) return;
-    const first = Math.floor(track.scrollTop / height);
-    const last = Math.floor((track.scrollTop + track.clientHeight - 1) / height);
+    const scrollTop = track.scrollTop, viewportHeight = track.clientHeight;
+    const first = Math.floor(scrollTop / height);
+    const last = Math.floor((scrollTop + viewportHeight - 1) / height);
     panels.forEach((panel,index) => {
       const hidden = index < first || index > last;
+      const proximity = Math.max(0, Math.min(1, (index * height - scrollTop) / edgeClearance));
+      const edgeOpacity = (proximity * proximity * (3 - 2 * proximity)).toFixed(4);
+      if (panel.edgeOpacity !== edgeOpacity) {
+        panel.edgeOpacity = edgeOpacity;
+        panel.element.style.setProperty('--room-edge-opacity', edgeOpacity);
+      }
       if (hidden && panel.element.contains(document.activeElement)) track.focus({preventScroll:true});
       if (panel.element.inert !== hidden) panel.element.inert = hidden;
       if (panel.element.getAttribute('aria-hidden') !== String(hidden)) panel.element.setAttribute('aria-hidden',String(hidden));
@@ -242,6 +250,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
     if (panels[target].loadedMode !== panels[slot].loadedMode) return;
     track.scrollTo({ top: target * height, behavior: 'instant' });
     setActive(target, false);
+    syncVisiblePanels();
   }
 
   function refreshScenes(selectedMode) {
@@ -266,9 +275,15 @@ export function initProjectGallery({ onReturn, onSelect }) {
     dialog.dataset.layout = selectedMode === 'landscape' ? 'split' : responsive ? 'stack' : 'desktop';
     panels.forEach(panel => { panel.element.dataset.layout = dialog.dataset.layout; });
 
-    // Batch all geometry reads before writing scene styles. Three copies of a
-    // project share one camera, avoiding repeated forced layouts during resize.
-    const navigation = responsive ? headerContent.getBoundingClientRect().height + 12 : 0;
+    // Position shared chrome before measuring it. The edge fade uses this
+    // cached clearance, so scrolling never measures or shifts the header.
+    const header = stageLayout(innerWidth, height);
+    for (const [key,value] of Object.entries({ '--gallery-scale': header.scale, '--gallery-left': `${header.left}px`,
+      '--gallery-top': `${header.top}px`, '--stage-width': '1505px', '--stage-height': '1045px' })) dialog.style.setProperty(key,value);
+    const headerBounds = headerContent.getBoundingClientRect();
+    edgeClearance = Math.max(1, headerBounds.bottom + 28);
+    // Three copies of each project share one measured camera.
+    const navigation = responsive ? headerBounds.height + 12 : 0;
     const captions = responsive ? ids.map((_,index) => panels[ids.length + index].caption.getBoundingClientRect()) : [];
     const styles = new Map(ids.map((id,index) => {
       const project = getProject(id);
@@ -288,10 +303,6 @@ export function initProjectGallery({ onReturn, onSelect }) {
     for (const panel of panels) {
       for (const [key,value] of Object.entries(styles.get(panel.project.id))) panel.element.style.setProperty(key,value);
     }
-    // Website chrome belongs to the gallery, not to a photograph's dimensions.
-    const header = stageLayout(innerWidth, height);
-    for (const [key,value] of Object.entries({ '--gallery-scale': header.scale, '--gallery-left': `${header.left}px`,
-      '--gallery-top': `${header.top}px`, '--stage-width': '1505px', '--stage-height': '1045px' })) dialog.style.setProperty(key,value);
     refreshScenes(selectedMode);
   }
 
@@ -354,6 +365,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
     if (!wasOpen) dialog.showModal();
     layout();
     track.scrollTo({top: currentSlot * height, behavior:'instant'});
+    syncVisiblePanels();
     track.focus({ preventScroll: true });
     if (!fromHistory) {
       if (wasOpen) history.replaceState(ownsHistoryEntry ? {studioProject:id} : history.state,'',`#work/${id}`);
