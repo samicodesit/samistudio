@@ -36,7 +36,7 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
     output.replaceChildren(paragraph);output.scrollTop=0;
   }
   function listProjects(welcome=false){
-    response(welcome?'Found it. Pick a project.':'Three projects. Take a look.');
+    response(welcome?'You’re in. Welcome.':'Three projects. Take a look.');
     output.dataset.kind='projects';
     const list=page.createElement('div');list.className='shell-projects';
     for(const project of projects){
@@ -50,10 +50,10 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
     cancelHold();if(active||disposed||page.hidden||!isAvailable())return;
     onEnter?.();active=true;display.dataset.shell='true';
     work.hidden=true;pagination.hidden=true;screen.hidden=false;exit.hidden=false;
-    trigger.textContent='~/studio';trigger.setAttribute('aria-expanded','true');
+    trigger.textContent='~/studio : secret';trigger.setAttribute('aria-expanded','true');
     announcement.textContent='Secret terminal. Choose a command or a project.';
     input.value='';historyIndex=history.length;draft='';listProjects(true);
-    if(!reducedMotion.matches){motion?.cancel();motion=screen.animate([{opacity:.25},{opacity:1}],{duration:160,easing:'ease-out'});}
+    if(!reducedMotion.matches){motion?.cancel();motion=screen.animate([{opacity:0,offset:0},{opacity:0,offset:.18},{opacity:1}],{duration:420,easing:'cubic-bezier(.2,.7,.2,1)'});}
     if(keyboard&&canType())input.focus({preventScroll:true});
     else actions.querySelectorAll('[data-command]')[0]?.focus({preventScroll:true});
     onChange?.();
