@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    "mobile/**",
+    // Offline design studies include vendored players and Node-only QA scripts.
+    "docs/design/**",
   ]),
 ]);
 

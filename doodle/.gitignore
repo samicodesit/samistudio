@@ -12,6 +12,7 @@
 
 # testing
 /coverage
+/report-review/
 
 # next.js
 /.next/
@@ -40,3 +41,21 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local native build outputs and signing material
+/mobile/artifacts/
+/mobile/.expo/
+/mobile/.expo-export/
+/mobile/android/.gradle/
+/mobile/android/.cxx/
+/mobile/android/local.properties
+/mobile/android/app/src/main/java/inline/
+/android/.gradle/
+/android/.cxx/
+/android/local.properties
+*.jks
+*.keystore
+**/.cxx/
+**/.gradle/
+/marketing-assets/**/raw/
+*:Zone.Identifier

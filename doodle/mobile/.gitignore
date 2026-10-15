@@ -1,0 +1,20 @@
+.expo/
+.expo-export/
+
+# Local dependencies, build outputs and signing material
+node_modules/
+artifacts/
+coverage/
+android/.gradle/
+android/**/build/
+ios/Pods/
+ios/build/
+.env*
+!.env.example
+*.keystore
+*.jks
+*.p12
+*.p8
+*.mobileprovision
+local.properties
+keystore.properties

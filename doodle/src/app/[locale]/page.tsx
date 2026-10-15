@@ -1,0 +1,16 @@
+import { isDetailLevel } from "@/lib/generation/detail-level";
+import { connection } from "next/server";
+import { notFound } from "next/navigation";
+import { DoodlePage } from "@/components/doodle-page";
+import { MAX_SCENE_LENGTH } from "@/lib/app-config";
+import { hasLocale } from "@/lib/i18n";
+import { pickSceneIdeas } from "@/lib/scenes/suggestions";
+
+export default async function LocalizedPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ scene?: string | string[]; detail?: string | string[]; runtime?: string | string[] }> }) {
+  const { locale } = await params;
+  if (!hasLocale(locale) || locale === "en") notFound();
+  const { scene, detail, runtime } = await searchParams;
+  await connection();
+  const initialSuggestionIds = pickSceneIdeas().map((idea) => idea.id);
+  return <DoodlePage locale={locale} initialScene={typeof scene === "string" ? scene.trim().slice(0, MAX_SCENE_LENGTH) : ""} initialDetailLevel={isDetailLevel(detail) ? detail : undefined} initialSuggestionIds={initialSuggestionIds} initialInstalled={runtime === "play" || runtime === "app"} />;
+}

@@ -1,0 +1,449 @@
+[
+  {
+    "id": "thank-you-mug-simple",
+    "subject": "thank-you-mug",
+    "detailLevel": "simple",
+    "image": "/ideas/thank-you-mug.webp",
+    "thumbnail": "/ideas/thumbs/thank-you-mug-simple",
+    "width": 900,
+    "height": 900,
+    "prompts": {
+      "en": "A steaming mug beside a folded thank-you note with a tiny heart on it",
+      "nl": "Een dampende mok naast een gevouwen bedankbriefje met een klein hartje",
+      "de": "Eine dampfende Tasse neben einem gefalteten Dankeszettel mit kleinem Herz",
+      "fr": "Une tasse fumante près d’un petit mot de remerciement plié avec un cœur",
+      "es": "Una taza humeante junto a una nota de agradecimiento doblada con un corazón",
+      "pt-br": "Uma caneca fumegante ao lado de um bilhete de agradecimento dobrado com um coração",
+      "it": "Una tazza fumante accanto a un biglietto di ringraziamento piegato con un cuore",
+      "ja": "湯気の立つマグカップと、小さなハート付きの折りたたんだお礼メモ",
+      "ko": "김이 나는 머그잔과 작은 하트가 있는 접힌 감사 메모",
+      "ar": "كوب ساخن يتصاعد منه البخار بجانب رسالة شكر مطوية عليها قلب صغير"
+    }
+  },
+  {
+    "id": "astronaut-simple",
+    "subject": "astronaut",
+    "detailLevel": "simple",
+    "image": "/ideas/astronaut-simple.webp",
+    "thumbnail": "/ideas/thumbs/astronaut-simple",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "cooking-medium",
+    "subject": "cooking",
+    "detailLevel": "medium",
+    "image": "/ideas/cooking-friends.webp",
+    "thumbnail": "/ideas/thumbs/cooking-medium",
+    "width": 1024,
+    "height": 1024,
+    "prompts": {
+      "en": "Two friends baking pancakes",
+      "nl": "Twee vrienden die pannenkoeken bakken",
+      "de": "Zwei Freunde backen Pfannkuchen",
+      "fr": "Deux amis préparent des pancakes",
+      "es": "Dos amigos preparando tortitas",
+      "pt-br": "Dois amigos fazendo panquecas",
+      "it": "Due amici preparano i pancake",
+      "ja": "友達二人でパンケーキを作る",
+      "ko": "함께 팬케이크를 만드는 두 친구",
+      "ar": "صديقان يحضّران الفطائر"
+    }
+  },
+  {
+    "id": "flower-cat-simple",
+    "subject": "flower-cat",
+    "detailLevel": "simple",
+    "image": "/ideas/flower-cat-simple.webp",
+    "thumbnail": "/ideas/thumbs/flower-cat-simple",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "bookshop-detailed",
+    "subject": "bookshop",
+    "detailLevel": "detailed",
+    "image": "/ideas/bookshop.webp",
+    "thumbnail": "/ideas/thumbs/bookshop-detailed",
+    "width": 1024,
+    "height": 1024,
+    "prompts": {
+      "en": "A cozy bookshop with plants and a bicycle outside",
+      "nl": "Een gezellige boekwinkel met planten en een fiets voor de deur",
+      "de": "Eine gemütliche Buchhandlung mit Pflanzen und einem Fahrrad vor der Tür",
+      "fr": "Une librairie accueillante avec des plantes et un vélo devant",
+      "es": "Una librería acogedora con plantas y una bicicleta fuera",
+      "pt-br": "Uma livraria aconchegante com plantas e uma bicicleta na entrada",
+      "it": "Una libreria accogliente con piante e una bicicletta fuori",
+      "ja": "植物と自転車が入口にある居心地のよい本屋",
+      "ko": "입구에 화분과 자전거가 있는 아늑한 서점",
+      "ar": "مكتبة دافئة أمامها نباتات ودراجة"
+    }
+  },
+  {
+    "id": "parent-hug-simple",
+    "subject": "parent-hug",
+    "detailLevel": "simple",
+    "image": "/ideas/parent-hug-simple.webp",
+    "thumbnail": "/ideas/thumbs/parent-hug-simple",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "camper-simple",
+    "subject": "camper",
+    "detailLevel": "simple",
+    "image": "/ideas/camper-simple.webp",
+    "thumbnail": "/ideas/thumbs/camper-simple",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "sunflower-medium",
+    "subject": "sunflower",
+    "detailLevel": "medium",
+    "image": "/ideas/sunflower-medium.webp",
+    "thumbnail": "/ideas/thumbs/sunflower-medium",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "cat-note-simple",
+    "subject": "cat-note",
+    "detailLevel": "simple",
+    "image": "/ideas/cat-note.webp",
+    "thumbnail": "/ideas/thumbs/cat-note-simple",
+    "width": 900,
+    "height": 900,
+    "prompts": {
+      "en": "A curious cat peeking over a folded paper note",
+      "nl": "Een nieuwsgierige kat die over een gevouwen briefje gluurt",
+      "de": "Eine neugierige Katze schaut über einen gefalteten Zettel",
+      "fr": "Un chat curieux qui regarde par-dessus un petit mot plié",
+      "es": "Un gato curioso asomándose por encima de una nota doblada",
+      "pt-br": "Um gato curioso espiando por cima de um bilhete dobrado",
+      "it": "Un gatto curioso che sbircia sopra un biglietto piegato",
+      "ja": "折りたたんだメモから顔をのぞかせる好奇心いっぱいの猫",
+      "ko": "접힌 메모지 위로 얼굴을 내미는 호기심 많은 고양이",
+      "ar": "قطة فضولية تطل من خلف ورقة مطوية"
+    }
+  },
+  {
+    "id": "super-banana-simple",
+    "subject": "super-banana",
+    "detailLevel": "simple",
+    "image": "/ideas/super-banana.webp",
+    "thumbnail": "/ideas/thumbs/super-banana-simple",
+    "width": 900,
+    "height": 900,
+    "prompts": {
+      "en": "A brave banana wearing a superhero cape",
+      "nl": "Een dappere banaan met een superheldencape",
+      "de": "Eine mutige Banane mit Superheldenumhang",
+      "fr": "Une banane courageuse avec une cape de super-héros",
+      "es": "Un plátano valiente con capa de superhéroe",
+      "pt-br": "Uma banana corajosa com capa de super-herói",
+      "it": "Una banana coraggiosa con mantello da supereroe",
+      "ja": "ヒーローのマントを着けた勇敢なバナナ",
+      "ko": "슈퍼히어로 망토를 두른 용감한 바나나",
+      "ar": "موزة شجاعة ترتدي عباءة بطل خارق"
+    }
+  },
+  {
+    "id": "reading-cat-detailed",
+    "subject": "reading-cat",
+    "detailLevel": "detailed",
+    "image": "/ideas/reading-cat-detailed.webp",
+    "thumbnail": "/ideas/thumbs/reading-cat-detailed",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "cottage-simple",
+    "subject": "cottage",
+    "detailLevel": "simple",
+    "image": "/ideas/cottage-simple.webp",
+    "thumbnail": "/ideas/thumbs/cottage-simple",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "birthday-dog-simple",
+    "subject": "birthday-dog",
+    "detailLevel": "simple",
+    "image": "/ideas/birthday-balloon-dog.webp",
+    "thumbnail": "/ideas/thumbs/birthday-dog-simple",
+    "width": 1024,
+    "height": 1024,
+    "prompts": {
+      "en": "A cheerful dog holding one birthday balloon",
+      "nl": "Een vrolijke hond met één verjaardagsballon",
+      "de": "Ein fröhlicher Hund hält einen Geburtstagsballon",
+      "fr": "Un chien joyeux tenant un ballon d’anniversaire",
+      "es": "Un perro alegre sujetando un globo de cumpleaños",
+      "pt-br": "Um cachorro alegre segurando um balão de aniversário",
+      "it": "Un cane allegro con un palloncino di compleanno",
+      "ja": "誕生日の風船をひとつ持つうれしそうな犬",
+      "ko": "생일 풍선 하나를 든 신난 강아지",
+      "ar": "كلب سعيد يحمل بالون عيد ميلاد واحدًا"
+    }
+  },
+  {
+    "id": "coffee-book-simple",
+    "subject": "coffee-book",
+    "detailLevel": "simple",
+    "image": "/ideas/coffee-book-simple.webp",
+    "thumbnail": "/ideas/thumbs/coffee-book-simple",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "missing-friend-medium",
+    "subject": "missing-friend",
+    "detailLevel": "medium",
+    "image": "/ideas/missing-friend-medium.webp",
+    "thumbnail": "/ideas/thumbs/missing-friend-medium",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "warm-hug-simple",
+    "subject": "warm-hug",
+    "detailLevel": "simple",
+    "image": "/ideas/warm-hug.webp",
+    "thumbnail": "/ideas/thumbs/warm-hug-simple",
+    "width": 900,
+    "height": 900,
+    "prompts": {
+      "en": "Two little friends hugging beneath a small heart",
+      "nl": "Twee kleine vriendjes die knuffelen onder een hartje",
+      "de": "Zwei kleine Freunde umarmen sich unter einem Herz",
+      "fr": "Deux petits amis qui se prennent dans les bras sous un cœur",
+      "es": "Dos pequeños amigos abrazándose bajo un corazón",
+      "pt-br": "Dois amiguinhos se abraçando sob um coração",
+      "it": "Due piccoli amici che si abbracciano sotto un cuore",
+      "ja": "小さなハートの下で抱き合う二人の友だち",
+      "ko": "작은 하트 아래에서 포옹하는 두 친구",
+      "ar": "صديقان صغيران يتعانقان تحت قلب صغير"
+    }
+  },
+  {
+    "id": "pencil-eraser-simple",
+    "subject": "pencil-eraser",
+    "detailLevel": "simple",
+    "image": "/ideas/pencil-helps-eraser.webp",
+    "thumbnail": "/ideas/thumbs/pencil-eraser-simple",
+    "width": 900,
+    "height": 900,
+    "prompts": {
+      "en": "A pencil helping an eraser climb onto a schoolbook",
+      "nl": "Een potlood dat een gum op een schoolboek helpt klimmen",
+      "de": "Ein Bleistift hilft einem Radiergummi auf ein Schulbuch",
+      "fr": "Un crayon aide une gomme à monter sur un livre d’école",
+      "es": "Un lápiz ayuda a una goma a subir a un libro escolar",
+      "pt-br": "Um lápis ajuda uma borracha a subir em um livro escolar",
+      "it": "Una matita aiuta una gomma a salire su un libro",
+      "ja": "消しゴムが教科書に上がるのを手伝う鉛筆",
+      "ko": "지우개가 교과서 위로 올라가도록 돕는 연필",
+      "ar": "قلم رصاص يساعد ممحاة على الصعود فوق كتاب مدرسي"
+    }
+  },
+  {
+    "id": "school-snail-simple",
+    "subject": "school-snail",
+    "detailLevel": "simple",
+    "image": "/ideas/school-snail.webp",
+    "thumbnail": "/ideas/thumbs/school-snail-simple",
+    "width": 900,
+    "height": 900,
+    "prompts": {
+      "en": "A smiling snail carrying a school backpack and pencil",
+      "nl": "Een lachende slak met een schoolrugzak en potlood",
+      "de": "Eine lächelnde Schnecke mit Schulrucksack und Bleistift",
+      "fr": "Un escargot souriant avec un sac d’école et un crayon",
+      "es": "Un caracol sonriente con mochila escolar y lápiz",
+      "pt-br": "Um caracol sorridente com mochila e lápis",
+      "it": "Una lumaca sorridente con zaino e matita",
+      "ja": "ランドセルと鉛筆を持つ笑顔のカタツムリ",
+      "ko": "책가방과 연필을 든 웃는 달팽이",
+      "ar": "حلزون مبتسم يحمل حقيبة مدرسية وقلم رصاص"
+    }
+  },
+  {
+    "id": "lunch-high-five-simple",
+    "subject": "lunch-high-five",
+    "detailLevel": "simple",
+    "image": "/ideas/lunch-high-five.webp",
+    "thumbnail": "/ideas/thumbs/lunch-high-five-simple",
+    "width": 900,
+    "height": 900,
+    "prompts": {
+      "en": "A happy apple and sandwich giving each other a high-five",
+      "nl": "Een blije appel en boterham die elkaar een high five geven",
+      "de": "Ein fröhlicher Apfel und ein Sandwich geben sich ein High Five",
+      "fr": "Une pomme et un sandwich joyeux qui se tapent dans la main",
+      "es": "Una manzana y un sándwich felices chocando las manos",
+      "pt-br": "Uma maçã e um sanduíche felizes batendo as mãos",
+      "it": "Una mela e un panino felici che si danno il cinque",
+      "ja": "ハイタッチするりんごとサンドイッチ",
+      "ko": "서로 하이파이브하는 사과와 샌드위치",
+      "ar": "تفاحة وشطيرة تتبادلان التحية باليد"
+    }
+  },
+  {
+    "id": "sunflower-simple",
+    "subject": "sunflower",
+    "detailLevel": "simple",
+    "image": "/ideas/sunflower-simple.webp",
+    "thumbnail": "/ideas/thumbs/sunflower-simple",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "flower-cat-detailed",
+    "subject": "flower-cat",
+    "detailLevel": "detailed",
+    "image": "/ideas/flower-cat-detailed.webp",
+    "thumbnail": "/ideas/thumbs/flower-cat-detailed",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "cooking-simple",
+    "subject": "cooking",
+    "detailLevel": "simple",
+    "image": "/ideas/cooking-simple.webp",
+    "thumbnail": "/ideas/thumbs/cooking-simple",
+    "width": 1024,
+    "height": 1024,
+    "prompts": {
+      "en": "Two friends baking pancakes",
+      "nl": "Twee vrienden die pannenkoeken bakken",
+      "de": "Zwei Freunde backen Pfannkuchen",
+      "fr": "Deux amis préparent des pancakes",
+      "es": "Dos amigos preparando tortitas",
+      "pt-br": "Dois amigos fazendo panquecas",
+      "it": "Due amici preparano i pancake",
+      "ja": "友達二人でパンケーキを作る",
+      "ko": "함께 팬케이크를 만드는 두 친구",
+      "ar": "صديقان يحضّران الفطائر"
+    }
+  },
+  {
+    "id": "missing-friend-simple",
+    "subject": "missing-friend",
+    "detailLevel": "simple",
+    "image": "/ideas/missing-friend-simple.webp",
+    "thumbnail": "/ideas/thumbs/missing-friend-simple",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "reading-cat-medium",
+    "subject": "reading-cat",
+    "detailLevel": "medium",
+    "image": "/ideas/reading-cat-medium.webp",
+    "thumbnail": "/ideas/thumbs/reading-cat-medium",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "birthday-dog-detailed",
+    "subject": "birthday-dog",
+    "detailLevel": "detailed",
+    "image": "/ideas/birthday-dog-detailed.webp",
+    "thumbnail": "/ideas/thumbs/birthday-dog-detailed",
+    "width": 1024,
+    "height": 1024,
+    "prompts": {
+      "en": "A cheerful dog holding one birthday balloon",
+      "nl": "Een vrolijke hond met één verjaardagsballon",
+      "de": "Ein fröhlicher Hund hält einen Geburtstagsballon",
+      "fr": "Un chien joyeux tenant un ballon d’anniversaire",
+      "es": "Un perro alegre sujetando un globo de cumpleaños",
+      "pt-br": "Um cachorro alegre segurando um balão de aniversário",
+      "it": "Un cane allegro con un palloncino di compleanno",
+      "ja": "誕生日の風船をひとつ持つうれしそうな犬",
+      "ko": "생일 풍선 하나를 든 신난 강아지",
+      "ar": "كلب سعيد يحمل بالون عيد ميلاد واحدًا"
+    }
+  },
+  {
+    "id": "sunflower-detailed",
+    "subject": "sunflower",
+    "detailLevel": "detailed",
+    "image": "/ideas/sunflower-detailed.webp",
+    "thumbnail": "/ideas/thumbs/sunflower-detailed",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "flower-cat-medium",
+    "subject": "flower-cat",
+    "detailLevel": "medium",
+    "image": "/ideas/flower-cat-medium.webp",
+    "thumbnail": "/ideas/thumbs/flower-cat-medium",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "cooking-detailed",
+    "subject": "cooking",
+    "detailLevel": "detailed",
+    "image": "/ideas/cooking-detailed.webp",
+    "thumbnail": "/ideas/thumbs/cooking-detailed",
+    "width": 1024,
+    "height": 1024,
+    "prompts": {
+      "en": "Two friends baking pancakes",
+      "nl": "Twee vrienden die pannenkoeken bakken",
+      "de": "Zwei Freunde backen Pfannkuchen",
+      "fr": "Deux amis préparent des pancakes",
+      "es": "Dos amigos preparando tortitas",
+      "pt-br": "Dois amigos fazendo panquecas",
+      "it": "Due amici preparano i pancake",
+      "ja": "友達二人でパンケーキを作る",
+      "ko": "함께 팬케이크를 만드는 두 친구",
+      "ar": "صديقان يحضّران الفطائر"
+    }
+  },
+  {
+    "id": "reading-cat-simple",
+    "subject": "reading-cat",
+    "detailLevel": "simple",
+    "image": "/ideas/reading-cat-simple.webp",
+    "thumbnail": "/ideas/thumbs/reading-cat-simple",
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "id": "birthday-dog-medium",
+    "subject": "birthday-dog",
+    "detailLevel": "medium",
+    "image": "/ideas/birthday-dog-medium.webp",
+    "thumbnail": "/ideas/thumbs/birthday-dog-medium",
+    "width": 1024,
+    "height": 1024,
+    "prompts": {
+      "en": "A cheerful dog holding one birthday balloon",
+      "nl": "Een vrolijke hond met één verjaardagsballon",
+      "de": "Ein fröhlicher Hund hält einen Geburtstagsballon",
+      "fr": "Un chien joyeux tenant un ballon d’anniversaire",
+      "es": "Un perro alegre sujetando un globo de cumpleaños",
+      "pt-br": "Um cachorro alegre segurando um balão de aniversário",
+      "it": "Un cane allegro con un palloncino di compleanno",
+      "ja": "誕生日の風船をひとつ持つうれしそうな犬",
+      "ko": "생일 풍선 하나를 든 신난 강아지",
+      "ar": "كلب سعيد يحمل بالون عيد ميلاد واحدًا"
+    }
+  },
+  {
+    "id": "missing-friend-detailed",
+    "subject": "missing-friend",
+    "detailLevel": "detailed",
+    "image": "/ideas/missing-friend-detailed.webp",
+    "thumbnail": "/ideas/thumbs/missing-friend-detailed",
+    "width": 1024,
+    "height": 1024
+  }
+]

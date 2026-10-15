@@ -1,0 +1,43 @@
+{
+  "source_files_audited": 722,
+  "baseline_changes": [
+    "AGENTS.md",
+    "next.config.ts",
+    "src/app/(english)/doodle-ideas/page.test.tsx",
+    "src/components/doodle-analytics.test.tsx",
+    "src/components/doodle-analytics.tsx",
+    "src/components/editorial-pages.tsx",
+    "src/components/legal-page.tsx",
+    "src/lib/doodle-ideas.ts",
+    "src/lib/i18n.ts"
+  ],
+  "unexpected_baseline_changes": false,
+  "reviewed_marker_findings": [
+    {
+      "path": "src/lib/native-attestation.test.ts",
+      "reason": "private_key"
+    },
+    {
+      "path": "src/lib/native-attestation.ts",
+      "reason": "private_key"
+    },
+    {
+      "path": "src/lib/auth/apple-tokens.ts",
+      "reason": "private_key"
+    },
+    {
+      "path": "src/lib/billing/apple-config.ts",
+      "reason": "private_key"
+    },
+    {
+      "path": "src/lib/billing/play-config.test.ts",
+      "reason": "private_key"
+    },
+    {
+      "path": "src/lib/billing/play-config.ts",
+      "reason": "private_key"
+    }
+  ],
+  "reviewed_marker_conclusion": "All six are PEM validation markers or explicit dummy test strings containing secret. No private-key payloads.",
+  "credential_findings_after_review": []
+}
