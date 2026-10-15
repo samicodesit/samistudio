@@ -1,5 +1,45 @@
 // Native terminal state and deliberate gestures. Gallery artwork/loading stays
 // owned by the existing gallery controller.
+// Finite compositor-only passes leave no running animation during the rest.
+export function initTerminalReflection({surface,container,page=document,reducedMotion,isVisible=()=>true,
+  setTimer=setTimeout,clearTimer=clearTimeout}) {
+  let timer=0,animation=null,ready=false,disposed=false;
+  const held=new Set(),bindings=[];
+  const allowed=()=>ready&&!disposed&&!page.hidden&&!reducedMotion.matches&&isVisible()&&!held.size;
+  function stop(){clearTimer(timer);timer=0;animation?.cancel();animation=null;surface.dataset.active='false';}
+  function schedule(delay=6500){stop();if(allowed())timer=setTimer(sweep,delay);}
+  function sweep(){
+    timer=0;if(!allowed())return;
+    surface.dataset.active='true';
+    const pass=surface.animate([
+      {transform:'translateX(-70%)',opacity:0},
+      {transform:'translateX(0)',opacity:.7},
+      {transform:'translateX(70%)',opacity:0},
+    ],{duration:3200,easing:'cubic-bezier(.45,0,.55,1)',iterations:1});
+    animation=pass;
+    pass.finished.then(()=>{if(animation===pass){animation=null;schedule(12800);}}).catch(()=>{});
+  }
+  function listen(target,type,handler,capture=true){if(!target)return;target.addEventListener(type,handler,{passive:true,capture});bindings.push(()=>target.removeEventListener(type,handler,capture));}
+  function hold(id){held.add(id);stop();}
+  function release(id){if(held.delete(id))schedule();}
+  listen(container,'pointerdown',event=>hold(`p${event.pointerId}`));
+  listen(page,'pointerup',event=>release(`p${event.pointerId}`));
+  listen(page,'pointercancel',event=>release(`p${event.pointerId}`));
+  listen(container,'keydown',event=>hold(`k${event.key}`));
+  listen(page,'keyup',event=>release(`k${event.key}`));
+  listen(page,'visibilitychange',()=>{held.clear();schedule();});
+  listen(page.defaultView,'blur',()=>{held.clear();stop();},false);
+  listen(page.defaultView,'focus',()=>schedule(),false);
+  listen(page.defaultView,'pagehide',()=>{held.clear();stop();},false);
+  listen(page.defaultView,'pageshow',()=>schedule(),false);
+  listen(reducedMotion,'change',()=>schedule());
+  return {
+    ready(){if(!ready){ready=true;schedule(2500);}},
+    refresh:()=>schedule(),
+    destroy(){disposed=true;stop();held.clear();bindings.forEach(remove=>remove());},
+  };
+}
+
 export function initTerminalControls({display,pilot,keys,screens,onPage,onLeaveWork,onOpen,
   reducedMotion=false,isVisible=()=>true,setTimer=setTimeout,clearTimer=clearTimeout}) {
   const title=display.querySelector('#display-title');

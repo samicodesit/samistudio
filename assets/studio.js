@@ -1,7 +1,7 @@
 import { KeySpring } from './key-spring.mjs';
 import { projectiveMatrix as quadMatrix, fitMobileTerminal } from './gallery-geometry.mjs';
 import { initProjectGallery } from './project-gallery.js';
-import { initTerminalControls } from './terminal-controls.mjs';
+import { initTerminalControls, initTerminalReflection } from './terminal-controls.mjs';
 
 (() => {
   'use strict';
@@ -14,6 +14,18 @@ import { initTerminalControls } from './terminal-controls.mjs';
   const keys = [...document.querySelectorAll('.key')];
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const screens = [...document.querySelectorAll('.screen')];
+  const reflectionMask=document.createElement('span');
+  reflectionMask.className='terminal-reflection';reflectionMask.setAttribute('aria-hidden','true');
+  const reflectionSurface=document.createElement('span');reflectionSurface.className='terminal-reflection-glint';
+  reflectionMask.append(reflectionSurface);display.append(reflectionMask);
+  let terminalInView=true;
+  const reflection=initTerminalReflection({surface:reflectionSurface,container:document.querySelector('.terminal'),reducedMotion,
+    isVisible:()=>terminalInView&&!projectDialog.open});
+  new MutationObserver(()=>reflection.refresh()).observe(projectDialog,{attributes:true,attributeFilter:['open']});
+  if('IntersectionObserver' in window)new IntersectionObserver(entries=>{
+    const visible=entries[0].isIntersecting;
+    if(visible!==terminalInView){terminalInView=visible;reflection.refresh();}
+  }).observe(experience);
   let entranceAssetsReady = false;
   let entranceScheduled = false;
   const keyArtwork = new Image();
@@ -271,6 +283,7 @@ import { initTerminalControls } from './terminal-controls.mjs';
       requestAnimationFrame(() => requestAnimationFrame(() => {
         root.classList.remove('is-loading');
         gallery.ready();
+        reflection.ready();
       }));
     }
   }

@@ -218,6 +218,17 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-o
   background: linear-gradient(135deg, rgba(255,255,255,0.08), transparent 55%);
   box-shadow: inset 0 2px 6px rgba(0,0,0,0.25);
 }
+.terminal-reflection {
+  position: absolute; inset: 0; z-index: 3; overflow: hidden; pointer-events: none;
+}
+.terminal-reflection-glint {
+  position: absolute; inset: -30% -50%; opacity: 0; pointer-events: none;
+  background: linear-gradient(114deg, transparent 36%, #fffdf135 44%, #ffffff72 48%, #fffdf126 51%, transparent 60%);
+}
+.terminal-reflection-glint[data-active="true"] { will-change: transform, opacity; }
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .terminal-reflection { display: none; }
+}
 .display:not([style]), .key-label:not([style]) { visibility: hidden; }
 .display-topline {
   position: relative;
