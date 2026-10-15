@@ -100,6 +100,7 @@
   </dialog>
   <template id="gallery-page-template">
     <section class="project-gallery gallery-panel" data-scene="composed">
+    <div class="gallery-page-motion">
     <div class="gallery-environment" aria-hidden="true"><img width="1505" height="1045" alt="" loading="lazy" decoding="async"></div>
     <div class="gallery-viewport" role="region" aria-label="Project artwork" tabindex="-1"><div class="gallery-scene-area"><div class="gallery-frame">
       <figure class="composed-scene" hidden>
@@ -119,10 +120,12 @@
       <figure class="project-secondary"><div class="plane-enter"><div class="plane-depth"><div class="plane-surface"><img alt="" decoding="async"></div></div></div></figure>
     </div></div></div>
     <div class="gallery-ui-frame gallery-caption-frame"><div class="project-caption">
+        <div class="project-counter"><span class="project-counter-previous" aria-hidden="true"></span><span class="project-counter-value"></span></div>
         <h2 id="project-title"></h2>
         <p id="project-description"></p>
         <a class="project-link" target="_blank" rel="noopener noreferrer"><span class="project-link-label"></span><span class="project-link-short" aria-hidden="true">Open</span><img src="./assets/icons/arrow-left.svg" width="26" height="26" alt=""><span class="sr-only"> opens a new tab</span></a>
     </div></div>
+    </div>
     </section>
   </template>
 </body>

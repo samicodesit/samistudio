@@ -9,7 +9,7 @@ import * as geometry from '../assets/gallery-geometry.mjs';
 
 // Run the real controller with animations deliberately held unfinished. This
 // models the opening period independently of animation or device frame rate.
-async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, extraTail=0,reduced=false,slowProject=null,failedProject=null,autoOpen=true}={}) {
+async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, extraTail=0,reduced=false,slowProject=null,failedProject=null,autoOpen=true,session=new Map(),blockedStorage=false}={}) {
   const requests = [], animations = [], frames = [], scrollWrites = [], measurements = [], timers = new Map();
   let timerId = 0;
   const decodeGates=[]; let selectedLayout='tablet';
@@ -37,9 +37,9 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
     showModal() { this.open=true; }
     close() { this.open=false; }
     cloneNode() { return new Element(); }
-    animate() {
+    animate(keyframes,options) {
       let reject;
-      const animation={finished:new Promise((_,fail)=>{reject=fail;}),cancelled:false,
+      const animation={element:this,keyframes,options,finished:new Promise((_,fail)=>{reject=fail;}),cancelled:false,
         cancel() { this.cancelled=true; reject(new Error('cancelled')); }};
       animations.push(animation); return animation;
     }
@@ -55,7 +55,8 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
   track.clientHeight=trackHeight;
   Object.defineProperty(track,'scrollHeight',{get:()=>track.children.length*track.clientHeight+extraTail});
   const window=new Element(); window.visualViewport={scale:1,height:viewportHeight,addEventListener(){}};
-  const context={document,window,navigator:{connection:{effectiveType:'4g'}},innerWidth:393,innerHeight:711,
+  const sessionStorage={getItem:key=>{if(blockedStorage)throw new Error("Storage blocked");return session.get(key)??null;},setItem:(key,value)=>{if(blockedStorage)throw new Error("Storage blocked");session.set(key,value);}};
+  const context={document,window,sessionStorage,navigator:{connection:{effectiveType:'4g'}},innerWidth:393,innerHeight:711,
     URL,console, getProject,projectAssets,allowPrefetch,gallerySequence,centerSlot,settledSlot,...geometry,
     matchMedia:query=>({matches:query.includes('prefers-reduced-motion') ? reduced : query.includes('orientation: portrait') ? selectedLayout==='tablet' : query.includes('orientation: landscape') ? selectedLayout==='landscape' : query.includes('min-aspect-ratio: 2/1') ? selectedLayout==='panorama' : query.includes('min-aspect-ratio') && selectedLayout==='wide',addEventListener(){}}),
     getComputedStyle:()=>({getPropertyValue:()=>''}),
@@ -71,7 +72,7 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
   const flush=async()=>{for(let i=0;i<80;i++)await Promise.resolve();};
   if(autoOpen) rows[0].emit('click'); await flush();
   return {dialog:document.querySelector('#project-gallery'),track:document.querySelector('#project-gallery').querySelector('.gallery-track'),
-    requests,animations,frames,timers,flush,window,scrollWrites,measurements,rows,controller:context.controller,history:context.history,
+    requests,animations,frames,timers,flush,window,scrollWrites,measurements,rows,session,controller:context.controller,history:context.history,
     releaseDecodes(){decodeGates.splice(0).forEach(resolve=>resolve());},
     blockProject(id){slowProject=id;},
     setLayout(value){selectedLayout=value;context.innerWidth=value==='landscape'?844:393;window.emit('resize');},
@@ -183,10 +184,10 @@ test('boundary overscroll recovers without scrollend, including a stale extra ex
   }
 });
 
-test('keyboard moves one physical page and reduced motion uses no animation',async()=>{
+test('keyboard moves one physical page and reduced motion uses only opacity fades',async()=>{
   const f=await galleryFixture({reduced:true});f.flushFrames();
   f.track.emit('keydown',{key:'ArrowDown',target:{closest(){return null;}},preventDefault(){}});
-  assert.equal(f.track.scrollTop,4*H);assert.equal(f.animations.length,0);
+  assert.equal(f.track.scrollTop,4*H);assert.ok(f.animations.every(animation=>animation.options.duration===200 && animation.keyframes.every(frame=>!('transform' in frame))));
   f.track.emit('scrollend');await f.runSettlement();assert.equal(f.dialog.dataset.project,'autolister');
 });
 
@@ -355,4 +356,100 @@ test('a failed scene load shows retry feedback on the existing description line 
   f.controller.page(1);
   assert.equal(f.rows[0].querySelector('.work-summary').textContent,'Description for doodle.');
   assert.equal(f.rows[1].querySelector('.work-summary').textContent,'Description for autolister.');
+});
+
+
+test('every fixed gallery copy carries its logical counter above the project title',async()=>{
+  const f=await galleryFixture();
+  assert.deepEqual(f.track.children.map(panel=>panel.querySelector('.project-counter-value').textContent),['1/3','2/3','3/3','1/3','2/3','3/3','1/3','2/3','3/3']);
+});
+
+test('first project arms the specified one-time nudge without writing native scroll position',async()=>{
+  const f=await galleryFixture();
+  const timer=[...f.timers.values()].find(timer=>timer.delay===1200);
+  assert.ok(timer,'nudge waits1200ms after the prepared project is visible');
+  const writes=f.scrollWrites.length, count=f.animations.length;
+  timer.fn();
+  const nudge=f.animations.slice(count);
+  assert.equal(nudge.length,3,'current page, next page and header move together');
+  assert.equal(nudge.filter(animation=>animation.element.debugKey==='.gallery-page-motion').length,2,'animate inner visuals, never the native snap targets');
+  for(const animation of nudge){
+    assert.equal(animation.options.duration,1050);
+    assert.deepEqual(Array.from(animation.keyframes,frame=>frame.transform),['translateY(0)','translateY(-24px)','translateY(-24px)','translateY(0)']);
+    assert.deepEqual(Array.from(animation.keyframes,frame=>frame.offset),[0,400/1050,550/1050,1]);
+    assert.equal(animation.keyframes[0].easing,'ease-out');
+  }
+  assert.equal(f.scrollWrites.length,writes,'nudge never changes scrollTop or snap targets');
+  assert.equal(f.session.get('studio.galleryNudgeSeen'),'1');
+  assert.ok(nudge.every(animation=>!['h2','.project-caption p','.project-link'].includes(animation.element.debugKey)));
+});
+
+test('touch, wheel, pointer input and actual scrolling cancel the pending nudge',async()=>{
+  for(const event of ['touchstart','wheel','pointerdown','scroll']){
+    const f=await galleryFixture();
+    assert.ok([...f.timers.values()].some(timer=>timer.delay===1200));
+    if(event==='scroll')f.track.scrollTop+=24;
+    f.track.emit(event);
+    assert.ok(![...f.timers.values()].some(timer=>timer.delay===1200),event);
+  }
+});
+
+test('the nudge skips later gallery visits, reduced motion and survives blocked storage',async()=>{
+  const session=new Map();await galleryFixture({session});
+  const again=await galleryFixture({session});
+  assert.ok(![...again.timers.values()].some(timer=>timer.delay===1200));
+  const reduced=await galleryFixture({reduced:true});
+  assert.ok(![...reduced.timers.values()].some(timer=>timer.delay===1200));
+  const blocked=await galleryFixture({blockedStorage:true});
+  assert.equal(blocked.dialog.open,true);
+  assert.ok([...blocked.timers.values()].some(timer=>timer.delay===1200));
+});
+
+test('native input cancels an active nudge immediately',async()=>{
+  const f=await galleryFixture();const count=f.animations.length;
+  [...f.timers.values()].find(timer=>timer.delay===1200)?.fn();
+  const nudge=f.animations.slice(count);assert.equal(nudge.length,3);
+  f.track.emit('touchstart');
+  assert.ok(nudge.every(animation=>animation.cancelled));
+});
+
+test('the counter crossfades for200ms, including3/3 back to1/3',async()=>{
+  const f=await galleryFixture();
+  f.track.emit('wheel');
+  for(const slot of [4,5,6]){
+    const count=f.animations.length;
+    f.track.scrollTop=slot*H;f.track.emit('scrollend');await f.runSettlement();
+    const fades=f.animations.slice(count);
+    const numbers=fades.filter(animation=>['.project-counter-value','.project-counter-previous'].includes(animation.element.debugKey));
+    assert.equal(numbers.length,6,'both numbers crossfade on all identical copies so a loop relocation preserves the effect');
+    assert.ok(numbers.every(animation=>animation.options.duration===200));
+    assert.ok(numbers.every(animation=>animation.keyframes.every(frame=>!('transform' in frame))));
+  }
+  assert.equal(f.track.children[6].querySelector('.project-counter-value').textContent,'1/3');
+});
+
+
+test('actual project changes use the requested60/140ms stagger and8px rise, finishing at440ms',async()=>{
+  const f=await galleryFixture();f.track.emit('wheel');
+  const count=f.animations.length;f.track.scrollTop=4*H;f.track.emit('scrollend');await f.runSettlement();
+  const captions=f.animations.slice(count).filter(animation=>['h2','.project-caption p','.project-link'].includes(animation.element.debugKey));
+  assert.equal(captions.length,9,'matching copies retain the same motion during an invisible loop relocation');
+  for(const animation of captions){
+    assert.equal(animation.options.duration,300);assert.equal(animation.options.easing,'ease-out');
+    assert.equal(animation.options.delay,animation.element.debugKey==='h2'?60:140);
+    assert.equal(animation.keyframes[0].transform,'translateY(8px)');
+    assert.equal(animation.keyframes[1].transform,'translateY(0)');
+    assert.equal(animation.keyframes[0].opacity,0);assert.equal(animation.keyframes[1].opacity,1);
+  }
+  const later=f.animations.length;f.track.emit('scrollend');await f.runSettlement();
+  assert.equal(f.animations.length,later,'settling the same project does not replay its entrance');
+});
+
+test('reduced motion uses plain200ms caption fades with no rise, delay or nudge',async()=>{
+  const f=await galleryFixture({reduced:true});
+  assert.ok(![...f.timers.values()].some(timer=>timer.delay===1200));
+  const count=f.animations.length;f.track.scrollTop=4*H;f.track.emit('scrollend');await f.runSettlement();
+  const fades=f.animations.slice(count);assert.equal(fades.length,15);
+  assert.ok(fades.every(animation=>animation.options.duration===200 && !animation.options.delay));
+  assert.ok(fades.every(animation=>animation.keyframes.every(frame=>!('transform' in frame))));
 });
