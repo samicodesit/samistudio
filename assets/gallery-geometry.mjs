@@ -141,14 +141,18 @@ export function fitDesktopTerminal(width,height,headlineRatio) {
   if(![width,height,headlineRatio].every(value=>Number.isFinite(value)&&value>0)) {
     throw new RangeError('Invalid desktop composition dimensions.');
   }
-  const laptop=width<1280,margin=laptop?48:64,gap=laptop?48:64;
-  const contentWidth=Math.min(1280,width-2*margin);
-  const columnWidth=(contentWidth-gap)*.55,copyWidth=(contentWidth-gap)*.45;
-  const desiredWidth=laptop?Math.max(400,Math.min(520,width*.42)):Math.max(480,Math.min(640,width*.4));
-  const scale=Math.min(desiredWidth/657,columnWidth/657,height*(laptop?.65:.7)/589);
+  const margin=width<1280?48:64;
+  const gap=Math.max(44,Math.min(112,width/24));
+  // Grow with the display, while short ultrawide windows keep one coherent group.
+  const contentWidth=Math.min(2560,width-2*margin,height*2.1);
+  const columnWidth=(contentWidth-gap)*.54,copyWidth=(contentWidth-gap)*.46;
+  const scale=Math.min(1180/657,width*.48/657,columnWidth/657,height*.78/589);
   const start=(width-contentWidth)/2;
-  const headlineSize=Math.min(laptop?56:Math.max(64,Math.min(96,width*.055)),(copyWidth-1)/headlineRatio);
-  return {scale,left:start+(columnWidth-657*scale)/2-20*scale,top:height/2-531.5*scale,
+  const headlineSize=Math.min(Math.max(64,Math.min(184,width*.07)),(copyWidth-1)/headlineRatio);
+  const brandSize=Math.max(28,Math.min(48,width*.02));
+  const brandGap=Math.max(18,Math.min(32,width/80));
+  const bodySize=Math.max(20,Math.min(32,width/64));
+  return {scale,left:start+(columnWidth-657*scale)/2-20*scale,top:height*.52-531.5*scale,
     copyLeft:start+columnWidth+gap,copyWidth,headlineSize,deviceHeight:589*scale,
-    deviceWidth:657*scale,contentWidth,columnWidth,gap,margin};
+    deviceWidth:657*scale,contentWidth,columnWidth,gap,margin,brandSize,brandGap,bodySize};
 }

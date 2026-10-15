@@ -287,6 +287,11 @@ import { initTerminalControls, initTerminalReflection } from './terminal-control
       ({scale,left:sceneLeft,top:sceneTop}=fit);
       root.style.setProperty('--hero-font-size',`${fit.headlineSize}px`);
       root.style.setProperty('--hero-device-height',`${fit.deviceHeight}px`);
+      root.style.setProperty('--hero-content-width',`${fit.contentWidth}px`);
+      root.style.setProperty('--hero-gap',`${fit.gap}px`);
+      root.style.setProperty('--hero-brand-size',`${fit.brandSize}px`);
+      root.style.setProperty('--hero-brand-gap',`${fit.brandGap}px`);
+      root.style.setProperty('--hero-body-size',`${fit.bodySize}px`);
     }
     root.style.setProperty('--scene-scale',String(scale));
     root.style.setProperty('--scene-left',`${sceneLeft}px`);

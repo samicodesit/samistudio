@@ -23,10 +23,11 @@ test('desktop composition reserves room for both the real device and the measure
     const deviceRight=fit.left+677*fit.scale;
     assert.ok(fit.copyLeft-deviceRight>=fit.gap-.001,`${width}x${height} must keep the text clear of the device`);
     assert.ok(fit.copyLeft+633.1/104*fit.headlineSize<=width-fit.margin+.001);
-    assert.ok(fit.deviceHeight<=height*(width<1280?.65:.7)+.001);
-    assert.equal(fit.gap,width<1280?48:64);
+    assert.ok(fit.deviceHeight<=height*.8+.001);
+    assert.ok(fit.gap>=44&&fit.gap<=112);
     assert.equal(fit.margin,width<1280?48:64);
-    assert.ok(fit.contentWidth<=1280);
+    assert.ok(fit.contentWidth<=2560);
+    assert.ok(fit.contentWidth<=width-2*fit.margin);
   }
 });
 
@@ -39,5 +40,17 @@ test('desktop fitting remains collision free through intermediate widths and asp
       assert.ok(fit.copyLeft>=fit.left+677*fit.scale+fit.gap-.001);
       assert.ok(fit.copyLeft+textWidth/104*fit.headlineSize<=width-fit.margin+.001);
     }
+  }
+});
+
+
+test('large desktops grow the terminal and display type together instead of staying laptop sized',()=>{
+  for(const [width,height,minDevice,minType] of [[1920,1080,840,120],[2559,1228,1000,160],[3440,1440,1100,175]]){
+    const fit=geometry.fitDesktopTerminal(width,height,633.1/104);
+    assert.ok(fit.deviceWidth>=minDevice,`${width}: the terminal must carry the scene`);
+    assert.ok(fit.headlineSize>=minType,`${width}: display type must keep pace with the terminal`);
+    assert.ok(fit.brandSize>=34,'wordmark must be proportionate to the larger composition');
+    assert.ok(fit.top+237*fit.scale>=0);
+    assert.ok(fit.top+826*fit.scale<=height);
   }
 });

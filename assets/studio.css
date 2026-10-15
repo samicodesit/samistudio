@@ -425,28 +425,21 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-o
   .key-label { font-size: max(14px, calc(10px / var(--scene-scale))); }
 }
 
-/* One centered content grid; the photographed device is fitted to its slot. */
-.site-header { position:absolute; top:48px; left:64px; margin:0; }
-.wordmark > span { font-size:24px; }
+/* One fluid desktop composition, with the brand attached to its type column. */
+.site-header { position:static; top:auto; left:auto; margin:0 0 var(--hero-brand-gap,24px); }
+.wordmark > span { font-size:var(--hero-brand-size,32px); }
 .hero-layout {
-  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-  width:calc(100% - 128px); max-width:1280px;
-  display:grid; grid-template-columns:minmax(0,55fr) minmax(0,45fr); gap:64px; align-items:center;
+  position:absolute; left:50%; top:52%; transform:translate(-50%,-50%);
+  width:var(--hero-content-width,calc(100% - 128px)); max-width:2560px;
+  display:grid; grid-template-columns:minmax(0,54fr) minmax(0,46fr); gap:var(--hero-gap,64px); align-items:center;
 }
 .hero-device-column { height:var(--hero-device-height,400px); pointer-events:none; }
 .hero-copy { position:static; inset:auto; padding:0; display:block; min-width:0; }
 .introduction { width:100%; margin:0; }
-.introduction h1 { font-size:var(--hero-font-size,clamp(64px,5.5vw,96px)); letter-spacing:-.024em; }
-.introduction p { width:100%; max-width:none; margin:24px 0 0; font-size:22px; line-height:1.5; color:#3A3236; }
-@media (min-width:1024px) and (max-width:1279px) {
-  .site-header { top:40px; left:48px; }
-  .wordmark > span { font-size:22px; }
-  .hero-layout { width:calc(100% - 96px); gap:48px; }
-  .introduction h1 { font-size:56px; }
-  .introduction p { font-size:20px; }
-}
+.introduction h1 { font-size:var(--hero-font-size,clamp(64px,7vw,184px)); letter-spacing:-.024em; }
+.introduction p { width:100%; max-width:none; margin:clamp(24px,1.25vw,36px) 0 0; font-size:var(--hero-body-size,22px); line-height:1.5; color:#3A3236; }
 @media (max-width:1023px) {
-  .site-header { top:max(24px,env(safe-area-inset-top)); left:calc(var(--hero-column-left,0px) + max(28px,env(safe-area-inset-left))); }
+  .site-header { position:absolute; top:max(24px,env(safe-area-inset-top)); left:max(28px,env(safe-area-inset-left)); margin:0; }
   .wordmark > span { font-size:24px; }
   .hero-layout { position:static; width:100%; max-width:none; height:100%; transform:none; display:block; }
   .hero-device-column { display:none; }
