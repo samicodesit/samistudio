@@ -12,12 +12,12 @@ export class KeySpring {
   get moving() { return this.position !== this.target || this.velocity !== 0; }
   setPressed(pressed) { this.pressed = pressed; this.updateTarget(); }
   setSelected(selected) { this.selected = selected; this.updateTarget(); }
-  updateTarget() { this.target = this.pressed ? 1.28 : this.selected ? 1 : 0; }
+  updateTarget() { this.target = this.pressed ? 1.6 : this.selected ? 1 : 0; }
   finish() { this.position = this.target; this.velocity = 0; }
   advance(seconds) {
     let remaining = Math.min(Math.max(seconds, 0), 0.04);
-    const stiffness = this.pressed ? 1900 : 1050;
-    const damping = this.pressed ? 82 : 49;
+    const stiffness = this.pressed ? 3200 : 1500;
+    const damping = this.pressed ? 86 : 64;
     while (remaining > 0) {
       const step = Math.min(remaining, 1 / 240);
       this.velocity += ((this.target - this.position) * stiffness - this.velocity * damping) * step;

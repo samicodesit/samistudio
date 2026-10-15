@@ -306,3 +306,12 @@ Browser evidence covers 25 viewports from 320 x 480 through 3840 x 2160, includi
 ### Key shadow refinement
 
 The mobile bronze key used an angular polygon that cut a diagonal bottom corner into its photographed base. Replaced it with a rounded inset following the cap silhouette. Reduced the additional CSS cast shadow from 4px offset/4px blur at 25% alpha to 2px offset/3px blur at 18% alpha, retaining the existing photographed contact shading. The selected key still halves the added shadow and retains its 3px travel. Inspected resting and pressed mobile states at 430 x 932, small-phone containment at 320 x 480, and laptop composition at 1024 x 768. No bitmap or motion controller changes.
+
+
+## 2026-10-15: physical key response polish
+
+Retuned the existing mechanical spring for a decisive 4.8px bottom-out, retaining the 3px selected resting depth and original cap geometry. At least 1.5px of additional travel is visible on a selected key within 67ms. A 78ms minimum stroke lets quick taps reach the seat before lifting; interrupted strokes preserve velocity and position. The return has a restrained rebound, without scale or elastic distortion.
+
+Moved mouse/touch sound to pressure instead of release, matching keyboard input. Replaced the thin transient with a quiet cached 90ms impact using a lower resonant body, short attack and tapered tail. Sound is scheduled 18ms after input to meet the visual stroke. No new audio files, runtime modules, dependencies or downloads. Corrected duplicate activation on pointer click, and removed the debounce window that could drop assistive clicks.
+
+Observed real browser click travel on a 393 x 711 phone viewport and inspected a press on the original socket. Checked desktop at 1440 x 900, Space/Enter activation, repeated selected-key presses, switching keys and warning/error logs. Automated red/green regressions cover prompt seating, bounded travel, interrupted strokes at 30/60/120Hz, one sound and one activation per gesture, cancellation, keyboard repeat, reduced motion and repeated assistive clicks. The audio check verifies first-gesture scheduling, cached synthesis, quiet signal headroom and zero-valued endpoints. All 93 tests pass, 10 runtime modules pass syntax checks, and the static build remains 58 files. Physical touchscreen feel, speaker quality and Safari audio latency still require device feedback.

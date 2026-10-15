@@ -322,13 +322,13 @@ import { initTerminalControls, initTerminalReflection } from './terminal-control
   let audioContext;
   let keySound;
   const soundingKeys = new Set();
-  function playKeySound(prepareOnly = false) {
+  function playKeySound() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (!AudioContext) return;
       if (!audioContext) {
-        audioContext = new AudioContext();
-        keySound = audioContext.createBuffer(1, Math.ceil(audioContext.sampleRate * .075), audioContext.sampleRate);
+        audioContext = new AudioContext({latencyHint:'interactive'});
+        keySound = audioContext.createBuffer(1, Math.ceil(audioContext.sampleRate * .09), audioContext.sampleRate);
         const samples = keySound.getChannelData(0);
         let noise = 0;
         let seed = 831;
@@ -336,15 +336,14 @@ import { initTerminalControls, initTerminalReflection } from './terminal-control
           const t = i / audioContext.sampleRate;
           seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
           noise = noise * .65 + (seed / 2147483648 - 1) * .35;
-          const attack = Math.min(1, t / .001);
-          const body = Math.sin(2 * Math.PI * 185 * t) * Math.exp(-t * 95);
-          const click = noise * Math.exp(-t * 210);
-          samples[i] = (body * .11 + click * .25) * attack * Math.min(1, (samples.length - i) / 100);
+          const attack = 1 - Math.exp(-t / .00045);
+          const body = (Math.sin(2 * Math.PI * (210 * t - 180 * t * t)) * .18
+            + Math.sin(2 * Math.PI * 420 * t) * .045) * Math.exp(-t * 65);
+          const click = noise * .17 * Math.exp(-t * 420);
+          const seat = Math.sin(2 * Math.PI * 95 * t) * .045 * Math.exp(-t * 85);
+          const tail = Math.min(1, (samples.length - 1 - i) / (audioContext.sampleRate * .008));
+          samples[i] = (body + click + seat) * attack * tail;
         }
-      }
-      if (prepareOnly) {
-        if (audioContext.state !== 'running') audioContext.resume().catch(() => {});
-        return;
       }
       const play = () => {
         if (document.hidden) return;
@@ -354,7 +353,7 @@ import { initTerminalControls, initTerminalReflection } from './terminal-control
         source.connect(audioContext.destination);
         soundingKeys.add(source);
         source.onended = () => { source.disconnect(); soundingKeys.delete(source); };
-        source.start(audioContext.currentTime + .025);
+        source.start(audioContext.currentTime + .018);
       };
       // Queue inside the trusted click/keyboard gesture, including Safari's
       // first activation. The suspended audio clock preserves the first sound.
@@ -425,24 +424,20 @@ import { initTerminalControls, initTerminalReflection } from './terminal-control
         key.classList.remove('is-down');
         wake();
       };
-      const remaining = Math.max(0, 58 - (performance.now() - pressedAt));
+      const remaining = Math.max(0, 78 - (performance.now() - pressedAt));
       if (immediate || !remaining) lift();
       else releaseTimer = window.setTimeout(lift, remaining);
     }
 
     key.addEventListener('pointerdown', event => {
       if (event.button !== 0) return;
-      gestureSoundPlayed = false;
-      playKeySound(true);
+      gestureSoundPlayed = true;
+      playKeySound();
       physicalInput = true;
       key.setPointerCapture(event.pointerId);
       down();
     });
     key.addEventListener('pointerup', () => {
-      if (physicalInput) {
-        playKeySound();
-        gestureSoundPlayed = true;
-      }
       physicalInput = false;
       up();
     });
@@ -470,8 +465,8 @@ import { initTerminalControls, initTerminalReflection } from './terminal-control
     key.addEventListener('click', event => {
       if (!gestureSoundPlayed) playKeySound();
       gestureSoundPlayed = false;
-      if (event.detail === 0 && !physicalInput && performance.now() - pressedAt > 150) { down(); up(); }
-      showView(key.dataset.view, key);
+      if (event.detail === 0 && !physicalInput) { actuated = false; down(); up(); }
+      if (!actuated) { actuated = true; showView(key.dataset.view, key); }
     });
     renderSpring();
     return {
