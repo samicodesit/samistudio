@@ -303,10 +303,9 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-o
 .key-contact { left: 473px; top: 560px; width: 146px; height: 125px; }
 .key-contact .keycap { background-position: -473px -560px; }
 .key-contact { --key-outline: polygon(11% 16%, 76% 4%, 85% 8%, 94% 40%, 99% 78%, 94% 91%, 23% 98%, 13% 93%, 1% 32%, 3% 23%); }
-.key { --key-active: 0; --key-depth: max(var(--key-active), var(--travel, 0)); filter: none; }
+.key { --key-depth: var(--travel, 0); filter: none; }
 .keycap { filter: drop-shadow(0 calc((4px - var(--key-depth) * 2px) / var(--scene-scale)) calc((4px - var(--key-depth) * 2px) / var(--scene-scale)) #21171c40); }
 .keycap::before { clip-path: var(--key-outline); }
-.key[aria-pressed="true"] { --key-active: 1; }
 .keycap { transform: translateY(calc(var(--key-depth) * 3px / var(--scene-scale))); }
 
 @media (max-width: 900px) and (orientation: portrait), (max-width: 599px) {

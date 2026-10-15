@@ -28,10 +28,14 @@ import { initTerminalControls } from './terminal-controls.mjs';
     layout();
   });
   let gallery;
+  let mechanisms = [];
   const terminalControls = initTerminalControls({display,keys,screens,
     pilot:document.querySelector('.pilot-light'),reducedMotion,isVisible:()=>!projectDialog.open,
     onPage:direction=>gallery?.page(direction),onOpen:()=>gallery?.openSelected(),onLeaveWork:()=>gallery?.cancelPending()});
-  const showView=(view,focusElement)=>terminalControls.show(view,focusElement);
+  const showView=(view,focusElement)=>{
+    terminalControls.show(view,focusElement);
+    mechanisms.forEach(mechanism=>mechanism.syncSelection());
+  };
   gallery = initProjectGallery({
     onReturn:()=>{showView('work');layout();},
     onSelect:(index,total)=>terminalControls.projectChanged(index,total),
@@ -315,8 +319,8 @@ import { initTerminalControls } from './terminal-controls.mjs';
     } catch { /* Sound must never interrupt a key interaction. */ }
   }
 
-  const mechanisms = keys.map(key => {
-    const spring = new KeySpring();
+  mechanisms = keys.map(key => {
+    const spring = new KeySpring(key.getAttribute('aria-pressed') === 'true');
     const cap = key.querySelector('.keycap');
     let releaseTimer = 0;
     let frame = 0;
@@ -330,7 +334,7 @@ import { initTerminalControls } from './terminal-controls.mjs';
       const position = spring.position;
       key.style.setProperty('--travel', position.toFixed(5));
       key.dataset.stroke = position.toFixed(3);
-      if (!actuated && position >= .45 && spring.target === 1) {
+      if (!actuated && position >= .45 && spring.pressed) {
         actuated = true;
         showView(key.dataset.view, key);
       }
@@ -345,6 +349,13 @@ import { initTerminalControls } from './terminal-controls.mjs';
     }
 
     function wake() {
+      if (reducedMotion.matches) {
+        cancelAnimationFrame(frame);
+        frame = 0; lastTime = 0;
+        spring.finish(); renderSpring();
+        cap.style.willChange = 'auto';
+        return;
+      }
       if (!frame) {
         cap.style.willChange = 'transform';
         lastTime = 0;
@@ -353,15 +364,14 @@ import { initTerminalControls } from './terminal-controls.mjs';
     }
 
     function down() {
-      if (spring.target === 1) return;
+      if (spring.pressed) return;
       clearTimeout(releaseTimer);
       pressedAt = performance.now();
       terminalControls.pulse();
       actuated = false;
       spring.setPressed(true);
       key.classList.add('is-down');
-      if (!reducedMotion.matches) wake();
-      else showView(key.dataset.view, key);
+      wake();
     }
 
     function up(immediate = false) {
@@ -419,9 +429,19 @@ import { initTerminalControls } from './terminal-controls.mjs';
       if (event.detail === 0 && !physicalInput && performance.now() - pressedAt > 150) { down(); up(); }
       showView(key.dataset.view, key);
     });
-    return { reset: () => { physicalInput = false; up(true); } };
+    renderSpring();
+    return {
+      syncSelection: () => {
+        spring.setSelected(key.getAttribute('aria-pressed') === 'true');
+        if (spring.moving) wake();
+      },
+      reset: () => { physicalInput = false; up(true); },
+    };
   });
 
+  reducedMotion.addEventListener('change', () => {
+    if (reducedMotion.matches) mechanisms.forEach(mechanism => mechanism.syncSelection());
+  });
   window.addEventListener('resize', layout, { passive: true });
   window.visualViewport?.addEventListener('resize',()=>{if(window.visualViewport.scale===1)layout();},{passive:true});
   window.addEventListener('blur', () => mechanisms.forEach(mechanism => mechanism.reset()));

@@ -272,3 +272,12 @@ The owner selected the three-mark rail rather than the arrow concept. The select
 Measured all three captions before and after at 320x480, 393x711, 430x932, 667x375, 768x1024, 1280x720, 1920x1080, 2560x1080 and 3440x1440. Every footer-height delta is zero. Caption text and Open positions are unchanged apart from negligible floating-point rounding. All rail hit targets remain inside their scene viewport. Native wheel, keyboard activation, forward loops and responsive switches were exercised in Chromium/IAB without console errors. Physical iPhone Safari and device frame-rate remain unverified.
 
 Verification: 75 tests pass, all 8 browser modules pass syntax checks, and the production build contains the same 58 runtime files. No new runtime images, dependencies or animation loops. Evidence: scroll-rail-final-layout.json, scroll-rail-interaction-evidence.json, scroll-rail-phone.png and scroll-rail-ultrawide.png in the existing samistudio-terminal visualizations directory.
+
+
+## 2026-10-15: Continuous terminal key travel (local, not deployed)
+
+The active-key CSS used max(active depth, physical travel). Selection switched the active depth directly to 1 in the middle of the physical spring stroke. The previous key also jumped back to zero. Repeated presses of an already selected key had no visible travel.
+
+The spring now owns the full depth: 0 unselected, 1 selected and 1.28 while physically pressed. The selected resting state remains exactly 3 rendered pixels, brightness .9 and half the unpressed shadow. The additional press travel is .84 rendered pixels. Selection updates only the spring target, preserving position and velocity. Previous keys rise continuously. Springs park at rest. Reduced motion immediately settles and clears velocity. Mechanical sound, amber 300ms pulse, key artwork and outlines remain.
+
+Verification: four new behavioral tests were observed failing before implementation, then passing. Full suite: 79 passed. Browser checks cover Work/About/Contact switching on desktop and a 393x711 phone viewport, plus repeated activation of the selected Contact key using Enter. An actual repeat sample showed stroke1.038 between pressed1.28 and resting1, confirming visible travel beyond the selected rest depth. Phone keys stay inside the first viewport with no horizontal overflow. This is Chromium/IAB verification, not physical Safari or measured device FPS. Ambient studies remain separate local previews and no ambient effect has been added to production.

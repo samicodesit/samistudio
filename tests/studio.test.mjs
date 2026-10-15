@@ -1,5 +1,6 @@
 import './terminal-layout.test.mjs';
 import './terminal-controls.test.mjs';
+import './key-spring.test.mjs';
 import './hero-background.test.mjs';
 import './gallery-startup.test.mjs';
 import './gallery-navigation.test.mjs';
