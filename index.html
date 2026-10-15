@@ -37,6 +37,7 @@
   <script src="./assets/studio.js" type="module" onerror="document.documentElement.classList.remove('is-loading')"></script>
 </head>
 <body>
+  <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><defs><clipPath id="terminal-key-outline" clipPathUnits="objectBoundingBox"><path d="M .22 .135 L .74 .06 C .82 .045 .865 .085 .89 .18 L .97 .77 C .985 .84 .965 .87 .9 .89 L .27 .97 C .20 .98 .16 .945 .14 .86 L .035 .36 C .015 .27 .055 .21 .13 .18 Z"/></clipPath></defs></svg>
   <div class="loading-screen" role="status"><span>Sami Studio</span><small>Loading…</small></div>
   <a class="skip-link" id="skip-link" href="#terminal-workspace">Skip to terminal controls</a>
   <main>
@@ -44,14 +45,16 @@
       <div class="scene" aria-hidden="true">
         <picture><source media="(max-width: 900px) and (orientation: portrait), (max-width: 599px)" srcset="./assets/terminal-housing-mobile.webp"><img class="scene-photo" src="./assets/terminal-housing.webp" width="1686" height="933" alt="" fetchpriority="high" decoding="async"></picture>
       </div>
-      <header class="site-header">
-        <a class="wordmark" href="./" aria-label="Sami Studio home"><span>Sami Studio</span></a>
-      </header>
-      <div class="composition" id="terminal-workspace">
+      <div class="hero-copy">
+        <header class="site-header">
+          <a class="wordmark" href="./" aria-label="Sami Studio home"><span>Sami Studio</span></a>
+        </header>
         <div class="introduction">
           <h1 id="headline">I design it.<br>Then I build it.</h1>
           <p>From first sketch to shipped product.</p>
         </div>
+      </div>
+      <div class="composition" id="terminal-workspace">
         <div class="terminal" role="region" aria-label="Interactive Sami Studio terminal">
           <span class="pilot-light" aria-hidden="true"></span>
           <div class="display" id="terminal-display" aria-label="Terminal display">

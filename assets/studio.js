@@ -225,6 +225,7 @@ import { initTerminalControls } from './terminal-controls.mjs';
     let scale,sceneLeft,sceneTop;
     if(mobile){
       const textScale=Math.min(width/416,height/840,1);
+      root.style.setProperty('--hero-column-left',`${Math.max(0,(width-416)/2+1)}px`);
       root.style.setProperty('--hero-text-scale',String(textScale));
       root.style.setProperty('--hero-intro-top',`${Math.max(headerBottom+24,113*textScale)}px`);
       const introductionBottom=document.querySelector('.introduction').getBoundingClientRect().bottom;
@@ -240,9 +241,9 @@ import { initTerminalControls } from './terminal-controls.mjs';
     root.style.setProperty('--photo-left',`${sceneLeft}px`);
     if(!mobile){
       const headlineWidth=document.querySelector('#headline').offsetWidth;
-      const preferred=674+Math.max(0,width-1260*scale)*.63/scale;
-      const rightLimit=(width-sceneLeft-28)/scale-headlineWidth;
-      root.style.setProperty('--headline-left',`${Math.min(preferred,rightLimit)}px`);
+      const preferred=sceneLeft+674*scale+Math.max(0,width-1260*scale)*.63;
+      root.style.setProperty('--hero-column-left',`${Math.min(preferred,width-28-headlineWidth)-28}px`);
+      root.style.setProperty('--hero-intro-top',`${sceneTop+320*scale}px`);
     }
     display.style.transform = mobile
       ? quadMatrix(273, 170, [[73, 419], [346, 419], [346, 588], [73, 588]])
