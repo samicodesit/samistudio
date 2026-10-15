@@ -31,7 +31,8 @@ export const projects = Object.freeze([
   }),
   Object.freeze({
     id: 'cryptik', landscapeImage: './gallery/cryptik-landscape.webp', landscapeWidth: 1672, landscapeHeight: 941, landscapeBounds: [126, 120, 958, 780], tabletArtLeft: 30, tabletArtRight: 1055, portraitBounds: [256, 489, 770, 1104], tabletImage: './gallery/cryptik-portrait-room.webp', tabletWidth: 1024, tabletHeight: 1536, tabletArtTop: 453, tabletArtBottom: 1230, tabletFeather: 24, mobileRoom: './gallery/cryptik-mobile-room.webp', title: 'Cryptik', heading: 'Cryptik.',
-    description: 'A word game to play with friends.',
+    description: 'A word game of clues and guesses to play with friends.',
+    descriptionLines: ['A word game of clues and guesses', 'to play with friends.'],
     href: 'https://www.cryptik.me/en',
     image: './gallery/cryptik-desktop.webp', imageAlt: 'Blue and red Cryptik spies above a five-by-five grid of complete word cards on a dark stone table.',
     mobileImage: './gallery/cryptik-mobile-intro.webp',
