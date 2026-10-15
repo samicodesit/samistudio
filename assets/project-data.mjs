@@ -1,8 +1,8 @@
 export const projects = Object.freeze([
   Object.freeze({
     id: 'doodle', title: 'Doodle', heading: 'Doodle.',
-    description: 'Turn words or photos into doodles.',
-    descriptionLines: ['Turn words or photos', 'into doodles.'],
+    description: 'Drawing ideas for cards, notes and journals.',
+    descriptionLines: ['Drawing ideas for cards,', 'notes and journals.'],
     href: 'https://doodle.samistudio.nl/',
     image: './gallery/doodle-atelier-desktop.webp', wideImage: './gallery/doodle-atelier-desktop.webp',
     imageWidth: 1672, imageHeight: 941, coverScene: true,

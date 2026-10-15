@@ -29,9 +29,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
   let touching = false, layoutPending = false;
   let resizeFrame = 0, scrollFrame = 0, settleTimer = 0, prefetchTimer = 0;
   let refreshingMode = null;
-  let reveal = null, movement = [], nudgeMotion = [], nudgeTimer = 0, nudgeUsed = false;
-  try { nudgeUsed = sessionStorage.getItem('studio.galleryNudgeSeen') === '1'; } catch { /* Storage may be disabled. Keep an in-memory fallback. */ }
-
+  let reveal = null, movement = [];
 
   function mode() {
     return matchMedia(splitQuery).matches ? 'landscape'
@@ -91,9 +89,6 @@ export function initProjectGallery({ onReturn, onSelect }) {
     title.id = `project-title-${id}-${slot}`;
     title.textContent = project.heading;
     element.setAttribute('aria-labelledby', title.id);
-    const counter = element.querySelector('.project-counter-value');
-    counter.textContent = `${ids.indexOf(id) + 1}/${ids.length}`;
-    const counterPrevious = element.querySelector('.project-counter-previous');
     const description = element.querySelector('.project-caption p');
     description.id = `project-description-${id}-${slot}`;
     if (project.descriptionLines) {
@@ -112,8 +107,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
     spinner.className = 'gallery-scene-loader';
     spinner.setAttribute('aria-hidden', 'true');
     element.append(spinner);
-    const panel = { element, project, title, description, link, counter, counterPrevious,
-      motion: element.querySelector('.gallery-page-motion'),
+    const panel = { element, project, title, description, link,
       caption: element.querySelector('.gallery-caption-frame'),
       photo: element.querySelector('.composed-photo img'),
       environment: element.querySelector('.gallery-environment img'),
@@ -170,36 +164,15 @@ export function initProjectGallery({ onReturn, onSelect }) {
     return promise;
   }
 
-  function animateProjectChange(id, previousProject) {
-    cancelNudge();
-    movement.forEach(animation => animation.cancel());
-    movement = panels.filter(panel => panel.project.id === id).flatMap(panel => {
-      panel.counterPrevious.textContent = previousProject ? `${ids.indexOf(previousProject) + 1}/${ids.length}` : '';
-      const animations = [panel.counterPrevious.animate([{opacity:1},{opacity:0}],{duration:200,easing:'linear'}),
-        panel.counter.animate([{opacity:0},{opacity:1}],{duration:200,easing:'linear'})];
-      const rise = dialog.dataset.layout === 'desktop' ? 8 / (parseFloat(getComputedStyle(panel.element).getPropertyValue('--gallery-scale')) || 1) : 8;
-      [panel.title,panel.description,panel.link].forEach((element,index) => {
-        const frames = reducedMotion.matches ? [{opacity:0},{opacity:1}]
-          : [{opacity:0,transform:`translateY(${rise}px)`},{opacity:1,transform:'translateY(0)'}];
-        animations.push(element.animate(frames,{duration:reducedMotion.matches?200:300,
-          delay:reducedMotion.matches?0:index===0?60:140,easing:'ease-out',fill:'backwards'}));
-      });
-      return animations;
-    });
-    Promise.all(movement.map(animation => animation.finished)).catch(() => {});
-  }
-
-  function setActive(slot, updateHistory = true, animate = true) {
+  function setActive(slot, updateHistory = true) {
     if (currentSlot === slot && active !== null) return;
     const oldPanel = panels[currentSlot];
     const id = panels[slot].project.id;
-    const previousProject = active;
     const changedProject = active !== id;
     currentSlot = slot;
     active = id;
     dialog.dataset.project = id;
     select(ids.indexOf(id));
-    if (animate && changedProject && dialog.open && dialog.dataset.phase === 'open') animateProjectChange(id, previousProject);
     if (changedProject) announcement.textContent = `${getProject(id).title}. ${ids.indexOf(id) + 1} of ${ids.length}.`;
     if (oldPanel?.element.contains(document.activeElement)) track.focus({ preventScroll: true });
     panels.forEach((panel, index) => {
@@ -316,41 +289,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
       mobile: matchMedia(compactQuery).matches }, { width: innerWidth, height: innerHeight });
   }
 
-  function cancelNudge(reason = 'interaction') {
-    if (nudgeTimer || nudgeMotion.length) dialog.dataset.nudgeState = `cancelled:${reason}`;
-    clearTimeout(nudgeTimer); nudgeTimer = 0;
-    dialog.dataset.nudging = 'false';
-    nudgeMotion.forEach(animation => animation.cancel()); nudgeMotion = [];
-  }
-
-  function scheduleNudge() {
-    if (nudgeUsed || reducedMotion.matches) { dialog.dataset.nudgeState = nudgeUsed ? 'seen' : 'reduced'; return; }
-    dialog.dataset.nudgeState = 'pending';
-    nudgeUsed = true;
-    try { sessionStorage.setItem('studio.galleryNudgeSeen', '1'); } catch { /* The in-memory flag still prevents repeats. */ }
-    nudgeTimer = setTimeout(() => {
-      nudgeTimer = 0;
-      if (!dialog.open || dialog.dataset.phase !== 'open' || reducedMotion.matches) return;
-      // Move only the visible page, its decoded neighbor and the header.
-      // Native scrollTop, snap targets and input listeners remain untouched.
-      dialog.dataset.nudging = 'true';
-      dialog.dataset.nudgeState = 'playing';
-      const keyframes = [
-        {transform:'translateY(0)',offset:0,easing:'ease-out'},
-        {transform:'translateY(-24px)',offset:400/1050},
-        {transform:'translateY(-24px)',offset:550/1050,easing:'ease-out'},
-        {transform:'translateY(0)',offset:1},
-      ];
-      nudgeMotion = [panels[currentSlot].motion, panels[currentSlot + 1]?.motion, chrome]
-        .filter(Boolean).map(element => element.animate(keyframes,{duration:1050,easing:'linear'}));
-      const running = nudgeMotion;
-      Promise.all(running.map(animation => animation.finished)).then(() => {
-        if (nudgeMotion === running) { nudgeMotion = []; dialog.dataset.nudging = 'false'; dialog.dataset.nudgeState = 'complete'; }
-      }).catch(() => {});
-    },1200);
-  }
-
-  function stopMovement() { cancelNudge(); reveal?.cancel(); reveal = null; movement.forEach(animation => animation.cancel()); movement = []; }
+  function stopMovement() { reveal?.cancel(); reveal = null; movement.forEach(animation => animation.cancel()); movement = []; }
   function clearLoading() { status.textContent = ''; rows.forEach((row,index) => { row.removeAttribute('aria-busy'); if (summaries[index]) summaries[index].textContent = summaryCopy[index]; }); }
 
   async function open(id, fromHistory = false) {
@@ -384,11 +323,10 @@ export function initProjectGallery({ onReturn, onSelect }) {
     }
     if (token !== pending) return;
     const start = ids.length + ids.indexOf(id);
-    const previousProject = active;
     clearLoading();
     const wasOpen = dialog.open;
     touching = false; layoutPending = false;
-    setActive(start, false, false);
+    setActive(start, false);
     dialog.dataset.phase = 'opening';
     if (!wasOpen) dialog.showModal();
     layout();
@@ -404,10 +342,12 @@ export function initProjectGallery({ onReturn, onSelect }) {
     if (!reducedMotion.matches && !wasOpen) {
       const easing = 'cubic-bezier(.2,.75,.12,1)';
       reveal = dialog.animate([{opacity:0},{opacity:1}],{duration:420,easing});
-      reveal.finished.catch(() => { /* Native input can interrupt the opening fade. */ });
+      const panel = panels[start];
+      [panel.title,panel.description,panel.link].forEach((element,index) => movement.push(element.animate([
+        {transform:`translateY(${[64,34,22][index]}px)`,opacity:0},{transform:'translateY(0)',opacity:1}
+      ],{duration:[780,650,580][index],delay:[260,430,540][index],easing,fill:'backwards'})));
+      Promise.all([reveal,...movement].map(animation => animation.finished)).catch(() => { /* Input can interrupt the entrance. */ });
     }
-    if (!wasOpen || previousProject !== id) animateProjectChange(id, previousProject);
-    if (!wasOpen) scheduleNudge();
   }
 
   async function close() {
@@ -434,7 +374,6 @@ export function initProjectGallery({ onReturn, onSelect }) {
 
   track.addEventListener('scroll', () => {
     if (dialog.dataset.phase !== 'open') return;
-    if (Math.abs(track.scrollTop - currentSlot * height) > 1) stopMovement();
     queueSettlement();
     if (scrollFrame) return;
     scrollFrame = requestAnimationFrame(() => {
@@ -444,7 +383,6 @@ export function initProjectGallery({ onReturn, onSelect }) {
     });
   }, {passive:true});
   track.addEventListener('scrollend', queueSettlement);
-  track.addEventListener('pointerdown', stopMovement, {passive:true});
   track.addEventListener('wheel', () => { stopMovement(); queueSettlement(); }, {passive:true});
   track.addEventListener('touchstart', () => {
     touching = true; clearTimeout(settleTimer); stopMovement();
@@ -485,7 +423,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
     else { ++pending; clearLoading(); ownsHistoryEntry=false; close(); }
   });
   window.addEventListener('keydown',event=>{if(event.key==='Escape'&&!dialog.open){++pending;clearLoading();}});
-  window.addEventListener('resize',()=>{cancelNudge('resize');requestLayout();},{passive:true});
+  window.addEventListener('resize',requestLayout,{passive:true});
   window.visualViewport?.addEventListener('resize',()=>{if(window.visualViewport.scale===1)requestLayout();},{passive:true});
   reducedMotion.addEventListener('change',()=>{stopMovement();requestLayout();});
   const observer=new ResizeObserver(requestLayout); observer.observe(headerContent);
