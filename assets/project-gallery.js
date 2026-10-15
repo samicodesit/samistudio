@@ -99,6 +99,16 @@ export function initProjectGallery({ onReturn, onSelect }) {
         return span;
       }));
     } else description.textContent = project.description;
+    const cue = element.querySelector('.gallery-scroll-cue');
+    cue.setAttribute('aria-label', `Scroll to ${getProject(ids[(ids.indexOf(id) + 1) % ids.length]).title}. Project ${ids.indexOf(id) + 1} of ${ids.length}.`);
+    ids.forEach((_, index) => {
+      const mark = document.createElement('span');
+      mark.dataset.active = String(index === ids.indexOf(id));
+      mark.setAttribute('aria-hidden', 'true');
+      cue.append(mark);
+    });
+    description.append(cue);
+    cue.addEventListener('click', () => advanceFrom(slot));
     const link = element.querySelector('.project-link');
     link.href = project.href;
     link.addEventListener('click', () => setActive(slot));
@@ -107,7 +117,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
     spinner.className = 'gallery-scene-loader';
     spinner.setAttribute('aria-hidden', 'true');
     element.append(spinner);
-    const panel = { element, project, title, description, link,
+    const panel = { element, project, title, description, link, cue,
       caption: element.querySelector('.gallery-caption-frame'),
       photo: element.querySelector('.composed-photo img'),
       environment: element.querySelector('.gallery-environment img'),
@@ -179,8 +189,21 @@ export function initProjectGallery({ onReturn, onSelect }) {
       panel.element.inert = index !== slot;
       panel.element.setAttribute('aria-hidden', String(index !== slot));
       panel.link.tabIndex = index === slot ? 0 : -1;
+      panel.cue.tabIndex = index === slot ? 0 : -1;
     });
     if (updateHistory && changedProject) history.replaceState(ownsHistoryEntry ? { studioProject: id } : history.state, '', `#work/${id}`);
+  }
+
+  function advanceFrom(slot) {
+    if (!dialog.open || dialog.dataset.phase !== 'open' || height <= 0) return;
+    stopMovement();
+    if (slot === panels.length - 1) {
+      slot = centerSlot(slot, ids.length);
+      track.scrollTo({top:slot * height, behavior:'instant'});
+      setActive(slot, false);
+    }
+    track.scrollTo({top:(slot + 1) * height, behavior:reducedMotion.matches?'instant':'smooth'});
+    queueSettlement();
   }
 
   function syncVisiblePanels() {

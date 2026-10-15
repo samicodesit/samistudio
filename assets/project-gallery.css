@@ -593,3 +593,34 @@
 .gallery-panel[data-project][data-scene][data-art="wide"] .composed-scene { display: none; }
 .gallery-panel[data-project][data-scene][data-art="wide"] .gallery-environment img { display: block; }
 .gallery-panel[data-art] .composed-photo img { object-fit: cover; }
+
+
+/* A compact vertical position rail floats beside the last caption line.
+   Its 44px hit area is out of flow, so the accepted footer geometry stays fixed. */
+.project-caption { --cue-scale: var(--gallery-scale); }
+.project-caption p { position: relative; }
+.project-caption .project-description-line:last-of-type { padding-right: calc(44px / var(--cue-scale)); }
+.gallery-scroll-cue {
+  position: absolute; right: 0; bottom: calc((1lh - 44px / var(--cue-scale)) / 2);
+  width: calc(44px / var(--cue-scale)); height: calc(44px / var(--cue-scale));
+  display: flex; flex-direction: column; align-items: flex-end; justify-content: center;
+  gap: calc(4px / var(--cue-scale)); padding: 0; margin: 0; border: 0;
+  background: transparent; color: var(--ink); opacity: .7; cursor: pointer;
+  line-height: inherit; touch-action: manipulation; transition: opacity 120ms ease-out;
+}
+.gallery-scroll-cue > span {
+  flex: 0 0 auto; width: calc(3.5px / var(--cue-scale)); height: calc(3.5px / var(--cue-scale));
+  border-radius: 999px; background: currentColor; pointer-events: none;
+}
+.gallery-scroll-cue > span[data-active="true"] { height: calc(12px / var(--cue-scale)); }
+.gallery-scroll-cue:hover, .gallery-scroll-cue:focus-visible { opacity: 1; }
+.gallery-scroll-cue:focus-visible { outline-offset: 2px; }
+@media (orientation: portrait), (max-width: 599px),
+  (orientation: landscape) and (min-width: 600px) and (max-width: 1180px),
+  (orientation: landscape) and (max-width: 1366px) and (min-height: 900px) {
+  .project-caption { --cue-scale: 1; }
+}
+@media (forced-colors: active) {
+  .gallery-scroll-cue { color: CanvasText; opacity: 1; }
+  .gallery-scroll-cue > span { background: CanvasText; forced-color-adjust: none; }
+}

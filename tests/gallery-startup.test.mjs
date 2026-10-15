@@ -10,7 +10,7 @@ import * as geometry from '../assets/gallery-geometry.mjs';
 // Run the real controller with animations deliberately held unfinished. This
 // models the opening period independently of animation or device frame rate.
 async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, extraTail=0,reduced=false,slowProject=null,failedProject=null,autoOpen=true}={}) {
-  const requests = [], animations = [], frames = [], scrollWrites = [], measurements = [], timers = new Map();
+  const requests = [], animations = [], frames = [], scrollWrites = [], scrollOptions = [], measurements = [], timers = new Map();
   let timerId = 0;
   const decodeGates=[]; let selectedLayout='tablet';
   class Element {
@@ -33,7 +33,7 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
     focus() {}
     replaceChildren() {}
     decode() { return Promise.resolve(); }
-    scrollTo({top}) { scrollWrites.push(top); this.scrollTop=top; }
+    scrollTo(options) { scrollOptions.push(options); scrollWrites.push(options.top); this.scrollTop=options.top; }
     showModal() { this.open=true; }
     close() { this.open=false; }
     cloneNode() { return new Element(); }
@@ -71,7 +71,7 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
   const flush=async()=>{for(let i=0;i<80;i++)await Promise.resolve();};
   if(autoOpen) rows[0].emit('click'); await flush();
   return {dialog:document.querySelector('#project-gallery'),track:document.querySelector('#project-gallery').querySelector('.gallery-track'),
-    requests,animations,frames,timers,flush,window,scrollWrites,measurements,rows,controller:context.controller,history:context.history,
+    requests,animations,frames,timers,flush,window,scrollWrites,scrollOptions,measurements,rows,controller:context.controller,history:context.history,
     releaseDecodes(){decodeGates.splice(0).forEach(resolve=>resolve());},
     blockProject(id){slowProject=id;},
     setLayout(value){selectedLayout=value;context.innerWidth=value==='landscape'?844:393;window.emit('resize');},
@@ -355,4 +355,46 @@ test('a failed scene load shows retry feedback on the existing description line 
   f.controller.page(1);
   assert.equal(f.rows[0].querySelector('.work-summary').textContent,'Description for doodle.');
   assert.equal(f.rows[1].querySelector('.work-summary').textContent,'Description for autolister.');
+});
+
+
+test('each project rail has three logical marks and an accessible next-project label',async()=>{
+  const f=await galleryFixture();
+  for(const [slot,panel] of f.track.children.entries()){
+    const rail=panel.querySelector('.gallery-scroll-cue');
+    assert.match(rail.getAttribute('aria-label')||'',/Scroll to (Doodle|AutoLister|Cryptik)/);
+    assert.deepEqual(rail.children.map(mark=>mark.dataset.active),[0,1,2].map(index=>String(index===slot%3)));
+    assert.equal(rail.tabIndex,slot===3?0:-1);
+  }
+});
+
+test('the compact rail advances one native page and loops from Cryptik back to Doodle',async()=>{
+  const f=await galleryFixture();f.scrollWrites.length=0;
+  f.track.children[3].querySelector('.gallery-scroll-cue').emit('click');
+  assert.equal(f.track.scrollTop,4*H);
+  assert.equal(f.scrollOptions.at(-1).behavior,'smooth');
+  f.track.emit('scrollend');await f.runSettlement();
+  f.track.children[4].querySelector('.gallery-scroll-cue').emit('click');
+  f.track.emit('scrollend');await f.runSettlement();
+  f.track.children[5].querySelector('.gallery-scroll-cue').emit('click');
+  assert.equal(f.track.scrollTop,6*H);
+  f.track.emit('scrollend');await f.runSettlement();
+  assert.equal(f.dialog.dataset.project,'doodle');
+  assert.equal(f.track.scrollTop,3*H);
+});
+
+test('the final physical copy advances through an identical middle copy without traversing the whole track',async()=>{
+  const f=await galleryFixture();const nodes=[...f.track.children];f.scrollWrites.length=0;
+  f.track.scrollTop=8*H;
+  f.track.children[8].querySelector('.gallery-scroll-cue').emit('click');
+  assert.deepEqual(f.scrollWrites,[5*H,6*H]);
+  assert.equal(f.scrollOptions.at(-2).behavior,'instant');
+  assert.equal(f.scrollOptions.at(-1).behavior,'smooth');
+  assert.deepEqual(f.track.children,nodes,'rail never reorders or recreates native snap targets');
+});
+
+test('reduced-motion rail navigation moves instantly',async()=>{
+  const f=await galleryFixture({reduced:true});
+  f.track.children[3].querySelector('.gallery-scroll-cue').emit('click');
+  assert.equal(f.track.scrollTop,4*H);assert.equal(f.scrollOptions.at(-1).behavior,'instant');
 });
