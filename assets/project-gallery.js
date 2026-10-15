@@ -465,6 +465,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
   document.fonts.ready.then(requestLayout);
   select(0);
   return {
+    openProject(id){return open(id);},
     openSelected(){return open(rows[selected].dataset.project);},
     page(direction){ if (!dialog.open) { ++pending; clearLoading(); select(selected + direction); prefetch(); } },
     ready(){

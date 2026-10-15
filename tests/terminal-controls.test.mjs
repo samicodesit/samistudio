@@ -18,7 +18,7 @@ function fixture(reducedMotion=false,visible=true){
   const keys=['work','about','contact'].map(view=>{const e=new Element();e.dataset.view=view;return e;});
   const screens=keys.map(k=>{const e=new Element();e.dataset.screen=k.dataset.view;return e;});
   const calls=[],timers=new Map();let timer=0;
-  const controller=initTerminalControls({display,pilot,keys,screens,reducedMotion,isVisible:()=>visible,onPage:n=>calls.push(n),onLeaveWork:()=>calls.push('cancel'),setTimer:(fn,delay)=>{timers.set(++timer,{fn,delay});return timer;},clearTimer:n=>timers.delete(n)});
+  const controller=initTerminalControls({display,pilot,keys,screens,reducedMotion,isVisible:()=>visible,onPage:n=>calls.push(n),onOpen:()=>calls.push('open'),onLeaveWork:()=>calls.push('cancel'),setTimer:(fn,delay)=>{timers.set(++timer,{fn,delay});return timer;},clearTimer:n=>timers.delete(n)});
   return {display,pilot,keys,screens,calls,timers,controller};
 }
 test('Work is the initial screen and non-work screens have no page counter',()=>{
@@ -55,4 +55,13 @@ test('gallery selection can update the counter without animating the covered ter
   const f=fixture(false,false);f.controller.projectChanged(2,3);
   assert.equal(f.display.querySelector('#display-number').textContent,'3/3');
   assert.equal(f.screens[0].animations,undefined);
+});
+
+test('the hidden command screen cannot page projects or open one from blank-screen taps',()=>{
+  const f=fixture();f.display.dataset.shell='true';
+  f.display.fire('keydown',{key:'ArrowRight',preventDefault(){}});
+  f.display.fire('pointerdown',{button:0,pointerId:1,clientX:200,clientY:100});
+  f.display.fire('pointerup',{pointerId:1,clientX:100,clientY:100});
+  f.display.fire('click',{target:new Element()});assert.deepEqual(f.calls,[]);
+  delete f.display.dataset.shell;f.display.fire('click',{target:new Element()});assert.deepEqual(f.calls,['open']);
 });

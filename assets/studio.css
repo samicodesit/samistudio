@@ -472,3 +472,60 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-o
   .display .work-row .work-art { width: 34px; height: 34px; grid-row: 1; }
   .display .work-row .work-meta { grid-column: 1 / -1; }
 }
+
+/* The hidden prompt stays on the photographed LCD, using the existing type. */
+#display-title, .shell-exit {
+  position:relative; align-self:center; border:0; background:none; color:inherit; font:inherit;
+  min-height:calc(28px / var(--scene-scale)); padding:4px 6px; margin:-4px 0 -4px -6px;
+  text-align:left; -webkit-touch-callout:none; user-select:none; touch-action:pan-y;
+}
+#display-title { cursor:help; }
+#display-title:disabled { cursor:default; opacity:1; }
+#display-title::after {
+  content:''; position:absolute; left:6px; right:6px; bottom:3px; height:1px;
+  background:currentColor; opacity:.5; transform:scaleX(0); transform-origin:left;
+  transition:transform 100ms ease-out;
+}
+#display-title[data-holding="true"]::after { transform:scaleX(1); transition-duration:700ms; transition-timing-function:linear; }
+.shell-exit { cursor:pointer; margin-right:-6px; text-align:right; text-decoration:underline; text-underline-offset:3px; }
+.display .screen-shell { display:grid; grid-template-rows:minmax(0,1fr) auto auto; gap:7px; }
+.display .screen-shell[hidden] { display:none; }
+.shell-output {
+  min-height:0; overflow:auto; overscroll-behavior:contain; scrollbar-width:none;
+  font-size:max(15px,calc(9px / var(--scene-scale))); line-height:1.2; letter-spacing:-.25px;
+  align-content:center;
+}
+.shell-output::-webkit-scrollbar { display:none; }
+.shell-output p { margin:0; white-space:pre-line; }
+.shell-projects { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; margin-top:4px; }
+.shell-projects button {
+  min-width:0; min-height:max(26px,calc(28px / var(--scene-scale))); padding:3px 4px;
+  border:1px solid #24252025; border-radius:3px; background:#24252008; color:inherit;
+  font-size:max(13px,calc(9px / var(--scene-scale))); letter-spacing:-.4px; white-space:nowrap; cursor:pointer;
+}
+.shell-actions { display:flex; align-items:center; gap:9px; border-top:1px solid #63645b38; padding-top:3px; }
+.shell-actions button {
+  border:0; background:none; color:inherit; font-size:max(13px,calc(9px / var(--scene-scale)));
+  min-height:max(24px,calc(28px / var(--scene-scale))); padding:2px 6px; cursor:pointer;
+}
+.shell-actions button:first-child { margin-left:-6px; }
+.shell-form { display:grid; grid-template-columns:12px minmax(0,1fr) 26px; gap:5px; align-items:center; margin:0; border-bottom:1px solid #63645b50; }
+.shell-form > span { font-size:16px; opacity:.65; }
+.shell-input { width:100%; min-width:0; padding:3px 0; border:0; border-radius:0; background:none; color:inherit; font:inherit; font-size:16px; line-height:22px; caret-color:#242520; }
+.shell-input::placeholder { color:#514d50; opacity:.8; }
+.shell-input:focus { outline:none; }
+.shell-form:focus-within { border-bottom-color:#242520; }
+.shell-form button { width:26px; height:28px; padding:0; border:0; background:none; color:inherit; font-size:19px; cursor:pointer; }
+.shell-projects button:hover, .shell-actions button:hover, .shell-form button:hover { background:#24252012; }
+.screen-shell button:focus-visible, #display-title:focus-visible, .shell-exit:focus-visible { outline:1px solid #24252090; outline-offset:-2px; }
+@media (max-width:1023px) {
+  .display .screen-shell { grid-template-rows:minmax(0,1fr) auto; gap:5px; }
+  .shell-form { display:none; }
+  .shell-output { font-size:max(14px,calc(9px / var(--scene-scale))); }
+  .shell-projects { gap:5px; }
+}
+@media (max-width:1023px) and (max-height:620px) {
+  .shell-output[data-kind="projects"] > p { display:none; }
+  .shell-projects { margin-top:0; }
+}
+@media (prefers-reduced-motion:reduce) { #display-title::after { transition:none; } }

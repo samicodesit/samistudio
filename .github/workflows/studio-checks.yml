@@ -15,6 +15,7 @@ on:
       - tests/gallery-startup.test.mjs
       - tests/gallery-navigation.test.mjs
       - tests/hero-background.test.mjs
+      - tests/secret-terminal.test.mjs
       - tests/terminal-controls.test.mjs
       - tests/terminal-layout.test.mjs
       - site.webmanifest
@@ -36,6 +37,7 @@ on:
       - tests/gallery-startup.test.mjs
       - tests/gallery-navigation.test.mjs
       - tests/hero-background.test.mjs
+      - tests/secret-terminal.test.mjs
       - tests/terminal-controls.test.mjs
       - tests/terminal-layout.test.mjs
       - site.webmanifest
@@ -57,6 +59,7 @@ jobs:
       - name: Check browser module syntax
         run: |
           node --input-type=module --check < assets/studio.js
+          node --check assets/secret-terminal.mjs
           node --check assets/key-spring.mjs
           node --check assets/terminal-controls.mjs
           node --input-type=module --check < assets/project-gallery.js

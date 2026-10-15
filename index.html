@@ -69,7 +69,8 @@
         <div class="terminal" role="region" aria-label="Interactive Sami Studio terminal">
           <span class="pilot-light" aria-hidden="true"></span>
           <div class="display" id="terminal-display" aria-label="Terminal display">
-            <div class="display-topline"><span id="display-title">Work</span><div class="display-pagination"><button type="button" data-page="previous" aria-label="Previous project">&#8249;</button><span id="display-number">1/3</span><button type="button" data-page="next" aria-label="Next project">&#8250;</button></div></div>
+            <div class="display-topline"><button type="button" id="display-title" aria-controls="secret-terminal" aria-expanded="false" aria-describedby="secret-entry-hint">Work</button><div class="display-pagination"><button type="button" data-page="previous" aria-label="Previous project">&#8249;</button><span id="display-number">1/3</span><button type="button" data-page="next" aria-label="Next project">&#8250;</button></div><button class="shell-exit" type="button" aria-label="Exit secret terminal" hidden>exit</button></div>
+            <span class="sr-only" id="secret-entry-hint">Hold Work, or focus it and press Enter, to open a hidden command prompt. The backtick key also opens it.</span>
             <div class="display-stage">
               <section class="screen screen-work" data-screen="work" aria-label="Work">
                 <p class="sr-only" id="work-instructions">Use the left and right arrows or swipe to change project. Tap the screen or press Enter to open it.</p>
@@ -79,6 +80,17 @@
                   <li hidden><button class="work-row" type="button" data-project="cryptik" aria-label="Open Cryptik project" aria-haspopup="dialog" aria-controls="project-gallery" hidden><span class="work-name">Cryptik</span><span class="work-meta">Web app · 2024</span><span class="work-summary">Play a word game with friends.</span><img class="work-art" src="./assets/terminal-art/cryptik.png" width="192" height="192" alt="" aria-hidden="true" draggable="false" loading="eager" decoding="async"></button></li>
                 </ul>
                 <p class="work-status sr-only" id="work-status" role="status" aria-live="polite"></p>
+              </section>
+              <section class="screen screen-shell" id="secret-terminal" data-screen="shell" aria-label="Secret terminal" hidden>
+                <div class="shell-output" role="status" aria-live="polite" aria-atomic="true"></div>
+                <div class="shell-actions" role="group" aria-label="Terminal commands">
+                  <button type="button" data-command="ls" aria-label="List projects">ls</button>
+                  <button type="button" data-command="whoami" aria-label="About Sami">whoami</button>
+                  <button type="button" data-command="help" aria-label="Command help">help</button>
+                </div>
+                <form class="shell-form" aria-label="Command prompt" autocomplete="off">
+                  <span aria-hidden="true">&gt;</span><input class="shell-input" aria-label="Terminal command" placeholder="Type a command" maxlength="80" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"><button type="submit" aria-label="Run command">&#8629;</button>
+                </form>
               </section>
               <section class="screen screen-about" data-screen="about" aria-label="About" hidden><p class="screen-copy">No handoff between designer and developer, so nothing gets lost in between. Every detail you see, I decided and built.</p></section>
               <section class="screen screen-contact" data-screen="contact" aria-label="Contact" hidden><p class="screen-copy" id="contact-copy">Got something to build? Tap here to email me.</p><p class="contact-email" id="contact-email">hello@samistudio.nl</p></section>

@@ -3,6 +3,7 @@ import './terminal-controls.test.mjs';
 import './key-spring.test.mjs';
 import './terminal-key-input.test.mjs';
 import './terminal-reflection.test.mjs';
+import './secret-terminal.test.mjs';
 import './hero-background.test.mjs';
 import './gallery-startup.test.mjs';
 import './gallery-navigation.test.mjs';
@@ -20,6 +21,7 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 const runtimeFiles = [
   'index.html', 'favicon.svg', 'og-image.jpg', 'assets/studio.css', 'assets/studio.js',
   'assets/key-spring.mjs', 'assets/terminal-controls.mjs', 'assets/terminal-housing.webp',
+  'assets/secret-terminal.mjs',
   'assets/terminal-housing-mobile.webp', 'assets/terminal-keycaps.webp',
   'assets/terminal-keycaps-mobile.webp', 'assets/terminal-wide.webp',
   'assets/project-gallery.js', 'assets/project-gallery.css', 'assets/project-data.mjs', 'assets/gallery-geometry.mjs', 'assets/gallery-loading.mjs', 'assets/gallery-navigation.mjs',

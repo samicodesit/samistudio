@@ -2,6 +2,7 @@ import { KeySpring } from './key-spring.mjs';
 import { projectiveMatrix as quadMatrix, fitMobileTerminal, fitDesktopTerminal } from './gallery-geometry.mjs';
 import { initProjectGallery } from './project-gallery.js';
 import { initTerminalControls, initTerminalReflection } from './terminal-controls.mjs';
+import { initSecretTerminal } from './secret-terminal.mjs';
 
 (() => {
   'use strict';
@@ -20,7 +21,7 @@ import { initTerminalControls, initTerminalReflection } from './terminal-control
   reflectionMask.append(reflectionSurface);display.append(reflectionMask);
   let terminalInView=true;
   const reflection=initTerminalReflection({surface:reflectionSurface,container:document.querySelector('.terminal'),reducedMotion,
-    isVisible:()=>terminalInView&&!projectDialog.open});
+    isVisible:()=>terminalInView&&!projectDialog.open&&display.dataset.shell!=='true'});
   new MutationObserver(()=>reflection.refresh()).observe(projectDialog,{attributes:true,attributeFilter:['open']});
   if('IntersectionObserver' in window)new IntersectionObserver(entries=>{
     const visible=entries[0].isIntersecting;
@@ -39,18 +40,27 @@ import { initTerminalControls, initTerminalReflection } from './terminal-control
     entranceAssetsReady = true;
     layout();
   });
-  let gallery;
+  let gallery, secretTerminal;
   let mechanisms = [];
   const terminalControls = initTerminalControls({display,keys,screens,
     pilot:document.querySelector('.pilot-light'),reducedMotion,isVisible:()=>!projectDialog.open,
     onPage:direction=>gallery?.page(direction),onOpen:()=>gallery?.openSelected(),onLeaveWork:()=>gallery?.cancelPending()});
   const showView=(view,focusElement)=>{
+    secretTerminal?.close({restore:false});
     terminalControls.show(view,focusElement);
     mechanisms.forEach(mechanism=>mechanism.syncSelection());
   };
   gallery = initProjectGallery({
     onReturn:()=>{showView('work');layout();},
     onSelect:(index,total)=>terminalControls.projectChanged(index,total),
+  });
+  secretTerminal=initSecretTerminal({display,reducedMotion,
+    isAvailable:()=>terminalInView&&!projectDialog.open,
+    canType:()=>matchMedia('(min-width:1024px)').matches,
+    onEnter:()=>{showView('work');gallery.cancelPending();terminalControls.pulse();},
+    onExit:()=>showView('work'),
+    onOpenProject:id=>{showView('work');gallery.openProject(id);},
+    onChange:()=>reflection.refresh(),
   });
   const fittedPhoto = document.createElement('canvas');
   fittedPhoto.width = 1260;

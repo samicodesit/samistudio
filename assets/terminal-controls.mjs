@@ -57,7 +57,7 @@ export function initTerminalControls({display,pilot,keys,screens,onPage,onLeaveW
     if(!names[view])return;
     const changed=current!==view;
     if(view!=='work')onLeaveWork?.();
-    current=view;title.textContent=names[view];
+    current=view;title.textContent=names[view];title.disabled=view!=='work';
     pagination.hidden=view!=='work';contact.hidden=view!=='contact';
     screens.forEach(screen=>{screen.hidden=screen.dataset.screen!==view;});
     keys.forEach(key=>key.setAttribute('aria-pressed',String(key.dataset.view===view)));
@@ -86,17 +86,18 @@ export function initTerminalControls({display,pilot,keys,screens,onPage,onLeaveW
   display.querySelector('[data-page="previous"]').addEventListener('click',()=>onPage(-1));
   display.querySelector('[data-page="next"]').addEventListener('click',()=>onPage(1));
   display.addEventListener('keydown',event=>{
-    if(current!=='work'||event.altKey||event.metaKey||event.ctrlKey)return;
+    if(current!=='work'||display.dataset.shell==='true'||event.altKey||event.metaKey||event.ctrlKey)return;
     if(event.key==='ArrowLeft'||event.key==='ArrowRight'){
       event.preventDefault();onPage(event.key==='ArrowRight'?1:-1);
     }
   });
   display.addEventListener('pointerdown',event=>{
-    if(current!=='work'||event.button!==0)return;
+    if(current!=='work'||display.dataset.shell==='true'||event.button!==0)return;
     gesture={id:event.pointerId,x:event.clientX,y:event.clientY,width:display.getBoundingClientRect().width};
   },{passive:true});
   display.addEventListener('pointercancel',()=>{gesture=null;},{passive:true});
   display.addEventListener('pointerup',event=>{
+    if(display.dataset.shell==='true'){gesture=null;return;}
     if(!gesture||event.pointerId!==gesture.id)return;
     const dx=event.clientX-gesture.x,dy=event.clientY-gesture.y;
     const threshold=Math.max(24,Math.min(48,gesture.width*.13));gesture=null;
@@ -105,7 +106,7 @@ export function initTerminalControls({display,pilot,keys,screens,onPage,onLeaveW
     setTimer(()=>{suppressClick=false;},0);
   },{passive:true});
   display.addEventListener('click',event=>{
-    if(current==='work'&&!event.target.closest('button,a'))onOpen?.();
+    if(current==='work'&&display.dataset.shell!=='true'&&!event.target.closest('button,a'))onOpen?.();
   });
   // Browser click follows pointerup. A completed swipe must not open the next
   // project's gallery as though it was a tap.

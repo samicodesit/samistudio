@@ -425,3 +425,10 @@ test('reduced-motion rail navigation moves instantly',async()=>{
   f.track.children[3].querySelector('.gallery-scroll-cue').emit('click');
   assert.equal(f.track.scrollTop,4*H);assert.equal(f.scrollOptions.at(-1).behavior,'instant');
 });
+
+test('a named terminal command opens the requested existing project through normal gallery loading',async()=>{
+  const f=await galleryFixture({autoOpen:false});
+  await f.controller.openProject('autolister');await f.flush();
+  assert.equal(f.dialog.open,true);assert.equal(f.dialog.dataset.project,'autolister');
+  assert.equal(f.track.scrollTop,4*H);
+});
