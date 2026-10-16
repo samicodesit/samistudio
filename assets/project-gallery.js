@@ -29,7 +29,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
   let touching = false, layoutPending = false, edgeClearance = 96;
   let resizeFrame = 0, scrollFrame = 0, settleTimer = 0, prefetchTimer = 0;
   let refreshingMode = null;
-  let reveal = null, movement = [];
+  let reveal = null, movement = [], landing = null, landingPanel = null, arrivalVersion = 0;
 
   function mode() {
     return matchMedia(splitQuery).matches ? 'landscape'
@@ -117,7 +117,14 @@ export function initProjectGallery({ onReturn, onSelect }) {
     spinner.className = 'gallery-scene-loader';
     spinner.setAttribute('aria-hidden', 'true');
     element.append(spinner);
+    // One surface moves the artwork and its registered caption glass together.
+    // The native snap target and the shared header remain outside this surface.
+    const landingSurface = document.createElement('div');
+    landingSurface.className = 'gallery-landing';
+    for (const child of [...element.children]) landingSurface.append(child);
+    element.append(landingSurface);
     const panel = { element, project, title, description, link, cue,
+      landing: landingSurface,
       caption: element.querySelector('.gallery-caption-frame'),
       photo: element.querySelector('.composed-photo img'),
       environment: element.querySelector('.gallery-environment img'),
@@ -156,6 +163,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
           : [panel.photo, ...panel.patches.filter(patch => !patch.hidden).map(patch => patch.querySelector('img'))];
         await Promise.all(images.map(image => image.decode()));
         if (version !== panel.version) return;
+        panel.element.style.setProperty('--caption-glass-photo', `url("${wide ? panel.environment.src : assetUrl(path)}")`);
         panel.loadedMode = selectedMode;
         panel.element.dataset.art = wide ? 'wide' : 'photo';
         panel.element.dataset.ready = 'true';
@@ -214,7 +222,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
     const last = Math.floor((scrollTop + viewportHeight - 1) / height);
     panels.forEach((panel,index) => {
       const hidden = index < first || index > last;
-      const proximity = Math.max(0, Math.min(1, (index * height - scrollTop) / edgeClearance));
+      const proximity = Math.max(0, Math.min(1, (index * height - scrollTop - edgeClearance) / 128));
       const edgeOpacity = (proximity * proximity * (3 - 2 * proximity)).toFixed(4);
       if (panel.edgeOpacity !== edgeOpacity) {
         panel.edgeOpacity = edgeOpacity;
@@ -231,11 +239,28 @@ export function initProjectGallery({ onReturn, onSelect }) {
     if (dialog.open && dialog.dataset.phase === 'open') settleTimer = setTimeout(settle, 180);
   }
 
+  function queueArrival() {
+    const version = ++arrivalVersion, offset = track.scrollTop;
+    if (touching || layoutPending || !dialog.open || dialog.dataset.phase !== 'open' || height <= 0) return;
+    const slot = settledSlot(offset, height, panels.length);
+    if (slot === null || active === panels[slot].project.id) return;
+    // Confirm the snap position survived one paint. This hands motion over at
+    // arrival without waiting for scrollend or moving the native scroll track.
+    requestAnimationFrame(() => {
+      if (version !== arrivalVersion || touching || layoutPending || !dialog.open || dialog.dataset.phase !== 'open'
+        || Math.abs(track.scrollTop - offset) > .01 || active === panels[slot].project.id) return;
+      setActive(slot);
+      dialog.dataset.scrolling = 'false';
+      if (!reducedMotion.matches) playLanding(panels[slot]);
+    });
+  }
+
   function settle() {
     if (touching || !dialog.open || dialog.dataset.phase !== 'open' || height <= 0) return;
     const offset = Math.max(0, Math.min(track.scrollTop, height * (panels.length - 1)));
     let slot = settledSlot(offset, height, panels.length);
     if (slot === null && !layoutPending) return;
+    const shouldLand = slot !== null && active !== panels[slot].project.id && !layoutPending;
     // Viewport changes are fitted only after native input is quiet. Preserve
     // the currently visible copy instead of resizing snap distances mid-drag.
     if (slot === null) slot = Math.round(offset / height);
@@ -244,13 +269,18 @@ export function initProjectGallery({ onReturn, onSelect }) {
     setActive(slot);
     dialog.dataset.scrolling = 'false';
     const target = centerSlot(slot, ids.length);
-    if (target === slot && height === previousHeight) return;
     // Every copy is decoded before opening. Wrapping has no asynchronous
     // loading or DOM mutation that could later interrupt a newer gesture.
-    if (panels[target].loadedMode !== panels[slot].loadedMode) return;
-    track.scrollTo({ top: target * height, behavior: 'instant' });
-    setActive(target, false);
-    syncVisiblePanels();
+    if ((target !== slot || height !== previousHeight) && panels[target].loadedMode === panels[slot].loadedMode) {
+      const elapsed = landingPanel === panels[slot] ? landing?.currentTime : null;
+      track.scrollTo({ top: target * height, behavior: 'instant' });
+      setActive(target, false);
+      syncVisiblePanels();
+      // The identical copy inherits the exact landing phase. A loop must not
+      // restart the bounce or snap a moving surface back to rest.
+      if (Number.isFinite(elapsed) && !reducedMotion.matches) playLanding(panels[target], elapsed);
+    }
+    if (shouldLand && !reducedMotion.matches) playLanding(panels[currentSlot]);
   }
 
   function refreshScenes(selectedMode) {
@@ -281,7 +311,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
     for (const [key,value] of Object.entries({ '--gallery-scale': header.scale, '--gallery-left': `${header.left}px`,
       '--gallery-top': `${header.top}px`, '--stage-width': '1505px', '--stage-height': '1045px' })) dialog.style.setProperty(key,value);
     const headerBounds = headerContent.getBoundingClientRect();
-    edgeClearance = Math.max(1, headerBounds.bottom + 28);
+    edgeClearance = Math.max(1, headerBounds.bottom + 12);
     // Three copies of each project share one measured camera.
     const navigation = responsive ? headerBounds.height + 12 : 0;
     const captions = responsive ? ids.map((_,index) => panels[ids.length + index].caption.getBoundingClientRect()) : [];
@@ -298,6 +328,8 @@ export function initProjectGallery({ onReturn, onSelect }) {
       return [id, { '--stage-width': `${width}px`, '--stage-height': `${photoHeight}px`, '--mobile-image-height': `${photoHeight}px`,
         '--visible-height': `${height}px`, '--mobile-art-window': `${height}px`, '--mobile-stage-height': `${height}px`,
         '--gallery-scale': camera.scale, '--gallery-left': `${camera.left}px`, '--gallery-top': `${camera.top}px`,
+        '--caption-glass-size': `${width * camera.scale}px ${photoHeight * camera.scale}px`,
+        '--caption-glass-position': `${camera.left - (captions[index]?.left || 0) + 24}px ${camera.top - height + (captions[index]?.height || 0) + 64}px`,
         '--atelier-caption-x': `${panoramic ? 1400 : 1234}px` }];
     }));
     for (const panel of panels) {
@@ -307,6 +339,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
   }
 
   function requestLayout() {
+    stopLanding();
     if (!dialog.open || resizeFrame) return;
     resizeFrame = requestAnimationFrame(() => {
       resizeFrame = 0;
@@ -323,7 +356,23 @@ export function initProjectGallery({ onReturn, onSelect }) {
       mobile: matchMedia(compactQuery).matches }, { width: innerWidth, height: innerHeight });
   }
 
-  function stopMovement() { reveal?.cancel(); reveal = null; movement.forEach(animation => animation.cancel()); movement = []; }
+  function stopLanding() { ++arrivalVersion; landing?.cancel(); landing = null; landingPanel = null; }
+  function playLanding(panel, elapsed = 0) {
+    stopLanding();
+    // A quick 8px rebound and a 2px echo share the same gravity. The shorter
+    // second flight dissipates energy without delaying the user's next swipe.
+    const frames = Array.from({length:73}, (_,index) => {
+      const time = index * 5;
+      const first = time <= 240, u = first ? time / 240 : (time - 240) / 120;
+      const y = -4 * (first ? 8 : 2) * u * (1-u);
+      return {offset:time/360, transform:`translateY(${y}px)`};
+    });
+    const animation = panel.landing.animate(frames,{duration:360,easing:'linear'});
+    if (elapsed > 0) animation.currentTime = elapsed;
+    landing = animation; landingPanel = panel;
+    animation.finished.then(() => { if (landing === animation) { landing = null; landingPanel = null; } }, () => {});
+  }
+  function stopMovement() { stopLanding(); reveal?.cancel(); reveal = null; movement.forEach(animation => animation.cancel()); movement = []; }
   function clearLoading() { status.textContent = ''; rows.forEach((row,index) => { row.removeAttribute('aria-busy'); if (summaries[index]) summaries[index].textContent = summaryCopy[index]; }); }
 
   async function open(id, fromHistory = false) {
@@ -409,23 +458,25 @@ export function initProjectGallery({ onReturn, onSelect }) {
 
   track.addEventListener('scroll', () => {
     if (dialog.dataset.phase !== 'open') return;
+    if (landing && Math.abs(track.scrollTop - currentSlot * height) > 1) stopLanding();
     queueSettlement();
     if (scrollFrame) return;
     scrollFrame = requestAnimationFrame(() => {
       scrollFrame = 0;
       syncVisiblePanels();
       dialog.dataset.scrolling = String(Math.abs(track.scrollTop - currentSlot * height) > 1);
+      queueArrival();
     });
   }, {passive:true});
-  track.addEventListener('scrollend', queueSettlement);
+  track.addEventListener('scrollend', () => { settle(); queueSettlement(); });
   track.addEventListener('wheel', () => { stopMovement(); queueSettlement(); }, {passive:true});
   track.addEventListener('touchstart', () => {
     touching = true; clearTimeout(settleTimer); stopMovement();
   }, {passive:true});
   window.addEventListener('touchend', event => {
-    touching = event.touches.length > 0; queueSettlement();
+    touching = event.touches.length > 0; queueArrival(); queueSettlement();
   }, {passive:true});
-  window.addEventListener('touchcancel', () => { touching = false; queueSettlement(); }, {passive:true});
+  window.addEventListener('touchcancel', () => { touching = false; queueArrival(); queueSettlement(); }, {passive:true});
   track.addEventListener('keydown', event => {
     if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('a,button')) return;
     const direction = ['ArrowDown','PageDown'].includes(event.key) ? 1 : ['ArrowUp','PageUp'].includes(event.key) ? -1 : 0;

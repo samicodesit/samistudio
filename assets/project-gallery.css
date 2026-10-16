@@ -387,10 +387,16 @@
   .project-gallery[data-project][data-scene="composed"] .gallery-back img { width: 19px; height: 19px; }
   .project-gallery[data-scene="composed"] .gallery-caption-frame { top: auto; bottom: 0; z-index: 5; }
   .project-gallery[data-scene="composed"] .gallery-caption-frame::before {
-    content: ''; position: absolute; inset: -52px 0 0; pointer-events: none;
-    background: color-mix(in srgb, var(--gallery-surface) 12%, transparent);
-    -webkit-backdrop-filter: blur(8px) saturate(.98); backdrop-filter: blur(8px) saturate(.98);
-    mask-image: linear-gradient(transparent, #000 52px);
+    content: ''; position: absolute; inset: -64px -24px -24px; pointer-events: none;
+    /* Frost a registered copy of this scene. Unlike a moving backdrop filter,
+       this glass cannot reflect a clipped frame or sample the next project. */
+    background-image: linear-gradient(#f4efe81f, #f4efe82e), var(--caption-glass-photo, none);
+    background-size: 100% 100%, var(--caption-glass-size);
+    background-position: 0 0, var(--caption-glass-position);
+    background-repeat: no-repeat;
+    filter: blur(8px) saturate(1.04);
+    -webkit-mask-image: linear-gradient(transparent, #00000080 28px, #000 72px);
+    mask-image: linear-gradient(transparent, #00000080 28px, #000 72px);
   }
   .project-gallery[data-project][data-scene="composed"] .project-caption {
     position: relative; inset: auto; width: auto; margin: 0;
@@ -456,12 +462,9 @@
   .project-gallery[data-project][data-scene="composed"] .project-link { position: absolute; top: -7px; right: var(--caption-right); }
 }
 
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .project-gallery[data-scene="composed"] .gallery-caption-frame::before { background: #f4efe8e6; }
-}
 @media (prefers-reduced-transparency: reduce) {
   .project-gallery[data-scene="composed"] .gallery-caption-frame::before {
-    background: #f4efe8; -webkit-backdrop-filter: none; backdrop-filter: none; mask-image: none;
+    background: #f4efe8; filter: none; -webkit-backdrop-filter: none; backdrop-filter: none; -webkit-mask-image: none; mask-image: none;
   }
 }
 
@@ -499,6 +502,27 @@
   position: relative; inset: auto; width: 100%; height: var(--gallery-page-height, 100%); min-height: 0;
   flex: 0 0 var(--gallery-page-height, 100%); margin: 0; overflow: clip; scroll-snap-align: start; scroll-snap-stop: always;
   contain: layout paint style; overflow-anchor: none; touch-action: pan-y pinch-zoom;
+  /* The photograph continues beneath the moving surface. A landing can lift
+     a few pixels without exposing the next project or a flat background gap. */
+  background-image: var(--caption-glass-photo, none);
+  background-size: var(--caption-glass-size);
+  background-position: var(--gallery-left) var(--gallery-top);
+  background-repeat: no-repeat;
+}
+.gallery-landing { position: absolute; inset: 0; }
+.gallery-track > .gallery-panel[data-art="wide"] { background-size: cover; background-position: center; }
+/* An invisible surface above the seam casts a broad, blurred shadow onto the
+   next photograph. There is no painted stroke or bevel at the scene boundary. */
+.gallery-panel::before {
+  content: ''; position: absolute; z-index: 8; top: -18px; left: 0; right: 0;
+  height: 18px; pointer-events: none;
+  opacity: var(--room-edge-opacity, 0);
+  background: transparent;
+  box-shadow: 0 20px 38px 14px #160e0996, 0 34px 64px 22px #160e0938;
+}
+@media (forced-colors: active) {
+  .gallery-track > .gallery-panel[data-project][data-scene] { background-image: none; }
+  .gallery-panel::before { top: 0; height: 1px; background: CanvasText; box-shadow: none; }
 }
 .gallery-panel .gallery-environment { position: absolute; }
 .gallery-panel[data-ready="false"] .composed-scene { visibility: hidden; }
@@ -516,18 +540,19 @@
   position: sticky; top: 0; left: 0; width: 100%; flex: 0 0 0; height: 0; min-height: 0; overflow: visible;
 }
 .gallery-chrome .gallery-wordmark { letter-spacing: -.3px; }
-.gallery-chrome .gallery-header { position: absolute; top: 38px; left: 68px; right: 68px; padding: 0; margin: 0; }
+.gallery-chrome .gallery-header { position: absolute; top: 38px; left: 68px; right: 68px; padding: 0; margin: 0; isolation: isolate; }
 .gallery-chrome .gallery-header::before {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
-  inset: -40px -66px -22px; background: #f4efe819;
-  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
-  mask-image: linear-gradient(#000 45%, transparent), linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  /* Keep controls legible even when an engine cannot composite backdrop blur. */
+  inset: -40px -66px -48px; background: #f4efe8e6;
+  -webkit-backdrop-filter: blur(10px) saturate(1.04); backdrop-filter: blur(10px) saturate(1.04);
+  -webkit-mask-image: linear-gradient(#000 0 32%, #000000f2 44%, #000000b3 60%, #0000004d 78%, #0000000d 92%, transparent), linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(#000 0 32%, #000000f2 44%, #000000b3 60%, #0000004d 78%, #0000000d 92%, transparent), linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
-.gallery-chrome .gallery-header::after {
-  content: ''; position: absolute; left: 0; right: 0; bottom: -10px; height: 1px;
-  pointer-events: none; background: #24252026; box-shadow: 0 1px 0 #ffffff35;
-}
+/* The glass ends in a feather, not a stroke or a hard bottom edge. */
+.gallery-chrome .gallery-header::after { content: none; }
 @media (orientation: portrait), (max-width: 599px),
   (orientation: landscape) and (min-width: 600px) and (max-width: 1180px),
   (orientation: landscape) and (max-width: 1366px) and (min-height: 900px) {
@@ -539,11 +564,9 @@
     padding: max(16px, env(safe-area-inset-top)) max(var(--chrome-inset), env(safe-area-inset-right)) 0 max(var(--chrome-inset), env(safe-area-inset-left));
   }
   .gallery-chrome .gallery-header::before {
-    inset: 0 0 -22px; background: #f4efe81a;
-    mask-image: linear-gradient(#000 calc(100% - 22px), transparent);
-  }
-  .gallery-chrome .gallery-header::after {
-    left: max(var(--chrome-inset), env(safe-area-inset-left)); right: max(var(--chrome-inset), env(safe-area-inset-right)); bottom: -8px;
+    inset: 0 0 -48px;
+    -webkit-mask-image: linear-gradient(#000 0 32%, #000000f2 44%, #000000b3 60%, #0000004d 78%, #0000000d 92%, transparent);
+    mask-image: linear-gradient(#000 0 32%, #000000f2 44%, #000000b3 60%, #0000004d 78%, #0000000d 92%, transparent);
   }
   .gallery-chrome .gallery-wordmark { font-size: 24px; letter-spacing: -.6px; }
   .gallery-chrome .gallery-back { gap: 8px; font-size: 13px; min-height: 44px; padding: 0; letter-spacing: 0; }
@@ -553,8 +576,14 @@
   .gallery-chrome .gallery-wordmark { font-size: 30px; }
   .gallery-chrome .gallery-back { font-size: 16px; }
 }
+@supports (backdrop-filter: blur(1px)) {
+  .gallery-chrome .gallery-header::before { background: #f4efe86b; }
+}
+@supports (-webkit-backdrop-filter: blur(1px)) and (not (backdrop-filter: blur(1px))) {
+  .gallery-chrome .gallery-header::before { background: #f4efe8f0; }
+}
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .gallery-chrome .gallery-header::before { background: #f4efe8cc; }
+  .gallery-chrome .gallery-header::before { background: #f4efe8f0; }
 }
 @media (prefers-reduced-transparency: reduce) {
   .gallery-chrome .gallery-header::before { background: #f4efe8e6; -webkit-backdrop-filter: none; backdrop-filter: none; }
@@ -564,6 +593,7 @@
 }
 @media (forced-colors: active) {
   .gallery-shell { background: Canvas; color: CanvasText; }
+  .gallery-panel .gallery-caption-frame::before { background: Canvas; filter: none; -webkit-mask-image: none; mask-image: none; }
   .gallery-chrome .gallery-header::before { background: Canvas; -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
 
@@ -571,18 +601,6 @@
   .gallery-shell[data-layout="desktop"] .gallery-wordmark { font-size: max(34px, calc(22px / var(--gallery-scale))); }
   .gallery-shell[data-layout="desktop"] .gallery-back { font-size: max(20px, calc(14px / var(--gallery-scale))); min-height: calc(44px / var(--gallery-scale)); }
   .gallery-shell[data-layout="desktop"] .gallery-back img { width: max(30px, calc(18px / var(--gallery-scale))); height: max(30px, calc(18px / var(--gallery-scale))); }
-}
-
-/* A shallow stone edge separates rooms while they pass through the viewport. */
-.gallery-panel::before {
-  content: ''; position: absolute; z-index: 8; top: 0; left: 0; right: 0;
-  height: 4px; box-sizing: border-box; pointer-events: none; opacity: var(--room-edge-opacity, 0);
-  background: #d8c1aaad;
-  border-top: 1px solid #fffdf5b3; border-bottom: 1px solid #78533477;
-  box-shadow: 0 2px 2px #39271c80, 0 7px 12px #5133215c, 0 20px 28px -8px #51332147;
-}
-@media (forced-colors: active) {
-  .gallery-panel::before { background: Canvas; border-color: CanvasText; box-shadow: none; }
 }
 
 /* During a viewport switch, retain the last decoded artwork until the complete
