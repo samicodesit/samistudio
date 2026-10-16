@@ -375,3 +375,9 @@ Removed the shared header divider. Its 10px blur now has a lighter 42% tint and 
 Verification: 113 tests pass, all 11 browser modules pass syntax checks, and the production build remains 62 files. Browser checks used actual 360x640, 393x711, 430x932, 768x1024, 844x390, 1024x768, 1440x900 and 2560x1080 viewports. All three scenes were opened and cycled at each size; all scene copies were decoded, links fit, no horizontal overflow appeared, and shared header geometry remained identical across project changes. Reverse looping, native wheel scrolling and live desktop-to-phone refitting also passed. No browser console warnings or errors were captured. These are Chromium responsive checks, not physical iPhone or Safari validation, and no frame-rate claim is made.
 
 Minimal evidence: C:/Users/Sami/.codex/visualizations/2026/10/17/studio-build/responsive-polish-qa.json and responsive-polish-matrix.jpg. Historical asset sharing is a separate Sites gallery and is excluded from the portfolio release.
+
+### Header divider correction
+
+Restored the owner's preferred divider exactly: the original 1px dark rule, subtle white highlight, desktop bottom offset of -10px and responsive offset of -8px, with its existing insets. The reported defect concerned boundaries inside the blur, not the divider. The glass now uses a cosine alpha falloff with zero slope at both ends and a 32px overscan on responsive top/side sampling bounds. Responsive single-mask composition is explicit for prefixed WebKit handling. Blur remains one filtered surface, with no new layers or raster assets.
+
+Rechecked all three scenes and native looping at actual 393x711, 768x1024, 844x390 and 1440x900. Computed divider color, highlight, thickness and offsets match the original CSS. Header positions stayed stable and no horizontal overflow appeared. Evidence: divider-restored-qa.json and divider-restored-393x711.jpg in the same review directory. Physical Safari behavior remains unverified.

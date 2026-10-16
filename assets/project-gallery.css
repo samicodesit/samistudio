@@ -545,14 +545,17 @@
   content: ''; position: absolute; z-index: -1; pointer-events: none;
   /* Keep controls legible even when an engine cannot composite backdrop blur. */
   inset: -40px -66px -48px; background: #f4efe8e6;
+  /* A cosine alpha falloff has no abrupt slope at either end of the veil. */
   -webkit-backdrop-filter: blur(10px) saturate(1.04); backdrop-filter: blur(10px) saturate(1.04);
-  -webkit-mask-image: linear-gradient(#000 0 32%, #000000f2 44%, #000000b3 60%, #0000004d 78%, #0000000d 92%, transparent), linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
-  mask-image: linear-gradient(#000 0 32%, #000000f2 44%, #000000b3 60%, #0000004d 78%, #0000000d 92%, transparent), linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  -webkit-mask-image: linear-gradient(#000 0 52%, rgba(0,0,0,0.99039) 55%, rgba(0,0,0,0.96194) 58%, rgba(0,0,0,0.91573) 61%, rgba(0,0,0,0.85355) 64%, rgba(0,0,0,0.77779) 67%, rgba(0,0,0,0.69134) 70%, rgba(0,0,0,0.59755) 73%, rgba(0,0,0,0.50000) 76%, rgba(0,0,0,0.40245) 79%, rgba(0,0,0,0.30866) 82%, rgba(0,0,0,0.22221) 85%, rgba(0,0,0,0.14645) 88%, rgba(0,0,0,0.08427) 91%, rgba(0,0,0,0.03806) 94%, rgba(0,0,0,0.00961) 97%, rgba(0,0,0,0.00000) 100%), linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(#000 0 52%, rgba(0,0,0,0.99039) 55%, rgba(0,0,0,0.96194) 58%, rgba(0,0,0,0.91573) 61%, rgba(0,0,0,0.85355) 64%, rgba(0,0,0,0.77779) 67%, rgba(0,0,0,0.69134) 70%, rgba(0,0,0,0.59755) 73%, rgba(0,0,0,0.50000) 76%, rgba(0,0,0,0.40245) 79%, rgba(0,0,0,0.30866) 82%, rgba(0,0,0,0.22221) 85%, rgba(0,0,0,0.14645) 88%, rgba(0,0,0,0.08427) 91%, rgba(0,0,0,0.03806) 94%, rgba(0,0,0,0.00961) 97%, rgba(0,0,0,0.00000) 100%), linear-gradient(to right, transparent, #000 40px, #000 calc(100% - 40px), transparent);
   -webkit-mask-composite: source-in;
   mask-composite: intersect;
 }
-/* The glass ends in a feather, not a stroke or a hard bottom edge. */
-.gallery-chrome .gallery-header::after { content: none; }
+.gallery-chrome .gallery-header::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -10px; height: 1px;
+  pointer-events: none; background: #24252026; box-shadow: 0 1px 0 #ffffff35;
+}
 @media (orientation: portrait), (max-width: 599px),
   (orientation: landscape) and (min-width: 600px) and (max-width: 1180px),
   (orientation: landscape) and (max-width: 1366px) and (min-height: 900px) {
@@ -564,9 +567,14 @@
     padding: max(16px, env(safe-area-inset-top)) max(var(--chrome-inset), env(safe-area-inset-right)) 0 max(var(--chrome-inset), env(safe-area-inset-left));
   }
   .gallery-chrome .gallery-header::before {
-    inset: 0 0 -48px;
-    -webkit-mask-image: linear-gradient(#000 0 32%, #000000f2 44%, #000000b3 60%, #0000004d 78%, #0000000d 92%, transparent);
-    mask-image: linear-gradient(#000 0 32%, #000000f2 44%, #000000b3 60%, #0000004d 78%, #0000000d 92%, transparent);
+    /* Overscan hides the filter's sampling bounds outside the viewport. */
+    inset: -32px -32px -48px;
+    -webkit-mask-image: linear-gradient(#000 0 52%, rgba(0,0,0,0.99039) 55%, rgba(0,0,0,0.96194) 58%, rgba(0,0,0,0.91573) 61%, rgba(0,0,0,0.85355) 64%, rgba(0,0,0,0.77779) 67%, rgba(0,0,0,0.69134) 70%, rgba(0,0,0,0.59755) 73%, rgba(0,0,0,0.50000) 76%, rgba(0,0,0,0.40245) 79%, rgba(0,0,0,0.30866) 82%, rgba(0,0,0,0.22221) 85%, rgba(0,0,0,0.14645) 88%, rgba(0,0,0,0.08427) 91%, rgba(0,0,0,0.03806) 94%, rgba(0,0,0,0.00961) 97%, rgba(0,0,0,0.00000) 100%);
+    mask-image: linear-gradient(#000 0 52%, rgba(0,0,0,0.99039) 55%, rgba(0,0,0,0.96194) 58%, rgba(0,0,0,0.91573) 61%, rgba(0,0,0,0.85355) 64%, rgba(0,0,0,0.77779) 67%, rgba(0,0,0,0.69134) 70%, rgba(0,0,0,0.59755) 73%, rgba(0,0,0,0.50000) 76%, rgba(0,0,0,0.40245) 79%, rgba(0,0,0,0.30866) 82%, rgba(0,0,0,0.22221) 85%, rgba(0,0,0,0.14645) 88%, rgba(0,0,0,0.08427) 91%, rgba(0,0,0,0.03806) 94%, rgba(0,0,0,0.00961) 97%, rgba(0,0,0,0.00000) 100%);
+    -webkit-mask-composite: source-over; mask-composite: add;
+  }
+  .gallery-chrome .gallery-header::after {
+    left: max(var(--chrome-inset), env(safe-area-inset-left)); right: max(var(--chrome-inset), env(safe-area-inset-right)); bottom: -8px;
   }
   .gallery-chrome .gallery-wordmark { font-size: 24px; letter-spacing: -.6px; }
   .gallery-chrome .gallery-back { gap: 8px; font-size: 13px; min-height: 44px; padding: 0; letter-spacing: 0; }
