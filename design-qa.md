@@ -390,3 +390,10 @@ Removed the post-snap gallery bounce, its animation wrapper, queued arrival work
 Added regressions that first failed against the bounce implementation, then passed after removal. All 109 tests pass, all 11 browser modules pass syntax checks, and the production build contains 62 files. Browser QA checked forward and reverse loops at 360x640, 393x711, 768x1024, 844x390, 1440x900 and 2560x1080. All 36 project changes settled on exact native snap positions with stationary panels, stable header geometry, decoded artwork and no horizontal overflow. Native wheel input also passed; no console warnings or errors were captured. Touch interruption, browser-bar resize deferral and reduced motion are covered by controller regressions. These are Chromium viewport checks, not physical Safari validation.
 
 Evidence: C:/Users/Sami/.codex/visualizations/2026/10/17/studio-build/no-bounce-qa.json, no-bounce-phone.jpg and no-bounce-wide.jpg.
+
+
+## 2026-10-17: Full-width desktop header glass
+
+Corrected the desktop header glass to counteract its centered, scaled camera. The filtered surface now overscans the entire viewport by 32px on both sides and at the top. Removed the horizontal mask so the side edges stay continuously blurred. The existing vertical cosine feather, filter strength, responsive treatment, divider and navigation geometry remain. No JavaScript, scrolling, project artwork or transition experiments are included.
+
+All 109 tests pass and the build contains 62 files. Before the fix, measured glass coverage at 2560x1080 was x=504 to x=2056. Afterward it spans x=-32 to x=2592. Coverage also passed at 1440x900, 1024x768 and 393x711. Header geometry stayed fixed after native scrolling. Evidence: C:/Users/Sami/.codex/visualizations/2026/10/17/studio-build/header-full-width-qa.json and header-full-width-wide.jpg. Checks used Chromium viewports, not physical Safari.
