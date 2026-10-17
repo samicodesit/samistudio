@@ -17,7 +17,6 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
   const trigger=display.querySelector('#display-title');
   const screen=display.querySelector('.screen-shell');
   const output=display.querySelector('.shell-output');
-  const actions=display.querySelector('.shell-actions');
   const form=display.querySelector('.shell-form');
   const input=display.querySelector('.shell-input');
   const exit=display.querySelector('.shell-exit');
@@ -25,8 +24,7 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
   const work=display.querySelector('.screen-work');
   const announcement=display.querySelector('#display-announcement');
   const bindings=[],history=[];
-  let playground=null,runSequence=0,example=0,busy=false;
-  const examples=['2 ** 10','Array.from({length:8}, (_, i) => i * i)','["sketch", "design", "build"].join(" -> ")','console.log("hello, curious person"); 6 * 7'];
+  let playground=null,runSequence=0,busy=false;
   let active=false,disposed=false,hold=null,holdTimer=0,motion=null,historyIndex=0,draft='';
   function listen(target,event,fn,options){
     target.addEventListener(event,fn,options);
@@ -44,9 +42,9 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
     while(output.children.length>40)output.children[0].remove();
     output.scrollTop=output.scrollHeight;
   }
-  function welcome(){response('JavaScript, in miniature.\nTry 2 ** 10.');output.dataset.kind='welcome';}
-  function listProjects(welcome=false){
-    response(welcome?'You’re in. Welcome.':'Three projects. Take a look.');
+  function welcome(){output.replaceChildren();output.dataset.kind='console';}
+  function listProjects(){
+    output.replaceChildren();
     output.dataset.kind='projects';
     const list=page.createElement('div');list.className='shell-projects';
     for(const project of projects){
@@ -60,16 +58,17 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
     cancelHold();if(active||disposed||page.hidden||!isAvailable())return;
     onEnter?.();active=true;display.dataset.shell='true';
     work.hidden=true;pagination.hidden=true;screen.hidden=false;exit.hidden=false;
-    trigger.textContent='~/studio : play';trigger.setAttribute('aria-expanded','true');
-    announcement.textContent='JavaScript playground. Type code or try an example.';
+    trigger.textContent='~/playground';trigger.setAttribute('aria-expanded','true');
+    announcement.textContent='JavaScript terminal.';
     input.value='';historyIndex=history.length;draft='';welcome();
     if(!reducedMotion.matches){motion?.cancel();motion=screen.animate([{opacity:0,offset:0},{opacity:0,offset:.18},{opacity:1}],{duration:420,easing:'cubic-bezier(.2,.7,.2,1)'});}
     if(keyboard&&canType())input.focus({preventScroll:true});
-    else actions.querySelectorAll('[data-command]')[0]?.focus({preventScroll:true});
+    else trigger.focus({preventScroll:true});
     onChange?.();
   }
   function close({restore=true}={}){
     cancelHold();if(!active)return;
+    if(page.activeElement===input)input.blur?.();
     active=false;busy=false;runSequence++;playground?.destroy();playground=null;motion?.cancel();motion=null;
     delete display.dataset.shell;screen.removeAttribute('aria-busy');screen.hidden=true;exit.hidden=true;
     trigger.setAttribute('aria-expanded','false');input.value='';
@@ -84,11 +83,10 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
     historyIndex=history.length;draft='';input.value='';
     if(normalized==='clear'){runSequence++;if(busy)playground?.reset();busy=false;screen.removeAttribute('aria-busy');output.replaceChildren();output.dataset.kind='console';return;}
     if(normalized==='reset'){runSequence++;playground?.reset();busy=false;screen.removeAttribute('aria-busy');welcome();return;}
-    if(normalized==='try')return run(examples[example++%examples.length]);
     switch(command.type){
       case 'ls':listProjects();return;
       case 'whoami':response('Just me, Sami.\nI design and build everything here.');return;
-      case 'help':response('Real JavaScript. Try 2 ** 10.\nvar keeps values between commands.\nclear / reset / ls / exit\nRuns locally, without page or network access.');return;
+      case 'help':response('JavaScript REPL\nclear / reset / ls / whoami / exit');return;
       case 'open':close({restore:false});onOpenProject?.(command.id);return;
       case 'exit':close();return;
     }
@@ -124,7 +122,6 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
   listen(page,'visibilitychange',cancelHold);
   listen(page.defaultView,'blur',cancelHold);
   listen(exit,'click',()=>close());
-  for(const button of actions.querySelectorAll('[data-command]'))listen(button,'click',()=>run(button.dataset.command));
   listen(form,'submit',event=>{event.preventDefault();run(input.value);if(active&&canType())input.focus({preventScroll:true});});
   listen(input,'keydown',event=>{
     if(event.isComposing||!['ArrowUp','ArrowDown'].includes(event.key)||!history.length)return;

@@ -12,7 +12,7 @@ test('terminal canvas rests until the return explicitly prepares its fitted scen
     const context={projectDialog:{open,dataset:{phase,preparingReturn}},experience:{clientWidth:393,clientHeight:711},
       matchMedia:()=>({matches:true}),ensureSceneAsset:()=>true,devicePixelRatio:1,
       activeSceneAsset:{key:'mobile'},widePhoto:{naturalWidth:0},entranceAssetsReady:true,entranceScheduled:true,
-      lastLayoutKey:'',clearBackdrop(){},paintBackdrop(){paints++;},root:{style:{setProperty(){}}},
+      terminalEditor:null,lastLayoutKey:'',clearBackdrop(){},paintBackdrop(){paints++;},root:{style:{setProperty(){}}},
       document:{querySelector:selector=>({getBoundingClientRect:()=>({bottom:selector==='.site-header'?60:276})})},
       getComputedStyle:()=>({paddingBottom:'0px'}),fitMobileTerminal,display:{style:{}},quadMatrix:()=>'',keys:[],scene:{classList:{contains:()=>true}}};
     runInNewContext(`${layout}\nlayout();`,context);

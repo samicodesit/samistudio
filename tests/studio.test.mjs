@@ -1,3 +1,4 @@
+import './terminal-viewport.test.mjs';
 import './motion-policy.test.mjs';
 import './portal-path.test.mjs';
 import './javascript-playground.test.mjs';
@@ -22,7 +23,7 @@ import { tmpdir } from 'node:os';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const runtimeFiles = [
-  'assets/motion-preferences.mjs', 'motion-study.mjs', 'motion-study.css', 'entry-paths.mjs',
+  'assets/terminal-viewport.mjs', 'assets/motion-preferences.mjs', 'motion-study.mjs', 'motion-study.css', 'entry-paths.mjs',
   'index.html', 'favicon.svg', 'og-image.jpg', 'assets/studio.css', 'assets/studio.js',
   'assets/key-spring.mjs', 'assets/terminal-controls.mjs', 'assets/terminal-housing.webp',
   'assets/secret-terminal.mjs', 'assets/javascript-playground.mjs',

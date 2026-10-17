@@ -97,8 +97,8 @@ test('physical-view dismissal restores no stale focus, cancels animations, and r
   const reduced=fixture({reduced:true});reduced.controller.open();assert.equal(reduced.shell.animations,undefined);
 });
 
-test('tappable commands, safe response text and disposal leave no pending actions',async()=>{
-  const f=fixture();f.controller.open();f.actions.commands[1].emit('click');
+test('explicit commands, safe response text and disposal leave no pending actions',async()=>{
+  const f=fixture();f.controller.open();f.controller.run('whoami');
   const output=f.display.querySelector('.shell-output');assert.match(output.children[0].textContent,/Sami/);
   await f.controller.run('<img onerror=alert(1)>');assert.ok(output.children.some(node=>node.textContent.includes('<img onerror=alert(1)>')));
   f.controller.close({restore:false});f.trigger.emit('pointerdown');f.controller.destroy();f.finishHold();
@@ -108,7 +108,7 @@ test('tappable commands, safe response text and disposal leave no pending action
 
 test('secret mode leads with a playground, runs JavaScript, clears output and cancels the runtime on exit',async()=>{
  const f=fixture();f.controller.open();const output=f.display.querySelector('.shell-output');
- assert.match(output.children[0].textContent,/JavaScript/);assert.notEqual(output.dataset.kind,'projects');
+ assert.equal(output.children.length,0);assert.equal(f.trigger.textContent,'~/playground');assert.notEqual(output.dataset.kind,'projects');
  await f.controller.run('2 ** 10');assert.ok(output.children.some(p=>p.textContent==='1024'));
  f.controller.run('clear');assert.equal(output.children.length,0);
  f.controller.close();assert.ok(f.calls.includes('disposed'));

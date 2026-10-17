@@ -3,6 +3,7 @@ import { projectiveMatrix as quadMatrix, fitMobileTerminal, fitDesktopTerminal }
 import { initProjectGallery } from './project-gallery.js';
 import { initTerminalControls, initTerminalReflection } from './terminal-controls.mjs';
 import { initSecretTerminal } from './secret-terminal.mjs';
+import { initTerminalViewport } from './terminal-viewport.mjs';
 import { motionPreference } from './motion-preferences.mjs';
 
 (() => {
@@ -41,7 +42,7 @@ import { motionPreference } from './motion-preferences.mjs';
     entranceAssetsReady = true;
     layout();
   });
-  let gallery, secretTerminal;
+  let gallery, secretTerminal, terminalEditor;
   let mechanisms = [];
   const terminalControls = initTerminalControls({display,keys,screens,
     pilot:document.querySelector('.pilot-light'),reducedMotion,isVisible:()=>!projectDialog.open,
@@ -74,7 +75,7 @@ import { motionPreference } from './motion-preferences.mjs';
     onEnter:()=>{showView('work');gallery.cancelPending();terminalControls.pulse();},
     onExit:()=>showView('work'),
     onOpenProject:id=>{showView('work');gallery.openProject(id);},
-    onChange:()=>reflection.refresh(),
+    onChange:()=>{reflection.refresh();terminalEditor?.refresh();},
   });
   const fittedPhoto = document.createElement('canvas');
   fittedPhoto.width = 1260;
@@ -84,6 +85,7 @@ import { motionPreference } from './motion-preferences.mjs';
   scene.append(backdrop);
   const widePhoto = new Image();
   const roomPhoto = document.createElement('canvas');
+  let mobilePhotoCache=null;
   widePhoto.decoding = 'async';
   widePhoto.addEventListener('load', () => { prepareRoomPhoto(); layout(); }, { once: true });
   widePhoto.addEventListener('error', () => root.classList.remove('is-loading'), { once: true });
@@ -96,15 +98,13 @@ import { motionPreference } from './motion-preferences.mjs';
   let pendingSceneAsset = null;
   let sceneLoadToken = 0;
   let lastLayoutKey = '';
+  terminalEditor=initTerminalViewport({input:display.querySelector('.shell-input'),isOpen:()=>secretTerminal.isOpen,containsFocus:()=>display.contains(document.activeElement),onChange:frame=>{
+    if(frame)root.dataset.terminalEditing='true';else delete root.dataset.terminalEditing;
+    layout();
+  }});
 
   function imageUrl(path) {
     return path ? new URL(path, import.meta.url).href : '';
-  }
-
-  function clearBackdrop() {
-    backdrop.width = 1;
-    backdrop.height = 1;
-    scene.classList.remove('is-ready');
   }
 
   function prepareScenePhoto() {
@@ -206,58 +206,53 @@ import { motionPreference } from './motion-preferences.mjs';
   function paintBackdrop(width, height, scale, mobile, sceneOffsetLeft, sceneOffsetTop) {
     if (mobile) {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      backdrop.width = Math.round(width * dpr);
-      backdrop.height = Math.round(height * dpr);
+      const pixelWidth=Math.round(width*dpr),pixelHeight=Math.round(height*dpr);
+      if(backdrop.width!==pixelWidth)backdrop.width=pixelWidth;
+      if(backdrop.height!==pixelHeight)backdrop.height=pixelHeight;
       const context = backdrop.getContext('2d');
       context.setTransform(dpr, 0, 0, dpr, 0, 0);
       const photoWidth = 416 * scale;
       const photoHeight = 932 * scale;
       const left = sceneOffsetLeft ?? (width - photoWidth) / 2;
       const top = sceneOffsetTop ?? Math.max(0, (height - 840 * scale) / 2);
-      // Extend the empty wall's real texture, then gently match the room tone.
-      // A row-by-row colour extension makes tablet gutters into flat stripes.
-      const plate = document.createElement('canvas');
-      plate.width = 416;
-      plate.height = 932;
-      const plateContext = plate.getContext('2d');
-      plateContext.drawImage(scenePhoto, 0, 0);
-      context.drawImage(scenePhoto,0,0,416,340,0,0,width,height);
-      const gradient = context.createLinearGradient(0, top, 0, top + photoHeight);
-      for (const y of [0,330,900]) {
-        const rgb = [0, 0, 0];
-        for (const side of [0, 400]) {
-          const pixels = plateContext.getImageData(side, y, 16, 32).data;
-          for (let i = 0; i < pixels.length; i += 4) {
-            rgb.forEach((value, channel) => { rgb[channel] += pixels[i + channel] / 1024; });
-          }
+      // Mask and sample the immutable photograph once. Keyboard pan/resize
+      // only redraws the prepared plate at its new registered camera pose.
+      const source=scenePhoto.currentSrc||scenePhoto.src;
+      if(!mobilePhotoCache||mobilePhotoCache.source!==source){
+        const plate=document.createElement('canvas');plate.width=416;plate.height=932;
+        const plateContext=plate.getContext('2d');plateContext.drawImage(scenePhoto,0,0);
+        const tones=[0,330,900].map(y=>{
+          const rgb=[0,0,0];for(const side of [0,400]){const pixels=plateContext.getImageData(side,y,16,32).data;for(let i=0;i<pixels.length;i+=4)rgb.forEach((value,channel)=>{rgb[channel]+=pixels[i+channel]/1024;});}
+          return [y/900,'rgb('+rgb.map(Math.round).join(',')+')'];
+        });
+        const mobileMask=document.createElement('canvas');
+        mobileMask.width=416;mobileMask.height=932;
+        const maskContext=mobileMask.getContext('2d');
+        for(let y=0;y<932;y++){
+          const outside=Math.max(365-y,y-800,0);
+          const inset=20+140*Math.min(1,outside/100);
+          const feather=maskContext.createLinearGradient(0,0,416,0);
+          feather.addColorStop(0,'transparent');feather.addColorStop(inset/416,'black');
+          feather.addColorStop(1-inset/416,'black');feather.addColorStop(1,'transparent');
+          maskContext.fillStyle=feather;maskContext.fillRect(0,y,416,1);
         }
-        gradient.addColorStop(y / 900, `rgb(${rgb.map(Math.round).join(',')})`);
+        maskContext.globalCompositeOperation='destination-in';
+        const verticalFeather = maskContext.createLinearGradient(0, 0, 0, 932);
+        verticalFeather.addColorStop(0, 'transparent');
+        verticalFeather.addColorStop(80 / 932, 'black');
+        verticalFeather.addColorStop(820 / 932, 'black');
+        verticalFeather.addColorStop(1, 'transparent');
+        maskContext.fillStyle = verticalFeather;
+        maskContext.fillRect(0, 0, 416, 932);
+        plateContext.globalCompositeOperation='destination-in';
+        plateContext.drawImage(mobileMask,0,0);
+        mobilePhotoCache={source,plate,tones};
       }
-      context.globalAlpha=.45;
-      context.fillStyle = gradient;
-      context.fillRect(0, 0, width, height);
-      context.globalAlpha=1;
-      const mobileMask=document.createElement('canvas');
-      mobileMask.width=416;mobileMask.height=932;
-      const maskContext=mobileMask.getContext('2d');
-      for(let y=0;y<932;y++){
-        const outside=Math.max(365-y,y-800,0);
-        const inset=20+140*Math.min(1,outside/100);
-        const feather=maskContext.createLinearGradient(0,0,416,0);
-        feather.addColorStop(0,'transparent');feather.addColorStop(inset/416,'black');
-        feather.addColorStop(1-inset/416,'black');feather.addColorStop(1,'transparent');
-        maskContext.fillStyle=feather;maskContext.fillRect(0,y,416,1);
-      }
-      maskContext.globalCompositeOperation='destination-in';
-      const verticalFeather = maskContext.createLinearGradient(0, 0, 0, 932);
-      verticalFeather.addColorStop(0, 'transparent');
-      verticalFeather.addColorStop(80 / 932, 'black');
-      verticalFeather.addColorStop(820 / 932, 'black');
-      verticalFeather.addColorStop(1, 'transparent');
-      maskContext.fillStyle = verticalFeather;
-      maskContext.fillRect(0, 0, 416, 932);
-      plateContext.globalCompositeOperation='destination-in';
-      plateContext.drawImage(mobileMask,0,0);
+      const {plate,tones}=mobilePhotoCache;
+      context.drawImage(scenePhoto,0,0,416,340,0,0,width,height);
+      const gradient=context.createLinearGradient(0,top,0,top+photoHeight);
+      for(const [stop,color]of tones)gradient.addColorStop(stop,color);
+      context.globalAlpha=.45;context.fillStyle=gradient;context.fillRect(0,0,width,height);context.globalAlpha=1;
       context.drawImage(plate, left, top, photoWidth, photoHeight);
       scene.classList.add('is-ready');
       return;
@@ -290,10 +285,10 @@ import { motionPreference } from './motion-preferences.mjs';
     if (!ensureSceneAsset(mobile)) return;
     const safeBottom=mobile?(parseFloat(getComputedStyle(experience).paddingBottom)||0):0;
     const headerBottom=mobile?document.querySelector('.site-header').getBoundingClientRect().bottom:0;
-    const layoutKey = [width, height, mobile, safeBottom, headerBottom, devicePixelRatio, activeSceneAsset.key, widePhoto.naturalWidth, entranceAssetsReady].join(':');
+    const editorFrame=mobile?terminalEditor?.frame:null;
+    const layoutKey = [width, height, mobile, safeBottom, headerBottom, JSON.stringify(editorFrame), devicePixelRatio, activeSceneAsset.key, widePhoto.naturalWidth, entranceAssetsReady].join(':');
     if (lastLayoutKey === layoutKey) return;
     lastLayoutKey = layoutKey;
-    if (mobile) clearBackdrop();
     let scale,sceneLeft,sceneTop;
     if(mobile){
       const shortLandscape=width>=600&&height<=480;
@@ -302,7 +297,7 @@ import { motionPreference } from './motion-preferences.mjs';
       root.style.setProperty('--hero-text-scale',String(textScale));
       root.style.setProperty('--hero-intro-top',`${shortLandscape?headerBottom+8:Math.max(headerBottom+24,113*textScale)}px`);
       const introductionBottom=document.querySelector('.introduction').getBoundingClientRect().bottom;
-      const fit=fitMobileTerminal(width,height,introductionBottom,safeBottom);
+      const fit=editorFrame||fitMobileTerminal(width,height,introductionBottom,safeBottom);
       ({scale,left:sceneLeft,top:sceneTop}=fit);
     }else{
       const headline=document.querySelector('#headline');
