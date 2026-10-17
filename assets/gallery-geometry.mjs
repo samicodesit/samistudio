@@ -146,13 +146,18 @@ export function fitDesktopTerminal(width,height,headlineRatio) {
   // Grow with the display, while short ultrawide windows keep one coherent group.
   const contentWidth=Math.min(2560,width-2*margin,height*2.1);
   const columnWidth=(contentWidth-gap)*.54,copyWidth=(contentWidth-gap)*.46;
-  const scale=Math.min(1180/657,width*.48/657,columnWidth/657,height*.78/589);
+  const baseScale=Math.min(1180/657,width*.48/657,columnWidth/657,height*.78/589);
   const start=(width-contentWidth)/2;
+  const deviceLeft=start+(columnWidth-657*baseScale)/2;
+  const copyLeft=start+columnWidth+gap;
+  // Preserve the object's left anchor while making room for its optical silhouette.
+  const opticalGap=Math.max(gap,Math.min(96,width/15));
+  const scale=Math.min(baseScale,(copyLeft-opticalGap-deviceLeft)/657);
   const headlineSize=Math.min(Math.max(64,Math.min(184,width*.07)),(copyWidth-1)/headlineRatio);
   const brandSize=Math.max(28,Math.min(48,width*.02));
   const brandGap=Math.max(18,Math.min(32,width/80));
   const bodySize=Math.max(20,Math.min(32,width/64));
-  return {scale,left:start+(columnWidth-657*scale)/2-20*scale,top:height*.52-531.5*scale,
-    copyLeft:start+columnWidth+gap,copyWidth,headlineSize,deviceHeight:589*scale,
+  return {scale,left:deviceLeft-20*scale,top:height*.52-531.5*scale,
+    copyLeft,copyWidth,headlineSize,deviceHeight:589*scale,
     deviceWidth:657*scale,contentWidth,columnWidth,gap,margin,brandSize,brandGap,bodySize};
 }

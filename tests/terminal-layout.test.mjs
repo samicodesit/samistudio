@@ -54,3 +54,13 @@ test('large desktops grow the terminal and display type together instead of stay
     assert.ok(fit.top+826*fit.scale<=height);
   }
 });
+
+
+test('laptop optical gutter separates the terminal silhouette from the headline without reducing display type',()=>{
+  for(const [width,height] of [[1024,768],[1280,720],[1440,900],[1600,900],[1920,1080]]){
+    const fit=geometry.fitDesktopTerminal(width,height,633.1/104);
+    const opticalGap=fit.copyLeft-(fit.left+677*fit.scale);
+    assert.ok(opticalGap>=Math.min(96,width/15)-.001, width+' needs breathing room between object and text');
+    assert.ok(fit.deviceWidth>=width*.42, 'device presence is retained');
+  }
+});
