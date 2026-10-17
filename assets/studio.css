@@ -519,8 +519,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-o
 .shell-projects button:hover, .shell-actions button:hover, .shell-form button:hover { background:#24252012; }
 .screen-shell button:focus-visible, #display-title:focus-visible, .shell-exit:focus-visible { outline:1px solid #24252090; outline-offset:-2px; }
 @media (max-width:1023px) {
-  .display .screen-shell { grid-template-rows:minmax(0,1fr) auto; gap:5px; }
-  .shell-form { display:none; }
+  .display .screen-shell { grid-template-rows:minmax(0,1fr) auto auto; gap:3px; }
+  .shell-form { display:grid; }
   .shell-output { font-size:max(14px,calc(9px / var(--scene-scale))); }
   .shell-projects { gap:5px; }
 }
@@ -579,4 +579,17 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-o
   .display[data-shell="true"] .shell-exit, .display[data-shell="true"] .screen-shell button,
   .display[data-shell="true"] .shell-input { color:CanvasText; text-shadow:none; }
   .display[data-shell="true"] .shell-output p::after { background:CanvasText; }
+}
+
+/* The hidden playground keeps native text input and clipped output inside the glass. */
+.shell-output[data-kind="console"] { align-content:start; overflow-wrap:anywhere; }
+.shell-output[data-kind="console"] p { margin:0 0 4px; white-space:pre-wrap; font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:.9em; letter-spacing:-.25px; }
+.display[data-shell="true"] .shell-output[data-kind="console"] p::after { display:none; }
+.shell-output p[data-kind="input"] { opacity:.6; }
+.shell-output p[data-kind="error"], .shell-output p[data-kind="log-error"] { color:#ffd2aa; }
+.screen-shell[aria-busy="true"] .shell-form > span { opacity:.4; }
+
+@media (max-width:1023px) and (max-height:620px) {
+  .display .screen-shell { grid-template-rows:minmax(0,1fr) auto; }
+  .shell-actions { display:none; }
 }

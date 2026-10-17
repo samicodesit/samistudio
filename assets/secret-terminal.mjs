@@ -1,3 +1,4 @@
+import {createPlayground} from './javascript-playground.mjs';
 import {projects, getProject} from './project-data.mjs';
 
 // This is a small portfolio command language, never an operating-system shell.
@@ -12,7 +13,7 @@ export function parseTerminalCommand(value) {
 }
 
 export function initSecretTerminal({display,page=document,reducedMotion={matches:false},isAvailable=()=>true,
-  canType=()=>true,onEnter,onExit,onOpenProject,onChange,setTimer=setTimeout,clearTimer=clearTimeout}) {
+  canType=()=>true,onEnter,onExit,onOpenProject,onChange,setTimer=setTimeout,clearTimer=clearTimeout,makePlayground=()=>createPlayground({page})}) {
   const trigger=display.querySelector('#display-title');
   const screen=display.querySelector('.screen-shell');
   const output=display.querySelector('.shell-output');
@@ -24,6 +25,8 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
   const work=display.querySelector('.screen-work');
   const announcement=display.querySelector('#display-announcement');
   const bindings=[],history=[];
+  let playground=null,runSequence=0,example=0,busy=false;
+  const examples=['2 ** 10','Array.from({length:8}, (_, i) => i * i)','["sketch", "design", "build"].join(" -> ")','console.log("hello, curious person"); 6 * 7'];
   let active=false,disposed=false,hold=null,holdTimer=0,motion=null,historyIndex=0,draft='';
   function listen(target,event,fn,options){
     target.addEventListener(event,fn,options);
@@ -35,6 +38,13 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
     const paragraph=page.createElement('p');paragraph.textContent=text;
     output.replaceChildren(paragraph);output.scrollTop=0;
   }
+  function append(text,kind='result'){
+    output.dataset.kind='console';
+    const p=page.createElement('p');p.textContent=text;p.dataset.kind=kind;output.append(p);
+    while(output.children.length>40)output.children[0].remove();
+    output.scrollTop=output.scrollHeight;
+  }
+  function welcome(){response('JavaScript, in miniature.\nTry 2 ** 10.');output.dataset.kind='welcome';}
   function listProjects(welcome=false){
     response(welcome?'You’re in. Welcome.':'Three projects. Take a look.');
     output.dataset.kind='projects';
@@ -50,9 +60,9 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
     cancelHold();if(active||disposed||page.hidden||!isAvailable())return;
     onEnter?.();active=true;display.dataset.shell='true';
     work.hidden=true;pagination.hidden=true;screen.hidden=false;exit.hidden=false;
-    trigger.textContent='~/studio : secret';trigger.setAttribute('aria-expanded','true');
-    announcement.textContent='Secret terminal. Choose a command or a project.';
-    input.value='';historyIndex=history.length;draft='';listProjects(true);
+    trigger.textContent='~/studio : play';trigger.setAttribute('aria-expanded','true');
+    announcement.textContent='JavaScript playground. Type code or try an example.';
+    input.value='';historyIndex=history.length;draft='';welcome();
     if(!reducedMotion.matches){motion?.cancel();motion=screen.animate([{opacity:0,offset:0},{opacity:0,offset:.18},{opacity:1}],{duration:420,easing:'cubic-bezier(.2,.7,.2,1)'});}
     if(keyboard&&canType())input.focus({preventScroll:true});
     else actions.querySelectorAll('[data-command]')[0]?.focus({preventScroll:true});
@@ -60,8 +70,8 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
   }
   function close({restore=true}={}){
     cancelHold();if(!active)return;
-    active=false;motion?.cancel();motion=null;
-    delete display.dataset.shell;screen.hidden=true;exit.hidden=true;
+    active=false;busy=false;runSequence++;playground?.destroy();playground=null;motion?.cancel();motion=null;
+    delete display.dataset.shell;screen.removeAttribute('aria-busy');screen.hidden=true;exit.hidden=true;
     trigger.setAttribute('aria-expanded','false');input.value='';
     if(restore){onExit?.();trigger.focus({preventScroll:true});}
     onChange?.();
@@ -69,16 +79,29 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
   function run(value){
     if(!active||disposed)return;
     const command=parseTerminalCommand(value);if(command.type==='empty')return;
-    history.push(String(value).trim().slice(0,80));if(history.length>12)history.shift();
+    const normalized=String(value).trim().toLowerCase();
+    history.push(String(value).trim().slice(0,2000));if(history.length>12)history.shift();
     historyIndex=history.length;draft='';input.value='';
+    if(normalized==='clear'){runSequence++;if(busy)playground?.reset();busy=false;screen.removeAttribute('aria-busy');output.replaceChildren();output.dataset.kind='console';return;}
+    if(normalized==='reset'){runSequence++;playground?.reset();busy=false;screen.removeAttribute('aria-busy');welcome();return;}
+    if(normalized==='try')return run(examples[example++%examples.length]);
     switch(command.type){
-      case 'ls':listProjects();break;
-      case 'whoami':response('Just me, Sami.\nI design and build everything here.');break;
-      case 'help':response(canType()?'ls · projects\nopen <project> · take a look\nwhoami · about me':'ls · pick a project\nwhoami · about me\nexit · back to Work');break;
+      case 'ls':listProjects();return;
+      case 'whoami':response('Just me, Sami.\nI design and build everything here.');return;
+      case 'help':response('Real JavaScript. Try 2 ** 10.\nvar keeps values between commands.\nclear / reset / ls / exit\nRuns locally, without page or network access.');return;
       case 'open':close({restore:false});onOpenProject?.(command.id);return;
       case 'exit':close();return;
-      default:response('Unknown command. Try help.');
     }
+    if(!value||String(value).length>2000){response('Keep commands under 2,000 characters.');return;}
+    if(busy){append('Still running. Type reset to stop it.','error');return;}
+    if(output.dataset.kind!=='console')output.replaceChildren();
+    append('> '+value,'input');
+    const token=++runSequence;busy=true;playground??=makePlayground();screen.setAttribute('aria-busy','true');
+    return playground.run(String(value)).then(records=>{
+      if(!active||disposed||token!==runSequence)return;
+      for(const record of records)append(record.text,record.kind);
+    }).catch(()=>{if(active&&token===runSequence)append('Something interrupted execution. Try reset.','error');})
+      .finally(()=>{if(token===runSequence){busy=false;screen.removeAttribute('aria-busy');}});
   }
   listen(trigger,'pointerdown',event=>{
     if(event.button!==0||event.isPrimary===false||active||display.dataset.view!=='work'||!isAvailable())return;
@@ -102,7 +125,7 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
   listen(page.defaultView,'blur',cancelHold);
   listen(exit,'click',()=>close());
   for(const button of actions.querySelectorAll('[data-command]'))listen(button,'click',()=>run(button.dataset.command));
-  listen(form,'submit',event=>{event.preventDefault();run(input.value);});
+  listen(form,'submit',event=>{event.preventDefault();run(input.value);if(active&&canType())input.focus({preventScroll:true});});
   listen(input,'keydown',event=>{
     if(event.isComposing||!['ArrowUp','ArrowDown'].includes(event.key)||!history.length)return;
     event.preventDefault();if(historyIndex===history.length)draft=input.value;

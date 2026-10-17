@@ -56,7 +56,7 @@ import { initSecretTerminal } from './secret-terminal.mjs';
   });
   secretTerminal=initSecretTerminal({display,reducedMotion,
     isAvailable:()=>terminalInView&&!projectDialog.open,
-    canType:()=>matchMedia('(min-width:1024px)').matches,
+    canType:()=>true,
     onEnter:()=>{showView('work');gallery.cancelPending();terminalControls.pulse();},
     onExit:()=>showView('work'),
     onOpenProject:id=>{showView('work');gallery.openProject(id);},

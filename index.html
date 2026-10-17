@@ -82,14 +82,14 @@
                 <p class="work-status sr-only" id="work-status" role="status" aria-live="polite"></p>
               </section>
               <section class="screen screen-shell" id="secret-terminal" data-screen="shell" aria-label="Secret terminal" hidden>
-                <div class="shell-output" role="status" aria-live="polite" aria-atomic="true"></div>
+                <div class="shell-output" role="log" aria-live="polite" aria-atomic="false"></div>
                 <div class="shell-actions" role="group" aria-label="Terminal commands">
-                  <button type="button" data-command="ls" aria-label="List projects">ls</button>
-                  <button type="button" data-command="whoami" aria-label="About Sami">whoami</button>
+                  <button type="button" data-command="try" aria-label="Run a JavaScript example">try</button>
+                  <button type="button" data-command="clear" aria-label="Clear terminal output">clear</button>
                   <button type="button" data-command="help" aria-label="Command help">help</button>
                 </div>
                 <form class="shell-form" aria-label="Command prompt" autocomplete="off">
-                  <span aria-hidden="true">&gt;</span><input class="shell-input" aria-label="Terminal command" placeholder="Type a command" maxlength="80" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"><button type="submit" aria-label="Run command">&#8629;</button>
+                  <span aria-hidden="true">&gt;</span><input class="shell-input" aria-label="Terminal command" placeholder="Try 2 ** 10" maxlength="2000" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"><button type="submit" aria-label="Run command">&#8629;</button>
                 </form>
               </section>
               <section class="screen screen-about" data-screen="about" aria-label="About" hidden><p class="screen-copy">No handoff between designer and developer, so nothing gets lost in between. Every detail you see, I decided and built.</p></section>

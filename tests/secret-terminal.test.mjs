@@ -26,6 +26,7 @@ function fixture({reduced=false}={}) {
   const actions=display.querySelector('.shell-actions');actions.commands=['ls','whoami','help'].map(command=>{const node=new Element(page);node.dataset.command=command;return node;});
   const calls=[],timers=new Map();let id=0,available=true;
   const controller=initSecretTerminal({display,page,reducedMotion:{matches:reduced},isAvailable:()=>available,
+    makePlayground:()=>({run:code=>Promise.resolve([{kind:'result',text:code==='2 ** 10'?'1024':'undefined'}]),reset(){calls.push('reset')},destroy(){calls.push('disposed')}}),
     onEnter:()=>calls.push('enter'),onExit:()=>calls.push('exit'),onOpenProject:id=>calls.push(id),onChange:()=>calls.push('change'),
     setTimer:(fn,delay)=>{timers.set(++id,{fn,delay});return id;},clearTimer:id=>timers.delete(id)});
   const finishHold=()=>{for(const [id,task] of [...timers]){timers.delete(id);task.fn();}};
@@ -46,6 +47,7 @@ test('a deliberate Work-label hold opens once, with tappable projects and no inp
   f.trigger.emit('pointerdown');assert.equal([...f.timers.values()][0].delay,700);f.finishHold();
   assert.equal(f.controller.isOpen,true);assert.equal(f.display.dataset.shell,'true');assert.equal(f.shell.hidden,false);
   assert.equal(f.calls.filter(c=>c==='enter').length,1);assert.notEqual(f.page.activeElement,f.input);
+  f.controller.run('ls');
   const projects=f.display.querySelector('.shell-output').children.flatMap(e=>e.children);
   assert.equal(projects.length,3);projects[1].emit('click');
   assert.ok(f.calls.includes('autolister'));assert.equal(f.controller.isOpen,false);
@@ -95,10 +97,19 @@ test('physical-view dismissal restores no stale focus, cancels animations, and r
   const reduced=fixture({reduced:true});reduced.controller.open();assert.equal(reduced.shell.animations,undefined);
 });
 
-test('tappable commands, safe response text and disposal leave no pending actions',()=>{
+test('tappable commands, safe response text and disposal leave no pending actions',async()=>{
   const f=fixture();f.controller.open();f.actions.commands[1].emit('click');
   const output=f.display.querySelector('.shell-output');assert.match(output.children[0].textContent,/Sami/);
-  f.controller.run('<img onerror=alert(1)>');assert.equal(output.children.length,1);assert.match(output.children[0].textContent,/help/);
+  await f.controller.run('<img onerror=alert(1)>');assert.ok(output.children.some(node=>node.textContent.includes('<img onerror=alert(1)>')));
   f.controller.close({restore:false});f.trigger.emit('pointerdown');f.controller.destroy();f.finishHold();
   assert.equal(f.controller.isOpen,false);assert.equal(f.timers.size,0);f.page.emit('keydown',{key:'`'});assert.equal(f.controller.isOpen,false);
+});
+
+
+test('secret mode leads with a playground, runs JavaScript, clears output and cancels the runtime on exit',async()=>{
+ const f=fixture();f.controller.open();const output=f.display.querySelector('.shell-output');
+ assert.match(output.children[0].textContent,/JavaScript/);assert.notEqual(output.dataset.kind,'projects');
+ await f.controller.run('2 ** 10');assert.ok(output.children.some(p=>p.textContent==='1024'));
+ f.controller.run('clear');assert.equal(output.children.length,0);
+ f.controller.close();assert.ok(f.calls.includes('disposed'));
 });

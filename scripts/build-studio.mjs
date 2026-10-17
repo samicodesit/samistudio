@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 export const studioFiles = [
   'index.html', 'favicon.svg', 'og-image.jpg', 'assets/studio.css', 'assets/studio.js',
   'assets/key-spring.mjs', 'assets/terminal-controls.mjs', 'assets/terminal-housing.webp',
-  'assets/secret-terminal.mjs',
+  'assets/secret-terminal.mjs', 'assets/javascript-playground.mjs',
   'assets/terminal-housing-mobile.webp', 'assets/terminal-keycaps.webp',
   'assets/terminal-keycaps-mobile.webp', 'assets/terminal-wide.webp',
   'assets/project-gallery.js', 'assets/project-gallery.css', 'assets/project-data.mjs', 'assets/gallery-geometry.mjs', 'assets/gallery-loading.mjs', 'assets/gallery-navigation.mjs',
