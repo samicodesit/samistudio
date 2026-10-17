@@ -381,3 +381,12 @@ Minimal evidence: C:/Users/Sami/.codex/visualizations/2026/10/17/studio-build/re
 Restored the owner's preferred divider exactly: the original 1px dark rule, subtle white highlight, desktop bottom offset of -10px and responsive offset of -8px, with its existing insets. The reported defect concerned boundaries inside the blur, not the divider. The glass now uses a cosine alpha falloff with zero slope at both ends and a 32px overscan on responsive top/side sampling bounds. Responsive single-mask composition is explicit for prefixed WebKit handling. Blur remains one filtered surface, with no new layers or raster assets.
 
 Rechecked all three scenes and native looping at actual 393x711, 768x1024, 844x390 and 1440x900. Computed divider color, highlight, thickness and offsets match the original CSS. Header positions stayed stable and no horizontal overflow appeared. Evidence: divider-restored-qa.json and divider-restored-393x711.jpg in the same review directory. Physical Safari behavior remains unverified.
+
+
+## 2026-10-17: Remove gallery rebound
+
+Removed the post-snap gallery bounce, its animation wrapper, queued arrival work and duplicate scene backdrop. Native CSS scrolling, mandatory snap targets, immediate scrollend settlement, the idle fallback and identical-copy looping remain. No extra animation starts when a project changes or a loop relocates. Terminal key springs, initial gallery entrance, registered caption glass, shared header divider and feathered seam shadow are unchanged.
+
+Added regressions that first failed against the bounce implementation, then passed after removal. All 109 tests pass, all 11 browser modules pass syntax checks, and the production build contains 62 files. Browser QA checked forward and reverse loops at 360x640, 393x711, 768x1024, 844x390, 1440x900 and 2560x1080. All 36 project changes settled on exact native snap positions with stationary panels, stable header geometry, decoded artwork and no horizontal overflow. Native wheel input also passed; no console warnings or errors were captured. Touch interruption, browser-bar resize deferral and reduced motion are covered by controller regressions. These are Chromium viewport checks, not physical Safari validation.
+
+Evidence: C:/Users/Sami/.codex/visualizations/2026/10/17/studio-build/no-bounce-qa.json, no-bounce-phone.jpg and no-bounce-wide.jpg.
