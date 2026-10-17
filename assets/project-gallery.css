@@ -502,15 +502,7 @@
   position: relative; inset: auto; width: 100%; height: var(--gallery-page-height, 100%); min-height: 0;
   flex: 0 0 var(--gallery-page-height, 100%); margin: 0; overflow: clip; scroll-snap-align: start; scroll-snap-stop: always;
   contain: layout paint style; overflow-anchor: none; touch-action: pan-y pinch-zoom;
-  /* The photograph continues beneath the moving surface. A landing can lift
-     a few pixels without exposing the next project or a flat background gap. */
-  background-image: var(--caption-glass-photo, none);
-  background-size: var(--caption-glass-size);
-  background-position: var(--gallery-left) var(--gallery-top);
-  background-repeat: no-repeat;
 }
-.gallery-landing { position: absolute; inset: 0; }
-.gallery-track > .gallery-panel[data-art="wide"] { background-size: cover; background-position: center; }
 /* An invisible surface above the seam casts a broad, blurred shadow onto the
    next photograph. There is no painted stroke or bevel at the scene boundary. */
 .gallery-panel::before {
@@ -521,7 +513,6 @@
   box-shadow: 0 20px 38px 14px #160e0996, 0 34px 64px 22px #160e0938;
 }
 @media (forced-colors: active) {
-  .gallery-track > .gallery-panel[data-project][data-scene] { background-image: none; }
   .gallery-panel::before { top: 0; height: 1px; background: CanvasText; box-shadow: none; }
 }
 .gallery-panel .gallery-environment { position: absolute; }

@@ -118,94 +118,48 @@ test('ordinary scroll keeps snap targets and native position untouched',async()=
   }
 });
 
-test('a new scene gets two diminishing gravity rebounds only after native settlement',async()=>{
+test('project changes settle with no extra surface animation',async()=>{
+  for(const reduced of [false,true]) {
+    const f=await galleryFixture({reduced});f.flushFrames();await f.runSettlement();
+    const initialAnimations=f.animations.length;
+    for(const slot of [4,5,4,3]) {
+      f.track.emit('touchstart');f.track.scrollTop=slot*H;f.track.emit('scroll');f.flushFrames();
+      f.track.emit('scrollend');await f.flush();
+      f.window.emit('touchend',{touches:[]});f.flushFrames();
+      f.track.emit('scrollend');await f.runSettlement();f.flushFrames();
+      assert.equal(f.dialog.dataset.project,f.track.children[slot].dataset.project);
+      assert.equal(f.animations.length,initialAnimations,'native snapping must not start a second motion');
+      assert.equal(f.track.scrollTop,slot*H);
+    }
+  }
+});
+
+test('loop relocation has no rebound, replay, or moving snap targets',async()=>{
   const f=await galleryFixture();f.flushFrames();await f.runSettlement();
-  const landings=()=>f.animations.filter(a=>a.target.className==='gallery-landing');
-  assert.equal(landings().length,0,'opening cannot bounce');
-  f.track.emit('touchstart');f.track.scrollTop=4*H;f.track.emit('scroll');f.flushFrames();
-  f.track.emit('scrollend');await f.flush();
-  assert.equal(landings().length,0,'the scene cannot bounce under the finger');
-  f.window.emit('touchend',{touches:[]});f.track.emit('scrollend');await f.flush();
-  assert.equal(landings().length,1);
-  const landing=landings()[0],ys=Array.from(landing.keyframes,k=>Number(k.transform.match(/translateY\(([-.\d]+)px\)/)[1]));
-  assert.equal(ys[0],0,'arrival cannot jump to an offset');assert.equal(ys.at(-1),0);
-  const peaks=ys.filter((y,i)=>i>0&&i<ys.length-1&&y<ys[i-1]&&y<ys[i+1]);
-  assert.equal(peaks.length,2);assert.ok(Math.abs(peaks[0])>Math.abs(peaks[1])*3);
-  assert.ok(Math.min(...ys)>=-8&&Math.max(...ys)===0,'the scene never crosses its floor');
-  assert.equal(landing.options.duration,360);
-  const count=landings().length;f.track.emit('scrollend');await f.flush();
-  assert.equal(landings().length,count,'duplicate settlement cannot replay the landing');
-});
-
-test('arrival begins on the next render frame without waiting for scrollend or the idle timer',async()=>{
-  const f=await galleryFixture();f.flushFrames();f.scrollWrites.length=0;
-  f.track.scrollTop=4*H-4;f.track.emit('scroll');f.flushFrames();
-  assert.equal(f.animations.filter(a=>a.target.className==='gallery-landing').length,0);
-  f.track.scrollTop=4*H;f.track.emit('scroll');f.flushFrames();
-  assert.equal(f.animations.filter(a=>a.target.className==='gallery-landing').length,1);
-  assert.equal(f.dialog.dataset.project,'autolister');
-  assert.equal(f.scrollWrites.length,0,'early visual handoff cannot relocate the native track');
-});
-
-test('input or renewed movement invalidates an arrival queued for the next paint',async()=>{
-  for(const interrupt of ['touch','move','resize']) {
-    const f=await galleryFixture();f.flushFrames();
-    f.track.scrollTop=4*H;f.track.emit('scroll');
-    f.frames.splice(0).forEach(fn=>fn());
-    if(interrupt==='touch')f.track.emit('touchstart');
-    else if(interrupt==='resize')f.setViewport(390,844);
-    else f.track.scrollTop=4*H+24;
-    f.flushFrames();
-    assert.equal(f.animations.filter(a=>a.target.className==='gallery-landing').length,0,interrupt);
-    assert.equal(f.dialog.dataset.project,'doodle',interrupt);
+  const nodes=[...f.track.children],initialAnimations=f.animations.length;
+  for(const slot of [6,2,6,2]) {
+    f.track.emit('wheel');f.track.scrollTop=slot*H;f.track.emit('scroll');f.flushFrames();
+    assert.equal(f.track.scrollTop,slot*H,'native motion finishes before relocation');
+    f.track.emit('scrollend');await f.runSettlement();f.flushFrames();
+    assert.equal(f.track.scrollTop,centerSlot(slot,3)*H);
+    assert.equal(f.dialog.dataset.project,nodes[slot].dataset.project);
+    assert.equal(f.animations.length,initialAnimations,'identical copies cannot start decorative motion');
+    assert.ok(f.track.children.every((node,index)=>node===nodes[index]));
   }
 });
 
-test('releasing a finger on an already snapped new page starts its landing without an idle wait',async()=>{
-  const f=await galleryFixture();f.flushFrames();
-  f.track.emit('touchstart');f.track.scrollTop=4*H;f.track.emit('scroll');f.flushFrames();
-  assert.equal(f.animations.filter(a=>a.target.className==='gallery-landing').length,0);
-  f.window.emit('touchend',{touches:[]});f.flushFrames();
-  assert.equal(f.animations.filter(a=>a.target.className==='gallery-landing').length,1);
-});
-
-test('a loop reset transfers a running landing at its current time instead of replaying it',async()=>{
-  const f=await galleryFixture();f.flushFrames();f.scrollWrites.length=0;
-  f.track.scrollTop=5*H;f.track.emit('scrollend');await f.flush();
-  f.track.emit('wheel');
-  f.track.scrollTop=6*H;f.track.emit('scroll');f.flushFrames();
-  const before=f.animations.filter(a=>a.target.className==='gallery-landing').at(-1);
-  assert.equal(f.track.scrollTop,6*H,'no relocation while native settlement is pending');
-  before.currentTime=120;
-  f.track.emit('scrollend');await f.flush();
-  const after=f.animations.filter(a=>a.target.className==='gallery-landing').at(-1);
-  assert.equal(f.track.scrollTop,3*H);
-  assert.notEqual(after,before);
-  assert.equal(after.currentTime,120,'the identical middle copy keeps the same animation phase');
-  assert.equal(before.cancelled,true);
-});
-
-test('new input interrupts the landing without moving the native snap targets',async()=>{
-  for(const input of ['touchstart','wheel','keydown','resize']){
-    const f=await galleryFixture();f.flushFrames();
-    f.track.scrollTop=4*H;f.track.emit('scrollend');await f.flush();
-    const landing=f.animations.find(a=>a.target.className==='gallery-landing');assert.ok(landing);
-    const writes=f.scrollWrites.length;
-    if(input==='resize')f.setViewport(390,844);
-    else f.track.emit(input,input==='keydown'?{key:'ArrowDown',target:{closest(){return null;}},preventDefault(){}}:{});
-    assert.equal(landing.cancelled,true,`${input} must interrupt the landing`);
-    if(input!=='keydown')assert.equal(f.scrollWrites.length,writes);
-  }
-});
-
-test('same-page returns, viewport fitting, and reduced motion do not add landing effects',async()=>{
-  for(const reduced of [false,true]){
-    const f=await galleryFixture({reduced});f.flushFrames();
-    f.track.emit('touchstart');f.track.scrollTop=3.2*H;f.track.emit('scroll');f.flushFrames();
-    f.track.scrollTop=3*H;f.window.emit('touchend',{touches:[]});f.track.emit('scrollend');await f.flush();
-    assert.equal(f.animations.filter(a=>a.target.className==='gallery-landing').length,0);
-    if(reduced){f.track.scrollTop=4*H;f.track.emit('scrollend');await f.flush();assert.equal(f.animations.length,0);}
-    else {f.setViewport(390,844);f.flushFrames();f.track.scrollTop=4*H;f.track.emit('scrollend');await f.flush();assert.equal(f.animations.filter(a=>a.target.className==='gallery-landing').length,0);}
+test('keyboard paging retains native smooth scroll and respects reduced motion',async()=>{
+  for(const reduced of [false,true]) {
+    const f=await galleryFixture({reduced});f.flushFrames();await f.runSettlement();
+    const initialAnimations=f.animations.length;
+    let prevented=false;
+    f.track.emit('keydown',{key:'PageDown',target:{closest(){return null;}},preventDefault(){prevented=true;}});
+    assert.equal(prevented,true);
+    assert.equal(f.scrollOptions.at(-1).behavior,reduced?'instant':'smooth');
+    assert.equal(f.scrollOptions.at(-1).top,4*H);
+    f.track.emit('scrollend');await f.runSettlement();
+    assert.equal(f.dialog.dataset.project,'autolister');
+    assert.equal(f.animations.length,initialAnimations);
   }
 });
 
