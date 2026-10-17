@@ -294,8 +294,8 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-o
   filter: brightness(calc(1 - var(--key-depth, 0) * .1));
 }
 .key:not(.is-down):hover .keycap::before { filter: brightness(calc(1.025 - var(--key-depth, 0) * .125)); }
+.key:focus,
 .key:focus-visible { outline: 0; }
-.key:focus-visible::after { content: ''; position: absolute; inset: 3px; border: 1px solid #f8efe5a6; border-radius: 12px; pointer-events: none; }
 .key-label {
   position: absolute;
   top: 0;
