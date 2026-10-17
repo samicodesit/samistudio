@@ -2,9 +2,11 @@ import { getProject } from './project-data.mjs';
 import { projectAssets, allowPrefetch } from './gallery-loading.mjs';
 import { gallerySequence, centerSlot, settledSlot } from './gallery-navigation.mjs';
 import { terminalPolygon, projectFromHash, stageLayout, coverStageLayout, coverGalleryLayout, portraitCoverLayout } from './gallery-geometry.mjs';
+import { motionPreference } from './motion-preferences.mjs';
 
 const assetUrl = path => new URL(path, import.meta.url).href;
-const compactQuery = '(max-width: 900px) and (orientation: portrait), (max-width: 599px)';
+// The aperture follows the terminal photograph, not the project scene layout.
+const terminalQuery = '(max-width: 1023px)';
 const splitQuery = '(orientation: landscape) and (min-width: 600px) and (max-width: 1180px), (orientation: landscape) and (max-width: 1366px) and (min-height: 900px)';
 const fullScreen = 'polygon(0% 0%,100% 0%,100% 100%,0% 100%)';
 
@@ -20,7 +22,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
   const summaries = rows.map(row => row.querySelector('.work-summary'));
   const summaryCopy = summaries.map(summary => summary?.textContent);
   const status = document.querySelector('#work-status');
-  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const reducedMotion = motionPreference;
   const template = document.querySelector('#gallery-page-template');
   const cache = new Map();
   const panels = [];
@@ -323,10 +325,10 @@ export function initProjectGallery({ onReturn, onSelect }) {
     return terminalPolygon({ left: parseFloat(style.getPropertyValue('--scene-left')) || 0,
       top: parseFloat(style.getPropertyValue('--scene-top')) || 0,
       scale: parseFloat(style.getPropertyValue('--scene-scale')) || 1,
-      mobile: matchMedia(compactQuery).matches }, { width: innerWidth, height: innerHeight });
+      mobile: matchMedia(terminalQuery).matches }, { width: innerWidth, height: innerHeight });
   }
 
-  function stopMovement() { reveal?.cancel(); reveal = null; movement.forEach(animation => animation.cancel()); movement = []; }
+  function stopMovement() { window.finishEntryPreview?.(); reveal?.cancel(); reveal = null; movement.forEach(animation => animation.cancel()); movement = []; }
   function clearLoading() { status.textContent = ''; rows.forEach((row,index) => { row.removeAttribute('aria-busy'); if (summaries[index]) summaries[index].textContent = summaryCopy[index]; }); }
 
   async function open(id, fromHistory = false) {
@@ -377,7 +379,7 @@ export function initProjectGallery({ onReturn, onSelect }) {
     // Entrance motion is decorative. Native scrolling is ready immediately.
     dialog.dataset.phase = 'open';
     queueSettlement();
-    if (!reducedMotion.matches && !wasOpen) {
+    if (window.playEntryPreview && !wasOpen) { movement = window.playEntryPreview({dialog,track,panel:panels[start],aperture:aperture(),reducedMotion:reducedMotion.matches}); } else if (!reducedMotion.matches && !wasOpen) {
       const easing = 'cubic-bezier(.2,.75,.12,1)';
       reveal = dialog.animate([{opacity:0},{opacity:1}],{duration:420,easing});
       const panel = panels[start];
@@ -394,13 +396,18 @@ export function initProjectGallery({ onReturn, onSelect }) {
     dialog.dataset.phase = 'closing';
     touching = false; layoutPending = false;
     clearTimeout(settleTimer);
-    stopMovement(); clearLoading(); onReturn();
-    if (!reducedMotion.matches) {
+    stopMovement(); clearLoading(); await onReturn();
+    if(token!==pending)return;
+    if (window.playExitPreview) {
+      movement = window.playExitPreview({dialog,track,panel:panels[currentSlot],aperture:aperture(),reducedMotion:reducedMotion.matches});
+      await Promise.allSettled(movement.map(animation=>animation.finished));
+    } else if (!reducedMotion.matches) {
       reveal = dialog.animate([{clipPath:fullScreen},{clipPath:aperture()}],{duration:480,easing:'cubic-bezier(.55,0,.7,.3)'});
       try { await reveal.finished; } catch { /* Interrupted by resize. */ }
     }
     if (token !== pending) return;
     dialog.close(); dialog.dataset.phase = 'closed'; active = null; currentSlot = -1;
+    onReturn();
     rows[selected].focus({preventScroll:true});
   }
 
@@ -466,6 +473,8 @@ export function initProjectGallery({ onReturn, onSelect }) {
   reducedMotion.addEventListener('change',()=>{stopMovement();requestLayout();});
   const observer=new ResizeObserver(requestLayout); observer.observe(headerContent);
   document.fonts.ready.then(requestLayout);
+  window.resetMotionStudy = () => { ++pending; stopMovement(); clearTimeout(settleTimer); clearLoading(); if(dialog.open)dialog.close(); dialog.dataset.phase='closed'; active=null;currentSlot=-1;touching=false;layoutPending=false;onReturn(); history.replaceState(null,'',location.pathname+location.search); };
+  window.openMotionStudy = async id => { window.resetMotionStudy(); await new Promise(requestAnimationFrame); return open(id); };
   select(0);
   return {
     openProject(id){return open(id);},

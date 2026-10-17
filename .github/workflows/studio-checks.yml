@@ -59,6 +59,9 @@ jobs:
       - name: Check browser module syntax
         run: |
           node --input-type=module --check < assets/studio.js
+          node --check assets/motion-preferences.mjs
+          node --check motion-study.mjs
+          node --check entry-paths.mjs
           node --check assets/secret-terminal.mjs
           node --check assets/key-spring.mjs
           node --check assets/terminal-controls.mjs

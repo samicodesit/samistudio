@@ -3,6 +3,7 @@ import { projectiveMatrix as quadMatrix, fitMobileTerminal, fitDesktopTerminal }
 import { initProjectGallery } from './project-gallery.js';
 import { initTerminalControls, initTerminalReflection } from './terminal-controls.mjs';
 import { initSecretTerminal } from './secret-terminal.mjs';
+import { motionPreference } from './motion-preferences.mjs';
 
 (() => {
   'use strict';
@@ -13,7 +14,7 @@ import { initSecretTerminal } from './secret-terminal.mjs';
   const scenePhoto = document.querySelector('.scene-photo');
   const display = document.querySelector('#terminal-display');
   const keys = [...document.querySelectorAll('.key')];
-  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const reducedMotion = motionPreference;
   const screens = [...document.querySelectorAll('.screen')];
   const reflectionMask=document.createElement('span');
   reflectionMask.className='terminal-reflection';reflectionMask.setAttribute('aria-hidden','true');
@@ -51,7 +52,20 @@ import { initSecretTerminal } from './secret-terminal.mjs';
     mechanisms.forEach(mechanism=>mechanism.syncSelection());
   };
   gallery = initProjectGallery({
-    onReturn:()=>{showView('work');layout();},
+    onReturn:async()=>{
+      showView('work');
+      projectDialog.dataset.preparingReturn='true';
+      try{
+        layout();
+        // A rotated device may need the other photograph. Keep the project
+        // visible until the terminal has decoded and fitted its return pose.
+        const deadline=performance.now()+4000;
+        while(projectDialog.open&&pendingSceneAsset&&performance.now()<deadline){
+          await new Promise(resolve=>setTimeout(resolve,16));
+        }
+        layout();
+      }finally{delete projectDialog.dataset.preparingReturn;}
+    },
     onSelect:(index,total)=>terminalControls.projectChanged(index,total),
   });
   secretTerminal=initSecretTerminal({display,reducedMotion,
@@ -269,7 +283,7 @@ import { initSecretTerminal } from './secret-terminal.mjs';
   }
 
   function layout() {
-    if (!experience || (projectDialog.open && projectDialog.dataset.phase !== 'closing')) return;
+    if (!experience || (projectDialog.open && projectDialog.dataset.preparingReturn !== 'true')) return;
     const width = experience.clientWidth;
     const height = experience.clientHeight;
     const mobile = matchMedia('(max-width: 1023px)').matches;

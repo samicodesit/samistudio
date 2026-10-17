@@ -56,7 +56,7 @@ async function galleryFixture({viewportHeight=711, trackHeight=viewportHeight, e
   Object.defineProperty(track,'scrollHeight',{get:()=>track.children.length*track.clientHeight+extraTail});
   const window=new Element(); window.visualViewport={scale:1,height:viewportHeight,addEventListener(){}};
   const context={document,window,navigator:{connection:{effectiveType:'4g'}},innerWidth:393,innerHeight:711,
-    URL,console, getProject,projectAssets,allowPrefetch,gallerySequence,centerSlot,settledSlot,...geometry,
+    URL,console, motionPreference:{matches:reduced,addEventListener(){}},getProject,projectAssets,allowPrefetch,gallerySequence,centerSlot,settledSlot,...geometry,
     matchMedia:query=>({matches:query.includes('prefers-reduced-motion') ? reduced : query.includes('orientation: portrait') ? selectedLayout==='tablet' : query.includes('orientation: landscape') ? selectedLayout==='landscape' : query.includes('min-aspect-ratio: 2/1') ? selectedLayout==='panorama' : query.includes('min-aspect-ratio') && selectedLayout==='wide',addEventListener(){}}),
     getComputedStyle:()=>({getPropertyValue:()=>''}),
     requestAnimationFrame:fn=>{frames.push(fn);return frames.length;},

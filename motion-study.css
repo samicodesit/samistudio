@@ -1,0 +1,25 @@
+/* The camera moves inside a stationary viewport. Its enlarged scene must
+   never enlarge the document or give focus restoration an offscreen target. */
+body > main{position:fixed;inset:0;overflow:clip;contain:paint;}
+.entry-fx {position:absolute;inset:0;z-index:20;pointer-events:none;overflow:hidden;}
+.entry-sheen {position:absolute;inset:-60%;background:linear-gradient(110deg,transparent 37%,#fff7e1 47%,#fffdf3 49%,transparent 57%);mix-blend-mode:screen;pointer-events:none;}
+.entry-lcd-preview {position:absolute;inset:0;transform-origin:0 0;pointer-events:none;}
+.entry-signal-band {position:absolute;inset:0;width:100%;height:100%;opacity:0;pointer-events:none;}
+.entry-scan {position:absolute;inset:0;background:repeating-linear-gradient(to bottom,#f9f0d5 0 1px,transparent 1px 4px);mix-blend-mode:screen;pointer-events:none;}
+.gallery-shell { clip-path: polygon(0% 0%,100% 0%,100% 100%,0% 100%); }
+.gallery-chrome .gallery-wordmark,.gallery-chrome .gallery-back{will-change:opacity;}
+.gallery-panel .project-caption > h2,.gallery-panel .project-caption > p,.gallery-panel .project-link{translate:0 0;}
+.gallery-panel[aria-hidden="false"] .project-caption > h2,.gallery-panel[aria-hidden="false"] .project-caption > p,.gallery-panel[aria-hidden="false"] .project-link{will-change:opacity;}
+.motion-control{position:fixed;z-index:30;right:max(24px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:36px;padding:0;border:0;border-radius:0;background:none;box-shadow:none;color:#3a3236;font:11px/1.2 Inter,sans-serif;letter-spacing:.01em;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.motion-control:hover{opacity:.75;}
+.motion-control:focus-visible{outline:1px solid currentColor;outline-offset:3px;}
+.motion-label{white-space:nowrap;}
+.motion-glyph{display:block;flex:0 0 13px;width:13px;height:13px;stroke:currentColor;stroke-width:1.2;stroke-linecap:round;stroke-linejoin:round;}
+.motion-slash{opacity:0;}
+.motion-control[data-state="off"]{color:#5e2228;}
+.motion-control[data-state="off"] .motion-slash{opacity:1;}
+html[data-motion="reduce"] .experience{transition-duration:180ms;}
+html[data-motion="reduce"] .terminal-reflection{display:none;}
+html[data-motion="reduce"] .terminal-loader,html[data-motion="reduce"] .gallery-scene-loader{animation:none!important;}
+@media(min-width:1181px){.motion-control{right:32px;bottom:16px;}}
+@media(forced-colors:active){.motion-control{color:ButtonText;}}
