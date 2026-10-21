@@ -1,0 +1,161 @@
+[
+  {
+    "id": "birthday-dog-simple",
+    "subject": "birthday-dog",
+    "detailLevel": "simple",
+    "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/birthday-balloon-dog.webp",
+    "sourceSha256": "8b6d02220c8066f22944cb44d05467d84667bfe48f618a97e9eaa6e52336837e",
+    "publishedImage": "/ideas/birthday-balloon-dog.webp",
+    "publishedSha256": "8b6d02220c8066f22944cb44d05467d84667bfe48f618a97e9eaa6e52336837e",
+    "bytes": 160832,
+    "thumbnails": [
+      {
+        "width": 320,
+        "bytes": 6530,
+        "file": "/ideas/thumbs/birthday-dog-simple-320.webp",
+        "sha256": "8511bac9e3c6295e996811cdf78d43aeb16ea58023150515f2f0c073f6ede875"
+      },
+      {
+        "width": 640,
+        "bytes": 16240,
+        "file": "/ideas/thumbs/birthday-dog-simple-640.webp",
+        "sha256": "8f9520dae8726d5c9ebcca17ebbd7c00a8341901541383fd28392f88ca996b73"
+      }
+    ],
+    "provenance": "Existing published gallery example, retained unchanged",
+    "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+    "originalPreserved": true,
+    "width": 1024,
+    "height": 1024,
+    "prompts": {
+      "en": "A cheerful dog holding one birthday balloon",
+      "nl": "Een vrolijke hond met \u00e9\u00e9n verjaardagsballon",
+      "de": "Ein fr\u00f6hlicher Hund h\u00e4lt einen Geburtstagsballon",
+      "fr": "Un chien joyeux tenant un ballon d\u2019anniversaire",
+      "es": "Un perro alegre sujetando un globo de cumplea\u00f1os",
+      "pt-br": "Um cachorro alegre segurando um bal\u00e3o de anivers\u00e1rio",
+      "it": "Un cane allegro con un palloncino di compleanno",
+      "ja": "\u8a95\u751f\u65e5\u306e\u98a8\u8239\u3092\u3072\u3068\u3064\u6301\u3064\u3046\u308c\u3057\u305d\u3046\u306a\u72ac",
+      "ko": "\uc0dd\uc77c \ud48d\uc120 \ud558\ub098\ub97c \ub4e0 \uc2e0\ub09c \uac15\uc544\uc9c0",
+      "ar": "\u0643\u0644\u0628 \u0633\u0639\u064a\u062f \u064a\u062d\u0645\u0644 \u0628\u0627\u0644\u0648\u0646 \u0639\u064a\u062f \u0645\u064a\u0644\u0627\u062f \u0648\u0627\u062d\u062f\u064b\u0627"
+    },
+    "captions": {
+      "en": "A birthday balloon",
+      "nl": "Een verjaardagsballon",
+      "de": "Ein Geburtstagsballon",
+      "fr": "Un ballon d\u2019anniversaire",
+      "es": "Un globo de cumplea\u00f1os",
+      "pt-br": "Um bal\u00e3o de anivers\u00e1rio",
+      "it": "Un palloncino di compleanno",
+      "ja": "\u8a95\u751f\u65e5\u306e\u98a8\u8239",
+      "ko": "\uc0dd\uc77c \ud48d\uc120",
+      "ar": "\u0628\u0627\u0644\u0648\u0646 \u0639\u064a\u062f \u0645\u064a\u0644\u0627\u062f"
+    }
+  },
+  {
+    "id": "birthday-dog-detailed",
+    "subject": "birthday-dog",
+    "detailLevel": "detailed",
+    "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/flare-refinement-2026-10-04/refined-birthday-detailed.png",
+    "sourceSha256": "1bae34bad35f839596715bc99243467db6daa436e15c6d79410d0ca5f9fff007",
+    "publishedImage": "/ideas/birthday-dog-detailed.webp",
+    "publishedSha256": "c6ce65028378991457c02a0ad653d142b88a7ce7f0992232e8e1d6f45b2eef87",
+    "bytes": 96734,
+    "thumbnails": [
+      {
+        "width": 320,
+        "bytes": 15454,
+        "file": "/ideas/thumbs/birthday-dog-detailed-320.webp",
+        "sha256": "f648dba19f5d053150153d93bb1db20117e87c3c4c9878c9f4a972cc51921596"
+      },
+      {
+        "width": 640,
+        "bytes": 41276,
+        "file": "/ideas/thumbs/birthday-dog-detailed-640.webp",
+        "sha256": "e1685aaf5950d70cb8d6c244f012180bbaaf9824fd28e454ed60956d9d04a777"
+      }
+    ],
+    "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+    "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+    "originalPreserved": true,
+    "width": 1024,
+    "height": 1024,
+    "prompts": {
+      "en": "A cheerful dog holding one birthday balloon",
+      "nl": "Een vrolijke hond met \u00e9\u00e9n verjaardagsballon",
+      "de": "Ein fr\u00f6hlicher Hund h\u00e4lt einen Geburtstagsballon",
+      "fr": "Un chien joyeux tenant un ballon d\u2019anniversaire",
+      "es": "Un perro alegre sujetando un globo de cumplea\u00f1os",
+      "pt-br": "Um cachorro alegre segurando um bal\u00e3o de anivers\u00e1rio",
+      "it": "Un cane allegro con un palloncino di compleanno",
+      "ja": "\u8a95\u751f\u65e5\u306e\u98a8\u8239\u3092\u3072\u3068\u3064\u6301\u3064\u3046\u308c\u3057\u305d\u3046\u306a\u72ac",
+      "ko": "\uc0dd\uc77c \ud48d\uc120 \ud558\ub098\ub97c \ub4e0 \uc2e0\ub09c \uac15\uc544\uc9c0",
+      "ar": "\u0643\u0644\u0628 \u0633\u0639\u064a\u062f \u064a\u062d\u0645\u0644 \u0628\u0627\u0644\u0648\u0646 \u0639\u064a\u062f \u0645\u064a\u0644\u0627\u062f \u0648\u0627\u062d\u062f\u064b\u0627"
+    },
+    "captions": {
+      "en": "A birthday balloon",
+      "nl": "Een verjaardagsballon",
+      "de": "Ein Geburtstagsballon",
+      "fr": "Un ballon d\u2019anniversaire",
+      "es": "Un globo de cumplea\u00f1os",
+      "pt-br": "Um bal\u00e3o de anivers\u00e1rio",
+      "it": "Un palloncino di compleanno",
+      "ja": "\u8a95\u751f\u65e5\u306e\u98a8\u8239",
+      "ko": "\uc0dd\uc77c \ud48d\uc120",
+      "ar": "\u0628\u0627\u0644\u0648\u0646 \u0639\u064a\u062f \u0645\u064a\u0644\u0627\u062f"
+    }
+  },
+  {
+    "id": "birthday-dog-medium",
+    "subject": "birthday-dog",
+    "detailLevel": "medium",
+    "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/flare-refinement-2026-10-04/refined-birthday-medium.png",
+    "sourceSha256": "f1618b7f7edb869ea250ae0305b024bff539a025f82b51c2a169f0d6cd20d308",
+    "publishedImage": "/ideas/birthday-dog-medium.webp",
+    "publishedSha256": "0131e7448cbade356782aba144630c1aab09bc3b1657b16291903d7691847b58",
+    "bytes": 57310,
+    "thumbnails": [
+      {
+        "width": 320,
+        "bytes": 9456,
+        "file": "/ideas/thumbs/birthday-dog-medium-320.webp",
+        "sha256": "5d5bf2cdb0dd113ea00a654b5bb15144c99003b784135955839d03b4fc2b204a"
+      },
+      {
+        "width": 640,
+        "bytes": 24160,
+        "file": "/ideas/thumbs/birthday-dog-medium-640.webp",
+        "sha256": "e67ba4ad5f9971e8ec6a105af852a0448617a5eb7ea8c5aca131c229c49f2554"
+      }
+    ],
+    "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+    "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+    "originalPreserved": true,
+    "width": 1024,
+    "height": 1024,
+    "prompts": {
+      "en": "A cheerful dog holding one birthday balloon",
+      "nl": "Een vrolijke hond met \u00e9\u00e9n verjaardagsballon",
+      "de": "Ein fr\u00f6hlicher Hund h\u00e4lt einen Geburtstagsballon",
+      "fr": "Un chien joyeux tenant un ballon d\u2019anniversaire",
+      "es": "Un perro alegre sujetando un globo de cumplea\u00f1os",
+      "pt-br": "Um cachorro alegre segurando um bal\u00e3o de anivers\u00e1rio",
+      "it": "Un cane allegro con un palloncino di compleanno",
+      "ja": "\u8a95\u751f\u65e5\u306e\u98a8\u8239\u3092\u3072\u3068\u3064\u6301\u3064\u3046\u308c\u3057\u305d\u3046\u306a\u72ac",
+      "ko": "\uc0dd\uc77c \ud48d\uc120 \ud558\ub098\ub97c \ub4e0 \uc2e0\ub09c \uac15\uc544\uc9c0",
+      "ar": "\u0643\u0644\u0628 \u0633\u0639\u064a\u062f \u064a\u062d\u0645\u0644 \u0628\u0627\u0644\u0648\u0646 \u0639\u064a\u062f \u0645\u064a\u0644\u0627\u062f \u0648\u0627\u062d\u062f\u064b\u0627"
+    },
+    "captions": {
+      "en": "A birthday balloon",
+      "nl": "Een verjaardagsballon",
+      "de": "Ein Geburtstagsballon",
+      "fr": "Un ballon d\u2019anniversaire",
+      "es": "Un globo de cumplea\u00f1os",
+      "pt-br": "Um bal\u00e3o de anivers\u00e1rio",
+      "it": "Un palloncino di compleanno",
+      "ja": "\u8a95\u751f\u65e5\u306e\u98a8\u8239",
+      "ko": "\uc0dd\uc77c \ud48d\uc120",
+      "ar": "\u0628\u0627\u0644\u0648\u0646 \u0639\u064a\u062f \u0645\u064a\u0644\u0627\u062f"
+    }
+  }
+]

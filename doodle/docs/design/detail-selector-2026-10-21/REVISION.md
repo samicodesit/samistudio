@@ -10,4 +10,4 @@ Verified actual CSS viewports: 320x568, 390x844, 768x1024 and 1440x900. The brow
 
 Verified choosing Medium updates the displayed level and image, closes the dialog, and resets aria-expanded. Native devices, translations and screen-reader behavior have not been tested in this design-only mock.
 
-Interactive review: index.html. The original two alternatives remain as reference files. Current artifacts: combined.html, combined.css, combined.js, combined-closed.png, combined-open.png and combined-layout-checks.json.
+Interactive review: index.html. Current artifacts: combined.html, combined.css, combined.js, combined-closed.png, combined-open.png and combined-layout-checks.json.
