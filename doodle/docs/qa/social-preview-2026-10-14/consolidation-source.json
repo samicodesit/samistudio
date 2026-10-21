@@ -1,0 +1,907 @@
+{
+  "base_github_commit": "9e6751cbe25e4d6097a2278d158c3dc857dd9edd",
+  "baseline_deployment": "dpl_9FMZyHBkZkJVoMRDz5T5ytHML9HW",
+  "live_source_files_recovered": 478,
+  "obsolete_pre_release_files_removed": [
+    "doodle/src/app/api/session/route.test.ts",
+    "doodle/src/app/api/session/route.ts",
+    "doodle/src/app/layout.tsx",
+    "doodle/src/app/page.tsx",
+    "doodle/src/components/unlock-form.test.tsx",
+    "doodle/src/components/unlock-form.tsx",
+    "doodle/src/lib/auth/authorize-generation.ts"
+  ],
+  "native_source": "C:\\Users\\Sami\\.codex\\worktrees\\android-doodle-packs\\samistudio\\doodle\\mobile",
+  "native_files": [
+    {
+      "path": "mobile/App.tsx",
+      "sha256": "a787d2845ee83eb86ea0024bf7d591800422c5e59c7f06d830b15435a34fd5ca"
+    },
+    {
+      "path": "mobile/expo-env.d.ts",
+      "sha256": "6d9a7b600a87cbdd871ff567bdb1ae56eaa8516d0195393f912c81e920d1b3f5"
+    },
+    {
+      "path": "mobile/vitest.config.ts",
+      "sha256": "deae0542f05bf003803e01c279a4ca494fc270917c0e65ccb02ba7f1021f056b"
+    },
+    {
+      "path": "mobile/app.config.ts",
+      "sha256": "0bd31b57113c0374c65aee3c8fd4271375394ae799b7597fb25ee354cbf02160"
+    },
+    {
+      "path": "mobile/package.json",
+      "sha256": "04b67c2b7768b28dbe7b2be4b24a4a9622759ca9b8c61f6f166e4847c2ff0793"
+    },
+    {
+      "path": "mobile/.gitignore",
+      "sha256": "339e7e7fd0196257d3b1a0f51a597e2f5e671f0f45ce213f10b5e71f4d07799c",
+      "canonical_sha256": "072355a57d8fc6e09d5d679bf432a8a5fd78e1368cc97e3e0f1ddeab37009886",
+      "change": "Expanded dependency, build-output and signing-file ignores."
+    },
+    {
+      "path": "mobile/babel.config.js",
+      "sha256": "6eedd158a3bc23960f2b2ecbd0044fecb82bce7da908d4598ca4b01639ae9933"
+    },
+    {
+      "path": "mobile/package-lock.json",
+      "sha256": "2ecd16d560600eea387fe0c32d50142dbcbecec05b11a2da6c2ef715cbb0e6ee"
+    },
+    {
+      "path": "mobile/metro.config.js",
+      "sha256": "183ff36c0cdb439a5b0faae000b023fadb17b9df112944231d234915fe3b0240"
+    },
+    {
+      "path": "mobile/index.ts",
+      "sha256": "0fabbca7f68e857dbc87a18c043b1b47d8fec1ace9ecdbba7ec508975e2028c4"
+    },
+    {
+      "path": "mobile/tsconfig.json",
+      "sha256": "053f51d90b0624f14e03b226a728365b613577555c25093132a33b9402cf5ed2"
+    },
+    {
+      "path": "mobile/plugins/withDoodleConfigurationChanges.js",
+      "sha256": "237251d26438c2001cd8fd617f799131b4e4272dd18042c104429c92764d7c7b"
+    },
+    {
+      "path": "mobile/plugins/withDoodleLocalBuildTypes.js",
+      "sha256": "cb58a8f11d0f59cec09f43b33ac453d5aa9b86c9a5285792f35f12ea5a45d3a2"
+    },
+    {
+      "path": "mobile/plugins/withDoodleReleaseSigning.js",
+      "sha256": "2a2e25656ff7ff5436b82f755d4b80d064141fb568845b6d6496a1976fb5ab52"
+    },
+    {
+      "path": "mobile/plugins/withDoodleSharedBundleInputs.js",
+      "sha256": "1fd39400ba5dcd577b04b1be43d5a4462e1bfe890deb4feed79e83539185de9e"
+    },
+    {
+      "path": "mobile/modules/doodle-photo/expo-module.config.json",
+      "sha256": "69660a11eb2e026ee91f016af8e06b39d88cb012d6b516536fdff1eea7b6ee03"
+    },
+    {
+      "path": "mobile/modules/doodle-photo/index.ts",
+      "sha256": "d30ca08911b69e9e9156d174bc210587e5398a9576e3dbebaca679aa4942e946"
+    },
+    {
+      "path": "mobile/modules/doodle-photo/android/build.gradle",
+      "sha256": "94eef2a9a26c6614e68fee6e1ed4ecf8238cc3e51c6d8b8e1263c0c1de6fdf21"
+    },
+    {
+      "path": "mobile/modules/doodle-photo/android/src/main/java/expo/modules/doodlephoto/DoodlePhotoModule.kt",
+      "sha256": "401a629baff446cca241061c59dd6d668ec85985c67f3cc0258ebe2c27ee2eb7"
+    },
+    {
+      "path": "mobile/modules/doodle-photo/android/src/test/java/expo/modules/doodlephoto/WhiteThumbnailTest.kt",
+      "sha256": "f0da6557212e5c548ca9d23b95c9189fbeae593f16b3d272121fa64e5247e1ac"
+    },
+    {
+      "path": "mobile/scripts/build-fixture.mjs",
+      "sha256": "2e704abd13140ef0e33aa0090c8091a3461a99e358f71cd9962f2e621f91ba9c"
+    },
+    {
+      "path": "mobile/android/.gitignore",
+      "sha256": "ed2e83b6a71e3b048dc2681be0bdf534a5ec81d4eded17012e78a6b252422465"
+    },
+    {
+      "path": "mobile/android/build.gradle",
+      "sha256": "b2cb52734a4f45c6fda73fd98a749545a295742b2e4a82fc166c5eb2b91cbede"
+    },
+    {
+      "path": "mobile/android/gradle.properties",
+      "sha256": "e6508010ca86043dde0f943690e8114f5a8848cd338a981fc210ae17d6d76c8e"
+    },
+    {
+      "path": "mobile/android/gradlew",
+      "sha256": "fb68debc1b1acf8ec55dc0d5e5495e1dedd0bd6b61f304bee61613eeb2bd9b92"
+    },
+    {
+      "path": "mobile/android/gradlew.bat",
+      "sha256": "982f1b2979dd2d13505c11e92192ab43eef338242ca61587f86f8d7fbc86f67b"
+    },
+    {
+      "path": "mobile/android/settings.gradle",
+      "sha256": "089860db6f8847b24fa7d25fcd45510af717f5b7eb37507849f6041b6f6fec59"
+    },
+    {
+      "path": "mobile/android/app/build.gradle",
+      "sha256": "ab571ac3b603ed765bdeef71e48e637bed8ed9829992bee9459048487384d8e4"
+    },
+    {
+      "path": "mobile/android/app/proguard-rules.pro",
+      "sha256": "8bd4d7b69a1d78e8322b459b5e8d48234adce7481df04da34c0140d52ffb367a"
+    },
+    {
+      "path": "mobile/android/app/src/debug/AndroidManifest.xml",
+      "sha256": "fb1795032c764d975376e1612ab7022058eca2268a45efbe731a47a5d3ac0f60"
+    },
+    {
+      "path": "mobile/android/app/src/debugOptimized/AndroidManifest.xml",
+      "sha256": "fb1795032c764d975376e1612ab7022058eca2268a45efbe731a47a5d3ac0f60"
+    },
+    {
+      "path": "mobile/android/app/src/main/AndroidManifest.xml",
+      "sha256": "0a7d529593b4d7c15e96914731e36f927c629f03d825a751df167f93e862e468"
+    },
+    {
+      "path": "mobile/android/app/src/main/java/nl/samistudio/doodle/MainActivity.kt",
+      "sha256": "04583850bd3425f59603049b0b14dd5e208b84ed6cd1bef355bf25ed87ba5d23"
+    },
+    {
+      "path": "mobile/android/app/src/main/java/nl/samistudio/doodle/MainApplication.kt",
+      "sha256": "5b9e7fa859984925bac596b42ebbcfd301bd00bbb885c764ab00e51be8b3ca1c"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/drawable/ic_launcher_background.xml",
+      "sha256": "51fca95679d075ddbe2b9fe7ad2efb5ef545c5770a9ad6cafe8bf610c18c67be"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/drawable/rn_edit_text_material.xml",
+      "sha256": "738e3aaad53180caba1419a6d5db8465a0742662fe59a4bbaf05f1061cbc3390"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/drawable-hdpi/splashscreen_logo.png",
+      "sha256": "721c895579cb08ec4c9a0fe7dadafe9a97c33ef758d3578ad5e8b540de59f974"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/drawable-mdpi/splashscreen_logo.png",
+      "sha256": "f84b9b17a4a1c7d7dd840cd272c07a6c3fd66d5a9826b64bb53facb6f176bc24"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/drawable-xhdpi/splashscreen_logo.png",
+      "sha256": "e1c5250e339add5ed7849cb0859d052edb9781abb91db049e68ae3a4059247d7"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/drawable-xxhdpi/splashscreen_logo.png",
+      "sha256": "23d97ccb41a821ee345b2c5bb0c9bdab730a751a9227925acbf0af021dc38a9b"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/drawable-xxxhdpi/splashscreen_logo.png",
+      "sha256": "be9fac5c4cda48c41dce592288c486524bba3e4ca7fa00c0a04a46928154b5bf"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/alexandria_bold.ttf",
+      "sha256": "9cb49d9bd1c725fb03d16db436f5745384b7ecc679845b5b6d2c157fd636c11a"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/alexandria_regular.ttf",
+      "sha256": "8b854acb2f34ebbda5d505a5ffa92f6270210384c868c4a8f8e2c2ded89af7b4"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/alexandria_semi_bold.ttf",
+      "sha256": "2878abbd109bc2bd128747f769a13468d3d4d88977efc51b399a4e6058b6bb83"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/bricolage_grotesque_bold.ttf",
+      "sha256": "a940c95f2015e830cb5cb29269a13601e3956b8318223a3560a5c8096e21c4cc"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/bricolage_grotesque_regular.ttf",
+      "sha256": "0c62f2daa4a0604c700a155106d098a426398a3da775b900ba8c69fb5ef6ef9a"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/bricolage_grotesque_semi_bold.ttf",
+      "sha256": "a4c5ae7f8cade5a1b2b8372466fe410089efbc8933b1995d3bd343ad37c238f6"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/ibm_plex_sans_bold.ttf",
+      "sha256": "f377e8456fe1faa7135ae1aaee0d90184ac7e4f06a070edf8386504b4cc243f6"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/ibm_plex_sans_regular.ttf",
+      "sha256": "3ff755c69b95f5db6b65fea40038be3cbcaf5870a304771631ec63eef9da0e97"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/ibm_plex_sans_semi_bold.ttf",
+      "sha256": "1ebdf946b02fd33a9d2984c650ca0e9538abe0adbc4716ded7dc219890935e41"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/xml_alexandria.xml",
+      "sha256": "187b922e540a4729abfeca819470226276f6dbf2f54e1413501524c50007a22f"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/xml_bricolage_grotesque.xml",
+      "sha256": "d2de19af4613d053efff9556d97beb4a83e84ae3b7201b6e8f06c87e2ed18a33"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/font/xml_ibm_plex_sans.xml",
+      "sha256": "13a64e9677910205a13a1e30fa23f53ef438f4d4fe7c4553f9465f1d39f3e1e6"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml",
+      "sha256": "03d70962a0beea2bb6ab1a838b015d90da6c33adb045ff85f7b198aca70df08d"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml",
+      "sha256": "03d70962a0beea2bb6ab1a838b015d90da6c33adb045ff85f7b198aca70df08d"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-hdpi/ic_launcher.webp",
+      "sha256": "b97dea07d644cea8a5ed9f98065b3efbcd9cc1e6c75592b3cd1d6c2458ed87e9"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp",
+      "sha256": "55cb4f635bfe60d16fd26b4caa75fe86db9b699ef799967ee8c42074fe70a80a"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp",
+      "sha256": "a4323e1cab059035db846a59efb79818610dd14d62d859e96ded32faa7a007d2"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-mdpi/ic_launcher.webp",
+      "sha256": "8b8bf9bd8cca98d4f2b8e4f027690a3eaf7477b46869a86520ac6482ad1edabb"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp",
+      "sha256": "3b448e512819e2aff2c78ea326e676565a3b8e3058ada3c40565f621a7c94f10"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp",
+      "sha256": "80bc3b7f28ba0ddfc102f49025dbfc898d6ca48a9329c656499d837e6266af5e"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xhdpi/ic_launcher.webp",
+      "sha256": "342f4e56fc4bf23234065ff50fc021516d38c7795377e8431a763cee05074dab"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp",
+      "sha256": "90c2ccf6697a821f59d5e3aa86bd00dea0dc3202a24323d58f7aa67e25580bfe"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp",
+      "sha256": "f31cbd6010b8e4e8133767a89584ec3e9c928d0693b477b180fa9f44f7b650ff"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp",
+      "sha256": "daf10e9deeb8398b6887fcc1b65b10ea66ecc69fd114851267d8540edfbe1357"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp",
+      "sha256": "1e7eeea2ac463425fa8b35df172d03ccb4e68bc65e316fb23478687445c0f25b"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp",
+      "sha256": "e60d3ed830760bae633123f3ce5352187cfd7c331038cc3084db88c583a35104"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp",
+      "sha256": "8e2ed9cef9fd986371376042816ee0f86688d56d1d16e9d6b2ced362a6dc4b36"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp",
+      "sha256": "f9fcaf85cca3e83f047962cef147ca95f22e8326ba646092716f455daf47ee49"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp",
+      "sha256": "7ac9195876f5e6db08c256b8972dc5a5aa4901447f944b2c27465ef13a03511f"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/values/colors.xml",
+      "sha256": "b4ef218d6102069529f76adaa97267979f5fe818e6af6123ba3e75eda7bfa0e0"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/values/strings.xml",
+      "sha256": "869cd2ad59653b03c5c8b3cb623d2de8b0d5b71024ae138932c75f5332985c17"
+    },
+    {
+      "path": "mobile/android/app/src/main/res/values/styles.xml",
+      "sha256": "e40414258372e05336fde31cd6a59ba286f0735dcc548fec42180b59af12b0f0"
+    },
+    {
+      "path": "mobile/android/gradle/wrapper/gradle-wrapper.jar",
+      "sha256": "b3a875ddc1f044746e1b1a55f645584505f4a10438c1afea9f15e92a7c42ec13"
+    },
+    {
+      "path": "mobile/android/gradle/wrapper/gradle-wrapper.properties",
+      "sha256": "a180163249c7252412ddaee1c7adcf59f6494b1183136f690fbd9a3b8aaed00e"
+    },
+    {
+      "path": "mobile/src/app/fixture-runtime.test.ts",
+      "sha256": "76b56b4611350d745046a6a8dd308b27e2263d3b91180942113e2dab6070d823"
+    },
+    {
+      "path": "mobile/src/app/fixture-runtime.ts",
+      "sha256": "e628ad153efd83fec9af66ba7acb711b4ee2cc79f10b5be20c95c2121e092f65"
+    },
+    {
+      "path": "mobile/src/app/native-app-state.test.ts",
+      "sha256": "7ebb33d63220555eb6d18af1551b89bdbca23032ee799eb0fa3ba9f672021692"
+    },
+    {
+      "path": "mobile/src/app/native-app-state.ts",
+      "sha256": "dc49d460a5b8f9e0652e4c55d6cdb39fd8d7f6d618c7b351086cbf3abee89c8e"
+    },
+    {
+      "path": "mobile/src/app/native-runtime.ts",
+      "sha256": "e177d9a1f560601757c5ac64017b855170edd70ca3f888dd428523bddb58f204"
+    },
+    {
+      "path": "mobile/src/app/native-suggestions.test.ts",
+      "sha256": "5ead9d25149a60c35237bb6a2e0cdf79f7b4099846cc0d3a8b0735a91f659a44"
+    },
+    {
+      "path": "mobile/src/app/native-suggestions.ts",
+      "sha256": "efa13eb54b120d1a55ea0e0f92fee1a94aa4f66483c94924e9c328999e35ac3c"
+    },
+    {
+      "path": "mobile/src/app/pack-purchase-ui.test.ts",
+      "sha256": "3965f728bdd02ce574cd2d4d9d88939f5be5a0ef589be19c6ba0030d18bc7e1e"
+    },
+    {
+      "path": "mobile/src/app/pack-purchase-ui.ts",
+      "sha256": "5bb262a2dd78c3c95ce0259d843554ac4b927a0f2dc3474cf821ba3b98397913"
+    },
+    {
+      "path": "mobile/src/app/packs-photo.integration.test.ts",
+      "sha256": "0d28e15cadd7bfff3131f2fbbeebbbc284d1d42c49a8b3eff2fb8f4c376efe4a"
+    },
+    {
+      "path": "mobile/src/app/purchase-ui.test.ts",
+      "sha256": "1f0ccf7910415094217950e5702ad15401bd5dffa4da02860bad660da9c88dc5"
+    },
+    {
+      "path": "mobile/src/app/purchase-ui.ts",
+      "sha256": "d02450bbfc02a6237bf2aa2cdddddde0443857e17bb01aa48d5531967f8cf63a"
+    },
+    {
+      "path": "mobile/src/app/use-native-doodle-app.tsx",
+      "sha256": "efbc4b592ba2c87c9b594d90980e16574702a37dea5011da0ddc1f5c14a73aac"
+    },
+    {
+      "path": "mobile/src/contracts/native.ts",
+      "sha256": "c9003b2962c709c0597deb3ea3f9a27d9a3e9ac6eeebb51c068f3a700e79c86d"
+    },
+    {
+      "path": "mobile/src/platform/app-integrity.test.ts",
+      "sha256": "72dd55cf4a1bd2930e4161addcec80f058c97df5e26a8d04e97622c689cc0e95"
+    },
+    {
+      "path": "mobile/src/platform/app-integrity.ts",
+      "sha256": "8b0e8ffac1e7690b339258ad695a8942fd6ab0011b87db4d6d4c86c2377cf30d"
+    },
+    {
+      "path": "mobile/src/platform/assets.ts",
+      "sha256": "055dc6b6e230718121f34e6174b25334a3d95b9bcd74554579ee1fa91166f2ba"
+    },
+    {
+      "path": "mobile/src/platform/crypto.ts",
+      "sha256": "0e0e22ede6678c1dc6a9820befd18b22ab9de640754ecb0430c60d6834cea759"
+    },
+    {
+      "path": "mobile/src/platform/diagnostics.test.ts",
+      "sha256": "c2d94cc0ae7248f8a2b8d642ca7ab7b75fb0addff827072c6da508445689d22c"
+    },
+    {
+      "path": "mobile/src/platform/diagnostics.ts",
+      "sha256": "ecd8ea02e40ad7e07f2f2912d154401ef7f83f4fe981022c9c2e9d98ce1a15db"
+    },
+    {
+      "path": "mobile/src/platform/fixture-gate.test.ts",
+      "sha256": "d84c0c2761d82b1852b3fa92f9ec9bae7f3d437228405b1fb348e1bb574ac98c"
+    },
+    {
+      "path": "mobile/src/platform/fixture-gate.ts",
+      "sha256": "8bf0320c2c07ce46ae0536de462efcfaef6b82b63aad8e13de78196855df2015"
+    },
+    {
+      "path": "mobile/src/platform/fonts.ts",
+      "sha256": "bbecb30f676738ccf20e27c93f9ba5602625c36a215cd3ced68ac3b815bf58d1"
+    },
+    {
+      "path": "mobile/src/platform/google-sign-in.ts",
+      "sha256": "c5878c23068e00f7c95f49dcee4c882553bd2bb10241ce8d8f5cd37c23159db2"
+    },
+    {
+      "path": "mobile/src/platform/iap.ts",
+      "sha256": "0214388fec0b8115f6285931c9aa966e1f3599b155fa923788972ab47b2233de"
+    },
+    {
+      "path": "mobile/src/platform/localization.ts",
+      "sha256": "c1cd87d0e8d02a39b47d6d7c5efa152a4a8d1af122f8b1880888117bdf78ac63"
+    },
+    {
+      "path": "mobile/src/platform/media.ts",
+      "sha256": "e4f76609c21d74f62f66a0d2ab93dc9972b8ecc07980ca5b58918653a020d416"
+    },
+    {
+      "path": "mobile/src/platform/photo-permissions.test.ts",
+      "sha256": "1f86ebaac6987e0a9f7268d3fbbdadd19871ba1c73b411d5637a16af1ab23776"
+    },
+    {
+      "path": "mobile/src/platform/photo-picker.test.ts",
+      "sha256": "2d43c0a577c500eb02d0e5a2020ca78e544c9ac37d59c7fdc6b7bee606dbda1e"
+    },
+    {
+      "path": "mobile/src/platform/photo-picker.ts",
+      "sha256": "1673183ce88610669e3ab787291e380109389d4e2ba418a319a3d4fd22e8e87f"
+    },
+    {
+      "path": "mobile/src/platform/report.ts",
+      "sha256": "aabaa8cdda4b7df9930b41ba45a1696f2d36ffe219801a130db049f86336d536"
+    },
+    {
+      "path": "mobile/src/platform/runtime-config.ts",
+      "sha256": "06279839735e75dd2142c280f454cf94fc0d70f67e125b9792e7cc4babdebec7"
+    },
+    {
+      "path": "mobile/src/platform/secure-store.ts",
+      "sha256": "a03bf063ec00b8619ab8bf6257bbf3201b77b2152350cc454ace3abb1993a7d8"
+    },
+    {
+      "path": "mobile/src/services/api-client.test.ts",
+      "sha256": "68ce25b7b6f511f63ff75c3dfe664fefa92b3fcc08915807e16ff67646590064"
+    },
+    {
+      "path": "mobile/src/services/api-client.ts",
+      "sha256": "02149b88952080814e007f661ec8a1a16364987409e5dd20a582f06fc100ee81"
+    },
+    {
+      "path": "mobile/src/services/auth.test.ts",
+      "sha256": "07b6ea1a668f3371a4282399c89be4b28dbaabc00304185e7eeedd60260862a2"
+    },
+    {
+      "path": "mobile/src/services/auth.ts",
+      "sha256": "74f4bcf07197e7b5832ef2e398e479eb96cb50d468afd85f98cc4a3654c8dc70"
+    },
+    {
+      "path": "mobile/src/services/billing.test.ts",
+      "sha256": "44f2259adefe2a39b557132e44d767c4d73c44cd5e1998c5e7adb692f3c5e096"
+    },
+    {
+      "path": "mobile/src/services/billing.ts",
+      "sha256": "a1dd38bb5b9aa62c23bb954eef223552fe5cec22a041f3a6412daee31e6a9f63"
+    },
+    {
+      "path": "mobile/src/services/diagnostics.test.ts",
+      "sha256": "2416d9026011efd1cf06ceabdc7b496d4ec87681ead577e3df5ff72bfa20c2f8"
+    },
+    {
+      "path": "mobile/src/services/diagnostics.ts",
+      "sha256": "50c6f6519896f157e2df1715c14818423eda60f4c0b14c97b05d50ce0abddb3b"
+    },
+    {
+      "path": "mobile/src/services/errors.ts",
+      "sha256": "4395f4b7fd92de19c457767bfa2b560e17e88bf0fc690e812b96e351a37ea859"
+    },
+    {
+      "path": "mobile/src/services/localization.test.ts",
+      "sha256": "81f8e6e8897c1613a8c9b1269c42dd1d068cf0bc66d28c15da39688e736912b7"
+    },
+    {
+      "path": "mobile/src/services/localization.ts",
+      "sha256": "963a8fd47fca730d6d354c078c8b223093735d3cc6951c28723dca1eb04cce10"
+    },
+    {
+      "path": "mobile/src/services/media.test.ts",
+      "sha256": "ed062fbe399cca0c90c42d3e2db7b4ca5d22d8a3e20b59f6b346f2c4854321eb"
+    },
+    {
+      "path": "mobile/src/services/media.ts",
+      "sha256": "26fdd262d30eccca0f878350d21472da3f029e96e0f98e38fe47ec5dfc917888"
+    },
+    {
+      "path": "mobile/src/services/pack-copy.ts",
+      "sha256": "8e00b7093d45d27619202aa146eb65a08a91f222c56eb9ce1eae0ce69fa21060"
+    },
+    {
+      "path": "mobile/src/services/report.test.ts",
+      "sha256": "98470d786a77a1b29be0d9979d840932ca3434bd8b233036bfbdae468a39c91a"
+    },
+    {
+      "path": "mobile/src/services/report.ts",
+      "sha256": "258ebe04499364f6d3c25e8270ac54711eb5ce88e0800edebc09c621fde28dda"
+    },
+    {
+      "path": "mobile/src/services/session-store.test.ts",
+      "sha256": "0d56b255cea2cc9a9dddf68d98d76802d8ae45c67d23ea68b8f02d89f006697c"
+    },
+    {
+      "path": "mobile/src/services/session-store.ts",
+      "sha256": "21f7409eb694f6df202f60a92967e56b0c429eac9834bb459fb1dd1c78dcac06"
+    },
+    {
+      "path": "mobile/src/ui/DoodleAppView.tsx",
+      "sha256": "5743706ed25b0216802e916ab0e255c9d4c6fa028d51eafb86264f5c788a2ef4"
+    },
+    {
+      "path": "mobile/src/ui/grid-composition.ts",
+      "sha256": "98155ec5474849588c3ae3b800928e3ad54d519be9d01c9dc864698ba7749543"
+    },
+    {
+      "path": "mobile/src/ui/NativeAccountSlot.tsx",
+      "sha256": "10fd2b63cc63a04f5a3cc9d5a689a935b4f3c2d89ba27a58f5e98b91ae95f07d"
+    },
+    {
+      "path": "mobile/src/ui/NativeArtExamples.tsx",
+      "sha256": "7b16b2b350478066c5e55daad1c5555ff381e0e7340606ee5fd96e46967c155f"
+    },
+    {
+      "path": "mobile/src/ui/NativeBottomTabs.tsx",
+      "sha256": "da5095c8a8dc6375295a495982f79cc21ef2a3704aa6ab3d9d460fb26d32a01e"
+    },
+    {
+      "path": "mobile/src/ui/NativeCreateView.tsx",
+      "sha256": "bdf8f919c0ec46ccddda427cd03854efcfabd576274ad85b4712ae0eb7bb5633"
+    },
+    {
+      "path": "mobile/src/ui/NativeDetailSelector.tsx",
+      "sha256": "320c5c04f35994a35eeee7fb8367257cccfb35c645126f476b35a666b980ec5d"
+    },
+    {
+      "path": "mobile/src/ui/NativeDoodleGridFrame.tsx",
+      "sha256": "68c44f32183c1961f18711211a57e6d6395144b521ffe586b7d2e1c378d53690"
+    },
+    {
+      "path": "mobile/src/ui/NativeGridOverlay.tsx",
+      "sha256": "1e3153905450ffe8d543e7d650b76ac720f021a387daaec96689bcfb5e5294e4"
+    },
+    {
+      "path": "mobile/src/ui/NativeIcon.tsx",
+      "sha256": "cb2754e053d6aef3ad37da27279fa570f74a5465a45dc9e81d69e06f109ce01a"
+    },
+    {
+      "path": "mobile/src/ui/NativeIdeasView.tsx",
+      "sha256": "861711d375cbcbb02ea0def72fc9d8021fd4848cf70f070a1e9cefd751abbc7a"
+    },
+    {
+      "path": "mobile/src/ui/NativeModals.tsx",
+      "sha256": "dd0dbd51c4fa6a2abab6940190f7c1f6c87b3a167fa407d59119ef6076fc974b"
+    },
+    {
+      "path": "mobile/src/ui/NativePackPaywall.tsx",
+      "sha256": "50cd5f70cd6d47c0601b8916390abc51d907d917a30129f52c46ba554606e2a5"
+    },
+    {
+      "path": "mobile/src/ui/NativeSettingsView.tsx",
+      "sha256": "bce2a6ed992d63565c16ba97a5c3f24e09d890d27bd451c8482479499c638c53"
+    },
+    {
+      "path": "mobile/src/ui/theme.ts",
+      "sha256": "56daa2cb89dd479bac60ed8c9fc943f9d8db38047c4d89a98c3708ec73a663a2"
+    },
+    {
+      "path": "mobile/src/ui/types.ts",
+      "sha256": "05d4536000dbb4418104e5b6208c7f68400af670362fc0f318e686dcc79d3432"
+    },
+    {
+      "path": "mobile/src/ui/ui-logic.test.ts",
+      "sha256": "9ce82c190aca497e8e9ade266e70cca8537206f1f8ee214f5ff2ff751a4fb4f0"
+    },
+    {
+      "path": "mobile/src/ui/ui-logic.ts",
+      "sha256": "0ca7c0a1dfe1008558068f7c6d072cc543bddc9b77e09d369c8bb21f3459c4ce"
+    },
+    {
+      "path": "mobile/assets/Alexandria-Bold.ttf",
+      "sha256": "9cb49d9bd1c725fb03d16db436f5745384b7ecc679845b5b6d2c157fd636c11a"
+    },
+    {
+      "path": "mobile/assets/Alexandria-Regular.ttf",
+      "sha256": "8b854acb2f34ebbda5d505a5ffa92f6270210384c868c4a8f8e2c2ded89af7b4"
+    },
+    {
+      "path": "mobile/assets/Alexandria-SemiBold.ttf",
+      "sha256": "2878abbd109bc2bd128747f769a13468d3d4d88977efc51b399a4e6058b6bb83"
+    },
+    {
+      "path": "mobile/assets/Alexandria-Variable.ttf",
+      "sha256": "db8ae03b62d55a65aa4e04307878df8c00d6e5388e4800635cbe0e22b6411b64"
+    },
+    {
+      "path": "mobile/assets/birthday-dog.webp",
+      "sha256": "8b6d02220c8066f22944cb44d05467d84667bfe48f618a97e9eaa6e52336837e"
+    },
+    {
+      "path": "mobile/assets/bookshop.webp",
+      "sha256": "4aa3c54610536af77751359e1662a962756d2d9bf6c5a36f9d23aa521c0f87ad"
+    },
+    {
+      "path": "mobile/assets/BricolageGrotesque-Bold.ttf",
+      "sha256": "a940c95f2015e830cb5cb29269a13601e3956b8318223a3560a5c8096e21c4cc"
+    },
+    {
+      "path": "mobile/assets/BricolageGrotesque-Regular.ttf",
+      "sha256": "0c62f2daa4a0604c700a155106d098a426398a3da775b900ba8c69fb5ef6ef9a"
+    },
+    {
+      "path": "mobile/assets/BricolageGrotesque-SemiBold.ttf",
+      "sha256": "a4c5ae7f8cade5a1b2b8372466fe410089efbc8933b1995d3bd343ad37c238f6"
+    },
+    {
+      "path": "mobile/assets/BricolageGrotesque-Variable.ttf",
+      "sha256": "413e7357809ddd12fd80a96a8a396de0e401638d4acd3cb3e37532f0472ac682"
+    },
+    {
+      "path": "mobile/assets/cat-note.webp",
+      "sha256": "5de9e40ccc51f42c808faaf3bbd0a63401d413618f4ad90c41d3f579feffd3e2"
+    },
+    {
+      "path": "mobile/assets/cooking-friends.webp",
+      "sha256": "815cc2c9c2bcccd56d5c73a3bc185e9f63756e0a7f010d44f7ea0652fe6bf2d6"
+    },
+    {
+      "path": "mobile/assets/doodle-adaptive-icon-maskable.png",
+      "sha256": "35cb0546687aed3f15694e4bb987300a8a0cd5b3aeb39bbd7d105e8d5c2548f3"
+    },
+    {
+      "path": "mobile/assets/doodle-icon.png",
+      "sha256": "c69929d0d3f36ce2d6b2c5c80870a5cdbca211577d30258b170ddb56809da169"
+    },
+    {
+      "path": "mobile/assets/doodle-reference-kiss.png",
+      "sha256": "c69ab0edfd99b61bf32900d549bc6f75a9ac90d64cdbc39afc7d7ec1d4431b94"
+    },
+    {
+      "path": "mobile/assets/doodle-splash.png",
+      "sha256": "73df94714c81d98bec5772610bdb00df278d3463119333f6c091dfbe6a86aff1"
+    },
+    {
+      "path": "mobile/assets/hero-cat-line.png",
+      "sha256": "89b389e01a3b6a61538659eca26b1740f984429e1b3495300fa7860dc5479332"
+    },
+    {
+      "path": "mobile/assets/IBMPlexSans-Bold.ttf",
+      "sha256": "f377e8456fe1faa7135ae1aaee0d90184ac7e4f06a070edf8386504b4cc243f6"
+    },
+    {
+      "path": "mobile/assets/IBMPlexSans-Regular.ttf",
+      "sha256": "3ff755c69b95f5db6b65fea40038be3cbcaf5870a304771631ec63eef9da0e97"
+    },
+    {
+      "path": "mobile/assets/IBMPlexSans-SemiBold.ttf",
+      "sha256": "1ebdf946b02fd33a9d2984c650ca0e9538abe0adbc4716ded7dc219890935e41"
+    },
+    {
+      "path": "mobile/assets/IBMPlexSans-Variable.ttf",
+      "sha256": "3b031aa4216174205bd8471f88a49b91f093169e9e87bd5262242bc5967fe2e3"
+    },
+    {
+      "path": "mobile/assets/lunch-high-five.webp",
+      "sha256": "425f77dcc0ccf011e89994a101ffe17aff1878b3e0b71adfc12f8ff99b2c155b"
+    },
+    {
+      "path": "mobile/assets/OFL-Alexandria.txt",
+      "sha256": "56372aed19c2701f50e6e784110af55bf8796ed51648805324ad1adb0a3860bb"
+    },
+    {
+      "path": "mobile/assets/OFL-BricolageGrotesque.txt",
+      "sha256": "9e75de0268df02ccd432ce3e438b0a316c48a8170fd447aeadf0142541b667a6"
+    },
+    {
+      "path": "mobile/assets/OFL-IBMPlexSans.txt",
+      "sha256": "7e6b2818edbd8f6a01ae80641cc8f16a51080d08fb4e532be3a0b6f74adb07da"
+    },
+    {
+      "path": "mobile/assets/pastel-examples.webp",
+      "sha256": "42947b17f91629f243b7a6cd1d8681aa7feec02264f0f1bbf68d330bc95c1e9f"
+    },
+    {
+      "path": "mobile/assets/pen-draw-source.lottie",
+      "sha256": "de4d75473e9f62e112c17b1f70e8aca3e27d0c0af891d8e7d184db6805a60d10"
+    },
+    {
+      "path": "mobile/assets/pen-draw.json",
+      "sha256": "5993e105d703a1e0ee969aee331e6e687cf32a5d4d5ef6595e2103591ac0c3ed"
+    },
+    {
+      "path": "mobile/assets/pencil-helps-eraser.webp",
+      "sha256": "0e739fa2a18226279df81eb59840938df8202d6c4d823de7001a7de4ec36959f"
+    },
+    {
+      "path": "mobile/assets/pencil-loader.json",
+      "sha256": "540b73d5911fe44255d7bef236d3cfdaf812c3c562ac6e4dcf02f3e0511e9b7b"
+    },
+    {
+      "path": "mobile/assets/README.md",
+      "sha256": "46d58c3ecda33fcc3f7c24b6811ea0485412d1b489569ce9887e2d6ee9d22b06"
+    },
+    {
+      "path": "mobile/assets/school-snail.webp",
+      "sha256": "d6ac9981f3fcef2f7a559e874876b1b52618245dc9e7bdc56cba38684de95076"
+    },
+    {
+      "path": "mobile/assets/super-banana.webp",
+      "sha256": "b223d3134f35b86e578fc4d838495771b3e1b52b385179a751fe5e3e95a90183"
+    },
+    {
+      "path": "mobile/assets/thank-you-mug.webp",
+      "sha256": "66c556fbb385c5af3ad8a379633e268cf1f0ed8bbf908c9eab31f42d54015f1a"
+    },
+    {
+      "path": "mobile/assets/warm-hug.webp",
+      "sha256": "c2cc40f9f933bd7a69a0ce0f2b435dba460035aa0212854391bb021483f02ff5"
+    },
+    {
+      "path": "mobile/assets/detail/detailed.png",
+      "sha256": "735790a0af8aca492c4815a804218d1d71fe3fd457faea898b195c34b15adbf3"
+    },
+    {
+      "path": "mobile/assets/detail/medium.png",
+      "sha256": "bcf40855cf5c6556d7728575c8826398e95c201a0ea09267f874c4b97b976a23"
+    },
+    {
+      "path": "mobile/assets/detail/simple.png",
+      "sha256": "3fb79f29028e2956f68ac9856cb9d3d1cb73028a3862f2af71f1dc6ee0f3a9e9"
+    }
+  ],
+  "studio_preserved": true,
+  "draft_worktrees_preserved": true,
+  "native_release": "No Android or iOS build/submission is part of this consolidation.",
+  "support_source": [
+    {
+      "path": "scripts/analyze-search-console.mts",
+      "sha256": "3390c2013ef0544766ab94276092f787f0f6f65f78e77c27d1d74a76eb9a7bf7"
+    },
+    {
+      "path": "scripts/evaluate-prompt.mts",
+      "sha256": "29387d913cd4c66d983d13999f10ee7c86e9772dd5bb9e322498f22afdb324bf"
+    },
+    {
+      "path": "scripts/grant-complimentary.mts",
+      "sha256": "17d20fe1d53cf09d0863ddc3016df92f2d99c483936196b7843a67caae0d91fa"
+    },
+    {
+      "path": "scripts/reconcile-play-voids.mts",
+      "sha256": "c81c0d2a518774e5696794617a42886292b5c3ddff8aad231b1dfb3516e3bbf3"
+    },
+    {
+      "path": "scripts/review-reports.mts",
+      "sha256": "e85b4f18f07e6680bdad7e25180b579fc07ec82961609ae3b8fa6e924aa7aeae"
+    },
+    {
+      "path": "scripts/usage-metrics.mts",
+      "sha256": "2acdb519eb972c2134b094b30e4a4d2e96b9e8f452897276404939b3435d22cd"
+    },
+    {
+      "path": "e2e/app-workspace.spec.ts",
+      "sha256": "8b209ecd508808c6a04cd9afe17b009b191a35e903659096c1decf9041359415"
+    },
+    {
+      "path": "e2e/card-composer-stability.spec.ts",
+      "sha256": "ade335cf26149fc01143eee56eed447d285b2aa0a33332cf2aca51008bdcdd5d"
+    },
+    {
+      "path": "e2e/checkout-layout.spec.ts",
+      "sha256": "d8d08f035492ded4d0d63c0af18bb01f9589b302ac4522dfabb173aef3d04909",
+      "canonical_sha256": "58e4530f46b555bab3f237aefa7192cb1c09f5117d4c17d0ed090d8841227eb2",
+      "change": "Use the DOM Node API for fixture style removal so TypeScript accepts the recovered test."
+    },
+    {
+      "path": "e2e/delete-account.spec.ts",
+      "sha256": "c74c0b78e78bfc6b577c29a758c0a4d4cd6014b40f139f5cf19d5cd113c0acb1"
+    },
+    {
+      "path": "e2e/doodle.spec.ts",
+      "sha256": "d0cd099b6cc648fc569a4cdb786d4d85f4a7dff26d417b13bf9b50196b945c24"
+    },
+    {
+      "path": "e2e/grid-copy.spec.ts",
+      "sha256": "581ab0c72dcd685dd3e7199ca43bc270e2088c82df534ef205285f4f8a77f1e7"
+    },
+    {
+      "path": "e2e/grid-previews.spec.ts",
+      "sha256": "be66d2d9180fe1d6b645f884c1aacb083552523e62187813653049a0ff6d21dc"
+    },
+    {
+      "path": "e2e/language-selector-layout.spec.ts",
+      "sha256": "fa4b587a09e8e112aac628b3f0c8f549fea06e61d2f4fe2fefadff5c83fd9f9c"
+    },
+    {
+      "path": "e2e/loading-animation.spec.ts",
+      "sha256": "9e6ada512becef0adbc7abbf494a003b1a30c1c43dced37bafd07548d8593564"
+    },
+    {
+      "path": "e2e/mobile-pack-entry.spec.ts",
+      "sha256": "bb486b9f35eb3acf75d64027839e0e0a7d6f66aeb16fcadd6c61804b1cb4b0b3"
+    },
+    {
+      "path": "e2e/mobile-polish.spec.ts",
+      "sha256": "0ad0f7c19ba78b3b55aac8c7a1e8fb3f9ed2245b2d66aa18c2e5a125d3763600"
+    },
+    {
+      "path": "e2e/payment-processing.spec.ts",
+      "sha256": "c96c919988518fc9ea47dc83aeffc37e5572cd9f6443b76be94dca57894c484b"
+    },
+    {
+      "path": "e2e/photo-preparation.spec.ts",
+      "sha256": "e65b3a91f6a554d086c8f8539aeb2e606802b0eee327d9deb59748f34580b8dc"
+    },
+    {
+      "path": "e2e/play-billing.spec.ts",
+      "sha256": "e1ba15663bc7bb6665be635ec235361d284a6e8ca8fcd0a5cec86d97c1a48bfd"
+    },
+    {
+      "path": "e2e/pwa.spec.ts",
+      "sha256": "12e715ae055360e0d8b90915a7e7c9656a861cb7c63ef1465440a1e9d4115752"
+    },
+    {
+      "path": "e2e/reporting.spec.ts",
+      "sha256": "9c7d0d36e06c5ff4542834d5b5cf6210cce2e6bd886839c44cb8acef5d0e2f10"
+    },
+    {
+      "path": "e2e/sign-in-modal.spec.ts",
+      "sha256": "138d49a6e15fb9a6bb650b32794d8821f84da9c693b1776d6621a2eb0487d1e7"
+    },
+    {
+      "path": "e2e/suggestion-refresh.spec.ts",
+      "sha256": "06f756c17050f929165c46b658e9caeb5d4422f9c3848a4fb84ff83be90764a1"
+    },
+    {
+      "path": "e2e/web-packs-disabled.spec.ts",
+      "sha256": "5003b34f7f21cdc4d6780cfbfff1b1046ebfd715001cd2caa090d94d6bbb6b81"
+    },
+    {
+      "path": "e2e/web-packs.spec.ts",
+      "sha256": "7b8f385d8281451209619e95d44ab5ec8b10736aa6ef26da27364d5a3549523d"
+    },
+    {
+      "path": "e2e/web-payment-routing.spec.ts",
+      "sha256": "1d2c8117e1e1499cacc6aa80e6d4beb35e02b65b7efa19b32c202c9319b88c3d"
+    },
+    {
+      "path": "e2e/fixtures/photo/camera-48mp.jpg",
+      "sha256": "37c1ab9181c0bba63081578cfc8cacf6d86ccec0dae38690c7c23e2796d8ab5d"
+    },
+    {
+      "path": "e2e/fixtures/photo/orientation-1.jpg",
+      "sha256": "eb45b1df6b40ac7d17a324a2d3579007745143e9d02f02935e8fe9ea9aa556be"
+    },
+    {
+      "path": "e2e/fixtures/photo/orientation-2.jpg",
+      "sha256": "46eba298c77ccd60ee840681508caa524c228d1291ee5388ed4ae177ad9710c7"
+    },
+    {
+      "path": "e2e/fixtures/photo/orientation-3.jpg",
+      "sha256": "34652f9d95d4a2c5c1b234c865adda6589a12ef4b4392dc2f5145e1fa737bfb1"
+    },
+    {
+      "path": "e2e/fixtures/photo/orientation-4.jpg",
+      "sha256": "335eda248fe17fc9a9beb618e1bd47502a59d6098ffd1240c6d27a088c07dc78"
+    },
+    {
+      "path": "e2e/fixtures/photo/orientation-5.jpg",
+      "sha256": "a3fe309ab0f082d0ed02166f5996051c396e2ffec7b9d33677f178be5940b841"
+    },
+    {
+      "path": "e2e/fixtures/photo/orientation-6.jpg",
+      "sha256": "63004a200015f3bf8512734d9cae37b7f87422eebf44ed9522105c745f520970"
+    },
+    {
+      "path": "e2e/fixtures/photo/orientation-7.jpg",
+      "sha256": "2d327e4467e2850e28362ca126f752d183587b26fd24b04a115a04dc3c105f3e"
+    },
+    {
+      "path": "e2e/fixtures/photo/orientation-8.jpg",
+      "sha256": "db1059eb08f904c1bba497c8bd44f8965a3e46107a9ea5e1cbb61b04ea8c8fa1"
+    },
+    {
+      "path": "e2e/fixtures/photo/tall.png",
+      "sha256": "58a2baca6392d2da043323399d0e318191046ace65b9ac6ad8ff59e9b0f7420a"
+    },
+    {
+      "path": "e2e/fixtures/photo/transparent.png",
+      "sha256": "7bb054686d86377e85382c54dd7278e4852366cf0d1c645106a4639acefc28eb"
+    }
+  ],
+  "initial_base_github_commit": "d945f7d5ddae303ba33c14a97ac22e63ef713d06"
+}

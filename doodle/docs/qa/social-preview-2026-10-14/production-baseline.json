@@ -1,0 +1,2228 @@
+{
+  "deployment": "dpl_9FMZyHBkZkJVoMRDz5T5ytHML9HW",
+  "base": "/home/mests/.codex/doodle-adaptive-pricing-release-20261012",
+  "source_files": [
+    {
+      "path": ".vercelignore",
+      "sha1": "4c647ac3f51578dfa49436721855426a8eff8c8d"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha1": "7b2a0f37e07e6b488ac6a4e8cd3751eb12b41b86"
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha1": "c140473a3a5fbe89301c99d9d0d1b76c5971f2c3"
+    },
+    {
+      "path": "README.md",
+      "sha1": "57cd4eb067c7530b64982d66c560d56305ed94a9"
+    },
+    {
+      "path": "design-qa.md",
+      "sha1": "09255cb1873c02a828587e45887ba5d15aabd82a"
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha1": "148d687a77c2c2de7d982dcc63638c9a904dad4b"
+    },
+    {
+      "path": "next-env.d.ts",
+      "sha1": "915946e261450f4fb6aab2ca862c8b440b748240"
+    },
+    {
+      "path": "next.config.ts",
+      "sha1": "a854407d879cdc9e2986b1f3a64b9b48943b0c29"
+    },
+    {
+      "path": "package-lock.json",
+      "sha1": "8953a77b18baaf390aa8b13d92f1c4f38aef313d"
+    },
+    {
+      "path": "package.json",
+      "sha1": "c9cf58b7c81834692d09e57832e33f08e13370d4"
+    },
+    {
+      "path": "playwright.config.ts",
+      "sha1": "d3136f8b927b05da638b54eba2c11314af0b6f8b"
+    },
+    {
+      "path": "playwright.photo.config.ts",
+      "sha1": "8abcb49e2a49182584b88b336bbdf14f40a22a78"
+    },
+    {
+      "path": "public/.well-known/assetlinks.json",
+      "sha1": "3fc9b521592bc738b81fb07fc1374f03c13a42a8"
+    },
+    {
+      "path": "public/animations/pencil-loader-poster.webp",
+      "sha1": "aed98859445eb90f71affbdd9efe14b4ac0943aa"
+    },
+    {
+      "path": "public/animations/pencil-loader.json",
+      "sha1": "689d30b6fd78f41dc94122c89c504d9ca4eb1f48"
+    },
+    {
+      "path": "public/detail/detailed.svg",
+      "sha1": "8f115a97af322cc38c694becaeeadcada44262e6"
+    },
+    {
+      "path": "public/detail/medium.svg",
+      "sha1": "1e048d4dee5fe820d75d13025841ee55dd186303"
+    },
+    {
+      "path": "public/detail/simple.svg",
+      "sha1": "2fbbad640ea7e7ec8661b738a1ba7262a27e865e"
+    },
+    {
+      "path": "public/flags/LICENSE.txt",
+      "sha1": "48ba26b5a819c26a7845543a7b281e5154f687ac"
+    },
+    {
+      "path": "public/flags/README.md",
+      "sha1": "33d6cd46c04f479a9fd27b68671218eca880b2ba"
+    },
+    {
+      "path": "public/flags/br.svg",
+      "sha1": "efffb8f5ec1b4101455e02319a35d52ff030e86f"
+    },
+    {
+      "path": "public/flags/de.svg",
+      "sha1": "f46bdcf00fbd79c764b116ef8250e678e4b71c8b"
+    },
+    {
+      "path": "public/flags/es.svg",
+      "sha1": "c285598333fe5528683dcacfb4703245c15946fe"
+    },
+    {
+      "path": "public/flags/fr.svg",
+      "sha1": "ef0dfe9b2ee885551ee3691eaf79348a0d35bdcc"
+    },
+    {
+      "path": "public/flags/gb.svg",
+      "sha1": "161ee20a0a75bb06d4f2ca9acdbb137d9a963cec"
+    },
+    {
+      "path": "public/flags/it.svg",
+      "sha1": "25ecff80eb26ef79709ab7278eb3991ac8cc2734"
+    },
+    {
+      "path": "public/flags/jp.svg",
+      "sha1": "b5f2d0d5127becf2f525f44adb8ff9f8c8d67150"
+    },
+    {
+      "path": "public/flags/kr.svg",
+      "sha1": "a134d8392d41c775ee42fe2a0dba2cd5c043117b"
+    },
+    {
+      "path": "public/flags/nl.svg",
+      "sha1": "c2e921ab5ae421e9fa26fbf464240e7b95a77825"
+    },
+    {
+      "path": "public/flags/sa.svg",
+      "sha1": "939c037d34ab112a74126be0b99b2a53332a5994"
+    },
+    {
+      "path": "public/icons/doodle-192.png",
+      "sha1": "35b562de6551a1c4e64ab1e29db46b2771c4bbb7"
+    },
+    {
+      "path": "public/icons/doodle-512.png",
+      "sha1": "1ddb0635ee60419540bccfc2c5c00b3711922c94"
+    },
+    {
+      "path": "public/icons/doodle-maskable.png",
+      "sha1": "cd350d76ec5e429590db3cf01874a69ac41da936"
+    },
+    {
+      "path": "public/ideas/astronaut-simple.webp",
+      "sha1": "aa5b3d6fda176dd095b9782a47893ce9adeb08c8"
+    },
+    {
+      "path": "public/ideas/birthday-balloon-dog.webp",
+      "sha1": "45e17bd5d5155f5d5a2acd6a86284f8cea1848ed"
+    },
+    {
+      "path": "public/ideas/birthday-dog-detailed.webp",
+      "sha1": "305fc76722accf8218489ebcb04a73307f9f0d58"
+    },
+    {
+      "path": "public/ideas/birthday-dog-medium.webp",
+      "sha1": "529668727235f8530629be73badfd5a1c7b4d3e1"
+    },
+    {
+      "path": "public/ideas/birthday-dog.webp",
+      "sha1": "6ddb44ac7859daeaaec1ce71274740aac4c3fbf4"
+    },
+    {
+      "path": "public/ideas/bookshop.webp",
+      "sha1": "bdb1f751e38e89f68a6bbc9180b1e4e425b08f1c"
+    },
+    {
+      "path": "public/ideas/camper-simple.webp",
+      "sha1": "9c0349b96e7ef1a97f813e764d96db29c7383da4"
+    },
+    {
+      "path": "public/ideas/cat-note.webp",
+      "sha1": "106b7e0cefca84d74c5cb94ad41e6bb4c077b062"
+    },
+    {
+      "path": "public/ideas/coffee-book-simple.webp",
+      "sha1": "0435f0f292c434bd26634b95a618d4e4546554aa"
+    },
+    {
+      "path": "public/ideas/cooking-detailed.webp",
+      "sha1": "7da68d3e4668e31912f3f0864da9423005ce1606"
+    },
+    {
+      "path": "public/ideas/cooking-friends.webp",
+      "sha1": "d42ba151c309f8d24fa48520b04c49b2fec4e932"
+    },
+    {
+      "path": "public/ideas/cooking-simple.webp",
+      "sha1": "854bb63eaa5ec82067cf963c51297440efef0438"
+    },
+    {
+      "path": "public/ideas/cottage-simple.webp",
+      "sha1": "b25da512636de7f586ed316384bb11b989751cb2"
+    },
+    {
+      "path": "public/ideas/flower-cat-detailed.webp",
+      "sha1": "963dee0ed997a6ba4b42fedee835b4dc8fd45ba7"
+    },
+    {
+      "path": "public/ideas/flower-cat-medium.webp",
+      "sha1": "b478e21d4cbd6d0fd2b2dc245d1ccfbaf6fc8672"
+    },
+    {
+      "path": "public/ideas/flower-cat-simple.webp",
+      "sha1": "94857a4ec0d7cbe682cf9320af131d1b83434779"
+    },
+    {
+      "path": "public/ideas/lunch-high-five.webp",
+      "sha1": "5c6688c50b60a97dc5408354e2ca81c1ec3d8e6b"
+    },
+    {
+      "path": "public/ideas/missing-friend-detailed.webp",
+      "sha1": "34db1578275e5359070bb97af6b086a9d4ba94e9"
+    },
+    {
+      "path": "public/ideas/missing-friend-medium.webp",
+      "sha1": "89441d74d3effe09e278d84a5803817081c99b6e"
+    },
+    {
+      "path": "public/ideas/missing-friend-simple.webp",
+      "sha1": "4b6e8d1edefecafdec96ac0e25a409d82f4bc424"
+    },
+    {
+      "path": "public/ideas/parent-hug-simple.webp",
+      "sha1": "0fcae23599e5972797488ec9051f9f29716c694c"
+    },
+    {
+      "path": "public/ideas/pencil-helps-eraser.webp",
+      "sha1": "9d28b1be6ea0dd9e60c8d4dd97f64f1f34bd8fa9"
+    },
+    {
+      "path": "public/ideas/reading-cat-detailed.webp",
+      "sha1": "81343ab312e8984561ce1d2994816201fb7be03d"
+    },
+    {
+      "path": "public/ideas/reading-cat-medium.webp",
+      "sha1": "77f92b90744cac87cecbefef27ee38a3177e4914"
+    },
+    {
+      "path": "public/ideas/reading-cat-simple.webp",
+      "sha1": "22c2ea35e0c98777b8503d80e629c655e7606fe8"
+    },
+    {
+      "path": "public/ideas/school-snail.webp",
+      "sha1": "539d6236cdbbfdc473bef0d6c522d65cca82629f"
+    },
+    {
+      "path": "public/ideas/sunflower-detailed.webp",
+      "sha1": "e8c1473c418dd80c654572eaffca51589ef2f931"
+    },
+    {
+      "path": "public/ideas/sunflower-medium.webp",
+      "sha1": "981f7c1a573943d7b1187be9f5219afd33935596"
+    },
+    {
+      "path": "public/ideas/sunflower-simple.webp",
+      "sha1": "af0fe6d0d9390530e0ebcd9b291299824e16931b"
+    },
+    {
+      "path": "public/ideas/super-banana.webp",
+      "sha1": "64835afac2417425fad45a2f465de7208eceb53a"
+    },
+    {
+      "path": "public/ideas/thank-you-mug.webp",
+      "sha1": "6805b56c4e4b7ef12f91a5b2560cf751337b546b"
+    },
+    {
+      "path": "public/ideas/thumbs/astronaut-simple-320.webp",
+      "sha1": "98a1e2ca1bfafa860105104707c88ef7833dd552"
+    },
+    {
+      "path": "public/ideas/thumbs/astronaut-simple-640.webp",
+      "sha1": "f7d44160ff735e98dca415356daabd642bf01f84"
+    },
+    {
+      "path": "public/ideas/thumbs/birthday-dog-detailed-320.webp",
+      "sha1": "4094828e1e0551f7c81418686b65dc2195c896e3"
+    },
+    {
+      "path": "public/ideas/thumbs/birthday-dog-detailed-640.webp",
+      "sha1": "b4e8157913a8bc721ec68ca8c54aa12790fe523c"
+    },
+    {
+      "path": "public/ideas/thumbs/birthday-dog-medium-320.webp",
+      "sha1": "3305776913a4d4468625f74fab600a0ea94c376e"
+    },
+    {
+      "path": "public/ideas/thumbs/birthday-dog-medium-640.webp",
+      "sha1": "f29871f20374796f5d19bd6b91f1c4136c9bdba8"
+    },
+    {
+      "path": "public/ideas/thumbs/birthday-dog-simple-320.webp",
+      "sha1": "d06ce4effc75aded5c555b51e4a573ff27a1fcc3"
+    },
+    {
+      "path": "public/ideas/thumbs/birthday-dog-simple-640.webp",
+      "sha1": "e4a6a89f236682935a0cd404cbb333506f7d7914"
+    },
+    {
+      "path": "public/ideas/thumbs/bookshop-detailed-320.webp",
+      "sha1": "d2c4147629937ccdfc1398e3a4acbdc374e2d6a2"
+    },
+    {
+      "path": "public/ideas/thumbs/bookshop-detailed-640.webp",
+      "sha1": "e00b7a5bc8ae6bf83896b0578f311ac5f4e91628"
+    },
+    {
+      "path": "public/ideas/thumbs/camper-simple-320.webp",
+      "sha1": "f46be587faeb3e7f6a79cf59fc1a0d07e0d15854"
+    },
+    {
+      "path": "public/ideas/thumbs/camper-simple-640.webp",
+      "sha1": "845f44f91559a8719c7e5a22967d23f50d976cd5"
+    },
+    {
+      "path": "public/ideas/thumbs/cat-note-simple-320.webp",
+      "sha1": "7939df7b70bc5dcab07dfdb496a5f55985580d83"
+    },
+    {
+      "path": "public/ideas/thumbs/cat-note-simple-640.webp",
+      "sha1": "4ff8226a915ae937900f76ca0e9bb39c6f657cf5"
+    },
+    {
+      "path": "public/ideas/thumbs/coffee-book-simple-320.webp",
+      "sha1": "964dcd67626cc94365ab4ca3828db20d00389c8d"
+    },
+    {
+      "path": "public/ideas/thumbs/coffee-book-simple-640.webp",
+      "sha1": "ea3eff0fde7e29820ea5f98c8834b4179363b7f3"
+    },
+    {
+      "path": "public/ideas/thumbs/cooking-detailed-320.webp",
+      "sha1": "ee33e3ed2ea37c384283067eadaf3fc9780e6c5b"
+    },
+    {
+      "path": "public/ideas/thumbs/cooking-detailed-640.webp",
+      "sha1": "dbd9086e5cab11a72cb20935360b9af432d8fe60"
+    },
+    {
+      "path": "public/ideas/thumbs/cooking-medium-320.webp",
+      "sha1": "540209b1d9b17b6a1b63d3d5591f9c72c68ab6c9"
+    },
+    {
+      "path": "public/ideas/thumbs/cooking-medium-640.webp",
+      "sha1": "2901ad75e5fa68c6afdae987255a91bb3f819803"
+    },
+    {
+      "path": "public/ideas/thumbs/cooking-simple-320.webp",
+      "sha1": "da926a3264c92ce519b647e6ee951924c55a7fdc"
+    },
+    {
+      "path": "public/ideas/thumbs/cooking-simple-640.webp",
+      "sha1": "6d2b253147b922f503aeece16b6a29f30220d9b2"
+    },
+    {
+      "path": "public/ideas/thumbs/cottage-simple-320.webp",
+      "sha1": "4f817f858cb9e537fb40ac120a077f2df5e17a99"
+    },
+    {
+      "path": "public/ideas/thumbs/cottage-simple-640.webp",
+      "sha1": "9c9c1a6292e079c5f7f83783b03a3c2bbac39739"
+    },
+    {
+      "path": "public/ideas/thumbs/flower-cat-detailed-320.webp",
+      "sha1": "41cd62f90b79f2c3a349f73658bb66cea6e2ccc0"
+    },
+    {
+      "path": "public/ideas/thumbs/flower-cat-detailed-640.webp",
+      "sha1": "7e1b978b791091f131e9f37505f93ee37681837e"
+    },
+    {
+      "path": "public/ideas/thumbs/flower-cat-medium-320.webp",
+      "sha1": "4916f5062506fc61619956ff0fd3a0d3124580ab"
+    },
+    {
+      "path": "public/ideas/thumbs/flower-cat-medium-640.webp",
+      "sha1": "22c062131e023eec36bae67c75ea9011cfe8a956"
+    },
+    {
+      "path": "public/ideas/thumbs/flower-cat-simple-320.webp",
+      "sha1": "a592b75d5aac6b1af0a7e063346cbe8cfeca46ed"
+    },
+    {
+      "path": "public/ideas/thumbs/flower-cat-simple-640.webp",
+      "sha1": "1631a3311c46fc647d79901c2a9827edd1c3ffbb"
+    },
+    {
+      "path": "public/ideas/thumbs/lunch-high-five-simple-320.webp",
+      "sha1": "6becf284073907e4f253bfbb0131c019d51b0406"
+    },
+    {
+      "path": "public/ideas/thumbs/lunch-high-five-simple-640.webp",
+      "sha1": "9616d9279e7f6a1d8d1e68ef5d95fea4ba318dcd"
+    },
+    {
+      "path": "public/ideas/thumbs/missing-friend-detailed-320.webp",
+      "sha1": "c1bfbf785a65b6b3b366e968b6df634f3f3189d3"
+    },
+    {
+      "path": "public/ideas/thumbs/missing-friend-detailed-640.webp",
+      "sha1": "fb825136c82039bf8b8566b1b8c58dbd44326f91"
+    },
+    {
+      "path": "public/ideas/thumbs/missing-friend-medium-320.webp",
+      "sha1": "6ffd452e5a28b7f351ecaea3035c48f76f79652e"
+    },
+    {
+      "path": "public/ideas/thumbs/missing-friend-medium-640.webp",
+      "sha1": "acce3d4650ad5e366de58f22a9a6a534c0582b46"
+    },
+    {
+      "path": "public/ideas/thumbs/missing-friend-simple-320.webp",
+      "sha1": "25bfefde7ef751f75ebae4b5495b1652fabd72f7"
+    },
+    {
+      "path": "public/ideas/thumbs/missing-friend-simple-640.webp",
+      "sha1": "78c1301c9b943b9f8cf8c6a0221c6efbe45f2f62"
+    },
+    {
+      "path": "public/ideas/thumbs/parent-hug-simple-320.webp",
+      "sha1": "dcae918f95ae36b719a9995bfdb55aeb8e03442d"
+    },
+    {
+      "path": "public/ideas/thumbs/parent-hug-simple-640.webp",
+      "sha1": "396f4e5d0bfe738434098ced783a67f3922710d8"
+    },
+    {
+      "path": "public/ideas/thumbs/pencil-eraser-simple-320.webp",
+      "sha1": "9dfc2d4ce946b11d9f4bc5293ed83eda6a2a6abf"
+    },
+    {
+      "path": "public/ideas/thumbs/pencil-eraser-simple-640.webp",
+      "sha1": "7ae05031be87f545a5b63d62c3b0dc75cf271f46"
+    },
+    {
+      "path": "public/ideas/thumbs/reading-cat-detailed-320.webp",
+      "sha1": "4138ca06d95084338365c3bb5a286736dcd417a1"
+    },
+    {
+      "path": "public/ideas/thumbs/reading-cat-detailed-640.webp",
+      "sha1": "ddaf1122793476bb148e00967b95cccae32e340d"
+    },
+    {
+      "path": "public/ideas/thumbs/reading-cat-medium-320.webp",
+      "sha1": "6dfa76e8d2e09b68ba0ba60a9cfc5502d026cce8"
+    },
+    {
+      "path": "public/ideas/thumbs/reading-cat-medium-640.webp",
+      "sha1": "5a991d7f087f3214634f3003fb42686dff20d63d"
+    },
+    {
+      "path": "public/ideas/thumbs/reading-cat-simple-320.webp",
+      "sha1": "13fd6e54fef31a82973556388fdfb9616025a12c"
+    },
+    {
+      "path": "public/ideas/thumbs/reading-cat-simple-640.webp",
+      "sha1": "30274ecdf5dfd51dc129f97c8fb3362c6b0a13c1"
+    },
+    {
+      "path": "public/ideas/thumbs/school-snail-simple-320.webp",
+      "sha1": "c9b1f56e28aa1c80aa04218efdefbd4798dc4013"
+    },
+    {
+      "path": "public/ideas/thumbs/school-snail-simple-640.webp",
+      "sha1": "ed7eac200c0e9cf679a0466e1dbc581822232a28"
+    },
+    {
+      "path": "public/ideas/thumbs/sunflower-detailed-320.webp",
+      "sha1": "705f729ae5d99a4368d15fef6ada10f6129d9225"
+    },
+    {
+      "path": "public/ideas/thumbs/sunflower-detailed-640.webp",
+      "sha1": "39f03819025e0000fd51aae95680c453d590c2fa"
+    },
+    {
+      "path": "public/ideas/thumbs/sunflower-medium-320.webp",
+      "sha1": "50fb5eb79cc36b9ae019668b43391b8c0c94909d"
+    },
+    {
+      "path": "public/ideas/thumbs/sunflower-medium-640.webp",
+      "sha1": "b7c5c1e5571465a5c9c0d653abe47896315f7329"
+    },
+    {
+      "path": "public/ideas/thumbs/sunflower-simple-320.webp",
+      "sha1": "353f3e3856aaae8218593e42ead029561841c388"
+    },
+    {
+      "path": "public/ideas/thumbs/sunflower-simple-640.webp",
+      "sha1": "dc532705d8c314a110ca3eb517dbbd267e93c8c8"
+    },
+    {
+      "path": "public/ideas/thumbs/super-banana-simple-320.webp",
+      "sha1": "4e1b2427a7748d2a5313e8380ca7cd59984ef6c1"
+    },
+    {
+      "path": "public/ideas/thumbs/super-banana-simple-640.webp",
+      "sha1": "ce83d38d43b0a5c86b64d361799e7ed25e71386a"
+    },
+    {
+      "path": "public/ideas/thumbs/thank-you-mug-simple-320.webp",
+      "sha1": "ca6f5157d75a8870f1135b56fb1fdd227cba01d8"
+    },
+    {
+      "path": "public/ideas/thumbs/thank-you-mug-simple-640.webp",
+      "sha1": "c4e6ce627da3c24a89cbb543dff6fd5e79ae5ef5"
+    },
+    {
+      "path": "public/ideas/thumbs/warm-hug-simple-320.webp",
+      "sha1": "e54f2c9b335f4a75e87b50ad21e5955b9dac1f12"
+    },
+    {
+      "path": "public/ideas/thumbs/warm-hug-simple-640.webp",
+      "sha1": "9c5e681606409c9e3c690c0ca77f54c68d190ff6"
+    },
+    {
+      "path": "public/ideas/warm-hug.webp",
+      "sha1": "115ca5be3bb5de3db755de6a1ee1774e0b57a228"
+    },
+    {
+      "path": "public/landing/birthday-dog.webp",
+      "sha1": "15438cb1cbb761b1c2a67cba0c803fe70d040f1f"
+    },
+    {
+      "path": "public/landing/detail-examples.webp",
+      "sha1": "219c276646d1b100588e142ba7cc4ceada996e25"
+    },
+    {
+      "path": "public/landing/flower-cat.webp",
+      "sha1": "7bb5c6a89a5e61d93330612859784a72d134bfb3"
+    },
+    {
+      "path": "public/landing/hero-cat-line.png",
+      "sha1": "b27e4af7eeab8ac196034a7b1225cfc09881d554"
+    },
+    {
+      "path": "public/landing/pastel-examples.webp",
+      "sha1": "386a3ccaea5b93266af03ea34ffd5c664d030a69"
+    },
+    {
+      "path": "public/offline.html",
+      "sha1": "28013381a7d7a7e7e0276815f4bac05ad2d29856"
+    },
+    {
+      "path": "public/references/doodle-reference-kiss.png",
+      "sha1": "1632942b32876ad3a765235f28b9f92a851f3dd6"
+    },
+    {
+      "path": "public/store-badges/google-play-ar.svg",
+      "sha1": "711ccb2f786ef3255404e36ed842ecc8dc8c23a7"
+    },
+    {
+      "path": "public/store-badges/google-play-de.svg",
+      "sha1": "e9e3a4fdeea45b615478d93c51b84122ff0410e5"
+    },
+    {
+      "path": "public/store-badges/google-play-en.svg",
+      "sha1": "42a4d4c1d1162181bfff40a1caa96908c048bf17"
+    },
+    {
+      "path": "public/store-badges/google-play-es.svg",
+      "sha1": "ed3b4ff91c3c73be23311e3704ea87726d108d59"
+    },
+    {
+      "path": "public/store-badges/google-play-fr.svg",
+      "sha1": "429d4c537d58a665401fc751fce12289eb1e1562"
+    },
+    {
+      "path": "public/store-badges/google-play-it.svg",
+      "sha1": "46b6768cb37451fa1390ca2e8fa6cb10e0439767"
+    },
+    {
+      "path": "public/store-badges/google-play-ja.svg",
+      "sha1": "2a146bb91cc141bfbded8132a369b84d73a300a9"
+    },
+    {
+      "path": "public/store-badges/google-play-ko.svg",
+      "sha1": "345f8e003dd051f29e5a6667441b1963822780c0"
+    },
+    {
+      "path": "public/store-badges/google-play-nl.svg",
+      "sha1": "358fa69847a6fc141c840d64269f09d942fb668f"
+    },
+    {
+      "path": "public/store-badges/google-play-pt-br.svg",
+      "sha1": "9b1152d6c258adff6d82100f5cf7cb25d4166c22"
+    },
+    {
+      "path": "public/sw.js",
+      "sha1": "bf9b22fcba5c3f8ffa8458e3ef2a9a5ebe7dc723"
+    },
+    {
+      "path": "src/app/icon.png",
+      "sha1": "1ddb0635ee60419540bccfc2c5c00b3711922c94"
+    },
+    {
+      "path": "src/app/(english)/blog/[slug]/page.tsx",
+      "sha1": "0334868e82be98da32141718a78a7a65207a54b1"
+    },
+    {
+      "path": "src/app/(english)/blog/page.tsx",
+      "sha1": "02ec9cf87a4cab8bc08e30c31a5beafb6a5203f8"
+    },
+    {
+      "path": "src/app/(english)/contact/page.tsx",
+      "sha1": "612b3a99956ab84905f8fcbbb2a7da61bd1e96e1"
+    },
+    {
+      "path": "src/app/(english)/delete-account/page.tsx",
+      "sha1": "dec8ca8e628513168efda08b35a209f52618c57c"
+    },
+    {
+      "path": "src/app/(english)/doodle-ideas/page.test.tsx",
+      "sha1": "dce702289a9ad6545bdca11fad05485d94d67ce0"
+    },
+    {
+      "path": "src/app/(english)/doodle-ideas/page.tsx",
+      "sha1": "6a4209f0cb2c0bfc9c858555e2d4c9f512c03755"
+    },
+    {
+      "path": "src/app/(english)/for-ai/page.tsx",
+      "sha1": "438942c242062acd41b044c5fb429b4ce91acaa3"
+    },
+    {
+      "path": "src/app/(english)/layout.tsx",
+      "sha1": "6edfad1e37b169dd0ef7f34a564f650844f403e9"
+    },
+    {
+      "path": "src/app/(english)/page.tsx",
+      "sha1": "efcea46f429a8a8d7e545fec6b0a90a6d87792f8"
+    },
+    {
+      "path": "src/app/(english)/privacy/page.tsx",
+      "sha1": "f3caefc0dfba81f6b01f9e2f6500d4f1a12c6547"
+    },
+    {
+      "path": "src/app/(english)/refund/page.tsx",
+      "sha1": "eb999b15d312e57192dc60a6d91a4abcd68e7e65"
+    },
+    {
+      "path": "src/app/(english)/terms/page.tsx",
+      "sha1": "a5a6f148d26f6bd96d031152c5b8c095f34607b3"
+    },
+    {
+      "path": "src/app/[locale]/blog/[slug]/page.tsx",
+      "sha1": "27b6ab9941a82e9952a9891e1d3dcc1317a11310"
+    },
+    {
+      "path": "src/app/[locale]/blog/page.tsx",
+      "sha1": "a3e91cac4ea00192793edbbd88c70ed3abbc34a1"
+    },
+    {
+      "path": "src/app/[locale]/doodle-ideas/page.tsx",
+      "sha1": "1adea712af1c18a8b1199de144460ea2fbc8a192"
+    },
+    {
+      "path": "src/app/[locale]/for-ai/page.tsx",
+      "sha1": "cd91c5351b3e933f6711156f0d1e4f8953c66e62"
+    },
+    {
+      "path": "src/app/[locale]/layout.tsx",
+      "sha1": "c4b80e9d0ebba9a054e1a1497c524e12dae531ff"
+    },
+    {
+      "path": "src/app/[locale]/page.tsx",
+      "sha1": "3356d9bb5434dbdefb690168133174fc6ee8b1b3"
+    },
+    {
+      "path": "src/app/api/account/route.test.ts",
+      "sha1": "553af727216cc433d35fc58ed7466f952d955639"
+    },
+    {
+      "path": "src/app/api/account/route.ts",
+      "sha1": "14a5bdd17d55e15c0657d86d355ff06fc6b5268c"
+    },
+    {
+      "path": "src/app/api/apple/checkout.test.ts",
+      "sha1": "ccb979e104dd48e1ca3e25c086e87955fff3b722"
+    },
+    {
+      "path": "src/app/api/apple/config/route.ts",
+      "sha1": "3386c495d7c49831e546e5db688d5df83697f268"
+    },
+    {
+      "path": "src/app/api/apple/intent/route.ts",
+      "sha1": "6574cf52c20f98034c58d796644bb5bac5c26738"
+    },
+    {
+      "path": "src/app/api/apple/notifications/route.ts",
+      "sha1": "2ea18ab8cbe63f648e116149f2281d92a81917d4"
+    },
+    {
+      "path": "src/app/api/apple/verify/route.ts",
+      "sha1": "72498d17f44a59df04771c25b0594cf674758bde"
+    },
+    {
+      "path": "src/app/api/auth/google/redirect/route.test.ts",
+      "sha1": "494b13dd5194361cd8497be101684f29b0d240b5"
+    },
+    {
+      "path": "src/app/api/auth/google/redirect/route.ts",
+      "sha1": "24807e56d5cfbb7bddbe090f97f30611aa2ddccf"
+    },
+    {
+      "path": "src/app/api/auth/google/route.test.ts",
+      "sha1": "36e9bc0f58ba01d29af1b9526b3996a8f1a4a6e7"
+    },
+    {
+      "path": "src/app/api/auth/google/route.ts",
+      "sha1": "e0540828df91bc8b3624c738645f5c270a1d19ec"
+    },
+    {
+      "path": "src/app/api/auth/sign-out/route.test.ts",
+      "sha1": "142a1d464cd8cc850dcda21e8328efb1f8b036cc"
+    },
+    {
+      "path": "src/app/api/auth/sign-out/route.ts",
+      "sha1": "8605b9528a958d1baf7b1262bf18abc69de43f31"
+    },
+    {
+      "path": "src/app/api/checkout/catalog/route.test.ts",
+      "sha1": "539162e0d1d5578c6b16ac6a92714eb007f25f37"
+    },
+    {
+      "path": "src/app/api/checkout/catalog/route.ts",
+      "sha1": "cb86471216502f2d77dff392dc98fe3c67c0a68f"
+    },
+    {
+      "path": "src/app/api/checkout/confirm/route.test.ts",
+      "sha1": "6d51af24c1f3f12822001221cf5c68ba778bb8d1"
+    },
+    {
+      "path": "src/app/api/checkout/confirm/route.ts",
+      "sha1": "133f5a6373ce4adb37d33ed20697c8e9bdf2da87"
+    },
+    {
+      "path": "src/app/api/checkout/diagnostic/route.test.ts",
+      "sha1": "ef1b32f1b3df5f482e29b1e807dcdb0920e74646"
+    },
+    {
+      "path": "src/app/api/checkout/diagnostic/route.ts",
+      "sha1": "b83897eb2688c8c9d979d19558ee0a654e76f2bc"
+    },
+    {
+      "path": "src/app/api/checkout/elements/route.test.ts",
+      "sha1": "19b6ad2b8222e5420206ad6f68a394df679ae6fc"
+    },
+    {
+      "path": "src/app/api/checkout/elements/route.ts",
+      "sha1": "039a26c8c52ee9775b57d31b662208d66780020a"
+    },
+    {
+      "path": "src/app/api/checkout/paywall/route.ts",
+      "sha1": "d6f3d022ee0db62e6649ce9531db651103218d3e"
+    },
+    {
+      "path": "src/app/api/checkout/route.test.ts",
+      "sha1": "6ad1b6e82b6a27e9596bec9ec7d911267e9710a2"
+    },
+    {
+      "path": "src/app/api/checkout/route.ts",
+      "sha1": "4836aaf6b7f24eb6e3b189f174ea9edefde0613a"
+    },
+    {
+      "path": "src/app/api/generate/route.test.ts",
+      "sha1": "5a6383d404af934c7761680cddaac27de2862873"
+    },
+    {
+      "path": "src/app/api/generate/route.ts",
+      "sha1": "f3fdee9bd17b1cc8478c11a566c5c9a1e11cf2be"
+    },
+    {
+      "path": "src/app/api/ideas/route.test.ts",
+      "sha1": "8514d9a32a60bc6c02b15d4e752ecf6eb2dfc82a"
+    },
+    {
+      "path": "src/app/api/ideas/route.ts",
+      "sha1": "3b99def3438275f0e41baad467478e71528ea2f7"
+    },
+    {
+      "path": "src/app/api/internal/play/reconcile-voids/route.test.ts",
+      "sha1": "324bda2b830dade7322f6abba611ac4dabc6edee"
+    },
+    {
+      "path": "src/app/api/internal/play/reconcile-voids/route.ts",
+      "sha1": "81270b1372a23aecea03b79bd43870d606ce52ea"
+    },
+    {
+      "path": "src/app/api/native/attestation/apple/register/route.test.ts",
+      "sha1": "819c05a8f9bc37fae0ef2c51e98f78f67c059faf"
+    },
+    {
+      "path": "src/app/api/native/attestation/apple/register/route.ts",
+      "sha1": "35f40b4c60d50e1b34cf08a164943412e9a36526"
+    },
+    {
+      "path": "src/app/api/native/attestation/challenge/route.test.ts",
+      "sha1": "47994eec0a61c9a73ae097505ccd15b523f8713b"
+    },
+    {
+      "path": "src/app/api/native/attestation/challenge/route.ts",
+      "sha1": "75b78a70d35d50c917b672c0147070fda8863a1f"
+    },
+    {
+      "path": "src/app/api/native/auth/apple/notifications/route.test.ts",
+      "sha1": "2328d4dd98ee1a67d68e466f77640dd1c8e63c9d"
+    },
+    {
+      "path": "src/app/api/native/auth/apple/notifications/route.ts",
+      "sha1": "6545e87301d7df71b9fe6d6b32da05eddd8bf045"
+    },
+    {
+      "path": "src/app/api/native/auth/apple/route.test.ts",
+      "sha1": "49edb8009e363b485bcef9063a2e08b45043c4ae"
+    },
+    {
+      "path": "src/app/api/native/auth/apple/route.ts",
+      "sha1": "264e6500582b3505bab0ef6ba17c16096d2927dc"
+    },
+    {
+      "path": "src/app/api/native/auth/google/route.test.ts",
+      "sha1": "33dec8ceee1123c2beb96ee493f6cfee5d829a4c"
+    },
+    {
+      "path": "src/app/api/native/auth/google/route.ts",
+      "sha1": "6256afad4038a50394a1b5d3ce51971e27054a4f"
+    },
+    {
+      "path": "src/app/api/native/auth/sign-out/route.test.ts",
+      "sha1": "f4e82bf9cc9ffdcc579f72c349fde540a13c540f"
+    },
+    {
+      "path": "src/app/api/native/auth/sign-out/route.ts",
+      "sha1": "cf966e777dc31ed39d179a05a57fdf6f25643e13"
+    },
+    {
+      "path": "src/app/api/native/config/route.test.ts",
+      "sha1": "aa6c4cfba0c58a43deda64e2345ec5b1826f15ac"
+    },
+    {
+      "path": "src/app/api/native/config/route.ts",
+      "sha1": "b1c3c684ce787631cfc47d16fa765ceb255f15b9"
+    },
+    {
+      "path": "src/app/api/native/diagnostics/route.test.ts",
+      "sha1": "82ee349a5fed086776e5fb63804789e0b761aeda"
+    },
+    {
+      "path": "src/app/api/native/diagnostics/route.ts",
+      "sha1": "c4ebd0fbb0d4c6a581f8f1215d511a42140bdfe1"
+    },
+    {
+      "path": "src/app/api/native/session/guest/route.test.ts",
+      "sha1": "cce29bd8351141888ecbf1260876ef094d4f0d72"
+    },
+    {
+      "path": "src/app/api/native/session/guest/route.ts",
+      "sha1": "18c4670ad8a1860a74fa34cda6a25ab3ee33d7cb"
+    },
+    {
+      "path": "src/app/api/play/catalog/route.ts",
+      "sha1": "8f39912a6f2902cc2c3890c99b8310ab4868c8a0"
+    },
+    {
+      "path": "src/app/api/play/config/route.test.ts",
+      "sha1": "72057a66ccad2fb66f9cdab0773ac1a507467848"
+    },
+    {
+      "path": "src/app/api/play/config/route.ts",
+      "sha1": "9d29cbc995fc91674a95b9e97b47c2d768ec505c"
+    },
+    {
+      "path": "src/app/api/play/intent/route.ts",
+      "sha1": "d2ae7aef66bbf1ae08485f9e0db46ca70ad1cb0a"
+    },
+    {
+      "path": "src/app/api/play/pack-routes.test.ts",
+      "sha1": "65a28d19bc721a0712cf3a36887ec2406086ad48"
+    },
+    {
+      "path": "src/app/api/play/paywall/route.ts",
+      "sha1": "2c9c6ff0fcd0e07150b6824d17aecb316d6a80a8"
+    },
+    {
+      "path": "src/app/api/play/verify/route.integration.test.ts",
+      "sha1": "770ef39ea05711667f253cb07702238868176efc"
+    },
+    {
+      "path": "src/app/api/play/verify/route.test.ts",
+      "sha1": "36eee339cafa49e94a85d08b7482b32fa3cbb963"
+    },
+    {
+      "path": "src/app/api/play/verify/route.ts",
+      "sha1": "fade37fe51f449730aa8b7be1d276f5181050989"
+    },
+    {
+      "path": "src/app/api/reports/route.test.ts",
+      "sha1": "b077d4223ace2da92a69597161365aeb76758bff"
+    },
+    {
+      "path": "src/app/api/reports/route.ts",
+      "sha1": "45e5c147e7b9bdf59cb6ac434872cdcef090320d"
+    },
+    {
+      "path": "src/app/api/stripe/webhook/route.test.ts",
+      "sha1": "5063fddf84ef9836a572440537ad6c70125af04c"
+    },
+    {
+      "path": "src/app/api/stripe/webhook/route.ts",
+      "sha1": "69078557adea04aab55d0f8974e3c1fd64b532e1"
+    },
+    {
+      "path": "src/app/apple-icon.png",
+      "sha1": "45acd8c3db768b1a4f8956f1a01ffade480b326e"
+    },
+    {
+      "path": "src/app/editorial-routes.test.ts",
+      "sha1": "15940cefe84bb1217337923aa8f2bc2e4e8d983c"
+    },
+    {
+      "path": "src/app/favicon.ico",
+      "sha1": "9f1f542a2ceca43fa9bf9564247fba3a928b4f42"
+    },
+    {
+      "path": "src/app/globals.css",
+      "sha1": "817c9b39871c5501d91b7009aa1d61528916d903"
+    },
+    {
+      "path": "src/app/manifest.ts",
+      "sha1": "eb2478e3df482d8b3e391108729dfff5154ef226"
+    },
+    {
+      "path": "src/app/pwa-worker.test.ts",
+      "sha1": "c85d6d4729faf1b229b179b8153f69346d101f25"
+    },
+    {
+      "path": "src/app/pwa/icon/[variant]/route.ts",
+      "sha1": "9d189bfc8606c327e9fe3382a756b88c2cf84bfa"
+    },
+    {
+      "path": "src/app/robots.ts",
+      "sha1": "f47f56e9e405abc2eca72219f6039986366db17a"
+    },
+    {
+      "path": "src/app/root-document.test.tsx",
+      "sha1": "58d31d694164425be088aca4d47b63c2d78dd122"
+    },
+    {
+      "path": "src/app/root-document.tsx",
+      "sha1": "3a8ad8b524283ec86d18ebfa145fcf18874c71e0"
+    },
+    {
+      "path": "src/app/seo-routes.test.ts",
+      "sha1": "f6edde64248b44205d3722ab7e9a2f106bc5fdd8"
+    },
+    {
+      "path": "src/app/sitemap.ts",
+      "sha1": "4e1dd2e7d0105f0cf29737b362fd4353d7dfc95e"
+    },
+    {
+      "path": "src/app/viewport.ts",
+      "sha1": "e3502c5a3f2723437a2cf259af5c7c74bb5ca848"
+    },
+    {
+      "path": "src/components/account-menu.test.tsx",
+      "sha1": "117fbf18cd27ab1801220bd83fe81edd626b2b68"
+    },
+    {
+      "path": "src/components/account-menu.tsx",
+      "sha1": "aef45a9f7b6597dd9d4594bc0cd9589cf64cd611"
+    },
+    {
+      "path": "src/components/animated-prompt-hint.tsx",
+      "sha1": "fdd271a1faa451fd028bcd692b0503b462084aeb"
+    },
+    {
+      "path": "src/components/apple-pay-checkout.test.tsx",
+      "sha1": "5fcf049af9beb133d0ec891832e26b8bae1c4c22"
+    },
+    {
+      "path": "src/components/apple-pay-checkout.tsx",
+      "sha1": "8143dcc2d3bc66cc277e0408edac5586fd5b2d39"
+    },
+    {
+      "path": "src/components/card-composer.test.tsx",
+      "sha1": "5c69620616c15cbf104a00adfa094649fab98302"
+    },
+    {
+      "path": "src/components/card-composer.tsx",
+      "sha1": "ab7f4185001f00b973dd07462628a6ee9f92731b"
+    },
+    {
+      "path": "src/components/creator-link.tsx",
+      "sha1": "63363079e6320afb91cae0c868e3e7c883461633"
+    },
+    {
+      "path": "src/components/delete-account-client.test.tsx",
+      "sha1": "25e2c4e968397cb76179bc4129838181e2e499c4"
+    },
+    {
+      "path": "src/components/delete-account-client.tsx",
+      "sha1": "4342af51023ca8e62fc30c3501c01c882e0152d0"
+    },
+    {
+      "path": "src/components/detail-level-selector.test.tsx",
+      "sha1": "c3823c54f49dd47b57f5b11d993bc1bf82b16a28"
+    },
+    {
+      "path": "src/components/detail-level-selector.tsx",
+      "sha1": "7f2c2055ee3bb62efeb2db767c3bc93a86944a24"
+    },
+    {
+      "path": "src/components/discovery-links.css",
+      "sha1": "49facbce1b5ec40a008097fdb5129601118e3166"
+    },
+    {
+      "path": "src/components/discovery-links.test.tsx",
+      "sha1": "b6e3e802f28df4d0cac87f1494b4117722a882bd"
+    },
+    {
+      "path": "src/components/discovery-links.tsx",
+      "sha1": "3754ee12d490f3fbc9b305b0b1183383cf0a1f9b"
+    },
+    {
+      "path": "src/components/doodle-analytics.test.tsx",
+      "sha1": "deefb6f294edec888894155c66ad47fc2f1c8643"
+    },
+    {
+      "path": "src/components/doodle-analytics.tsx",
+      "sha1": "0d2b9a8cd87ff790b1ed28c2eb24c1616fd01ff2"
+    },
+    {
+      "path": "src/components/doodle-client-packs.test.tsx",
+      "sha1": "a1cb0465745ed313a686e7cfc94b86716349e8f6"
+    },
+    {
+      "path": "src/components/doodle-client-photo.test.tsx",
+      "sha1": "ba330d1f616ca51dff1592d8b9e6e27a44ff97ac"
+    },
+    {
+      "path": "src/components/doodle-client.test.tsx",
+      "sha1": "9cade4b69146c517f4242852a4db15423863b007"
+    },
+    {
+      "path": "src/components/doodle-client.tsx",
+      "sha1": "8590ffb2924a4e2be00544fcc87279a0aee77745"
+    },
+    {
+      "path": "src/components/doodle-grid-frame.tsx",
+      "sha1": "0006f90a88002ed826d3080337d7353f28f316ee"
+    },
+    {
+      "path": "src/components/doodle-ideas-page.test.tsx",
+      "sha1": "6c73a4d9c9f3f483cf46d1fae20343fe67d8e1b3"
+    },
+    {
+      "path": "src/components/doodle-ideas-page.tsx",
+      "sha1": "a78de14370babd031d9c27ebcbf709bbb79a9ab0"
+    },
+    {
+      "path": "src/components/doodle-landing.css",
+      "sha1": "0388680aee50cd454d12d8e41e2b4755c7872eb5"
+    },
+    {
+      "path": "src/components/doodle-loading-asset.test.ts",
+      "sha1": "7c61e2f5c410f7dcdb247b384448b2b339024972"
+    },
+    {
+      "path": "src/components/doodle-page.test.tsx",
+      "sha1": "c8cf54767b0b3dd6727e8aecb1e58e1d68e45d3f"
+    },
+    {
+      "path": "src/components/doodle-page.tsx",
+      "sha1": "d13ee3b9d7e41170bba1654951c74f490ae47554"
+    },
+    {
+      "path": "src/components/doodle-preview-dialog.test.tsx",
+      "sha1": "02d574397228496faa45e55b2a2cad46f73e497a"
+    },
+    {
+      "path": "src/components/doodle-preview-dialog.tsx",
+      "sha1": "cba08ad57c3c4c7a29b3f8f1e7b43633c0403cc2"
+    },
+    {
+      "path": "src/components/doodle-stage.test.tsx",
+      "sha1": "a66b6860e41deea73093d3771b19da81aeaede74"
+    },
+    {
+      "path": "src/components/doodle-stage.tsx",
+      "sha1": "1dd25476f977a31965244d0e3c95738c43528949"
+    },
+    {
+      "path": "src/components/doodle-waiting-card.tsx",
+      "sha1": "fe8609327b31e651d1b139eca5b8d063953d12c7"
+    },
+    {
+      "path": "src/components/editorial-pages.tsx",
+      "sha1": "627c1c7df7fc0dd977d5d338f1f7e689e0fbdf05"
+    },
+    {
+      "path": "src/components/gallery-prefill.test.tsx",
+      "sha1": "ef949fe87408d4e0c08612bcafdb61d7f1c73b2b"
+    },
+    {
+      "path": "src/components/google-sign-in-button.test.tsx",
+      "sha1": "dd6c4e8d742c90db353de196b72c68740d727541"
+    },
+    {
+      "path": "src/components/google-sign-in-button.tsx",
+      "sha1": "0e5d36ac2b6841ba192bd6bcc26c07c75cac17af"
+    },
+    {
+      "path": "src/components/grid-overlay.css",
+      "sha1": "358c1ce5ff820ff3cdf1e4f04ddc025aea80c4b8"
+    },
+    {
+      "path": "src/components/grid-overlay.tsx",
+      "sha1": "79448a1750f687c23e0f849d109f837242f15294"
+    },
+    {
+      "path": "src/components/idea-gallery-filter.test.tsx",
+      "sha1": "addddf9c146595026f22af762147341956326284"
+    },
+    {
+      "path": "src/components/idea-gallery.test.tsx",
+      "sha1": "61f719cb9babbe89825cdb5cf3c6955375e152c7"
+    },
+    {
+      "path": "src/components/idea-gallery.tsx",
+      "sha1": "29f11e5cac9a35070c1f13f279cd1d8b04a848d8"
+    },
+    {
+      "path": "src/components/idea-preview.tsx",
+      "sha1": "12991431cf7add76639c94e2f40c410c3e501430"
+    },
+    {
+      "path": "src/components/landing-examples.tsx",
+      "sha1": "ebccce88a7e4ac0dd550fd9be849e93a07fba4e5"
+    },
+    {
+      "path": "src/components/landing-next-step.test.tsx",
+      "sha1": "0f2aaf161b8ef9ab2fc9e27ebd419a2b30d2f4a7"
+    },
+    {
+      "path": "src/components/language-switcher.test.tsx",
+      "sha1": "ad19f7eda091ada3fa05b4a2b57f8986604e90da"
+    },
+    {
+      "path": "src/components/language-switcher.tsx",
+      "sha1": "3a0fc248ad87d866b44822807b477213c9f2cc0b"
+    },
+    {
+      "path": "src/components/legal-page.test.tsx",
+      "sha1": "c41cd20f5344dae18bf68057adf1eee1996c175e"
+    },
+    {
+      "path": "src/components/legal-page.tsx",
+      "sha1": "94589ac86c3084d0e2044fb1e76cd325b4d7dea4"
+    },
+    {
+      "path": "src/components/mobile-app-workspace.css",
+      "sha1": "7325ea00796f91045cb55ee3d9d262c6c1e80a32"
+    },
+    {
+      "path": "src/components/mobile-app-workspace.server.test.tsx",
+      "sha1": "aab33570cd9899a4c5ebf27cd7b83937dedce97d"
+    },
+    {
+      "path": "src/components/mobile-app-workspace.test.tsx",
+      "sha1": "692f5dd9ca594ff6cb6163e090ae762d2bcd816c"
+    },
+    {
+      "path": "src/components/mobile-app-workspace.tsx",
+      "sha1": "1d77b76d177755b6b371d0933f532ab17f2aabbc"
+    },
+    {
+      "path": "src/components/purchase-dialog-routing.test.tsx",
+      "sha1": "329e37598a09256874f33d2b2e463a7f616cfb31"
+    },
+    {
+      "path": "src/components/purchase-dialog.test.tsx",
+      "sha1": "e0d45735ac579d4c47389c70ba5f543274f642d0"
+    },
+    {
+      "path": "src/components/purchase-dialog.tsx",
+      "sha1": "c659593e76d79b29ee09366ba4f9f6ca6f7065ab"
+    },
+    {
+      "path": "src/components/report-dialog.test.tsx",
+      "sha1": "8abe83833568b39418c474b7c3eb8f747c913505"
+    },
+    {
+      "path": "src/components/report-dialog.tsx",
+      "sha1": "a95a2326b0b51c8079898babef5adf7e895fb7f2"
+    },
+    {
+      "path": "src/components/result-actions.test.tsx",
+      "sha1": "850f90aed6fe2bc21c6881a3f4af0ed9e7972531"
+    },
+    {
+      "path": "src/components/result-actions.tsx",
+      "sha1": "58fe188d536464c8043f9c533dd8ef9a4a7f920c"
+    },
+    {
+      "path": "src/components/result-dialog.test.tsx",
+      "sha1": "6de0a6f91b9ab08f8bfd8af9991a08fa04fc5d3e"
+    },
+    {
+      "path": "src/components/result-dialog.tsx",
+      "sha1": "35f8f36f7214af377543c5e4f2ddcf2e3ca83bea"
+    },
+    {
+      "path": "src/components/scene-composer.test.tsx",
+      "sha1": "9c32f0cc4eb001aabbd046e3f38de9035d68adeb"
+    },
+    {
+      "path": "src/components/scene-composer.tsx",
+      "sha1": "9d99c59565d7ac2855dd16c7d4b6350880fb3aab"
+    },
+    {
+      "path": "src/components/service-worker-registration.tsx",
+      "sha1": "9885677b249bb7bbfde179d3c003c4e4d6f9639d"
+    },
+    {
+      "path": "src/components/use-detail-level.ts",
+      "sha1": "c2c932dfe37415d9956d46e667daeac216edcab3"
+    },
+    {
+      "path": "src/components/use-photo-draft.ts",
+      "sha1": "8ecae2de68bf7eb28b64bfbebff5cf08dac19814"
+    },
+    {
+      "path": "src/components/web-pack-purchase-dialog.css",
+      "sha1": "8de45175032a22d09c22413180a81ae8d26bb0a4"
+    },
+    {
+      "path": "src/components/web-pack-purchase-dialog.test.tsx",
+      "sha1": "b6de8bb3204dd3067ff30e2d9c81a38b772dee55"
+    },
+    {
+      "path": "src/components/web-pack-purchase-dialog.tsx",
+      "sha1": "50f7694f52104765d11392f41691a19fb0227260"
+    },
+    {
+      "path": "src/instrumentation-client.test.ts",
+      "sha1": "a758a78128efa5c6977bbcc6a9ec4f9b310c0d8c"
+    },
+    {
+      "path": "src/instrumentation-client.ts",
+      "sha1": "901025c6935c31e212e6e3f31c36a80b812d30dd"
+    },
+    {
+      "path": "src/lib/app-config.test.ts",
+      "sha1": "0c14948081c1cc8038899686533fe5931b20fc18"
+    },
+    {
+      "path": "src/lib/app-config.ts",
+      "sha1": "7df8272ee3b8a8e02d1b6140d41fa4c21968f3df"
+    },
+    {
+      "path": "src/lib/apple-attestation-crypto.test.ts",
+      "sha1": "748994455a83f08c0f4a4b86e30a84c7616564d9"
+    },
+    {
+      "path": "src/lib/apple-attestation-crypto.ts",
+      "sha1": "584867debd6eb6100d6adc08a1fff7ca7adcedd6"
+    },
+    {
+      "path": "src/lib/apple-attestation-root.json",
+      "sha1": "9912d6be3f5a0cfacf848a8e3402adbbf87bc5b4"
+    },
+    {
+      "path": "src/lib/apple-attestation.redis.integration.test.ts",
+      "sha1": "0468edf0c14937ee5e3eff5949db921a998ca02d"
+    },
+    {
+      "path": "src/lib/apple-attestation.ts",
+      "sha1": "0ae86a88cdcf3bb93568d486c6cf4ef3e03a9b09"
+    },
+    {
+      "path": "src/lib/auth/account-deletion.redis.integration.test.ts",
+      "sha1": "92dabd412b9d65c50792cd4ec3227fe1e0c6991c"
+    },
+    {
+      "path": "src/lib/auth/accounts.test.ts",
+      "sha1": "e6bd029561a3e306b1aa5df0ace536b9834bffa0"
+    },
+    {
+      "path": "src/lib/auth/accounts.ts",
+      "sha1": "4147e95f1164735d4e5407242ccd9e3aef15907d"
+    },
+    {
+      "path": "src/lib/auth/apple-notifications.test.ts",
+      "sha1": "ac6255d011e4de8188447b499f2b0095904ea7e2"
+    },
+    {
+      "path": "src/lib/auth/apple-notifications.ts",
+      "sha1": "b14285e1f25d43ab048190f516021a78fd7722a8"
+    },
+    {
+      "path": "src/lib/auth/apple-tokens.test.ts",
+      "sha1": "71d59b2218aafa64aa8f6b7c4af2baab5686b916"
+    },
+    {
+      "path": "src/lib/auth/apple-tokens.ts",
+      "sha1": "08e36f08af03453e43f19e1ab1ccea1853891890"
+    },
+    {
+      "path": "src/lib/auth/apple.test.ts",
+      "sha1": "ceec5fdf23b24075e8262813e4b570523b8ebdca"
+    },
+    {
+      "path": "src/lib/auth/apple.ts",
+      "sha1": "73ddf0e669c47dcf0864fc7517134da4a974bd15"
+    },
+    {
+      "path": "src/lib/auth/google.test.ts",
+      "sha1": "483d2930fa24eabe427d5fba20fa499679c3f6de"
+    },
+    {
+      "path": "src/lib/auth/google.ts",
+      "sha1": "cd9ff1c5a2d9e83082963f756970c28f40676e60"
+    },
+    {
+      "path": "src/lib/auth/native-session-migration.ts",
+      "sha1": "0715777bd125c90459e6ab2a3944b1bd2239fcf1"
+    },
+    {
+      "path": "src/lib/auth/same-origin.test.ts",
+      "sha1": "5ba4f085424885e8d87a67e595bd2bc66707d37a"
+    },
+    {
+      "path": "src/lib/auth/same-origin.ts",
+      "sha1": "10e27428ec83557a7ec3a3a163ef2e991806a0f3"
+    },
+    {
+      "path": "src/lib/auth/session.test.ts",
+      "sha1": "6777db370ea05a2c23a740d225a9ee46073e9c67"
+    },
+    {
+      "path": "src/lib/auth/session.ts",
+      "sha1": "b8503893b0befce958a6d29accd25c714ed4d648"
+    },
+    {
+      "path": "src/lib/billing/apple-billing-notifications.test.ts",
+      "sha1": "a5d12b7755ba62f08c27aa04fd7ffda44f5dcaf5"
+    },
+    {
+      "path": "src/lib/billing/apple-billing-notifications.ts",
+      "sha1": "f948311289db4ed8d3c25ed29b2150d13da94502"
+    },
+    {
+      "path": "src/lib/billing/apple-config.ts",
+      "sha1": "93fef996421f7f517b10da8aa0472daa94172c30"
+    },
+    {
+      "path": "src/lib/billing/apple-credit-scope.ts",
+      "sha1": "db16b5447a79528db2bdbca064773ede2ce4d49b"
+    },
+    {
+      "path": "src/lib/billing/apple-credits.redis.integration.test.ts",
+      "sha1": "43d9f988cd6453fa972151527190549a55814b4c"
+    },
+    {
+      "path": "src/lib/billing/apple-credits.ts",
+      "sha1": "e69040d2850477721774d231e35b70b93b2d0483"
+    },
+    {
+      "path": "src/lib/billing/apple-pay-diagnostics.test.ts",
+      "sha1": "861394e9f3bade4471c7946f658af2c40685e94a"
+    },
+    {
+      "path": "src/lib/billing/apple-pay-diagnostics.ts",
+      "sha1": "143af014d4a53da69288599f2052a7bf9a31d3e0"
+    },
+    {
+      "path": "src/lib/billing/apple-purchase.test.ts",
+      "sha1": "14a37f112b28e0283c034a158ee02c578cbc2a29"
+    },
+    {
+      "path": "src/lib/billing/apple-purchase.ts",
+      "sha1": "62cad7801b340373ff8815ce164b894adc784e2b"
+    },
+    {
+      "path": "src/lib/billing/checkout.test.ts",
+      "sha1": "df3776c19281cb708fb8c50e7f1f67c1628aa7d1"
+    },
+    {
+      "path": "src/lib/billing/checkout.ts",
+      "sha1": "729a16587a001dc77c0326e4cf3151dc7d8a8b37"
+    },
+    {
+      "path": "src/lib/billing/complimentary-credits.ts",
+      "sha1": "6eeefce4cd1d0392dedbdf6fca1aa9334c425fb0"
+    },
+    {
+      "path": "src/lib/billing/credits.test.ts",
+      "sha1": "752e46f52167dd1d9a9605aa774a0bc9ae8baaa6"
+    },
+    {
+      "path": "src/lib/billing/credits.ts",
+      "sha1": "5b6939665183f433c8476c316442a659a10e6b35"
+    },
+    {
+      "path": "src/lib/billing/play-catalog.test.ts",
+      "sha1": "3d498fcb04b08b0cbab5257343087a7c14a47c87"
+    },
+    {
+      "path": "src/lib/billing/play-catalog.ts",
+      "sha1": "b9f421e26a68a8957f2c22e5f6f09b21c91f73f4"
+    },
+    {
+      "path": "src/lib/billing/play-client.test.ts",
+      "sha1": "3274bc86720e7194c8c82eb41f381d518edf25b7"
+    },
+    {
+      "path": "src/lib/billing/play-client.ts",
+      "sha1": "70ea7488b211d791e1947eceefaf20407e93ff96"
+    },
+    {
+      "path": "src/lib/billing/play-config.test.ts",
+      "sha1": "4b86f999d90dae08e7e0ab1454805efa31adf43c"
+    },
+    {
+      "path": "src/lib/billing/play-config.ts",
+      "sha1": "48497e0f4702c8da6a77647aac130ec6b3bcc595"
+    },
+    {
+      "path": "src/lib/billing/play-credits.redis.integration.test.ts",
+      "sha1": "456ad4fe61d7e4ffd5260897df1cbae08e3be6b0"
+    },
+    {
+      "path": "src/lib/billing/play-credits.test.ts",
+      "sha1": "ff7715d56d1ed7155676cc055a2a5f42f534d748"
+    },
+    {
+      "path": "src/lib/billing/play-credits.ts",
+      "sha1": "ad4002f04e55a1e38a447136e65986d85a2d252d"
+    },
+    {
+      "path": "src/lib/billing/play-google.test.ts",
+      "sha1": "a9e300bdd30c8dd990ce6345f37b9eaabe98381a"
+    },
+    {
+      "path": "src/lib/billing/play-google.ts",
+      "sha1": "f4bb0edaf48efe0e2ae3f8991ebb1ec8fda2cca9"
+    },
+    {
+      "path": "src/lib/billing/play-intents.ts",
+      "sha1": "69e0ed6e36b5a84b500d152cc11b3a55bd539dd0"
+    },
+    {
+      "path": "src/lib/billing/play-purchase.test.ts",
+      "sha1": "f4ba529c0591a77fc296495b774fda38a47e7b27"
+    },
+    {
+      "path": "src/lib/billing/play-purchase.ts",
+      "sha1": "8c94bec9f26b586acb583357875502465f5431b1"
+    },
+    {
+      "path": "src/lib/billing/play-voids.test.ts",
+      "sha1": "fc72187b3aa5bffdeda069ddf7d8f72f1be900c0"
+    },
+    {
+      "path": "src/lib/billing/play-voids.ts",
+      "sha1": "092f1d5d1b5127735b6e60cf31c41f9c3decae59"
+    },
+    {
+      "path": "src/lib/billing/sale-notification.test.ts",
+      "sha1": "42ef55d847ad364d6184548bf077e11269c1c5f2"
+    },
+    {
+      "path": "src/lib/billing/sale-notification.ts",
+      "sha1": "78b7cf76b147a47e01dfd0cd30fbffb0f0a21c63"
+    },
+    {
+      "path": "src/lib/billing/stripe.ts",
+      "sha1": "58ca16706f9d8763340115c0230d5a710c161791"
+    },
+    {
+      "path": "src/lib/billing/web-checkout.test.ts",
+      "sha1": "9e9c16b7ed496f53948f9740b3018dcacff06e95"
+    },
+    {
+      "path": "src/lib/billing/web-pack-ledger.ts",
+      "sha1": "b4dd5968c069a7c2000824a42e3baf05af482504"
+    },
+    {
+      "path": "src/lib/billing/web-packs.test.ts",
+      "sha1": "b252bb87611e766af02e44019060321b51d1b16f"
+    },
+    {
+      "path": "src/lib/billing/web-packs.ts",
+      "sha1": "2a88398545cdd1877f13d70460ece287610ce8cc"
+    },
+    {
+      "path": "src/lib/card/frame.ts",
+      "sha1": "b5070f89d9f9b07980d2c11f727afe4a6ca90d4c"
+    },
+    {
+      "path": "src/lib/card/render-card.test.ts",
+      "sha1": "62e298b42db4b9b4f16c2230f6ef70f6655f8c32"
+    },
+    {
+      "path": "src/lib/card/render-card.ts",
+      "sha1": "072b68577331eb1afa7cb2ae8fc21ec1a1bbc8d7"
+    },
+    {
+      "path": "src/lib/checkout-draft-store.ts",
+      "sha1": "30a656438984fe18920fc8da6763363fbcaa87fd"
+    },
+    {
+      "path": "src/lib/composer-intro.ts",
+      "sha1": "47f93f36b9f0c95dc865a93775d9daf816fa6b69"
+    },
+    {
+      "path": "src/lib/detail-dock.test.ts",
+      "sha1": "6eaca5dcf56b9ad9e63ddb974c20046d1e63c5ed"
+    },
+    {
+      "path": "src/lib/detail-dock.ts",
+      "sha1": "623798e50c7afafe2222fe60805aca6ba50be9da"
+    },
+    {
+      "path": "src/lib/detail-level-copy.ts",
+      "sha1": "4da03248763c3138565a8d5884fa9fa01b47c46e"
+    },
+    {
+      "path": "src/lib/diagnostics/events.test.ts",
+      "sha1": "b3aaac84a0e91923ca239118e5fd03c31bb3c49a"
+    },
+    {
+      "path": "src/lib/diagnostics/events.ts",
+      "sha1": "3a994f968c0cb7d2233fb54e7c5b3292b354dd72"
+    },
+    {
+      "path": "src/lib/diagnostics/provider.test.ts",
+      "sha1": "2f2902d90a0e88f9f273a3f883ab80004404e1e2"
+    },
+    {
+      "path": "src/lib/diagnostics/provider.ts",
+      "sha1": "4e94348cd9ed6a4da293c1b64feb309675e730b0"
+    },
+    {
+      "path": "src/lib/diagnostics/request.test.ts",
+      "sha1": "ad8819f136bc2ed3869395b2d0c9ce7a1d6b76c9"
+    },
+    {
+      "path": "src/lib/diagnostics/request.ts",
+      "sha1": "46e68298fc60f767b15cbda9bac1c78ef34942cf"
+    },
+    {
+      "path": "src/lib/diagnostics/store.redis.integration.test.ts",
+      "sha1": "8f4258422dcb02631185884a7f9d4dde6fc56ee3"
+    },
+    {
+      "path": "src/lib/diagnostics/store.test.ts",
+      "sha1": "f47074560126af273f15daaf2968c6548cd4359c"
+    },
+    {
+      "path": "src/lib/diagnostics/store.ts",
+      "sha1": "fbb70cb501654c140370ef648a021f616e7fa87d"
+    },
+    {
+      "path": "src/lib/doodle-ideas.test.ts",
+      "sha1": "4116dcaa4a8399596d869dd3d38a1a189fbbc9d4"
+    },
+    {
+      "path": "src/lib/doodle-ideas.ts",
+      "sha1": "5caff60826559c8169657e5a40c0bc4aaa2f9700"
+    },
+    {
+      "path": "src/lib/editorial.ts",
+      "sha1": "5fb21c087cb672e25094044f7af02624d977c9a9"
+    },
+    {
+      "path": "src/lib/env.ts",
+      "sha1": "27a8e3b47def8ed7fd4fcb9e1d37d6a61f212a18"
+    },
+    {
+      "path": "src/lib/funnel-deletion.ts",
+      "sha1": "8505d1b147c16cac5e20ce19112c66df0fd94332"
+    },
+    {
+      "path": "src/lib/funnel-metrics.ts",
+      "sha1": "a1d10c1cadd8781405cde287bc79ed70ae1314e4"
+    },
+    {
+      "path": "src/lib/funnel-report.ts",
+      "sha1": "39993b80a8703c662030c94b79dbe63c51e48455"
+    },
+    {
+      "path": "src/lib/gallery-assets.json",
+      "sha1": "1b70b4b9e7892149e7c85e74416a6d634d8d4d26"
+    },
+    {
+      "path": "src/lib/gallery-assets.test.ts",
+      "sha1": "3f0df7426b54970b4da75daaa953c7e2d0af950a"
+    },
+    {
+      "path": "src/lib/gallery-catalog.test.ts",
+      "sha1": "be3a8e20ad6ea93d5ab042d13c1c97f8f3e30e99"
+    },
+    {
+      "path": "src/lib/gallery-catalog.ts",
+      "sha1": "690a1545c4495a485aa66af8b160db302ede0232"
+    },
+    {
+      "path": "src/lib/gallery-copy.ts",
+      "sha1": "a10bfce9218396c466e93347ccfc20da3682041b"
+    },
+    {
+      "path": "src/lib/gallery-navigation.ts",
+      "sha1": "745a68c9a348770618c88a9830c342e923a2441f"
+    },
+    {
+      "path": "src/lib/generation/detail-level.ts",
+      "sha1": "78a98ca1765d2ca06e6ac07bc7c7c7eabba8964c"
+    },
+    {
+      "path": "src/lib/generation/free-allowance.redis.integration.test.ts",
+      "sha1": "7dfd4a248cecc97038c8fa977609653d30636a95"
+    },
+    {
+      "path": "src/lib/generation/free-allowance.test.ts",
+      "sha1": "2281caa453dc0ea486b6c8fe147cc406820df5f0"
+    },
+    {
+      "path": "src/lib/generation/free-allowance.ts",
+      "sha1": "6440ebeb0b9c7fe7efcf8b387a7cdff5553c5887"
+    },
+    {
+      "path": "src/lib/generation/generate-doodle.real.test.ts",
+      "sha1": "f42ca3b30663887ed153f3617a7f37b9f6416fff"
+    },
+    {
+      "path": "src/lib/generation/generate-doodle.test.ts",
+      "sha1": "569b1b2c2e61a8b36fbec99fb5e534cabcc89852"
+    },
+    {
+      "path": "src/lib/generation/generate-doodle.ts",
+      "sha1": "4f4404642eb8615bbc6730f76fd416332d428f0e"
+    },
+    {
+      "path": "src/lib/generation/generate-photo-doodle.test.ts",
+      "sha1": "89da0f21953b1f0bafe6c4ffc526ee75ac7146a5"
+    },
+    {
+      "path": "src/lib/generation/generate-photo-doodle.ts",
+      "sha1": "e57439bb826dd96f3618aac78b5251023b3721f3"
+    },
+    {
+      "path": "src/lib/generation/generation-limit.test.ts",
+      "sha1": "1d48c23d50855892ca386597c012bc8f0e10dea8"
+    },
+    {
+      "path": "src/lib/generation/generation-limit.ts",
+      "sha1": "5a5ecb397fc58964702586c310be3cfd581df1d2"
+    },
+    {
+      "path": "src/lib/generation/paper-color-metadata.ts",
+      "sha1": "0edfb361b098fb4df391f3a3fd2fa63ecd80539f"
+    },
+    {
+      "path": "src/lib/generation/paper-color.test.ts",
+      "sha1": "09e52829eef7465688398b6ee179cb0d2d57c360"
+    },
+    {
+      "path": "src/lib/generation/paper-color.ts",
+      "sha1": "f928e9fc82d0578e56ddecadafdb7985e4df47a2"
+    },
+    {
+      "path": "src/lib/generation/photo-input.ts",
+      "sha1": "dfb5a2ec05eaac0281c2661b8ff6ec4dd39333b4"
+    },
+    {
+      "path": "src/lib/generation/photo-prompt.ts",
+      "sha1": "76b59564c62b4fba43afdfa6631ae08036227f0d"
+    },
+    {
+      "path": "src/lib/generation/photo.test.ts",
+      "sha1": "1480a5dce65a73e783d8f1a635314fb345c74974"
+    },
+    {
+      "path": "src/lib/generation/photo.ts",
+      "sha1": "965b199965555293ae10d453dddc08b16332cad2"
+    },
+    {
+      "path": "src/lib/generation/profile.ts",
+      "sha1": "5424bf18a623723b8e8743dca60a293411f43a31"
+    },
+    {
+      "path": "src/lib/generation/prompt.test.ts",
+      "sha1": "272b0c95368220e2d4dcb74255444c3668900cd3"
+    },
+    {
+      "path": "src/lib/generation/prompt.ts",
+      "sha1": "9822d63144325adaf04a5039099ec51b180d6d2f"
+    },
+    {
+      "path": "src/lib/grid-copy.ts",
+      "sha1": "61a1bce924085490f8888a479d5efbc768b5c05d"
+    },
+    {
+      "path": "src/lib/i18n.test.ts",
+      "sha1": "14a58e3f9e546bb9eb49d5c7accb935acbc6b72a"
+    },
+    {
+      "path": "src/lib/i18n.ts",
+      "sha1": "365ccf69cc29bd1a79757e53037d498d36baa00a"
+    },
+    {
+      "path": "src/lib/landing-copy.ts",
+      "sha1": "ef5b4b0179bbcbec05eee82771c2cf6e4e3c6b9f"
+    },
+    {
+      "path": "src/lib/landing-resources.ts",
+      "sha1": "66a204aaad6f19a146c077aade3d1977ba49b36b"
+    },
+    {
+      "path": "src/lib/native-attestation.test.ts",
+      "sha1": "c5246fbcb08588838bd094af59f08ff9934013dc"
+    },
+    {
+      "path": "src/lib/native-attestation.ts",
+      "sha1": "f381323a48109994a0e4769e9fcc9f6b9e53ee3b"
+    },
+    {
+      "path": "src/lib/native-contracts.test.ts",
+      "sha1": "8ee1799ab2b35fdc42b2f5267d3442a8ce3ebccf"
+    },
+    {
+      "path": "src/lib/native-contracts.ts",
+      "sha1": "6b79fc7b4d393c3a7e1c6660e2381adb255f02c8"
+    },
+    {
+      "path": "src/lib/native-guest.test.ts",
+      "sha1": "fda5253ccc67ade44ff344181a9cad411e93e22a"
+    },
+    {
+      "path": "src/lib/native-guest.ts",
+      "sha1": "a25f297527ae46529ddb9c3aa1f450501046ddd2"
+    },
+    {
+      "path": "src/lib/native-session.test.ts",
+      "sha1": "8b79baa4247056c1394153edc3fc39a9bf3d615a"
+    },
+    {
+      "path": "src/lib/native-session.ts",
+      "sha1": "97b15b7c8a9d208ca87f12b2f945b6d9268174dc"
+    },
+    {
+      "path": "src/lib/pack-copy.test.ts",
+      "sha1": "898a565d440b2455e7ea4efc02cd84a6a3ad144d"
+    },
+    {
+      "path": "src/lib/pack-copy.ts",
+      "sha1": "53c695da3844ac5f3de1173165b85c8c61f7f7f5"
+    },
+    {
+      "path": "src/lib/photo-copy.ts",
+      "sha1": "8a324d8d118774966f68442b8897c42e1da5b9e5"
+    },
+    {
+      "path": "src/lib/photo-draft-store.ts",
+      "sha1": "3b85a9465ffccba9654ec5f9f85107934f7984f7"
+    },
+    {
+      "path": "src/lib/prepare-photo.test.ts",
+      "sha1": "9493a94165c9f3163d9b12f9ac2bc2d15f59deaa"
+    },
+    {
+      "path": "src/lib/prepare-photo.ts",
+      "sha1": "c6971b011d34d4e62fa3eb7647dece620b2b598e"
+    },
+    {
+      "path": "src/lib/purchase-wording.ts",
+      "sha1": "e5a3360abca7df6db9ed2530e8f998cfbb4e552e"
+    },
+    {
+      "path": "src/lib/redis.test.ts",
+      "sha1": "32bb059570b24d57d1caf02e68583753dbab77c8"
+    },
+    {
+      "path": "src/lib/redis.ts",
+      "sha1": "5d174402133b6066fec3195c63f92ada4953ac85"
+    },
+    {
+      "path": "src/lib/reports/prepare-report-image.ts",
+      "sha1": "020db48e193cb85ca31422b30ca0bd1710b54544"
+    },
+    {
+      "path": "src/lib/reports/report-copy.ts",
+      "sha1": "a802d281a40012765e25e6dbfacb1305be1510a7"
+    },
+    {
+      "path": "src/lib/reports/report-schema.test.ts",
+      "sha1": "d37da01964a4e41457283216d3dc8723b91b3195"
+    },
+    {
+      "path": "src/lib/reports/report-schema.ts",
+      "sha1": "ab4b15415d9d163d0db2b40495604497a8b0bc95"
+    },
+    {
+      "path": "src/lib/reports/report-store.test.ts",
+      "sha1": "52cea8e11846fd82317d7fa1cb0eed613896c209"
+    },
+    {
+      "path": "src/lib/reports/report-store.ts",
+      "sha1": "c9bbd7b94cd525c3768025f99a7c9c59c3a73b0c"
+    },
+    {
+      "path": "src/lib/reports/report-types.ts",
+      "sha1": "cf58fdfbe6526ad28a5be472ba838438e8d007e3"
+    },
+    {
+      "path": "src/lib/scenes/localized-suggestions.ts",
+      "sha1": "1460faa23df17b92696284a7e4e473a82054484e"
+    },
+    {
+      "path": "src/lib/scenes/scene.test.ts",
+      "sha1": "a21e86ef690544ab56da4d5921d7a8bd1127ecb9"
+    },
+    {
+      "path": "src/lib/scenes/scene.ts",
+      "sha1": "d5173986f488b82e742c0dc84b6f76ff62fbad06"
+    },
+    {
+      "path": "src/lib/scenes/suggestions.test.ts",
+      "sha1": "146463db9f8a05c2456d31b30e1801909d48a126"
+    },
+    {
+      "path": "src/lib/scenes/suggestions.ts",
+      "sha1": "fec1aca28491e43b634e80d3df94191222202d72"
+    },
+    {
+      "path": "src/lib/seo/search-console.test.ts",
+      "sha1": "6c96ced229a9f66add35fa6e7b258de347bff724"
+    },
+    {
+      "path": "src/lib/seo/search-console.ts",
+      "sha1": "1f8fd53e60221e3bb80c57817d23043f9bed1682"
+    },
+    {
+      "path": "src/lib/sharing.ts",
+      "sha1": "8e185ca624145737a73512f79b07ff0816babac7"
+    },
+    {
+      "path": "src/lib/test-fixtures/app-attest/LICENSE",
+      "sha1": "8d6616267758e21e27e11d40bc4cba242825a4a3"
+    },
+    {
+      "path": "src/lib/test-fixtures/app-attest/README.md",
+      "sha1": "e935c629152db48c875ea46f8a5f8eef487a078c"
+    },
+    {
+      "path": "src/lib/test-fixtures/app-attest/attestation-development.json",
+      "sha1": "37f589d3f66ffe4f1959422b4d92e00f3bde30ae"
+    },
+    {
+      "path": "src/lib/test-fixtures/app-attest/attestation-production.json",
+      "sha1": "68671af7fb31924c18511f05fe8b1d4da9382235"
+    },
+    {
+      "path": "src/lib/test-utils/isolated-redis.ts",
+      "sha1": "6cedc5da0ee4bc68d33f9021b906cbd015dda9e8"
+    },
+    {
+      "path": "src/lib/usage-metrics.redis.integration.test.ts",
+      "sha1": "9e3138c676edc160065a7dc9bb025db723b5b12d"
+    },
+    {
+      "path": "src/lib/usage-metrics.test.ts",
+      "sha1": "0c95c6946af865c18d34e78934a604ddae49dc28"
+    },
+    {
+      "path": "src/lib/usage-metrics.ts",
+      "sha1": "23abadc553afe66757ae07cf637bb8f401b38b5b"
+    },
+    {
+      "path": "src/test/setup.ts",
+      "sha1": "7e4630620b3052fca9f5627020d51cb15426e9aa"
+    },
+    {
+      "path": "src/types/exifr-mini.d.ts",
+      "sha1": "314218ec5241dfa572966c5b89d09699f4802b32"
+    },
+    {
+      "path": "src/types/google-identity.d.ts",
+      "sha1": "e9fb32721984357e55cb63ada82024a7f45604c4"
+    },
+    {
+      "path": "src/vercel-cron.test.ts",
+      "sha1": "754fb4cf3686b451937c8e830c65fab648957b31"
+    },
+    {
+      "path": "tsconfig.json",
+      "sha1": "b40a6425fac8941c2c9c456372fe100efd6f2edb"
+    },
+    {
+      "path": "tsconfig.tsbuildinfo",
+      "sha1": "b873c3eb944c07479aa777ec1125f114bac1feab"
+    },
+    {
+      "path": "vercel.json",
+      "sha1": "36b4b0b328a1384a26c8fb8c1ef4f767436ad17a"
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha1": "3b35977dd9b4c3753d261b699ed066c2d103b219"
+    }
+  ],
+  "differences": [
+    {
+      "path": "README.md",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "next-env.d.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "package-lock.json",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "package.json",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "playwright.config.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "public/icons/doodle-192.png",
+      "reason": "missing"
+    },
+    {
+      "path": "public/icons/doodle-512.png",
+      "reason": "missing"
+    },
+    {
+      "path": "public/icons/doodle-maskable.png",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/icon.png",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/(english)/privacy/page.tsx",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/(english)/terms/page.tsx",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/api/account/route.test.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/api/account/route.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/api/apple/checkout.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/apple/config/route.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/apple/intent/route.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/apple/notifications/route.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/apple/verify/route.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/generate/route.test.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/api/generate/route.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/api/ideas/route.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/ideas/route.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/native/attestation/apple/register/route.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/native/attestation/apple/register/route.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/native/attestation/challenge/route.test.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/api/native/attestation/challenge/route.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/api/native/auth/apple/notifications/route.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/native/auth/apple/notifications/route.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/native/auth/apple/route.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/native/auth/apple/route.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/api/native/config/route.test.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/api/native/config/route.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/api/native/session/guest/route.test.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/api/native/session/guest/route.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/apple-icon.png",
+      "reason": "missing"
+    },
+    {
+      "path": "src/app/favicon.ico",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/globals.css",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/app/pwa/icon/[variant]/route.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/components/discovery-links.css",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/components/mobile-app-workspace.test.tsx",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/components/mobile-app-workspace.tsx",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/apple-attestation-crypto.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/apple-attestation-crypto.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/apple-attestation-root.json",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/apple-attestation.redis.integration.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/apple-attestation.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/auth/account-deletion.redis.integration.test.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/auth/accounts.test.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/auth/accounts.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/auth/apple-notifications.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/auth/apple-notifications.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/auth/apple-tokens.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/auth/apple-tokens.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/auth/apple.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/auth/apple.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/auth/native-session-migration.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/auth/session.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/billing/apple-billing-notifications.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/billing/apple-billing-notifications.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/billing/apple-config.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/billing/apple-credit-scope.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/billing/apple-credits.redis.integration.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/billing/apple-credits.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/billing/apple-purchase.test.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/billing/apple-purchase.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/billing/credits.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/diagnostics/events.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/diagnostics/request.test.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/diagnostics/request.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/diagnostics/store.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/native-session.test.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/native-session.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/test-fixtures/app-attest/LICENSE",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/test-fixtures/app-attest/README.md",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/test-fixtures/app-attest/attestation-development.json",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/test-fixtures/app-attest/attestation-production.json",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/test-utils/isolated-redis.ts",
+      "reason": "missing"
+    },
+    {
+      "path": "src/lib/usage-metrics.test.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "src/lib/usage-metrics.ts",
+      "reason": "hash mismatch"
+    },
+    {
+      "path": "tsconfig.tsbuildinfo",
+      "reason": "missing"
+    }
+  ]
+}

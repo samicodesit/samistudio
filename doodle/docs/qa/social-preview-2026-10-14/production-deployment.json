@@ -1,0 +1,26 @@
+{
+  "deployment": "dpl_GsBZwhqr2wkFLxsWsJFxDiTS5NJb",
+  "url": "doodle-88ljrl991-ahmed-samis-projects-e6ef0336.vercel.app",
+  "target": "production",
+  "readyState": "READY",
+  "alias": "https://doodle.samistudio.nl",
+  "uploaded_files": 480,
+  "candidate_hash_mismatches": [],
+  "changed_from_previous_deployment": [
+    "next.config.ts",
+    "src/app/(english)/doodle-ideas/page.test.tsx",
+    "src/components/doodle-analytics.test.tsx",
+    "src/components/doodle-analytics.tsx",
+    "src/components/editorial-pages.tsx",
+    "src/components/legal-page.tsx",
+    "src/lib/doodle-ideas.ts",
+    "src/lib/i18n.ts"
+  ],
+  "new_uploads": [
+    ".nvmrc",
+    "public/social/doodle-og-2026-10-14.png",
+    "src/lib/social-channels.ts",
+    "src/lib/social-preview.test.ts",
+    "src/lib/social-preview.ts"
+  ]
+}

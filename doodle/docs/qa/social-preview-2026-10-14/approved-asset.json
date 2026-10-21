@@ -1,0 +1,15 @@
+{
+  "approval_date": "2026-10-14",
+  "status": "Owner-approved asset. Published and production verified.",
+  "asset": "public/social/doodle-og-2026-10-14.png",
+  "source": "marketing-assets/og-concepts-2026-10-14/your-idea-doodled-v7-consistent-color.png",
+  "sha256": "3564fddf3ed091e8a3a219606a2776e329ff3fc5b5bdd05d4b234e64f4e82e93",
+  "dimensions": [
+    1200,
+    630
+  ],
+  "provenance": "Built-in image_gen, followed by deterministic headline-color normalization. Owner approved completed v7.",
+  "public_url": "https://doodle.samistudio.nl/social/doodle-og-2026-10-14.png",
+  "deployment": "dpl_GsBZwhqr2wkFLxsWsJFxDiTS5NJb",
+  "readability_check": "Actual published PNG inspected at 400 x 210. Headline, bear and bunny remain immediately readable."
+}

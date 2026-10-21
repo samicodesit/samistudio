@@ -1,0 +1,23 @@
+plugins {
+  id 'com.android.library'
+  id 'expo-module-gradle-plugin'
+}
+
+group = 'nl.samistudio.doodle.photo'
+version = '1.0.0'
+
+android {
+  namespace 'expo.modules.doodlephoto'
+  defaultConfig {
+    versionCode 1
+    versionName '1.0.0'
+  }
+  testOptions { unitTests.includeAndroidResources = true }
+}
+
+dependencies {
+  // Match the decoder already used by expo-image. No second image engine.
+  implementation 'com.github.bumptech.glide:glide:5.0.5'
+  testImplementation 'junit:junit:4.13.2'
+  testImplementation 'org.robolectric:robolectric:4.16'
+}

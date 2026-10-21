@@ -1,0 +1,1650 @@
+{
+  "date": "2026-10-09",
+  "status": "Reviewed implementation preview; not published",
+  "baseline": "c02ccba",
+  "assets": [
+    {
+      "id": "thank-you-mug-simple",
+      "subject": "thank-you-mug",
+      "detailLevel": "simple",
+      "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/thank-you-mug.webp",
+      "sourceSha256": "66c556fbb385c5af3ad8a379633e268cf1f0ed8bbf908c9eab31f42d54015f1a",
+      "publishedImage": "/ideas/thank-you-mug.webp",
+      "publishedSha256": "66c556fbb385c5af3ad8a379633e268cf1f0ed8bbf908c9eab31f42d54015f1a",
+      "bytes": 196002,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 3912,
+          "file": "/ideas/thumbs/thank-you-mug-simple-320.webp",
+          "sha256": "a62aea43e7e3eebeb37dc6cac6cdd0f200439aa5cbcb09398e25eebefa8c8b67"
+        },
+        {
+          "width": 640,
+          "bytes": 10240,
+          "file": "/ideas/thumbs/thank-you-mug-simple-640.webp",
+          "sha256": "6b94a40828505a581ae16a6bb1bde43a14439bb750b2cb1a09768c42df910728"
+        }
+      ],
+      "provenance": "Existing published gallery example, retained unchanged",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 900,
+      "height": 900,
+      "prompts": {
+        "en": "A steaming mug beside a folded thank-you note with a tiny heart on it",
+        "nl": "Een dampende mok naast een gevouwen bedankbriefje met een klein hartje",
+        "de": "Eine dampfende Tasse neben einem gefalteten Dankeszettel mit kleinem Herz",
+        "fr": "Une tasse fumante près d’un petit mot de remerciement plié avec un cœur",
+        "es": "Una taza humeante junto a una nota de agradecimiento doblada con un corazón",
+        "pt-br": "Uma caneca fumegante ao lado de um bilhete de agradecimento dobrado com um coração",
+        "it": "Una tazza fumante accanto a un biglietto di ringraziamento piegato con un cuore",
+        "ja": "湯気の立つマグカップと、小さなハート付きの折りたたんだお礼メモ",
+        "ko": "김이 나는 머그잔과 작은 하트가 있는 접힌 감사 메모",
+        "ar": "كوب ساخن يتصاعد منه البخار بجانب رسالة شكر مطوية عليها قلب صغير"
+      },
+      "captions": {
+        "en": "A little thank-you",
+        "nl": "Een klein bedankje",
+        "de": "Ein kleines Dankeschön",
+        "fr": "Un petit merci",
+        "es": "Un pequeño agradecimiento",
+        "pt-br": "Um pequeno agradecimento",
+        "it": "Un piccolo grazie",
+        "ja": "小さなありがとう",
+        "ko": "작은 감사 인사",
+        "ar": "كلمة شكر صغيرة"
+      }
+    },
+    {
+      "id": "astronaut-simple",
+      "subject": "astronaut",
+      "detailLevel": "simple",
+      "source": "/home/mests/projects/samistudio/doodle/marketing-assets/play-gallery-2026-10-02/palette/drawings/03-astronaut-high.png",
+      "sourceSha256": "aeba90b484ed4bc0cc3e2c28e5638c91253168b51027a0d9a39f6abb7dba651c",
+      "publishedImage": "/ideas/astronaut-simple.webp",
+      "publishedSha256": "dbc4ea757b8cece27bd697876c9e0a09c241256cb9b812997fe217046c585bb8",
+      "bytes": 125008,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 7384,
+          "file": "/ideas/thumbs/astronaut-simple-320.webp",
+          "sha256": "fbe2bfd40cab42a4f1fe06a890459254bae6304faf2b14befe7c673ca9a4ef3b"
+        },
+        {
+          "width": 640,
+          "bytes": 23300,
+          "file": "/ideas/thumbs/astronaut-simple-640.webp",
+          "sha256": "7ab18c999a39d859cac36b2bb07623c7ed71bd3f0c5f9252ad354fa25c7d93a9"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "An astronaut sitting on a crescent moon, holding a fishing rod with a single star hanging from its line",
+        "nl": "Een astronaut zit op een maansikkel en vist met een hengel waaraan één ster hangt",
+        "de": "Ein Astronaut sitzt auf einer Mondsichel und hält eine Angel mit einem einzelnen Stern an der Schnur",
+        "fr": "Un astronaute assis sur un croissant de lune tient une canne à pêche avec une étoile au bout du fil",
+        "es": "Un astronauta sentado en una luna creciente sostiene una caña de pescar con una estrella colgando del hilo",
+        "pt-br": "Um astronauta sentado em uma lua crescente segura uma vara de pescar com uma estrela pendurada na linha",
+        "it": "Un astronauta seduto su una falce di luna tiene una canna da pesca con una stella appesa alla lenza",
+        "ja": "三日月に座る宇宙飛行士が、糸の先に一つの星が下がる釣りざおを持っている",
+        "ko": "초승달 위에 앉은 우주 비행사가 줄 끝에 별 하나가 매달린 낚싯대를 들고 있다",
+        "ar": "رائد فضاء يجلس على هلال ويحمل صنارة صيد تتدلى من خيطها نجمة واحدة"
+      },
+      "captions": {
+        "en": "Fishing for a star",
+        "nl": "Vissen naar een ster",
+        "de": "Nach einem Stern angeln",
+        "fr": "Pêcher une étoile",
+        "es": "Pescando una estrella",
+        "pt-br": "Pescando uma estrela",
+        "it": "Pescare una stella",
+        "ja": "星を釣ろう",
+        "ko": "별을 낚아요",
+        "ar": "نصطاد نجمة"
+      }
+    },
+    {
+      "id": "cooking-medium",
+      "subject": "cooking",
+      "detailLevel": "medium",
+      "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/cooking-friends.webp",
+      "sourceSha256": "815cc2c9c2bcccd56d5c73a3bc185e9f63756e0a7f010d44f7ea0652fe6bf2d6",
+      "publishedImage": "/ideas/cooking-friends.webp",
+      "publishedSha256": "815cc2c9c2bcccd56d5c73a3bc185e9f63756e0a7f010d44f7ea0652fe6bf2d6",
+      "bytes": 307266,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 16626,
+          "file": "/ideas/thumbs/cooking-medium-320.webp",
+          "sha256": "842cc2935ca91360cf77f556ca0cb652969e60c0f7df5434dce6dbcbf12d9e3d"
+        },
+        {
+          "width": 640,
+          "bytes": 46762,
+          "file": "/ideas/thumbs/cooking-medium-640.webp",
+          "sha256": "153385cae5e584394a3ad30f5823734911340400f4d782ed9521849c1bd96717"
+        }
+      ],
+      "provenance": "Existing published gallery example, retained unchanged",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "Two friends baking pancakes",
+        "nl": "Twee vrienden die pannenkoeken bakken",
+        "de": "Zwei Freunde backen Pfannkuchen",
+        "fr": "Deux amis préparent des pancakes",
+        "es": "Dos amigos preparando tortitas",
+        "pt-br": "Dois amigos fazendo panquecas",
+        "it": "Due amici preparano i pancake",
+        "ja": "友達二人でパンケーキを作る",
+        "ko": "함께 팬케이크를 만드는 두 친구",
+        "ar": "صديقان يحضّران الفطائر"
+      },
+      "captions": {
+        "en": "Pancakes with a friend",
+        "nl": "Samen pannenkoeken bakken",
+        "de": "Zusammen Pfannkuchen backen",
+        "fr": "Des pancakes entre amis",
+        "es": "Tortitas entre amigos",
+        "pt-br": "Panquecas entre amigos",
+        "it": "Pancake tra amici",
+        "ja": "友達とパンケーキ作り",
+        "ko": "친구와 팬케이크 만들기",
+        "ar": "فطائر مع صديق"
+      }
+    },
+    {
+      "id": "flower-cat-simple",
+      "subject": "flower-cat",
+      "detailLevel": "simple",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/simple-charm-2026-10-05/repeat-cat-action-ending.png",
+      "sourceSha256": "1f982bbe9f592c2107d07e531179274dc98fce26fdfb36e0d808663519b6fe53",
+      "publishedImage": "/ideas/flower-cat-simple.webp",
+      "publishedSha256": "d5bdec421183fabff39fbffd50cd4a3df4287870bc463f1d6514d6c5e93c476d",
+      "bytes": 43692,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 5910,
+          "file": "/ideas/thumbs/flower-cat-simple-320.webp",
+          "sha256": "13d4409603c5ca51484f4d2475b73773796d52da51539642963d63080b79cb17"
+        },
+        {
+          "width": 640,
+          "bytes": 15860,
+          "file": "/ideas/thumbs/flower-cat-simple-640.webp",
+          "sha256": "b5424351a4ad746ebd7d660a41c6f7b059c7549f91e6805e162d489a990d8c26"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A cat holding a small flower",
+        "nl": "Een kat met een kleine bloem",
+        "de": "Eine Katze hält eine kleine Blume",
+        "fr": "Un chat tenant une petite fleur",
+        "es": "Un gato sujetando una pequeña flor",
+        "pt-br": "Um gato segurando uma pequena flor",
+        "it": "Un gatto tiene un piccolo fiore",
+        "ja": "小さな花を持つ猫",
+        "ko": "작은 꽃을 들고 있는 고양이",
+        "ar": "قط يحمل زهرة صغيرة"
+      },
+      "captions": {
+        "en": "A flower for you",
+        "nl": "Een bloem voor jou",
+        "de": "Eine Blume für dich",
+        "fr": "Une fleur pour toi",
+        "es": "Una flor para ti",
+        "pt-br": "Uma flor para você",
+        "it": "Un fiore per te",
+        "ja": "あなたに一輪の花",
+        "ko": "너에게 주는 꽃",
+        "ar": "زهرة لك"
+      }
+    },
+    {
+      "id": "bookshop-detailed",
+      "subject": "bookshop",
+      "detailLevel": "detailed",
+      "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/bookshop.webp",
+      "sourceSha256": "4aa3c54610536af77751359e1662a962756d2d9bf6c5a36f9d23aa521c0f87ad",
+      "publishedImage": "/ideas/bookshop.webp",
+      "publishedSha256": "4aa3c54610536af77751359e1662a962756d2d9bf6c5a36f9d23aa521c0f87ad",
+      "bytes": 512276,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 31532,
+          "file": "/ideas/thumbs/bookshop-detailed-320.webp",
+          "sha256": "fb4f071553734b3bec89313dc3ed66f19b523c43ed14c69ba16f1e0ba75ab2b5"
+        },
+        {
+          "width": 640,
+          "bytes": 105482,
+          "file": "/ideas/thumbs/bookshop-detailed-640.webp",
+          "sha256": "4e6fc56eb5e1c847f6ce09536f2e93b20add37a79a143079298a9e13e91f5487"
+        }
+      ],
+      "provenance": "Existing published gallery example, retained unchanged",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A cozy bookshop with plants and a bicycle outside",
+        "nl": "Een gezellige boekwinkel met planten en een fiets voor de deur",
+        "de": "Eine gemütliche Buchhandlung mit Pflanzen und einem Fahrrad vor der Tür",
+        "fr": "Une librairie accueillante avec des plantes et un vélo devant",
+        "es": "Una librería acogedora con plantas y una bicicleta fuera",
+        "pt-br": "Uma livraria aconchegante com plantas e uma bicicleta na entrada",
+        "it": "Una libreria accogliente con piante e una bicicletta fuori",
+        "ja": "植物と自転車が入口にある居心地のよい本屋",
+        "ko": "입구에 화분과 자전거가 있는 아늑한 서점",
+        "ar": "مكتبة دافئة أمامها نباتات ودراجة"
+      },
+      "captions": {
+        "en": "A cozy bookshop",
+        "nl": "Een gezellige boekwinkel",
+        "de": "Eine gemütliche Buchhandlung",
+        "fr": "Une librairie accueillante",
+        "es": "Una librería acogedora",
+        "pt-br": "Uma livraria aconchegante",
+        "it": "Una libreria accogliente",
+        "ja": "居心地のよい本屋",
+        "ko": "아늑한 서점",
+        "ar": "مكتبة دافئة"
+      }
+    },
+    {
+      "id": "parent-hug-simple",
+      "subject": "parent-hug",
+      "detailLevel": "simple",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/simple-charm-2026-10-05/validate-hug-action-ending.png",
+      "sourceSha256": "4d71505bb26b3fe193353845147508b2d5423af01b923252c4c8768cc6bc4729",
+      "publishedImage": "/ideas/parent-hug-simple.webp",
+      "publishedSha256": "128304dedae44e61030672cdaa3e1ce5a0fc7466d302fca6d97a87af7c000583",
+      "bytes": 42636,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 6084,
+          "file": "/ideas/thumbs/parent-hug-simple-320.webp",
+          "sha256": "c49b08a2959f6df1cf1f47438312dc210e332009f976ba253d6c49f478c031e1"
+        },
+        {
+          "width": 640,
+          "bytes": 16202,
+          "file": "/ideas/thumbs/parent-hug-simple-640.webp",
+          "sha256": "5b11efc603d6cc7fcdc2c269d28890aeaf09bc27f7c9ace6e38a0802703e0f85"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A parent hugging their child after a difficult day",
+        "nl": "Een ouder knuffelt een kind na een moeilijke dag",
+        "de": "Ein Elternteil umarmt sein Kind nach einem schwierigen Tag",
+        "fr": "Un parent serre son enfant dans ses bras après une journée difficile",
+        "es": "Un padre o una madre abraza a su hijo después de un día difícil",
+        "pt-br": "Um pai ou uma mãe abraça seu filho depois de um dia difícil",
+        "it": "Un genitore abbraccia suo figlio dopo una giornata difficile",
+        "ja": "大変な一日を過ごした子どもを抱きしめる親",
+        "ko": "힘든 하루를 보낸 아이를 안아 주는 부모",
+        "ar": "أحد الوالدين يعانق طفله بعد يوم صعب"
+      },
+      "captions": {
+        "en": "A comforting hug",
+        "nl": "Een troostende knuffel",
+        "de": "Eine tröstende Umarmung",
+        "fr": "Un câlin réconfortant",
+        "es": "Un abrazo que consuela",
+        "pt-br": "Um abraço de conforto",
+        "it": "Un abbraccio di conforto",
+        "ja": "ほっとするハグ",
+        "ko": "위로가 되는 포옹",
+        "ar": "عناق يبعث الطمأنينة"
+      }
+    },
+    {
+      "id": "camper-simple",
+      "subject": "camper",
+      "detailLevel": "simple",
+      "source": "/home/mests/projects/samistudio/doodle/marketing-assets/play-gallery-2026-10-02/palette/drawings/01-camper-high.png",
+      "sourceSha256": "f9ed3a483aafcf4918ad710c2fdd241e7d96d6a911f4aeab233568bad573d600",
+      "publishedImage": "/ideas/camper-simple.webp",
+      "publishedSha256": "cee23152e40f20dcdbe6f904073af29105b48245ffda47945537817df529b753",
+      "bytes": 112462,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 8266,
+          "file": "/ideas/thumbs/camper-simple-320.webp",
+          "sha256": "c0c3c39f7f9c8e2fa4cb17442e1871d5294684775e3f5d734ffa86001c1d1d9e"
+        },
+        {
+          "width": 640,
+          "bytes": 26168,
+          "file": "/ideas/thumbs/camper-simple-640.webp",
+          "sha256": "317381fdefb37c9f563e2d15be320a627f5c9ddb127aa85746f092d6d759c592"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A small campervan beside one pine tree, under a crescent moon and three stars",
+        "nl": "Een kleine camper naast een dennenboom onder een maansikkel en drie sterren",
+        "de": "Ein kleiner Camper neben einer Kiefer unter einer Mondsichel und drei Sternen",
+        "fr": "Un petit camping-car près d’un pin, sous un croissant de lune et trois étoiles",
+        "es": "Una pequeña autocaravana junto a un pino, bajo una luna creciente y tres estrellas",
+        "pt-br": "Um pequeno trailer ao lado de um pinheiro, sob uma lua crescente e três estrelas",
+        "it": "Un piccolo camper accanto a un pino, sotto una falce di luna e tre stelle",
+        "ja": "三日月と三つの星の下、一本の松の隣に止まる小さなキャンピングカー",
+        "ko": "초승달과 별 세 개 아래 소나무 한 그루 옆에 있는 작은 캠핑카",
+        "ar": "سيارة تخييم صغيرة بجانب شجرة صنوبر تحت هلال وثلاث نجوم"
+      },
+      "captions": {
+        "en": "Camping under the stars",
+        "nl": "Kamperen onder de sterren",
+        "de": "Camping unter Sternen",
+        "fr": "Camper sous les étoiles",
+        "es": "Acampar bajo las estrellas",
+        "pt-br": "Acampando sob as estrelas",
+        "it": "Campeggio sotto le stelle",
+        "ja": "星空のキャンプ",
+        "ko": "별빛 아래 캠핑",
+        "ar": "تخييم تحت النجوم"
+      }
+    },
+    {
+      "id": "sunflower-medium",
+      "subject": "sunflower",
+      "detailLevel": "medium",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/flare-refinement-2026-10-04/refined-garden-medium.png",
+      "sourceSha256": "776cb26c88fd30907291e8c469b90ac57edbdc59d87e9ee09aee5b441359e1f4",
+      "publishedImage": "/ideas/sunflower-medium.webp",
+      "publishedSha256": "f33a918999f4cb29575d8730430e656b3a2e8bd0d115935e635ddeb789c07486",
+      "bytes": 114214,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 18034,
+          "file": "/ideas/thumbs/sunflower-medium-320.webp",
+          "sha256": "58b0bcc70d4aac6b5bc51183a23f90197b34a5c1fd12fff29740fe068ec92b5f"
+        },
+        {
+          "width": 640,
+          "bytes": 48326,
+          "file": "/ideas/thumbs/sunflower-medium-640.webp",
+          "sha256": "0a7547053398c32ef01d429e41a572adb5777e5b16b18d7b17f8c1f318d1ee60"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "An adult and a child planting a sunflower together in a small garden",
+        "nl": "Een volwassene en een kind planten samen een zonnebloem in een kleine tuin",
+        "de": "Ein Erwachsener und ein Kind pflanzen gemeinsam eine Sonnenblume in einem kleinen Garten",
+        "fr": "Un adulte et un enfant plantent un tournesol ensemble dans un petit jardin",
+        "es": "Un adulto y un niño plantan juntos un girasol en un pequeño jardín",
+        "pt-br": "Um adulto e uma criança plantam um girassol juntos em um pequeno jardim",
+        "it": "Un adulto e un bambino piantano insieme un girasole in un piccolo giardino",
+        "ja": "小さな庭で一緒にひまわりを植える大人と子ども",
+        "ko": "작은 정원에서 함께 해바라기를 심는 어른과 아이",
+        "ar": "شخص بالغ وطفل يزرعان زهرة دوار الشمس معاً في حديقة صغيرة"
+      },
+      "captions": {
+        "en": "Planting together",
+        "nl": "Samen planten",
+        "de": "Gemeinsam pflanzen",
+        "fr": "Planter ensemble",
+        "es": "Plantar juntos",
+        "pt-br": "Plantando juntos",
+        "it": "Piantare insieme",
+        "ja": "一緒に花を植えよう",
+        "ko": "함께 꽃 심기",
+        "ar": "نزرع معاً"
+      }
+    },
+    {
+      "id": "cat-note-simple",
+      "subject": "cat-note",
+      "detailLevel": "simple",
+      "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/cat-note.webp",
+      "sourceSha256": "5de9e40ccc51f42c808faaf3bbd0a63401d413618f4ad90c41d3f579feffd3e2",
+      "publishedImage": "/ideas/cat-note.webp",
+      "publishedSha256": "5de9e40ccc51f42c808faaf3bbd0a63401d413618f4ad90c41d3f579feffd3e2",
+      "bytes": 136124,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 3156,
+          "file": "/ideas/thumbs/cat-note-simple-320.webp",
+          "sha256": "e9374ad79eaf97d62acfc8d663b4beea54bd720b936fca486760cbb4d6edb92a"
+        },
+        {
+          "width": 640,
+          "bytes": 7542,
+          "file": "/ideas/thumbs/cat-note-simple-640.webp",
+          "sha256": "8cbaa51bb82bad24a0606ee7cfa89387a8b4c61454a615c17e5f16e82688de0a"
+        }
+      ],
+      "provenance": "Existing published gallery example, retained unchanged",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 900,
+      "height": 900,
+      "prompts": {
+        "en": "A curious cat peeking over a folded paper note",
+        "nl": "Een nieuwsgierige kat die over een gevouwen briefje gluurt",
+        "de": "Eine neugierige Katze schaut über einen gefalteten Zettel",
+        "fr": "Un chat curieux qui regarde par-dessus un petit mot plié",
+        "es": "Un gato curioso asomándose por encima de una nota doblada",
+        "pt-br": "Um gato curioso espiando por cima de um bilhete dobrado",
+        "it": "Un gatto curioso che sbircia sopra un biglietto piegato",
+        "ja": "折りたたんだメモから顔をのぞかせる好奇心いっぱいの猫",
+        "ko": "접힌 메모지 위로 얼굴을 내미는 호기심 많은 고양이",
+        "ar": "قطة فضولية تطل من خلف ورقة مطوية"
+      },
+      "captions": {
+        "en": "A curious cat",
+        "nl": "Een nieuwsgierige kat",
+        "de": "Eine neugierige Katze",
+        "fr": "Un chat curieux",
+        "es": "Un gato curioso",
+        "pt-br": "Um gato curioso",
+        "it": "Un gatto curioso",
+        "ja": "好奇心いっぱいの猫",
+        "ko": "호기심 많은 고양이",
+        "ar": "قط فضولي"
+      }
+    },
+    {
+      "id": "super-banana-simple",
+      "subject": "super-banana",
+      "detailLevel": "simple",
+      "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/super-banana.webp",
+      "sourceSha256": "b223d3134f35b86e578fc4d838495771b3e1b52b385179a751fe5e3e95a90183",
+      "publishedImage": "/ideas/super-banana.webp",
+      "publishedSha256": "b223d3134f35b86e578fc4d838495771b3e1b52b385179a751fe5e3e95a90183",
+      "bytes": 278922,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 5192,
+          "file": "/ideas/thumbs/super-banana-simple-320.webp",
+          "sha256": "06884357c21f89243d7714cfc251937b09b5581f75b7587f10adcaf29bb356be"
+        },
+        {
+          "width": 640,
+          "bytes": 13156,
+          "file": "/ideas/thumbs/super-banana-simple-640.webp",
+          "sha256": "77e478d74ede20590e55eee4d15540b796abf7cf77cf2a620cd77ade7dd2e7fb"
+        }
+      ],
+      "provenance": "Existing published gallery example, retained unchanged",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 900,
+      "height": 900,
+      "prompts": {
+        "en": "A brave banana wearing a superhero cape",
+        "nl": "Een dappere banaan met een superheldencape",
+        "de": "Eine mutige Banane mit Superheldenumhang",
+        "fr": "Une banane courageuse avec une cape de super-héros",
+        "es": "Un plátano valiente con capa de superhéroe",
+        "pt-br": "Uma banana corajosa com capa de super-herói",
+        "it": "Una banana coraggiosa con mantello da supereroe",
+        "ja": "ヒーローのマントを着けた勇敢なバナナ",
+        "ko": "슈퍼히어로 망토를 두른 용감한 바나나",
+        "ar": "موزة شجاعة ترتدي عباءة بطل خارق"
+      },
+      "captions": {
+        "en": "Super banana",
+        "nl": "Superbanaan",
+        "de": "Superbanane",
+        "fr": "Super banane",
+        "es": "Superplátano",
+        "pt-br": "Superbanana",
+        "it": "Super banana",
+        "ja": "スーパーバナナ",
+        "ko": "슈퍼 바나나",
+        "ar": "الموزة الخارقة"
+      }
+    },
+    {
+      "id": "reading-cat-detailed",
+      "subject": "reading-cat",
+      "detailLevel": "detailed",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/prompt-cleanup-2026-10-05/confirmation-bookshop-detailed-selected.png",
+      "sourceSha256": "1a465e4498a37c3c0d098e1d16c41babf7c8c05ac7ae764baa23ae1785c67f41",
+      "publishedImage": "/ideas/reading-cat-detailed.webp",
+      "publishedSha256": "804244c63eb527c0bdda34ce6af81cb36629aee8e18516d1e8d262e4c1f2823e",
+      "bytes": 251012,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 36194,
+          "file": "/ideas/thumbs/reading-cat-detailed-320.webp",
+          "sha256": "6b131fe55a0897eda50ac3654f964f908d80f3d604474e0eb61b5db03a1c64e4"
+        },
+        {
+          "width": 640,
+          "bytes": 103786,
+          "file": "/ideas/thumbs/reading-cat-detailed-640.webp",
+          "sha256": "ffb18b38f2c91c7cf30262435f87049efa0cbf1da99179f301f19ba8b72ab450"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A man reading beside a window in a cozy bookshop, with a cup of tea and a sleeping cat on the table",
+        "nl": "Een man leest bij het raam in een gezellige boekwinkel, met thee en een slapende kat op tafel",
+        "de": "Ein Mann liest am Fenster einer gemütlichen Buchhandlung, mit Tee und einer schlafenden Katze auf dem Tisch",
+        "fr": "Un homme lit près d’une fenêtre dans une librairie accueillante, avec du thé et un chat endormi sur la table",
+        "es": "Un hombre lee junto a la ventana de una librería acogedora, con té y un gato dormido sobre la mesa",
+        "pt-br": "Um homem lê perto da janela de uma livraria aconchegante, com chá e um gato dormindo sobre a mesa",
+        "it": "Un uomo legge vicino alla finestra di una libreria accogliente, con tè e un gatto addormentato sul tavolo",
+        "ja": "居心地のよい本屋の窓辺で本を読む男性。テーブルにはお茶と眠っている猫",
+        "ko": "아늑한 서점 창가에서 책을 읽는 남자. 탁자 위에는 차 한 잔과 잠든 고양이가 있다",
+        "ar": "رجل يقرأ كتاباً بجانب نافذة في مكتبة صغيرة ومريحة، وعلى الطاولة كوب شاي وقط نائم"
+      },
+      "captions": {
+        "en": "A book, tea and a cat",
+        "nl": "Een boek, thee en een kat",
+        "de": "Ein Buch, Tee und eine Katze",
+        "fr": "Un livre, du thé et un chat",
+        "es": "Un libro, té y un gato",
+        "pt-br": "Um livro, chá e um gato",
+        "it": "Un libro, tè e un gatto",
+        "ja": "本とお茶と猫",
+        "ko": "책과 차, 그리고 고양이",
+        "ar": "كتاب وشاي وقط"
+      }
+    },
+    {
+      "id": "cottage-simple",
+      "subject": "cottage",
+      "detailLevel": "simple",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/simple-charm-2026-10-05/validate-cottage-action-ending.png",
+      "sourceSha256": "24c56b3d2188624e16c5e5f033dc257487a4cead30a8b5ebe1e1346fad57fedf",
+      "publishedImage": "/ideas/cottage-simple.webp",
+      "publishedSha256": "5eaa147896e303770bd79e7dd9c90e6ad919f1fa8636de1810649f5885fea583",
+      "bytes": 53872,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 6850,
+          "file": "/ideas/thumbs/cottage-simple-320.webp",
+          "sha256": "b325a42d8db22e1a3d2c882ab1223a872c7b7b1b659257121bada75c8ccef4de"
+        },
+        {
+          "width": 640,
+          "bytes": 19102,
+          "file": "/ideas/thumbs/cottage-simple-640.webp",
+          "sha256": "5494b2f1ebc9bc72f74ab52eb70c4fad43fb55119a63c146d7306a2acd3f6a58"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A little cottage beside a tree on a sunny day",
+        "nl": "Een klein huisje naast een boom op een zonnige dag",
+        "de": "Ein kleines Häuschen neben einem Baum an einem sonnigen Tag",
+        "fr": "Une petite maison près d’un arbre par une journée ensoleillée",
+        "es": "Una casita junto a un árbol en un día soleado",
+        "pt-br": "Uma casinha ao lado de uma árvore em um dia de sol",
+        "it": "Una casetta accanto a un albero in una giornata di sole",
+        "ja": "晴れた日に木のそばに立つ小さな家",
+        "ko": "맑은 날 나무 옆에 있는 작은 집",
+        "ar": "بيت صغير بجانب شجرة في يوم مشمس"
+      },
+      "captions": {
+        "en": "A sunny little cottage",
+        "nl": "Een huisje in de zon",
+        "de": "Ein Häuschen in der Sonne",
+        "fr": "Une maisonnette au soleil",
+        "es": "Una casita al sol",
+        "pt-br": "Uma casinha ao sol",
+        "it": "Una casetta al sole",
+        "ja": "日なたの小さな家",
+        "ko": "햇살 아래 작은 집",
+        "ar": "بيت صغير في الشمس"
+      }
+    },
+    {
+      "id": "birthday-dog-simple",
+      "subject": "birthday-dog",
+      "detailLevel": "simple",
+      "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/birthday-balloon-dog.webp",
+      "sourceSha256": "8b6d02220c8066f22944cb44d05467d84667bfe48f618a97e9eaa6e52336837e",
+      "publishedImage": "/ideas/birthday-balloon-dog.webp",
+      "publishedSha256": "8b6d02220c8066f22944cb44d05467d84667bfe48f618a97e9eaa6e52336837e",
+      "bytes": 160832,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 6530,
+          "file": "/ideas/thumbs/birthday-dog-simple-320.webp",
+          "sha256": "8511bac9e3c6295e996811cdf78d43aeb16ea58023150515f2f0c073f6ede875"
+        },
+        {
+          "width": 640,
+          "bytes": 16240,
+          "file": "/ideas/thumbs/birthday-dog-simple-640.webp",
+          "sha256": "8f9520dae8726d5c9ebcca17ebbd7c00a8341901541383fd28392f88ca996b73"
+        }
+      ],
+      "provenance": "Existing published gallery example, retained unchanged",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A cheerful dog holding one birthday balloon",
+        "nl": "Een vrolijke hond met één verjaardagsballon",
+        "de": "Ein fröhlicher Hund hält einen Geburtstagsballon",
+        "fr": "Un chien joyeux tenant un ballon d’anniversaire",
+        "es": "Un perro alegre sujetando un globo de cumpleaños",
+        "pt-br": "Um cachorro alegre segurando um balão de aniversário",
+        "it": "Un cane allegro con un palloncino di compleanno",
+        "ja": "誕生日の風船をひとつ持つうれしそうな犬",
+        "ko": "생일 풍선 하나를 든 신난 강아지",
+        "ar": "كلب سعيد يحمل بالون عيد ميلاد واحدًا"
+      },
+      "captions": {
+        "en": "A birthday balloon",
+        "nl": "Een verjaardagsballon",
+        "de": "Ein Geburtstagsballon",
+        "fr": "Un ballon d’anniversaire",
+        "es": "Un globo de cumpleaños",
+        "pt-br": "Um balão de aniversário",
+        "it": "Un palloncino di compleanno",
+        "ja": "誕生日の風船",
+        "ko": "생일 풍선",
+        "ar": "بالون عيد ميلاد"
+      }
+    },
+    {
+      "id": "coffee-book-simple",
+      "subject": "coffee-book",
+      "detailLevel": "simple",
+      "source": "/home/mests/projects/samistudio/doodle/marketing-assets/play-gallery-2026-10-02/palette/drawings/02-reading-high.png",
+      "sourceSha256": "4b73e212a8b334d45d1745da0b629059f70b775d2a96cb0aee48911a5980f71e",
+      "publishedImage": "/ideas/coffee-book-simple.webp",
+      "publishedSha256": "d9713b944867abd2f60d1460d380b87e63ebdca7064f6d4b04be5cfcad570923",
+      "bytes": 92390,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 7100,
+          "file": "/ideas/thumbs/coffee-book-simple-320.webp",
+          "sha256": "b58ad1855fa26f9e58afc3f7b4b3b022b160115ad98ffd0d1e3c3475d08ac6c3"
+        },
+        {
+          "width": 640,
+          "bytes": 21590,
+          "file": "/ideas/thumbs/coffee-book-simple-640.webp",
+          "sha256": "a6bff0b3a57b026a4c1728c43b85274563db043f78233a8f78e9896d4e7b7910"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A steaming coffee mug beside an open book, with a small leaf resting on one page",
+        "nl": "Een dampende mok koffie naast een open boek met een klein blaadje op een pagina",
+        "de": "Eine dampfende Kaffeetasse neben einem offenen Buch mit einem kleinen Blatt auf einer Seite",
+        "fr": "Une tasse de café fumante près d’un livre ouvert avec une petite feuille sur une page",
+        "es": "Una taza de café humeante junto a un libro abierto con una pequeña hoja en una página",
+        "pt-br": "Uma caneca de café fumegante ao lado de um livro aberto com uma pequena folha em uma página",
+        "it": "Una tazza di caffè fumante accanto a un libro aperto con una piccola foglia su una pagina",
+        "ja": "開いた本の隣に湯気の立つコーヒーカップ。本のページには小さな葉",
+        "ko": "펼친 책 옆에 김이 나는 커피잔이 있고 책 한쪽에는 작은 나뭇잎이 놓여 있다",
+        "ar": "كوب قهوة يتصاعد منه البخار بجانب كتاب مفتوح وعلى إحدى صفحاته ورقة شجر صغيرة"
+      },
+      "captions": {
+        "en": "A quiet reading break",
+        "nl": "Een rustige leespauze",
+        "de": "Eine ruhige Lesepause",
+        "fr": "Une pause lecture",
+        "es": "Una pausa para leer",
+        "pt-br": "Uma pausa para ler",
+        "it": "Una pausa per leggere",
+        "ja": "静かな読書のひととき",
+        "ko": "조용한 독서 시간",
+        "ar": "استراحة هادئة للقراءة"
+      }
+    },
+    {
+      "id": "missing-friend-medium",
+      "subject": "missing-friend",
+      "detailLevel": "medium",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/prompt-cleanup-2026-10-05/confirmation-mood-medium-selected.png",
+      "sourceSha256": "cbdc3d65bf768034478bfaa129409913d87f06c88cb4792722a52b17c873ce44",
+      "publishedImage": "/ideas/missing-friend-medium.webp",
+      "publishedSha256": "8b78577c56a1c265077fa4f7c0f27f46fab00a4a0eeeba747a8adc5dd911c9ee",
+      "bytes": 127378,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 19132,
+          "file": "/ideas/thumbs/missing-friend-medium-320.webp",
+          "sha256": "e997667f7cc63c58f24e0859962325ab740668a847685faaaf34e2f8c7d5cda9"
+        },
+        {
+          "width": 640,
+          "bytes": 53002,
+          "file": "/ideas/thumbs/missing-friend-medium-640.webp",
+          "sha256": "4a220113367c3f590b6aef2f38f0aa8a3f1bd3404e44de37864540b9ed08f884"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "Missing my friend",
+        "nl": "Ik mis mijn vriend",
+        "de": "Ich vermisse meinen Freund",
+        "fr": "Mon ami me manque",
+        "es": "Echo de menos a mi amigo",
+        "pt-br": "Saudade do meu amigo",
+        "it": "Mi manca il mio amico",
+        "ja": "友達に会いたい",
+        "ko": "친구가 보고 싶어",
+        "ar": "أفتقد صديقي"
+      },
+      "captions": {
+        "en": "Missing a friend",
+        "nl": "Een vriend missen",
+        "de": "Einen Freund vermissen",
+        "fr": "Un ami nous manque",
+        "es": "Echar de menos a un amigo",
+        "pt-br": "Saudade de um amigo",
+        "it": "La mancanza di un amico",
+        "ja": "友達に会いたいな",
+        "ko": "친구가 보고 싶어",
+        "ar": "أفتقد صديقي"
+      }
+    },
+    {
+      "id": "warm-hug-simple",
+      "subject": "warm-hug",
+      "detailLevel": "simple",
+      "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/warm-hug.webp",
+      "sourceSha256": "c2cc40f9f933bd7a69a0ce0f2b435dba460035aa0212854391bb021483f02ff5",
+      "publishedImage": "/ideas/warm-hug.webp",
+      "publishedSha256": "c2cc40f9f933bd7a69a0ce0f2b435dba460035aa0212854391bb021483f02ff5",
+      "bytes": 166612,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 4246,
+          "file": "/ideas/thumbs/warm-hug-simple-320.webp",
+          "sha256": "77e37262d6249bb0f59539cfc40840fd655926a02f862e67df7c1e142d4eebb6"
+        },
+        {
+          "width": 640,
+          "bytes": 10274,
+          "file": "/ideas/thumbs/warm-hug-simple-640.webp",
+          "sha256": "171ea2aa00ca3f87864be64ea62d0895295bb8590100116fda62f828235e93e5"
+        }
+      ],
+      "provenance": "Existing published gallery example, retained unchanged",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 900,
+      "height": 900,
+      "prompts": {
+        "en": "Two little friends hugging beneath a small heart",
+        "nl": "Twee kleine vriendjes die knuffelen onder een hartje",
+        "de": "Zwei kleine Freunde umarmen sich unter einem Herz",
+        "fr": "Deux petits amis qui se prennent dans les bras sous un cœur",
+        "es": "Dos pequeños amigos abrazándose bajo un corazón",
+        "pt-br": "Dois amiguinhos se abraçando sob um coração",
+        "it": "Due piccoli amici che si abbracciano sotto un cuore",
+        "ja": "小さなハートの下で抱き合う二人の友だち",
+        "ko": "작은 하트 아래에서 포옹하는 두 친구",
+        "ar": "صديقان صغيران يتعانقان تحت قلب صغير"
+      },
+      "captions": {
+        "en": "A warm hug",
+        "nl": "Een warme knuffel",
+        "de": "Eine herzliche Umarmung",
+        "fr": "Un tendre câlin",
+        "es": "Un abrazo cálido",
+        "pt-br": "Um abraço carinhoso",
+        "it": "Un caldo abbraccio",
+        "ja": "あたたかなハグ",
+        "ko": "따뜻한 포옹",
+        "ar": "عناق دافئ"
+      }
+    },
+    {
+      "id": "pencil-eraser-simple",
+      "subject": "pencil-eraser",
+      "detailLevel": "simple",
+      "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/pencil-helps-eraser.webp",
+      "sourceSha256": "0e739fa2a18226279df81eb59840938df8202d6c4d823de7001a7de4ec36959f",
+      "publishedImage": "/ideas/pencil-helps-eraser.webp",
+      "publishedSha256": "0e739fa2a18226279df81eb59840938df8202d6c4d823de7001a7de4ec36959f",
+      "bytes": 253578,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 7268,
+          "file": "/ideas/thumbs/pencil-eraser-simple-320.webp",
+          "sha256": "e7868868bc44871110c33148f3df0c425b43d0ce2163671ee8f17f51451fb64b"
+        },
+        {
+          "width": 640,
+          "bytes": 18812,
+          "file": "/ideas/thumbs/pencil-eraser-simple-640.webp",
+          "sha256": "71c3ccbc23969c41be6186d5a2d7f8e25b25db7eac78d744b1baf6b24c5d86be"
+        }
+      ],
+      "provenance": "Existing published gallery example, retained unchanged",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 900,
+      "height": 900,
+      "prompts": {
+        "en": "A pencil helping an eraser climb onto a schoolbook",
+        "nl": "Een potlood dat een gum op een schoolboek helpt klimmen",
+        "de": "Ein Bleistift hilft einem Radiergummi auf ein Schulbuch",
+        "fr": "Un crayon aide une gomme à monter sur un livre d’école",
+        "es": "Un lápiz ayuda a una goma a subir a un libro escolar",
+        "pt-br": "Um lápis ajuda uma borracha a subir em um livro escolar",
+        "it": "Una matita aiuta una gomma a salire su un libro",
+        "ja": "消しゴムが教科書に上がるのを手伝う鉛筆",
+        "ko": "지우개가 교과서 위로 올라가도록 돕는 연필",
+        "ar": "قلم رصاص يساعد ممحاة على الصعود فوق كتاب مدرسي"
+      },
+      "captions": {
+        "en": "A helping hand",
+        "nl": "Een helpende hand",
+        "de": "Eine helfende Hand",
+        "fr": "Un coup de main",
+        "es": "Una mano amiga",
+        "pt-br": "Uma mão amiga",
+        "it": "Una mano amica",
+        "ja": "ちょっとお手伝い",
+        "ko": "도움의 손길",
+        "ar": "يد المساعدة"
+      }
+    },
+    {
+      "id": "school-snail-simple",
+      "subject": "school-snail",
+      "detailLevel": "simple",
+      "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/school-snail.webp",
+      "sourceSha256": "d6ac9981f3fcef2f7a559e874876b1b52618245dc9e7bdc56cba38684de95076",
+      "publishedImage": "/ideas/school-snail.webp",
+      "publishedSha256": "d6ac9981f3fcef2f7a559e874876b1b52618245dc9e7bdc56cba38684de95076",
+      "bytes": 164470,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 4352,
+          "file": "/ideas/thumbs/school-snail-simple-320.webp",
+          "sha256": "320125a8854edeaf06d40f171e816bf51f1b6a566d47469d6a7fdacee507002d"
+        },
+        {
+          "width": 640,
+          "bytes": 10590,
+          "file": "/ideas/thumbs/school-snail-simple-640.webp",
+          "sha256": "f329478e5c2afea0cfa7d54b51aef6c9e3515ffa079ff3dcf5abb7f7403d7c7f"
+        }
+      ],
+      "provenance": "Existing published gallery example, retained unchanged",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 900,
+      "height": 900,
+      "prompts": {
+        "en": "A smiling snail carrying a school backpack and pencil",
+        "nl": "Een lachende slak met een schoolrugzak en potlood",
+        "de": "Eine lächelnde Schnecke mit Schulrucksack und Bleistift",
+        "fr": "Un escargot souriant avec un sac d’école et un crayon",
+        "es": "Un caracol sonriente con mochila escolar y lápiz",
+        "pt-br": "Um caracol sorridente com mochila e lápis",
+        "it": "Una lumaca sorridente con zaino e matita",
+        "ja": "ランドセルと鉛筆を持つ笑顔のカタツムリ",
+        "ko": "책가방과 연필을 든 웃는 달팽이",
+        "ar": "حلزون مبتسم يحمل حقيبة مدرسية وقلم رصاص"
+      },
+      "captions": {
+        "en": "Ready for school",
+        "nl": "Klaar voor school",
+        "de": "Bereit für die Schule",
+        "fr": "Prêt pour l’école",
+        "es": "Listo para la escuela",
+        "pt-br": "Pronto para a escola",
+        "it": "Pronto per la scuola",
+        "ja": "学校へ行こう",
+        "ko": "학교 갈 준비 끝",
+        "ar": "جاهز للمدرسة"
+      }
+    },
+    {
+      "id": "lunch-high-five-simple",
+      "subject": "lunch-high-five",
+      "detailLevel": "simple",
+      "source": "/home/mests/.codex/doodle-footer-20261009/public/ideas/lunch-high-five.webp",
+      "sourceSha256": "425f77dcc0ccf011e89994a101ffe17aff1878b3e0b71adfc12f8ff99b2c155b",
+      "publishedImage": "/ideas/lunch-high-five.webp",
+      "publishedSha256": "425f77dcc0ccf011e89994a101ffe17aff1878b3e0b71adfc12f8ff99b2c155b",
+      "bytes": 174664,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 4290,
+          "file": "/ideas/thumbs/lunch-high-five-simple-320.webp",
+          "sha256": "9564908a7c7ba64d423d1e991db5fa9f76f050a650d76bbfa3840579f9583dc5"
+        },
+        {
+          "width": 640,
+          "bytes": 10336,
+          "file": "/ideas/thumbs/lunch-high-five-simple-640.webp",
+          "sha256": "4ab4331b15553406b162393d469dd77d992bab89467b81d67a27563652029044"
+        }
+      ],
+      "provenance": "Existing published gallery example, retained unchanged",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 900,
+      "height": 900,
+      "prompts": {
+        "en": "A happy apple and sandwich giving each other a high-five",
+        "nl": "Een blije appel en boterham die elkaar een high five geven",
+        "de": "Ein fröhlicher Apfel und ein Sandwich geben sich ein High Five",
+        "fr": "Une pomme et un sandwich joyeux qui se tapent dans la main",
+        "es": "Una manzana y un sándwich felices chocando las manos",
+        "pt-br": "Uma maçã e um sanduíche felizes batendo as mãos",
+        "it": "Una mela e un panino felici che si danno il cinque",
+        "ja": "ハイタッチするりんごとサンドイッチ",
+        "ko": "서로 하이파이브하는 사과와 샌드위치",
+        "ar": "تفاحة وشطيرة تتبادلان التحية باليد"
+      },
+      "captions": {
+        "en": "A lunchtime high-five",
+        "nl": "Een high five bij de lunch",
+        "de": "High Five zur Mittagspause",
+        "fr": "Tape-m’en cinq au déjeuner",
+        "es": "Choca esos cinco al almorzar",
+        "pt-br": "Um toque de mãos no almoço",
+        "it": "Batti cinque a pranzo",
+        "ja": "お昼のハイタッチ",
+        "ko": "점심시간 하이파이브",
+        "ar": "تحية في وقت الغداء"
+      }
+    },
+    {
+      "id": "sunflower-simple",
+      "subject": "sunflower",
+      "detailLevel": "simple",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/simple-charm-2026-10-05/repeat-garden-action-ending.png",
+      "sourceSha256": "c2f7c35ff11203830f4470f1e7acba98bc6998136ff5f71b57d7aacae828c71c",
+      "publishedImage": "/ideas/sunflower-simple.webp",
+      "publishedSha256": "5f2bdf680a83eb37067f58edb7e5091d8b27ec7d4ec7469691abbcb199fdba8c",
+      "bytes": 68894,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 9880,
+          "file": "/ideas/thumbs/sunflower-simple-320.webp",
+          "sha256": "7bd507e62e13cad85d0c9fa8a3d3ad838b78212e3e27c09a2bac74cead94f515"
+        },
+        {
+          "width": 640,
+          "bytes": 26372,
+          "file": "/ideas/thumbs/sunflower-simple-640.webp",
+          "sha256": "4f8be3c2f5118935f575b832958e68443944a55ab18fb05ad1fb325a9f4add2d"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "An adult and a child planting a sunflower together in a small garden",
+        "nl": "Een volwassene en een kind planten samen een zonnebloem in een kleine tuin",
+        "de": "Ein Erwachsener und ein Kind pflanzen gemeinsam eine Sonnenblume in einem kleinen Garten",
+        "fr": "Un adulte et un enfant plantent un tournesol ensemble dans un petit jardin",
+        "es": "Un adulto y un niño plantan juntos un girasol en un pequeño jardín",
+        "pt-br": "Um adulto e uma criança plantam um girassol juntos em um pequeno jardim",
+        "it": "Un adulto e un bambino piantano insieme un girasole in un piccolo giardino",
+        "ja": "小さな庭で一緒にひまわりを植える大人と子ども",
+        "ko": "작은 정원에서 함께 해바라기를 심는 어른과 아이",
+        "ar": "شخص بالغ وطفل يزرعان زهرة دوار الشمس معاً في حديقة صغيرة"
+      },
+      "captions": {
+        "en": "Planting together",
+        "nl": "Samen planten",
+        "de": "Gemeinsam pflanzen",
+        "fr": "Planter ensemble",
+        "es": "Plantar juntos",
+        "pt-br": "Plantando juntos",
+        "it": "Piantare insieme",
+        "ja": "一緒に花を植えよう",
+        "ko": "함께 꽃 심기",
+        "ar": "نزرع معاً"
+      }
+    },
+    {
+      "id": "flower-cat-detailed",
+      "subject": "flower-cat",
+      "detailLevel": "detailed",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/flare-fit-2026-10-04/cat-detailed.png",
+      "sourceSha256": "9724fccb1ce0768b2a61edcfb870dfca5b5d7bc91d666b074c60e5a412637fcd",
+      "publishedImage": "/ideas/flower-cat-detailed.webp",
+      "publishedSha256": "807024dd03ea653584f3915ffa519cfbfd58da22ecc461f8227a995ba62b515b",
+      "bytes": 144562,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 18606,
+          "file": "/ideas/thumbs/flower-cat-detailed-320.webp",
+          "sha256": "c3aaeefa7a97353ed43658d96d920995ea0996faf7a63a61a028c71f65744e0a"
+        },
+        {
+          "width": 640,
+          "bytes": 54666,
+          "file": "/ideas/thumbs/flower-cat-detailed-640.webp",
+          "sha256": "7e4b9a5e3cc783754d9b4064510541d17e232210b130a90f14c418adc50ec1a5"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A cat holding a small flower",
+        "nl": "Een kat met een kleine bloem",
+        "de": "Eine Katze hält eine kleine Blume",
+        "fr": "Un chat tenant une petite fleur",
+        "es": "Un gato sujetando una pequeña flor",
+        "pt-br": "Um gato segurando uma pequena flor",
+        "it": "Un gatto tiene un piccolo fiore",
+        "ja": "小さな花を持つ猫",
+        "ko": "작은 꽃을 들고 있는 고양이",
+        "ar": "قط يحمل زهرة صغيرة"
+      },
+      "captions": {
+        "en": "A flower for you",
+        "nl": "Een bloem voor jou",
+        "de": "Eine Blume für dich",
+        "fr": "Une fleur pour toi",
+        "es": "Una flor para ti",
+        "pt-br": "Uma flor para você",
+        "it": "Un fiore per te",
+        "ja": "あなたに一輪の花",
+        "ko": "너에게 주는 꽃",
+        "ar": "زهرة لك"
+      }
+    },
+    {
+      "id": "cooking-simple",
+      "subject": "cooking",
+      "detailLevel": "simple",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/simple-charm-2026-10-05/explore-cooking-action-ending.png",
+      "sourceSha256": "09a6e6e8b94885da5a264eea57b42949ea704899f4748a94c817086a44fba4b2",
+      "publishedImage": "/ideas/cooking-simple.webp",
+      "publishedSha256": "fc08f21389e46a739c9831067579d71978b76a7e45d62800bf41b559444fa026",
+      "bytes": 62670,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 9494,
+          "file": "/ideas/thumbs/cooking-simple-320.webp",
+          "sha256": "162e0de78062c0d9c60ef31fc8af692cbc39a198e52b4e2f19efa618f95dde27"
+        },
+        {
+          "width": 640,
+          "bytes": 25008,
+          "file": "/ideas/thumbs/cooking-simple-640.webp",
+          "sha256": "0c752297aeb6a03a337508109be6d0c5f760433b133911373bda6cde19c00db3"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "Two friends baking pancakes",
+        "nl": "Twee vrienden die pannenkoeken bakken",
+        "de": "Zwei Freunde backen Pfannkuchen",
+        "fr": "Deux amis préparent des pancakes",
+        "es": "Dos amigos preparando tortitas",
+        "pt-br": "Dois amigos fazendo panquecas",
+        "it": "Due amici preparano i pancake",
+        "ja": "友達二人でパンケーキを作る",
+        "ko": "함께 팬케이크를 만드는 두 친구",
+        "ar": "صديقان يحضّران الفطائر"
+      },
+      "captions": {
+        "en": "Pancakes with a friend",
+        "nl": "Samen pannenkoeken bakken",
+        "de": "Zusammen Pfannkuchen backen",
+        "fr": "Des pancakes entre amis",
+        "es": "Tortitas entre amigos",
+        "pt-br": "Panquecas entre amigos",
+        "it": "Pancake tra amici",
+        "ja": "友達とパンケーキ作り",
+        "ko": "친구와 팬케이크 만들기",
+        "ar": "فطائر مع صديق"
+      }
+    },
+    {
+      "id": "missing-friend-simple",
+      "subject": "missing-friend",
+      "detailLevel": "simple",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/simple-charm-2026-10-05/validate-mood-action-ending.png",
+      "sourceSha256": "63be1076195c39ae6b67c59a7b913839035dd80bd66cb6b197d02f4b74335674",
+      "publishedImage": "/ideas/missing-friend-simple.webp",
+      "publishedSha256": "4cedc938a44244d2379dc372a06511cbc4eeb081055f950940fe5925668cd46b",
+      "bytes": 39370,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 6108,
+          "file": "/ideas/thumbs/missing-friend-simple-320.webp",
+          "sha256": "7d2bb095d42bfd66f3a792d021fbdb7faa17b054b1f9d6a4178e71660839b98a"
+        },
+        {
+          "width": 640,
+          "bytes": 15464,
+          "file": "/ideas/thumbs/missing-friend-simple-640.webp",
+          "sha256": "b941b860a8edcc5e59a021c260a4a1b6ac6c429d691d66ea3db1e6d711561061"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "Missing my friend",
+        "nl": "Ik mis mijn vriend",
+        "de": "Ich vermisse meinen Freund",
+        "fr": "Mon ami me manque",
+        "es": "Echo de menos a mi amigo",
+        "pt-br": "Saudade do meu amigo",
+        "it": "Mi manca il mio amico",
+        "ja": "友達に会いたい",
+        "ko": "친구가 보고 싶어",
+        "ar": "أفتقد صديقي"
+      },
+      "captions": {
+        "en": "Missing a friend",
+        "nl": "Een vriend missen",
+        "de": "Einen Freund vermissen",
+        "fr": "Un ami nous manque",
+        "es": "Echar de menos a un amigo",
+        "pt-br": "Saudade de um amigo",
+        "it": "La mancanza di un amico",
+        "ja": "友達に会いたいな",
+        "ko": "친구가 보고 싶어",
+        "ar": "أفتقد صديقي"
+      }
+    },
+    {
+      "id": "reading-cat-medium",
+      "subject": "reading-cat",
+      "detailLevel": "medium",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/prompt-cleanup-2026-10-05/confirmation-bookshop-medium-selected.png",
+      "sourceSha256": "c54ee4020ffcde289e90b6cf692c65fc6e0b25ee8f7b0c4b8c8d67c89ed3a0ca",
+      "publishedImage": "/ideas/reading-cat-medium.webp",
+      "publishedSha256": "67e31a059086b03d0d3597fc58d745a3d9ddcab8ef549f19e743072f66e6ea33",
+      "bytes": 186788,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 27250,
+          "file": "/ideas/thumbs/reading-cat-medium-320.webp",
+          "sha256": "77ee0aaffe05460b70c8632eae988d470abc9b2c2ea6d041d845c7d9ef53dd50"
+        },
+        {
+          "width": 640,
+          "bytes": 75552,
+          "file": "/ideas/thumbs/reading-cat-medium-640.webp",
+          "sha256": "e236a6fcce6f1caf17cdd27d65baa57757af81a436e8bcda7768e04119c68a10"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A man reading beside a window in a cozy bookshop, with a cup of tea and a sleeping cat on the table",
+        "nl": "Een man leest bij het raam in een gezellige boekwinkel, met thee en een slapende kat op tafel",
+        "de": "Ein Mann liest am Fenster einer gemütlichen Buchhandlung, mit Tee und einer schlafenden Katze auf dem Tisch",
+        "fr": "Un homme lit près d’une fenêtre dans une librairie accueillante, avec du thé et un chat endormi sur la table",
+        "es": "Un hombre lee junto a la ventana de una librería acogedora, con té y un gato dormido sobre la mesa",
+        "pt-br": "Um homem lê perto da janela de uma livraria aconchegante, com chá e um gato dormindo sobre a mesa",
+        "it": "Un uomo legge vicino alla finestra di una libreria accogliente, con tè e un gatto addormentato sul tavolo",
+        "ja": "居心地のよい本屋の窓辺で本を読む男性。テーブルにはお茶と眠っている猫",
+        "ko": "아늑한 서점 창가에서 책을 읽는 남자. 탁자 위에는 차 한 잔과 잠든 고양이가 있다",
+        "ar": "رجل يقرأ كتاباً بجانب نافذة في مكتبة صغيرة ومريحة، وعلى الطاولة كوب شاي وقط نائم"
+      },
+      "captions": {
+        "en": "A book, tea and a cat",
+        "nl": "Een boek, thee en een kat",
+        "de": "Ein Buch, Tee und eine Katze",
+        "fr": "Un livre, du thé et un chat",
+        "es": "Un libro, té y un gato",
+        "pt-br": "Um livro, chá e um gato",
+        "it": "Un libro, tè e un gatto",
+        "ja": "本とお茶と猫",
+        "ko": "책과 차, 그리고 고양이",
+        "ar": "كتاب وشاي وقط"
+      }
+    },
+    {
+      "id": "birthday-dog-detailed",
+      "subject": "birthday-dog",
+      "detailLevel": "detailed",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/flare-refinement-2026-10-04/refined-birthday-detailed.png",
+      "sourceSha256": "1bae34bad35f839596715bc99243467db6daa436e15c6d79410d0ca5f9fff007",
+      "publishedImage": "/ideas/birthday-dog-detailed.webp",
+      "publishedSha256": "c6ce65028378991457c02a0ad653d142b88a7ce7f0992232e8e1d6f45b2eef87",
+      "bytes": 96734,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 15454,
+          "file": "/ideas/thumbs/birthday-dog-detailed-320.webp",
+          "sha256": "f648dba19f5d053150153d93bb1db20117e87c3c4c9878c9f4a972cc51921596"
+        },
+        {
+          "width": 640,
+          "bytes": 41276,
+          "file": "/ideas/thumbs/birthday-dog-detailed-640.webp",
+          "sha256": "e1685aaf5950d70cb8d6c244f012180bbaaf9824fd28e454ed60956d9d04a777"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A cheerful dog holding one birthday balloon",
+        "nl": "Een vrolijke hond met één verjaardagsballon",
+        "de": "Ein fröhlicher Hund hält einen Geburtstagsballon",
+        "fr": "Un chien joyeux tenant un ballon d’anniversaire",
+        "es": "Un perro alegre sujetando un globo de cumpleaños",
+        "pt-br": "Um cachorro alegre segurando um balão de aniversário",
+        "it": "Un cane allegro con un palloncino di compleanno",
+        "ja": "誕生日の風船をひとつ持つうれしそうな犬",
+        "ko": "생일 풍선 하나를 든 신난 강아지",
+        "ar": "كلب سعيد يحمل بالون عيد ميلاد واحدًا"
+      },
+      "captions": {
+        "en": "A birthday balloon",
+        "nl": "Een verjaardagsballon",
+        "de": "Ein Geburtstagsballon",
+        "fr": "Un ballon d’anniversaire",
+        "es": "Un globo de cumpleaños",
+        "pt-br": "Um balão de aniversário",
+        "it": "Un palloncino di compleanno",
+        "ja": "誕生日の風船",
+        "ko": "생일 풍선",
+        "ar": "بالون عيد ميلاد"
+      }
+    },
+    {
+      "id": "sunflower-detailed",
+      "subject": "sunflower",
+      "detailLevel": "detailed",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/flare-refinement-2026-10-04/refined-garden-detailed.png",
+      "sourceSha256": "a91788a4c8ff5c23cdbc8e035a33285ef514bd24f7b51850b9a62ed766463ea0",
+      "publishedImage": "/ideas/sunflower-detailed.webp",
+      "publishedSha256": "70f47fc284732976a0e95da01b7eb7a3d149c197441bd4880747d4664c9e9c0d",
+      "bytes": 197224,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 28352,
+          "file": "/ideas/thumbs/sunflower-detailed-320.webp",
+          "sha256": "5c33818c03fe596592e94180c26ab9186a9bae6418cc5f27f902d0a8ffb012f8"
+        },
+        {
+          "width": 640,
+          "bytes": 83404,
+          "file": "/ideas/thumbs/sunflower-detailed-640.webp",
+          "sha256": "47e0a59e213ab65108ea6f6275acdda878b2b15aea21f977788a984a77afee21"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "An adult and a child planting a sunflower together in a small garden",
+        "nl": "Een volwassene en een kind planten samen een zonnebloem in een kleine tuin",
+        "de": "Ein Erwachsener und ein Kind pflanzen gemeinsam eine Sonnenblume in einem kleinen Garten",
+        "fr": "Un adulte et un enfant plantent un tournesol ensemble dans un petit jardin",
+        "es": "Un adulto y un niño plantan juntos un girasol en un pequeño jardín",
+        "pt-br": "Um adulto e uma criança plantam um girassol juntos em um pequeno jardim",
+        "it": "Un adulto e un bambino piantano insieme un girasole in un piccolo giardino",
+        "ja": "小さな庭で一緒にひまわりを植える大人と子ども",
+        "ko": "작은 정원에서 함께 해바라기를 심는 어른과 아이",
+        "ar": "شخص بالغ وطفل يزرعان زهرة دوار الشمس معاً في حديقة صغيرة"
+      },
+      "captions": {
+        "en": "Planting together",
+        "nl": "Samen planten",
+        "de": "Gemeinsam pflanzen",
+        "fr": "Planter ensemble",
+        "es": "Plantar juntos",
+        "pt-br": "Plantando juntos",
+        "it": "Piantare insieme",
+        "ja": "一緒に花を植えよう",
+        "ko": "함께 꽃 심기",
+        "ar": "نزرع معاً"
+      }
+    },
+    {
+      "id": "flower-cat-medium",
+      "subject": "flower-cat",
+      "detailLevel": "medium",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/flare-fit-2026-10-04/cat-medium.png",
+      "sourceSha256": "eb1fcc0b50c2942924c6408260913c9db1114f08ce1a6c596aa8fcada08fbcfb",
+      "publishedImage": "/ideas/flower-cat-medium.webp",
+      "publishedSha256": "3fb2cc2ed1dca9a162d5ca433af5f6f6fb29f7546988ffc395578a7ae2b0180c",
+      "bytes": 64206,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 8878,
+          "file": "/ideas/thumbs/flower-cat-medium-320.webp",
+          "sha256": "a2497b1fa00376ddd7d84912f3a985c36da0e647e2ae7977b4456c2c371c766a"
+        },
+        {
+          "width": 640,
+          "bytes": 24816,
+          "file": "/ideas/thumbs/flower-cat-medium-640.webp",
+          "sha256": "805114f86038db500b4049c2a5f1d5c098b930a0c2495300527d8d5a03081408"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A cat holding a small flower",
+        "nl": "Een kat met een kleine bloem",
+        "de": "Eine Katze hält eine kleine Blume",
+        "fr": "Un chat tenant une petite fleur",
+        "es": "Un gato sujetando una pequeña flor",
+        "pt-br": "Um gato segurando uma pequena flor",
+        "it": "Un gatto tiene un piccolo fiore",
+        "ja": "小さな花を持つ猫",
+        "ko": "작은 꽃을 들고 있는 고양이",
+        "ar": "قط يحمل زهرة صغيرة"
+      },
+      "captions": {
+        "en": "A flower for you",
+        "nl": "Een bloem voor jou",
+        "de": "Eine Blume für dich",
+        "fr": "Une fleur pour toi",
+        "es": "Una flor para ti",
+        "pt-br": "Uma flor para você",
+        "it": "Un fiore per te",
+        "ja": "あなたに一輪の花",
+        "ko": "너에게 주는 꽃",
+        "ar": "زهرة لك"
+      }
+    },
+    {
+      "id": "cooking-detailed",
+      "subject": "cooking",
+      "detailLevel": "detailed",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/prompt-cleanup-2026-10-05/confirmation-cooking-detailed-selected.png",
+      "sourceSha256": "44781faee3ea949b47a9ac27b572dc3f11d0aa82f1f1cda54fcbae2c1812a69d",
+      "publishedImage": "/ideas/cooking-detailed.webp",
+      "publishedSha256": "f7f6441411ebc068248ef3b8d47040aaa31f5a76441341b45118ac970b07c85b",
+      "bytes": 261724,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 36570,
+          "file": "/ideas/thumbs/cooking-detailed-320.webp",
+          "sha256": "c31716587c58597b5f3435b2898c55ba121242ee03b2a79a50661dd141391ad3"
+        },
+        {
+          "width": 640,
+          "bytes": 104206,
+          "file": "/ideas/thumbs/cooking-detailed-640.webp",
+          "sha256": "797441e8da633b5c8fcdb18842363510cab051c547b1eded0bf8c3aab523b78d"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "Two friends baking pancakes",
+        "nl": "Twee vrienden die pannenkoeken bakken",
+        "de": "Zwei Freunde backen Pfannkuchen",
+        "fr": "Deux amis préparent des pancakes",
+        "es": "Dos amigos preparando tortitas",
+        "pt-br": "Dois amigos fazendo panquecas",
+        "it": "Due amici preparano i pancake",
+        "ja": "友達二人でパンケーキを作る",
+        "ko": "함께 팬케이크를 만드는 두 친구",
+        "ar": "صديقان يحضّران الفطائر"
+      },
+      "captions": {
+        "en": "Pancakes with a friend",
+        "nl": "Samen pannenkoeken bakken",
+        "de": "Zusammen Pfannkuchen backen",
+        "fr": "Des pancakes entre amis",
+        "es": "Tortitas entre amigos",
+        "pt-br": "Panquecas entre amigos",
+        "it": "Pancake tra amici",
+        "ja": "友達とパンケーキ作り",
+        "ko": "친구와 팬케이크 만들기",
+        "ar": "فطائر مع صديق"
+      }
+    },
+    {
+      "id": "reading-cat-simple",
+      "subject": "reading-cat",
+      "detailLevel": "simple",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/simple-charm-2026-10-05/validate-bookshop-action-ending.png",
+      "sourceSha256": "05346aa2cb236182ad50a098251eb293a5ee0382b3ca1354b07f1485e8405c89",
+      "publishedImage": "/ideas/reading-cat-simple.webp",
+      "publishedSha256": "ebb2a62bc232d9a619993b81d5b64c1c33f2f3224afee14301b51d8698df948d",
+      "bytes": 97596,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 13530,
+          "file": "/ideas/thumbs/reading-cat-simple-320.webp",
+          "sha256": "6aa51f6605abae15e263accc49d1603f0e2ddbab73165a80df5c692a9cf97a30"
+        },
+        {
+          "width": 640,
+          "bytes": 38696,
+          "file": "/ideas/thumbs/reading-cat-simple-640.webp",
+          "sha256": "87038132a905533d3f510ec11959cb0ec8b0cafbc377890d45632ee854275f8c"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A man reading beside a window in a cozy bookshop, with a cup of tea and a sleeping cat on the table",
+        "nl": "Een man leest bij het raam in een gezellige boekwinkel, met thee en een slapende kat op tafel",
+        "de": "Ein Mann liest am Fenster einer gemütlichen Buchhandlung, mit Tee und einer schlafenden Katze auf dem Tisch",
+        "fr": "Un homme lit près d’une fenêtre dans une librairie accueillante, avec du thé et un chat endormi sur la table",
+        "es": "Un hombre lee junto a la ventana de una librería acogedora, con té y un gato dormido sobre la mesa",
+        "pt-br": "Um homem lê perto da janela de uma livraria aconchegante, com chá e um gato dormindo sobre a mesa",
+        "it": "Un uomo legge vicino alla finestra di una libreria accogliente, con tè e un gatto addormentato sul tavolo",
+        "ja": "居心地のよい本屋の窓辺で本を読む男性。テーブルにはお茶と眠っている猫",
+        "ko": "아늑한 서점 창가에서 책을 읽는 남자. 탁자 위에는 차 한 잔과 잠든 고양이가 있다",
+        "ar": "رجل يقرأ كتاباً بجانب نافذة في مكتبة صغيرة ومريحة، وعلى الطاولة كوب شاي وقط نائم"
+      },
+      "captions": {
+        "en": "A book, tea and a cat",
+        "nl": "Een boek, thee en een kat",
+        "de": "Ein Buch, Tee und eine Katze",
+        "fr": "Un livre, du thé et un chat",
+        "es": "Un libro, té y un gato",
+        "pt-br": "Um livro, chá e um gato",
+        "it": "Un libro, tè e un gatto",
+        "ja": "本とお茶と猫",
+        "ko": "책과 차, 그리고 고양이",
+        "ar": "كتاب وشاي وقط"
+      }
+    },
+    {
+      "id": "birthday-dog-medium",
+      "subject": "birthday-dog",
+      "detailLevel": "medium",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/flare-refinement-2026-10-04/refined-birthday-medium.png",
+      "sourceSha256": "f1618b7f7edb869ea250ae0305b024bff539a025f82b51c2a169f0d6cd20d308",
+      "publishedImage": "/ideas/birthday-dog-medium.webp",
+      "publishedSha256": "0131e7448cbade356782aba144630c1aab09bc3b1657b16291903d7691847b58",
+      "bytes": 57310,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 9456,
+          "file": "/ideas/thumbs/birthday-dog-medium-320.webp",
+          "sha256": "5d5bf2cdb0dd113ea00a654b5bb15144c99003b784135955839d03b4fc2b204a"
+        },
+        {
+          "width": 640,
+          "bytes": 24160,
+          "file": "/ideas/thumbs/birthday-dog-medium-640.webp",
+          "sha256": "e67ba4ad5f9971e8ec6a105af852a0448617a5eb7ea8c5aca131c229c49f2554"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "A cheerful dog holding one birthday balloon",
+        "nl": "Een vrolijke hond met één verjaardagsballon",
+        "de": "Ein fröhlicher Hund hält einen Geburtstagsballon",
+        "fr": "Un chien joyeux tenant un ballon d’anniversaire",
+        "es": "Un perro alegre sujetando un globo de cumpleaños",
+        "pt-br": "Um cachorro alegre segurando um balão de aniversário",
+        "it": "Un cane allegro con un palloncino di compleanno",
+        "ja": "誕生日の風船をひとつ持つうれしそうな犬",
+        "ko": "생일 풍선 하나를 든 신난 강아지",
+        "ar": "كلب سعيد يحمل بالون عيد ميلاد واحدًا"
+      },
+      "captions": {
+        "en": "A birthday balloon",
+        "nl": "Een verjaardagsballon",
+        "de": "Ein Geburtstagsballon",
+        "fr": "Un ballon d’anniversaire",
+        "es": "Un globo de cumpleaños",
+        "pt-br": "Um balão de aniversário",
+        "it": "Un palloncino di compleanno",
+        "ja": "誕生日の風船",
+        "ko": "생일 풍선",
+        "ar": "بالون عيد ميلاد"
+      }
+    },
+    {
+      "id": "missing-friend-detailed",
+      "subject": "missing-friend",
+      "detailLevel": "detailed",
+      "source": "/mnt/c/Users/Sami/.codex/worktrees/doodle-detail-levels/samistudio/doodle/docs/qa/prompt-cleanup-2026-10-05/confirmation-mood-detailed-selected.png",
+      "sourceSha256": "edd224d87becf1a30050dd048b23e4481b71735ef6b020e5e8ee847988839d8f",
+      "publishedImage": "/ideas/missing-friend-detailed.webp",
+      "publishedSha256": "7aa0af6d652395a0b62efda0b1848a6de95f1dadfc0130ab35aac83537042414",
+      "bytes": 229936,
+      "thumbnails": [
+        {
+          "width": 320,
+          "bytes": 31568,
+          "file": "/ideas/thumbs/missing-friend-detailed-320.webp",
+          "sha256": "3b9e2de1613ac7da2f01e9f32e554e350f25e5dd42baaf991292833a0dc9d00f"
+        },
+        {
+          "width": 640,
+          "bytes": 91468,
+          "file": "/ideas/thumbs/missing-friend-detailed-640.webp",
+          "sha256": "bc1cbb7420334396826821ff2d1cc8ec287689119f63a7dc5369bffcdbd3eb2e"
+        }
+      ],
+      "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan",
+      "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+      "originalPreserved": true,
+      "width": 1024,
+      "height": 1024,
+      "prompts": {
+        "en": "Missing my friend",
+        "nl": "Ik mis mijn vriend",
+        "de": "Ich vermisse meinen Freund",
+        "fr": "Mon ami me manque",
+        "es": "Echo de menos a mi amigo",
+        "pt-br": "Saudade do meu amigo",
+        "it": "Mi manca il mio amico",
+        "ja": "友達に会いたい",
+        "ko": "친구가 보고 싶어",
+        "ar": "أفتقد صديقي"
+      },
+      "captions": {
+        "en": "Missing a friend",
+        "nl": "Een vriend missen",
+        "de": "Einen Freund vermissen",
+        "fr": "Un ami nous manque",
+        "es": "Echar de menos a un amigo",
+        "pt-br": "Saudade de um amigo",
+        "it": "La mancanza di un amico",
+        "ja": "友達に会いたいな",
+        "ko": "친구가 보고 싶어",
+        "ar": "أفتقد صديقي"
+      }
+    }
+  ]
+}

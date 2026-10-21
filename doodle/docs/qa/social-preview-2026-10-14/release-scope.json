@@ -1,0 +1,73 @@
+{
+  "baseline_deployment": "dpl_9FMZyHBkZkJVoMRDz5T5ytHML9HW",
+  "release": "/home/mests/.codex/doodle-social-preview-release-20261014",
+  "baseline_files_verified": 475,
+  "changed_files": [
+    {
+      "path": "next.config.ts",
+      "before_sha1": "a854407d879cdc9e2986b1f3a64b9b48943b0c29",
+      "after_sha1": "4efcad3b00e93cf34080e7eacf86784b9cfe4eda"
+    },
+    {
+      "path": "src/app/(english)/doodle-ideas/page.test.tsx",
+      "before_sha1": "dce702289a9ad6545bdca11fad05485d94d67ce0",
+      "after_sha1": "abed852f8397bcc3c9e9d0db0e8b8e894a2cd400"
+    },
+    {
+      "path": "src/components/doodle-analytics.test.tsx",
+      "before_sha1": "deefb6f294edec888894155c66ad47fc2f1c8643",
+      "after_sha1": "edc220dd3f7401285da8f8a9d3233d8bb898a4bb"
+    },
+    {
+      "path": "src/components/doodle-analytics.tsx",
+      "before_sha1": "0d2b9a8cd87ff790b1ed28c2eb24c1616fd01ff2",
+      "after_sha1": "32ebc9b5e58db80534728028d16381a2691ba26b"
+    },
+    {
+      "path": "src/components/editorial-pages.tsx",
+      "before_sha1": "627c1c7df7fc0dd977d5d338f1f7e689e0fbdf05",
+      "after_sha1": "3ed1c1e5984d1acfc696a0db5ca90c8ea7e2394e"
+    },
+    {
+      "path": "src/components/legal-page.tsx",
+      "before_sha1": "94589ac86c3084d0e2044fb1e76cd325b4d7dea4",
+      "after_sha1": "51d2b9457568e8f4a191c956e6b8bb386019b9b2"
+    },
+    {
+      "path": "src/lib/doodle-ideas.ts",
+      "before_sha1": "5caff60826559c8169657e5a40c0bc4aaa2f9700",
+      "after_sha1": "96357dfa46987e9fc214f72984201f87a93c5cc9"
+    },
+    {
+      "path": "src/lib/i18n.ts",
+      "before_sha1": "365ccf69cc29bd1a79757e53037d498d36baa00a",
+      "after_sha1": "10fbb77d83583063393e60eaff31a975b2e5ce2e"
+    }
+  ],
+  "new_files": [
+    "src/lib/social-preview.ts",
+    "src/lib/social-channels.ts",
+    "src/lib/social-preview.test.ts",
+    "public/social/doodle-og-2026-10-14.png"
+  ],
+  "non_runtime_test_inputs": [
+    "docs/qa/gallery-inspiration-2026-10-09/asset-manifest.json",
+    "mobile/assets/pencil-loader.json",
+    "docs/qa/detail-levels/comparisons/1-1-simple.png",
+    "docs/qa/detail-levels/comparisons/1-1-medium.png",
+    "docs/qa/detail-levels/comparisons/1-1-detailed.png",
+    "docs/qa/detail-levels/comparisons/2-1-simple.png",
+    "docs/qa/detail-levels/comparisons/2-1-medium.png",
+    "docs/qa/detail-levels/comparisons/2-1-detailed.png",
+    ".env.example",
+    ".nvmrc",
+    "docs/qa/detail-levels/comparisons/paper-color-trial/1-1-simple.png",
+    "docs/qa/detail-levels/comparisons/paper-color-trial/1-1-medium.png",
+    "docs/qa/detail-levels/comparisons/paper-color-trial/1-1-detailed.png",
+    "docs/qa/detail-levels/comparisons/paper-color-trial/2-1-simple.png",
+    "docs/qa/detail-levels/comparisons/paper-color-trial/2-1-medium.png",
+    "docs/qa/detail-levels/comparisons/paper-color-trial/2-1-detailed.png"
+  ],
+  "deployment": "dpl_GsBZwhqr2wkFLxsWsJFxDiTS5NJb",
+  "publication": "Owner authorized OG-only production web update after requesting no native releases. Published at https://doodle.samistudio.nl."
+}
