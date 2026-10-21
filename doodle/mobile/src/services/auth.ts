@@ -3,7 +3,7 @@ import { NativeServiceError } from "./errors";
 import type { NativeDiagnosticsSink } from "./diagnostics";
 
 export interface GoogleSignInApi {
-  configure(options: { webClientId: string; offlineAccess: boolean }): void;
+  configure(options: { webClientId: string; iosClientId?: string; offlineAccess: boolean }): void;
   hasPlayServices(options: { showPlayServicesUpdateDialog: boolean }): Promise<boolean>;
   signIn(): Promise<{ type: "success"; data: { idToken: string | null } } | { type: "cancelled"; data: null }>;
   signOut(): Promise<unknown>;
@@ -12,6 +12,8 @@ export interface GoogleSignInApi {
 export interface GoogleAuthServiceOptions {
   google: GoogleSignInApi;
   webClientId: string | null | undefined;
+  iosClientId?: string | null;
+  platform?: "android" | "ios";
   signInWithGoogle(credential: string): Promise<NativeGoogleResponse>;
   diagnostics?: NativeDiagnosticsSink;
 }
@@ -24,29 +26,34 @@ export class GoogleAuthService {
   async signIn(): Promise<NativeGoogleResponse> {
     const startedAt = Date.now();
     const webClientId = this.options.webClientId?.trim();
-    if (!webClientId || !/^[^\s]+\.apps\.googleusercontent\.com$/.test(webClientId)) {
+    const iosClientId = this.options.iosClientId?.trim();
+    const isIos = this.options.platform === "ios";
+    if (!webClientId || !/^[^\s]+\.apps\.googleusercontent\.com$/.test(webClientId) ||
+        (isIos && (!iosClientId || !/^[^\s]+\.apps\.googleusercontent\.com$/.test(iosClientId)))) {
       this.record("google_configure", "auth_unavailable", startedAt);
       throw new NativeServiceError("auth_unavailable");
     }
     if (!this.configured) {
       try {
-        this.options.google.configure({ webClientId, offlineAccess: false });
+        this.options.google.configure({ webClientId, ...(isIos ? { iosClientId } : {}), offlineAccess: false });
         this.configured = true;
       } catch (error) {
         this.record("google_configure", "auth_unavailable", startedAt, providerCode(error));
         throw new NativeServiceError("auth_unavailable");
       }
     }
-    let playServicesReady: boolean;
-    try {
-      playServicesReady = await this.options.google.hasPlayServices({ showPlayServicesUpdateDialog: true });
-    } catch (error) {
-      this.record("google_services", "auth_unavailable", startedAt, providerCode(error));
-      throw new NativeServiceError("auth_unavailable");
-    }
-    if (!playServicesReady) {
-      this.record("google_services", "auth_unavailable", startedAt);
-      throw new NativeServiceError("auth_unavailable");
+    if (!isIos) {
+      let playServicesReady: boolean;
+      try {
+        playServicesReady = await this.options.google.hasPlayServices({ showPlayServicesUpdateDialog: true });
+      } catch (error) {
+        this.record("google_services", "auth_unavailable", startedAt, providerCode(error));
+        throw new NativeServiceError("auth_unavailable");
+      }
+      if (!playServicesReady) {
+        this.record("google_services", "auth_unavailable", startedAt);
+        throw new NativeServiceError("auth_unavailable");
+      }
     }
     let idToken: string;
     try {

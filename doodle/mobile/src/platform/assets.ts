@@ -15,3 +15,14 @@ export const NATIVE_IDEA_ASSETS: readonly [string, NativeImageSource][] = [
 
 export const NATIVE_REFERENCE_IMAGE: NativeImageSource = require("../../assets/doodle-reference-kiss.png");
 
+
+/** Offline presentation samples, used only by the isolated QA runtime. */
+export const NATIVE_PAPER_FIXTURES = {
+  yellow: require("../../assets/paper-fixtures/yellow.png"),
+  pink: require("../../assets/paper-fixtures/pink.png"),
+  peach: require("../../assets/paper-fixtures/peach.png"),
+  mint: require("../../assets/paper-fixtures/mint.png"),
+  blue: require("../../assets/paper-fixtures/blue.png"),
+  lavender: require("../../assets/paper-fixtures/lavender.png"),
+  white: require("../../assets/paper-fixtures/white.png"),
+} as const;

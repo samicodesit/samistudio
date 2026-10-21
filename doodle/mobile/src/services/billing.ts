@@ -13,6 +13,7 @@ export type IapPurchase = {
   purchaseToken?: string | null;
   obfuscatedAccountIdAndroid?: string | null;
   obfuscatedProfileIdAndroid?: string | null;
+  appAccountToken?: string | null;
 };
 
 export interface IapModule {
@@ -20,8 +21,9 @@ export interface IapModule {
   fetchProducts(input: { skus: string[]; type: "in-app" }): Promise<readonly IapProduct[] | null>;
   purchaseUpdatedListener(listener: (purchase: IapPurchase) => void): { remove(): void };
   purchaseErrorListener(listener: (error: unknown) => void): { remove(): void };
-  requestPurchase(input: { type: "in-app"; request: { google: { skus: string[]; obfuscatedAccountId: string; obfuscatedProfileId?: string } } }): Promise<unknown>;
+  requestPurchase(input: { type: "in-app"; request: { google: { skus: string[]; obfuscatedAccountId: string; obfuscatedProfileId?: string } } | { apple: { sku: string; appAccountToken: string; andDangerouslyFinishTransactionAutomatically: false } } }): Promise<unknown>;
   getAvailablePurchases(): Promise<readonly IapPurchase[]>;
+  getPendingTransactionsIOS?(): Promise<readonly IapPurchase[]>;
   finishTransaction(input: { purchase: IapPurchase; isConsumable: boolean }): Promise<void>;
   endConnection(): Promise<void>;
 }

@@ -1,94 +1,61 @@
 import { Image } from "expo-image";
-import { useEffect, useMemo, useRef, useState } from "react";
-import { Animated, Easing, Keyboard, PanResponder, Pressable, StyleSheet, View } from "react-native";
+import { useRef, useState } from "react";
+import { Keyboard, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { DETAIL_LEVELS, type DetailLevel } from "../../../src/lib/generation/detail-level";
-import { detailDockSwipe } from "../../../src/lib/detail-dock";
 import { getDetailLevelCopy } from "../../../src/lib/detail-level-copy";
-import { NATIVE_COLORS, nativeRowDirection } from "./theme";
+import { NativeModalFrame } from "./NativeModals";
+import { NATIVE_COLORS, nativeFontFamily, nativeRowDirection, nativeTextAlign } from "./theme";
 import { NativeIcon } from "./NativeIcon";
 import type { NativeDirection, NativeLocale } from "./types";
 
-const FLOWERS: Record<DetailLevel, number> = {
-  simple: require("../../assets/detail/simple.png"),
-  medium: require("../../assets/detail/medium.png"),
-  detailed: require("../../assets/detail/detailed.png"),
+const EXAMPLES: Record<DetailLevel, number> = {
+  simple: require("../../assets/detail/dog-simple.webp"),
+  medium: require("../../assets/detail/dog-medium.webp"),
+  detailed: require("../../assets/detail/dog-detailed.webp"),
 };
-// Bundled artwork uses memory caching because Android resource IDs can change between builds.
-export const NATIVE_DETAIL_GEOMETRY = { width: 174, height: 104, toggleSize: 48, toggleInset: 65 } as const;
-
-export function NativeDetailSelector({ locale, direction, value, disabled, reducedMotion, onChange, onFocusVisible }: {
+export function NativeDetailSelector({ locale, direction, value, disabled, onChange, onFocusVisible }: {
   locale: NativeLocale; direction: NativeDirection; value: DetailLevel;
   disabled: boolean; reducedMotion: boolean; onChange(level: DetailLevel): void; onFocusVisible(tile: View): void;
 }) {
   const copy = getDetailLevelCopy(locale);
-  const [expanded, setExpanded] = useState(true);
-  const [focused, setFocused] = useState<DetailLevel | "toggle" | null>(null);
-  const progress = useRef(new Animated.Value(1)).current;
-  const tiles = useRef<Array<View | null>>([]);
-  const toggle = useRef<View | null>(null);
-  useEffect(() => {
-    if (reducedMotion) {
-      progress.stopAnimation();
-      progress.setValue(expanded ? 1 : 0);
-      return;
-    }
-    const animation = Animated.timing(progress, { toValue: expanded ? 1 : 0, duration: 180, easing: Easing.out(Easing.cubic), useNativeDriver: false });
-    animation.start();
-    return () => animation.stop();
-  }, [expanded, progress, reducedMotion]);
-  const gestures = useMemo(() => PanResponder.create({
-    onStartShouldSetPanResponderCapture: () => !disabled,
-    onPanResponderRelease: (_event, gesture) => {
-      const next = detailDockSwipe(gesture.dx, gesture.dy);
-      if (disabled) return;
-      Keyboard.dismiss();
-      setFocused(null);
-      if (next !== null) setExpanded(next);
-      else if (Math.abs(gesture.dx) < 6 && Math.abs(gesture.dy) < 6) setExpanded(current => !current);
-    },
-  }), [disabled]);
-  return <View style={styles.group}>
-    <Animated.View importantForAccessibility={expanded ? "auto" : "no-hide-descendants"} accessibilityElementsHidden={!expanded}
-      pointerEvents={expanded ? "auto" : "none"} style={[styles.drawer, direction === "rtl" ? { left: 4 } : { right: 4 }, {
-        transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [56, 0] }) }],
-      }]}>
-      <View accessibilityRole={expanded ? "radiogroup" : undefined} accessibilityLabel={expanded ? copy.label : undefined} style={[styles.tiles, { flexDirection: nativeRowDirection(direction) }]}>
-        {DETAIL_LEVELS.map((level, index) => <Pressable key={level} ref={tile => { tiles.current[index] = tile; }} accessible={expanded} focusable={expanded && !disabled} importantForAccessibility={expanded ? "yes" : "no-hide-descendants"} accessibilityRole={expanded ? "radio" : undefined}
-          accessibilityLabel={expanded ? copy.levels[level] : undefined} accessibilityState={{ checked: value === level, disabled: disabled || !expanded }}
-          disabled={disabled || !expanded} onPressIn={() => Keyboard.dismiss()} onPress={() => onChange(level)}
-          onFocus={() => { setFocused(level); const tile = tiles.current[index]; if (tile) onFocusVisible(tile); }} onBlur={() => setFocused(null)}
-          style={({ pressed }) => [styles.tile, index > 0 && (direction === "rtl" ? styles.dividedRtl : styles.divided), focused === level && styles.focused, disabled && styles.disabled, pressed && !disabled && styles.pressed]}>
-          <Image source={FLOWERS[level]} cachePolicy="memory" accessible={false} contentFit="contain" style={[styles.flower, index === 0 && (direction === "rtl" ? styles.roundRight : styles.roundLeft), index === 2 && (direction === "rtl" ? styles.roundLeft : styles.roundRight)]} />
-          {value === level ? <View pointerEvents="none" style={[styles.check, direction === "rtl" ? { left: 3 } : { right: 3 }]}><NativeIcon name="check" size={10} color={NATIVE_COLORS.paper} /></View> : null}
-        </Pressable>)}
-      </View>
-    </Animated.View>
-    <Animated.View {...gestures.panHandlers} style={[styles.toggleWrap, direction === "rtl" ? { left: NATIVE_DETAIL_GEOMETRY.toggleInset } : { right: NATIVE_DETAIL_GEOMETRY.toggleInset }, { transform: [{ translateY: progress.interpolate({ inputRange: [0, 1], outputRange: [56, 0] }) }] }]}>
-      <Pressable ref={toggle} accessibilityRole="button" accessibilityLabel={(expanded ? copy.hide : copy.show) + " (" + copy.levels[value] + ")"}
-        accessibilityState={{ expanded, disabled }} disabled={disabled}
-        onPressIn={() => Keyboard.dismiss()} onPress={() => { setFocused(null); setExpanded(!expanded); }}
-        onFocus={() => { setFocused("toggle"); if (toggle.current) onFocusVisible(toggle.current); }} onBlur={() => setFocused(null)}
-        style={({ pressed }) => [styles.toggle, focused === "toggle" && styles.focused, pressed && styles.pressed, disabled && styles.disabled]}>
-        <View pointerEvents="none" style={styles.handle}><NativeIcon name={expanded ? "chevronDown" : "chevronUp"} size={16} color={NATIVE_COLORS.graphite} /></View>
-      </Pressable>
-    </Animated.View>
+  const [expanded, setExpanded] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const trigger = useRef<View>(null);
+  const { width, fontScale } = useWindowDimensions();
+  const largeText = fontScale > 1.3;
+  const controlWidth = largeText ? Math.min(280, width - 36) : Math.min(190, Math.max(150, width * .4));
+  const body = { fontFamily: nativeFontFamily(locale,"body"), textAlign: nativeTextAlign(direction) };
+  return <View style={[styles.group, { width: controlWidth, maxWidth: largeText ? "100%" : "57%" }]}>
+    <Pressable testID="detail-trigger" ref={trigger} accessibilityRole="button" accessibilityLabel={`${copy.heading}: ${copy.levels[value]}`} accessibilityState={{ expanded, disabled }} disabled={disabled}
+      onPress={() => {Keyboard.dismiss();setExpanded(true);}} onFocus={() => {setFocused(true);if(trigger.current)onFocusVisible(trigger.current);}} onBlur={() => setFocused(false)}
+      style={({pressed}) => [styles.trigger,{flexDirection:nativeRowDirection(direction)},focused && styles.focused,disabled && styles.disabled,pressed && styles.pressed]}>
+      <Image source={EXAMPLES[value]} cachePolicy="memory" contentFit="cover" accessible={false} style={styles.thumbnail} />
+      <View style={styles.label}><Text style={[styles.caption,body]}>{copy.heading}</Text><Text style={[styles.value,body]}>{copy.levels[value]}</Text></View>
+      <NativeIcon name="chevronDown" size={14} color={NATIVE_COLORS.moss} />
+    </Pressable>
+    <NativeModalFrame titleMaxFontSizeMultiplier={2} contentKey={`detail:${value}`} visible={expanded && !disabled} title={copy.title} closeLabel={copy.close} locale={locale} direction={direction} onClose={() => setExpanded(false)}>
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+        <Text style={[styles.description,body]}>{copy.description}</Text>
+        <View accessibilityRole="radiogroup" accessibilityLabel={copy.label} style={[styles.options,{flexDirection:largeText ? "column" : nativeRowDirection(direction)}]}>
+          {DETAIL_LEVELS.map(level => <Pressable testID={`detail-choice-${level}`} key={level} accessibilityRole="radio" accessibilityLabel={copy.levels[level]} accessibilityHint={copy.descriptions[level]} accessibilityState={{checked:value===level}}
+            onPress={() => {onChange(level);setExpanded(false);}}
+            style={({pressed}) => [styles.choice,largeText && styles.largeChoice,{flexDirection:largeText ? nativeRowDirection(direction) : "column"},value===level && styles.selected,pressed && styles.pressed]}>
+            <Image source={EXAMPLES[level]} cachePolicy="memory" accessible={false} contentFit="cover" style={[styles.example,largeText && {width:Math.min(100,width*.25),aspectRatio:1}]} />
+            <View style={styles.choiceCopy}><Text style={[styles.level,body]}>{copy.levels[level]}</Text><Text style={[styles.summary,body]}>{copy.descriptions[level]}</Text></View>
+            {value===level ? <View pointerEvents="none" style={[styles.check,direction==="rtl" ? {left:10} : {right:10}]}><NativeIcon name="check" size={13} color={NATIVE_COLORS.paper} /></View> : null}
+          </Pressable>)}
+        </View>
+      </ScrollView>
+    </NativeModalFrame>
   </View>;
 }
-const styles = StyleSheet.create({
-  group: { overflow: "visible", width: NATIVE_DETAIL_GEOMETRY.width, height: NATIVE_DETAIL_GEOMETRY.height, flexShrink: 0 },
-  drawer: { position: "absolute", top: 48, width: 170, height: 70, borderWidth: 1, borderColor: NATIVE_COLORS.line, borderTopLeftRadius: 6, borderTopRightRadius: 6, backgroundColor: NATIVE_COLORS.sticky },
-  tiles: {},
-  tile: { width: 56, height: 56 },
-  divided: { borderLeftWidth: 1, borderLeftColor: "rgba(32, 35, 31, 0.2)" },
-  dividedRtl: { borderRightWidth: 1, borderRightColor: "rgba(32, 35, 31, 0.2)" },
-  focused: { outlineColor: NATIVE_COLORS.moss, outlineWidth: 2, outlineOffset: -3 },
-  flower: { width: "100%", height: "100%" },
-  roundLeft: { borderTopLeftRadius: 5 },
-  roundRight: { borderTopRightRadius: 5 },
-  check: { position: "absolute", top: 3, width: 13, height: 13, borderRadius: 7, backgroundColor: NATIVE_COLORS.moss, alignItems: "center", justifyContent: "center" },
-  toggleWrap: { position: "absolute", top: 0, zIndex: 1 },
-  toggle: { width: NATIVE_DETAIL_GEOMETRY.toggleSize, height: NATIVE_DETAIL_GEOMETRY.toggleSize, alignItems: "center", justifyContent: "flex-end" },
-  handle: { bottom: -1, width: 40, height: 24, alignItems: "center", justifyContent: "center", backgroundColor: NATIVE_COLORS.sticky, borderWidth: 1, borderBottomWidth: 0, borderColor: NATIVE_COLORS.line, borderTopLeftRadius: 14, borderTopRightRadius: 14 },
-  disabled: { opacity: 0.65 },
-  pressed: { opacity: 0.85 },
+const styles=StyleSheet.create({
+  group:{flexShrink:1}, trigger:{alignItems:"center",gap:8,minHeight:48,minWidth:132,padding:4,paddingEnd:9,borderWidth:1,borderColor:"#bbc6b5",borderRadius:12,backgroundColor:"#f9faf4"},
+  thumbnail:{width:38,height:38,borderRadius:8},label:{flex:1,flexShrink:1},caption:{fontSize:10,color:"#64705f",marginBottom:3},value:{fontSize:13,fontWeight:"600",color:"#315747"},
+  focused:{outlineColor:NATIVE_COLORS.moss,outlineWidth:2,outlineOffset:2},disabled:{opacity:.65},pressed:{opacity:.75},
+  scroll:{flexShrink:1},content:{paddingBottom:8},description:{fontSize:14,lineHeight:21,color:"#64705f",marginTop:2,marginBottom:18},options:{gap:8,alignItems:"stretch"},
+  choice:{flex:1,minWidth:0,padding:5,paddingBottom:11,borderWidth:1,borderColor:"#dce1d5",borderRadius:12,position:"relative"},largeChoice:{flex:0,alignItems:"center",gap:12},
+  selected:{borderColor:"#487c65",backgroundColor:"#f0f5eb"},example:{width:"100%",aspectRatio:1,borderRadius:8,marginBottom:10},choiceCopy:{flexShrink:1},
+  level:{paddingHorizontal:3,fontSize:14,fontWeight:"600",color:NATIVE_COLORS.graphite},summary:{paddingHorizontal:3,fontSize:11,lineHeight:16,color:"#64705f",marginTop:3},
+  check:{position:"absolute",top:10,width:20,height:20,borderRadius:10,backgroundColor:NATIVE_COLORS.moss,alignItems:"center",justifyContent:"center"},
 });

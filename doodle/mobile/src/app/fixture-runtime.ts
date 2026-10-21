@@ -1,12 +1,14 @@
 import { getPlayCatalog } from "../../../src/lib/billing/play-catalog";
 import { Asset } from "expo-asset";
-import { NATIVE_REFERENCE_IMAGE } from "../platform/assets";
+import type { PaperColorId } from "../../../src/lib/generation/paper-colors";
+import type { DetailLevel } from "../../../src/lib/generation/detail-level";
+import { NATIVE_PAPER_FIXTURES } from "../platform/assets";
 import { NATIVE_PRODUCT_ID, type NativeApi, type NativeBilling, type NativeConfigResponse, type NativeGenerationResult, type NativeGoogleResponse } from "../contracts/native";
-import type { GoogleAuthService } from "../services/auth";
+import type { NativeAuth } from "../services/native-auth";
 import { NativeServiceError } from "../services/errors";
 import { NativeReportService } from "../services/report";
 
-type FixtureAuth = Pick<GoogleAuthService, "signIn" | "signOut">;
+type FixtureAuth = Pick<NativeAuth, "signIn" | "signOut" | "isAppleAvailable">;
 
 export interface FrontendFixtureServices {
   api: NativeApi;
@@ -54,6 +56,7 @@ export function createFrontendFixtureServices(enabled = false, options: Frontend
 
   const api: NativeApi = {
     async getConfig() { return config; },
+    async signInWithApple() { throw new Error("Apple authorization is not simulated by this fixture"); },
     async signInWithGoogle() {
       state.signedIn = true;
       return googleResponse();
@@ -68,10 +71,10 @@ export function createFrontendFixtureServices(enabled = false, options: Frontend
       state.hasPurchased = false;
     },
     async createGuestSession() { throw new NativeServiceError("native_generation_unavailable"); },
-    async generate(_scene: string): Promise<NativeGenerationResult> {
+    async generate(_scene: string, _detailLevel?: DetailLevel, _photo?: string, paperColor: PaperColorId = "yellow"): Promise<NativeGenerationResult> {
       // Keep the fixture delay long enough to inspect the waiting state on a device.
       if (generationDelayMs > 0) await new Promise((resolve) => setTimeout(resolve, generationDelayMs));
-      const resolved = Asset.fromModule(NATIVE_REFERENCE_IMAGE as number);
+      const resolved = Asset.fromModule(NATIVE_PAPER_FIXTURES[paperColor] as number);
       await resolved.downloadAsync();
       const imageUri = resolved.localUri ?? resolved.uri;
       if (!imageUri) throw new NativeServiceError("media_unavailable");

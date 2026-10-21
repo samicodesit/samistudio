@@ -5,6 +5,7 @@ import { funnelDeletionLua } from "../funnel-deletion";
 import { redisCommand, redisInteger } from "@/lib/redis";
 import { trackUsage } from "@/lib/usage-metrics";
 import { notifyOwnerSale } from "./sale-notification";
+import type { CreditScope } from "./apple-credit-scope";
 
 export type CreditReservation = { reserved: boolean; remaining: number };
 export type CreditFinalization = { finalized: boolean; remaining: number; firstDoodle?: true };
@@ -68,12 +69,48 @@ return 0
 const DELETE_SCRIPT = `
 local mapped = redis.call('GET', KEYS[1])
 if mapped ~= ARGV[1] and redis.call('EXISTS', KEYS[2]) == 0 then return 0 end
+local revokedKey = 'doodle:account:' .. ARGV[1] .. ':apple-revoked-authorization'
+if ARGV[3] ~= '' then
+  local currentAuthorization = redis.call('GET', KEYS[11])
+  if currentAuthorization ~= ARGV[3] and (currentAuthorization or redis.call('GET', revokedKey) ~= ARGV[3]) then return -1 end
+end
+local sessionKind = redis.call('TYPE', KEYS[10]).ok
+if sessionKind ~= 'none' and sessionKind ~= 'set' then return redis.error_reply('Invalid session index') end
+local sessions = {}
+if sessionKind == 'set' then sessions = redis.call('SMEMBERS', KEYS[10]) end
+local prefix = 'doodle:auth:native:'
+for _, key in ipairs(sessions) do
+  if #key ~= #prefix + 64 or string.sub(key, 1, #prefix) ~= prefix or string.find(string.sub(key, #prefix + 1), '[^a-f0-9]') then
+    return redis.error_reply('Invalid session index')
+  end
+end
+local appleKind = redis.call('TYPE', KEYS[12]).ok
+if appleKind ~= 'none' and appleKind ~= 'set' then return redis.error_reply('Invalid Apple key index') end
+local appleKeys = {}
+if appleKind == 'set' then appleKeys = redis.call('SMEMBERS', KEYS[12]) end
+for _, key in ipairs(appleKeys) do
+  local production = 'doodle:apple:attest:production:key:'
+  local development = 'doodle:apple:attest:development:key:'
+  local prefix = ''
+  if string.sub(key, 1, #production) == production then prefix = production
+  elseif string.sub(key, 1, #development) == development then prefix = development end
+  if prefix == '' or #key ~= #prefix + 64 or string.find(string.sub(key, #prefix + 1), '[^a-f0-9]') then
+    return redis.error_reply('Invalid Apple key index')
+  end
+end
 ${funnelDeletionLua("ARGV[2]", "'doodle:metrics:funnel:aliases:'..ARGV[2]", "'doodle:metrics:funnel:'")}
 redis.call('SET', KEYS[6], 'deleted')
 if mapped == ARGV[1] then redis.call('DEL', KEYS[1]) end
 redis.call('DEL', KEYS[2], KEYS[3], KEYS[4], KEYS[5])
 redis.call('DEL', KEYS[7], KEYS[9])
 if redis.call('TYPE', KEYS[8]).ok == 'set' then redis.call('SREM', KEYS[8], ARGV[2]) end
+for _, key in ipairs(sessions) do redis.call('DEL', key) end
+redis.call('DEL', KEYS[10], KEYS[11], 'doodle:account:' .. ARGV[1] .. ':apple-authorized-at', revokedKey)
+for _, key in ipairs(appleKeys) do redis.call('DEL', key) end
+redis.call('DEL', KEYS[12])
+local sandbox = 'doodle:apple:sandbox:account:' .. ARGV[1] .. ':'
+redis.call('DEL', sandbox .. 'balance', sandbox .. 'holds', sandbox .. 'finalized', sandbox .. 'purchased', sandbox .. 'grants',
+  'doodle:account:' .. ARGV[1] .. ':apple-billing-environment')
 return 1
 `;
 
@@ -84,6 +121,11 @@ function unavailable(): never {
 function accountKey(accountId: string, suffix: string) {
   if (!UUID_PATTERN.test(accountId)) unavailable();
   return `doodle:account:${accountId}:${suffix}`;
+}
+function billingKey(accountId: string, suffix: string, scope: CreditScope) {
+  if (scope === "production") return accountKey(accountId, suffix);
+  if (scope !== "apple-sandbox" || !UUID_PATTERN.test(accountId)) unavailable();
+  return `doodle:apple:sandbox:account:${accountId}:${suffix}`;
 }
 
 function purchaseKey(checkoutSessionId: string) {
@@ -113,17 +155,17 @@ function holdResult(value: unknown) {
   return { active: status === 1, remaining };
 }
 
-export async function getPaidBalance(accountId: string): Promise<number> {
-  const result = await redisCommand(["GET", accountKey(accountId, "balance")]);
+export async function getPaidBalance(accountId: string, scope: CreditScope = "production"): Promise<number> {
+  const result = await redisCommand(["GET", billingKey(accountId, "balance", scope)]);
   return result === null ? 0 : balance(result);
 }
 
 /** Legacy balances are created only by credit fulfillment or a recorded gift.
  * Mixed historical gift/purchase accounts stay unknown until a verified purchase. */
-export async function getPurchaseHistory(accountId: string): Promise<boolean | null> {
+export async function getPurchaseHistory(accountId: string, scope: CreditScope = "production"): Promise<boolean | null> {
   const value = redisInteger(await redisCommand(["EVAL",
     "if redis.call('EXISTS',KEYS[1]) == 1 then return 1 end; if redis.call('EXISTS',KEYS[2]) == 0 then return 0 end; if redis.call('EXISTS',KEYS[3]) == 1 then return -1 end; return 1",
-    "3", accountKey(accountId, "purchased"), accountKey(accountId, "balance"), accountKey(accountId, "grants"),
+    "3", billingKey(accountId, "purchased", scope), billingKey(accountId, "balance", scope), billingKey(accountId, "grants", scope),
   ]));
   if (![0, 1, -1].includes(value)) unavailable();
   return value === -1 ? null : value === 1;
@@ -139,22 +181,22 @@ export async function isPaidAccountActive(accountId: string): Promise<boolean> {
   ])) === 1;
 }
 
-export async function reservePaidCredit(accountId: string, reservationId: string): Promise<CreditReservation> {
+export async function reservePaidCredit(accountId: string, reservationId: string, scope: CreditScope = "production"): Promise<CreditReservation> {
   const now = Date.now();
   const result = holdResult(
     await redisCommand([
       "EVAL", RESERVE_SCRIPT, "4",
-      accountKey(accountId, "active"), accountKey(accountId, "deleted"), accountKey(accountId, "balance"), accountKey(accountId, "holds"),
+      accountKey(accountId, "active"), accountKey(accountId, "deleted"), billingKey(accountId, "balance", scope), billingKey(accountId, "holds", scope),
       now, now + HOLD_TTL_MS, reservationId,
     ]),
   );
   return { reserved: result.active, remaining: result.remaining };
 }
 
-export async function finalizePaidCredit(accountId: string, reservationId: string): Promise<CreditFinalization> {
+export async function finalizePaidCredit(accountId: string, reservationId: string, scope: CreditScope = "production"): Promise<CreditFinalization> {
   const raw = await redisCommand([
       "EVAL", FINALIZE_SCRIPT, "5",
-      accountKey(accountId, "active"), accountKey(accountId, "deleted"), accountKey(accountId, "balance"), accountKey(accountId, "holds"), accountKey(accountId, "finalized"),
+      accountKey(accountId, "active"), accountKey(accountId, "deleted"), billingKey(accountId, "balance", scope), billingKey(accountId, "holds", scope), billingKey(accountId, "finalized", scope),
       Date.now(), reservationId,
     ]);
   if (!Array.isArray(raw) || (raw.length !== 2 && raw.length !== 3)) unavailable();
@@ -164,8 +206,8 @@ export async function finalizePaidCredit(accountId: string, reservationId: strin
   return { finalized: result.active, remaining: result.remaining, ...(first === 1 ? { firstDoodle: true as const } : {}) };
 }
 
-export async function releasePaidCredit(accountId: string, reservationId: string): Promise<number> {
-  const result = integer(await redisCommand(["EVAL", RELEASE_SCRIPT, "1", accountKey(accountId, "holds"), Date.now(), reservationId]));
+export async function releasePaidCredit(accountId: string, reservationId: string, scope: CreditScope = "production"): Promise<number> {
+  const result = integer(await redisCommand(["EVAL", RELEASE_SCRIPT, "1", billingKey(accountId, "holds", scope), Date.now(), reservationId]));
   if (result !== 0 && result !== 1) unavailable();
   return result;
 }
@@ -186,14 +228,17 @@ export async function fulfillCreditPack(accountId: string, checkoutSessionId: st
   return remaining;
 }
 
-export async function deletePaidAccount(accountId: string, identityKey: string): Promise<void> {
-  if (!IDENTITY_KEY_PATTERN.test(identityKey)) unavailable();
+export async function deletePaidAccount(accountId: string, identityKey: string, provider: "google" | "apple" = "google", revokedAuthorization?: string): Promise<void> {
+  if (!IDENTITY_KEY_PATTERN.test(identityKey) || (provider !== "google" && provider !== "apple")) unavailable();
+  if (revokedAuthorization !== undefined && (provider !== "apple" || !revokedAuthorization || revokedAuthorization.length > 16_000)) unavailable();
   const result = integer(await redisCommand([
-    "EVAL", DELETE_SCRIPT, "9",
-    `doodle:auth:google:${identityKey}`,
+    "EVAL", DELETE_SCRIPT, "12",
+    `doodle:auth:${provider}:${identityKey}`,
     accountKey(accountId, "active"), accountKey(accountId, "balance"), accountKey(accountId, "holds"), accountKey(accountId, "finalized"), accountKey(accountId, "deleted"),
     accountKey(accountId, "grants"), "doodle:metrics:gifted", accountKey(accountId, "purchased"),
-    accountId, createHash("sha256").update(`account:${accountId}`).digest("hex"),
+    accountKey(accountId, "native-sessions"), accountKey(accountId, "apple-authorization"),
+    accountKey(accountId, "apple-attest-keys"),
+    accountId, createHash("sha256").update(`account:${accountId}`).digest("hex"), revokedAuthorization ?? "",
   ]));
   if (result !== 0 && result !== 1) unavailable();
 }

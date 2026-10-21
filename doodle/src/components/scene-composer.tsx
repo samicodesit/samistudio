@@ -1,4 +1,6 @@
 "use client";
+import { PaperColorSelector } from "./paper-color-selector";
+import type { PaperColorId } from "@/lib/generation/paper-colors";
 
 import { useState, type Ref } from "react";
 import { DetailLevelSelector } from "./detail-level-selector";
@@ -21,6 +23,8 @@ interface SceneComposerProps {
   detailLevel?: DetailLevel;
   detailReady?: boolean;
   onDetailLevelChange?: (level: DetailLevel) => void;
+  paperColor?: PaperColorId;
+  onPaperColorChange?: (color: PaperColorId) => void;
   scene: string;
   isGenerating: boolean;
   onSceneChange: (scene: string) => void;
@@ -41,7 +45,7 @@ export function SceneComposer({
   onPickPhoto,
   onRemovePhoto,
   locale = "en",
-  detailLevel = "simple",
+  detailLevel = "medium",
   detailReady = true,
   onDetailLevelChange,
   scene,
@@ -49,8 +53,8 @@ export function SceneComposer({
   onSceneChange,
   onCreate,
   copy,
-  usage,
-  usageLoadingLabel,
+  paperColor = "yellow",
+  onPaperColorChange,
   createButtonRef,
   sceneInputRef,
   compactHeading = false,
@@ -61,7 +65,7 @@ export function SceneComposer({
   const photoCopy = getPhotoCopy(locale);
   const heading = <div className="scene-heading">
     {compactHeading ? <h2 id="scene-title">{copy.title}</h2> : <h1 id="scene-title">{copy.title}</h1>}
-    <p className="scene-hint">{photo ? photoCopy.hint : copy.hint}</p>
+    <div className="composer-prompt-line"><p className="scene-hint">{photo ? photoCopy.hint : copy.hint}</p>{onDetailLevelChange ? <DetailLevelSelector locale={locale} value={detailLevel} onChange={onDetailLevelChange} disabled={isGenerating || !detailReady} /> : null}</div>
   </div>;
 
   return (
@@ -71,7 +75,6 @@ export function SceneComposer({
       <div className="composer-input-wrap">
         {onDetailLevelChange ? <div className="composer-detail-row">
           {heading}
-          <DetailLevelSelector locale={locale} value={detailLevel} onChange={onDetailLevelChange} disabled={isGenerating || !detailReady} />
         </div> : null}
         <div className={`doodle-composer${photo ? " doodle-composer-photo" : ""}`} aria-busy={preparingPhoto}>
           {photo ? <div className="photo-selection">
@@ -112,7 +115,7 @@ export function SceneComposer({
           </div>
         </div>
         {photoError ? <p className="photo-error" role="alert">{photoError}</p> : null}
-        <div className="composer-usage">{usage === null ? <span className="usage-loading" role="status" aria-label={usageLoadingLabel} /> : <span className="usage-copy" aria-live="polite">{usage}</span>}</div>
+        <PaperColorSelector value={paperColor} onChange={onPaperColorChange ?? (() => undefined)} locale={locale} disabled={isGenerating || !detailReady || preparingPhoto} />
       </div>
     </section>
   );

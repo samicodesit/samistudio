@@ -20,6 +20,22 @@ function renderClient(locale: Locale = "en", initialScene = "", landing = false)
   return render(<DoodleClient webPacksEnabled locale={locale} copy={getCopy(locale)} initialScene={initialScene} accountHost="web" landing={landing ? getLandingCopy(locale) : undefined} />);
 }
 
+async function expectAccountBalance(label: string) {
+  await waitFor(() => expect(document.querySelector(".account-menu") || screen.queryByRole("button", { name: "Sign in" })).toBeTruthy());
+  const summary = document.querySelector<HTMLDetailsElement>(".account-menu");
+  if (summary) {
+    summary.open = true;
+    await screen.findByText(label.replace(" free", ""), { selector: ".account-balance" });
+    expect(screen.getByText(label.replace(" free", ""), { selector: ".account-balance" })).toBeVisible();
+    summary.open = false;
+  } else {
+    fireEvent.click(await screen.findByRole("button", { name: "Sign in" }));
+    expect(await screen.findByText(label, { selector: ".account-usage" })).toBeVisible();
+    fireEvent(screen.getByRole("dialog"), new Event("cancel", { cancelable: true }));
+  }
+  expect(document.querySelector(".composer-usage, .workspace-usage")).toBeNull();
+}
+
 function suggestionLabels() {
   return Array.from(document.querySelectorAll<HTMLButtonElement>(".suggestions-list button"), (button) =>
     button.textContent?.replace("+", "").trim() ?? "",
@@ -55,7 +71,8 @@ function deferred<T>() {
 describe("DoodleClient", () => {
   it("keeps landing ideas refreshable without spending credits or replacing the selected detail or draft", async () => {
     renderClient("en", "A cat holding a flower", true);
-    await screen.findByText("2 free doodles left");
+    await screen.findByRole("button", { name: "Sign in" });
+    fireEvent.click(screen.getByRole("button", { name: /^Detail:/ }));
     fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
     const previous = suggestionLabels();
     expect(previous).toHaveLength(3);
@@ -64,13 +81,13 @@ describe("DoodleClient", () => {
     await waitFor(() => expect(screen.getByRole("button", { name: "Refresh ideas" })).toBeEnabled());
     expect(suggestionLabels().every(idea => !previous.includes(idea))).toBe(true);
     expect(screen.getByRole("textbox")).toHaveValue("A cat holding a flower");
-    expect(screen.getByRole("radio", { name: "Medium" })).toHaveAttribute("aria-checked", "true");
+    await waitFor(() => expect(screen.getByRole("button", { name: "Detail: Medium" })).toHaveAttribute("aria-expanded", "false"));
     expect(fetch).toHaveBeenCalledTimes(calls);
   });
 
   it("refreshes three ideas without changing the draft or calling generation", async () => {
     renderClient("en", "A mug beside my journal");
-    await screen.findByText("2 free doodles left");
+    await screen.findByRole("button", { name: "Sign in" });
     const previous = suggestionLabels();
     const calls = vi.mocked(fetch).mock.calls.length;
     const refresh = screen.getByRole("button", { name: "Refresh ideas" });
@@ -125,7 +142,7 @@ describe("DoodleClient", () => {
     fireEvent.click(screen.getByRole("button", { name: "Birthday card" }));
     expect(screen.getByRole("textbox")).toHaveValue("A happy dog holding a birthday balloon");
     expect(create).toBeEnabled();
-    await screen.findByText("2 free doodles left");
+    await screen.findByRole("button", { name: "Sign in" });
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("button", { name: /Example drawing:/ })).toBeVisible();
   });
@@ -208,7 +225,7 @@ describe("DoodleClient", () => {
     expect(vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/account")).toHaveLength(1);
     await user.click(screen.getByRole("button", { name: "Not now" }));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(screen.getByText("7 doodles left", { selector: ".usage-copy" })).toBeVisible();
+    await expectAccountBalance("7 doodles left");
     expect(screen.getByText("Account").closest("summary")).toHaveFocus();
   });
 
@@ -260,10 +277,17 @@ describe("DoodleClient", () => {
     renderClient();
 
     expect(screen.queryByText("Free doodles to get started")).not.toBeInTheDocument();
-    expect(screen.getByRole("status", { name: "Account" })).toBeVisible();
+    expect(document.querySelector(".composer-usage")).toBeNull();
 
     await act(async () => initialAccount.resolve(json(anonymousAccount)));
-    expect(await screen.findByText("2 free doodles left")).toBeVisible();
+    await expectAccountBalance("2 free doodles left");
+  });
+
+  it("shows unavailable balance in the guest account panel when the account read fails", async () => {
+    vi.mocked(fetch).mockRejectedValueOnce(new Error("offline"));renderClient();
+    fireEvent.click(await screen.findByRole("button",{name:"Sign in"}));
+    expect(await screen.findByText(getCopy("en").errors.unavailable,{selector:".account-usage"})).toBeVisible();
+    expect(screen.queryByText("0 doodles left")).toBeNull();
   });
 
   it("keeps sign-in visible beside the allowance and opens a neutral sign-in dialog", async () => {
@@ -447,10 +471,10 @@ describe("DoodleClient", () => {
       new Response(new Blob(["png"]), { status: 200, headers: { "X-Doodle-Free-Remaining": "1" } }),
     );
     renderClient();
-    expect(await screen.findByText("2 free doodles left")).toBeVisible();
+    await expectAccountBalance("2 free doodles left");
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
-    expect(await screen.findByText("1 free doodle left")).toBeVisible();
+    await expectAccountBalance("1 free doodle left");
   });
 
   it("shows all available paid and free drawings, then the trial after paid exhaustion", async () => {
@@ -458,10 +482,10 @@ describe("DoodleClient", () => {
       new Response(new Blob(["png"]), { status: 200, headers: { "X-Doodle-Paid-Remaining": "0" } }),
     );
     renderClient();
-    expect(await screen.findByText("3 doodles left", { selector: ".usage-copy" })).toBeVisible();
+    await expectAccountBalance("3 doodles left");
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
-    expect(await screen.findByText("2 free doodles left")).toBeVisible();
+    await expectAccountBalance("2 free doodles left");
   });
 
   it("updates remaining usage from generation headers", async () => {
@@ -478,7 +502,7 @@ describe("DoodleClient", () => {
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
 
-    expect(await screen.findByText("1 free doodle left")).toBeVisible();
+    await expectAccountBalance("1 free doodle left");
   });
 
   it("refreshes uncertain balance without delaying or losing the generated image", async () => {
@@ -506,9 +530,9 @@ describe("DoodleClient", () => {
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
 
     expect(await screen.findByAltText("Generated sticky-note doodle")).toBeVisible();
-    expect(await screen.findByText("1 free doodle left")).toBeVisible();
+    await expectAccountBalance("1 free doodle left");
     await act(async () => initialAccount.resolve(json(anonymousAccount)));
-    expect(screen.getByText("1 free doodle left")).toBeVisible();
+    await expectAccountBalance("1 free doodle left");
   });
 
   it("keeps the uncertain image and current balance when account refresh fails", async () => {
@@ -528,7 +552,7 @@ describe("DoodleClient", () => {
 
     expect(await screen.findByAltText("Generated sticky-note doodle")).toBeVisible();
     await waitFor(() => expect(vi.mocked(fetch).mock.calls.filter(([input]) => input === "/api/account")).toHaveLength(2));
-    expect(screen.getByText("2 free doodles left")).toBeVisible();
+    await expectAccountBalance("2 free doodles left");
   });
 
   it("only applies the latest overlapping uncertainty reconciliation", async () => {
@@ -553,7 +577,7 @@ describe("DoodleClient", () => {
       throw new Error(`Unexpected fetch: ${String(input)}`);
     });
     renderClient();
-    await screen.findByText("2 free doodles left");
+    await screen.findByRole("button", { name: "Sign in" });
 
     fireEvent.change(screen.getByRole("textbox"), { target: { value: "Two cats hug" } });
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
@@ -564,7 +588,7 @@ describe("DoodleClient", () => {
     expect(screen.getByAltText("Generated sticky-note doodle")).toHaveAttribute("src", "blob:second");
 
     await act(async () => firstRefresh.resolve(json({ ...anonymousAccount, freeRemaining: 1 })));
-    expect(screen.getByText("2 free doodles left")).toBeVisible();
+    await expectAccountBalance("2 free doodles left");
 
     await act(async () => secondRefresh.resolve(json({
       authenticated: true,
@@ -572,7 +596,7 @@ describe("DoodleClient", () => {
       balance: 8,
       freeRemaining: null,
     })));
-    expect(screen.getByText("8 doodles left", { selector: ".workspace-usage > span" })).toBeVisible();
+    await expectAccountBalance("8 doodles left");
     expect(screen.getByText("Account")).toBeVisible();
     expect(screen.getByAltText("Generated sticky-note doodle")).toHaveAttribute("src", "blob:second");
   });
@@ -603,10 +627,10 @@ describe("DoodleClient", () => {
       freeRemaining: null,
     })));
 
-    expect(screen.getByText("7 doodles left", { selector: ".workspace-usage > span" })).toBeVisible();
+    await expectAccountBalance("7 doodles left");
     fireEvent.click(screen.getByText("Account"));
     expect(screen.getByText("buyer@example.com")).toBeVisible();
-    expect(screen.getAllByText("7 doodles left")).toHaveLength(2);
+    expect(screen.getAllByText("7 doodles left")).toHaveLength(1);
   });
 
   it("shows a zero paid balance instead of anonymous trial copy when signed in", async () => {
@@ -616,7 +640,7 @@ describe("DoodleClient", () => {
 
     renderClient();
 
-    await waitFor(() => expect(screen.getByText("0 doodles left", { selector: ".usage-copy" })).toBeVisible());
+    await expectAccountBalance("0 doodles left");
     expect(screen.queryByText("Free doodles to get started")).not.toBeInTheDocument();
   });
 
@@ -652,10 +676,10 @@ describe("DoodleClient", () => {
     await user.click(await screen.findByRole("button", { name: "Continue with Google" }));
 
     await waitFor(() => expect(accountRequests).toBe(2));
-    await waitFor(() => expect(screen.getByText("0 doodles left", { selector: ".usage-copy" })).toBeVisible());
+    await expectAccountBalance("0 doodles left");
     await act(async () => initialAccount.resolve(json(anonymousAccount)));
 
-    expect(screen.getByText("0 doodles left", { selector: ".usage-copy" })).toBeVisible();
+    await expectAccountBalance("0 doodles left");
     expect(screen.getByText("Account")).toBeInTheDocument();
     expect(screen.queryByText("Free doodles to get started")).not.toBeInTheDocument();
   });
@@ -770,15 +794,18 @@ describe("DoodleClient", () => {
   it("selects a visual detail level without generating, remembers it and submits it", async () => {
     mockGeneration(new Response(new Blob(["png"], { type: "image/png" }), { status: 200 }));
     const view = renderClient("en", "Two cats hug");
-    const medium = await screen.findByRole("radio", { name: "Medium" });
+    const trigger = await screen.findByRole("button", { name: "Detail: Medium" });
+    await waitFor(() => expect(trigger).toBeEnabled());
+    fireEvent.click(trigger);
+    const medium = screen.getByRole("radio", { name: "Medium" });
     await waitFor(() => expect(medium).toBeEnabled());
     fireEvent.click(medium);
-    expect(medium).toHaveAttribute("aria-checked", "true");
+    await waitFor(() => expect(screen.getByRole("button", {name:"Detail: Medium"})).toHaveAttribute("aria-expanded", "false"));
     expect(window.localStorage.getItem("doodle.detail-level")).toBe("medium");
     expect(vi.mocked(fetch).mock.calls.filter(([path]) => path === "/api/generate")).toHaveLength(0);
     view.unmount();
     renderClient("en", "Two cats hug");
-    await waitFor(() => expect(screen.getByRole("radio", { name: "Medium" })).toHaveAttribute("aria-checked", "true"));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Detail: Medium" })).toHaveAttribute("aria-expanded", "false"));
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
     await waitFor(() => expect(fetch).toHaveBeenCalledWith("/api/generate", expect.objectContaining({ body: JSON.stringify({ scene: "Two cats hug", detailLevel: "medium" }) })));
   });

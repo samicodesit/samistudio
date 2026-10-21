@@ -14,7 +14,8 @@ const IDENTITY_KEY_PATTERN = /^[a-f0-9]{64}$/;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+$/;
 const BASE64URL_PATTERN = /^[A-Za-z0-9_-]+$/;
 
-export type SessionUser = { id: string; identityKey: string; email: string };
+export type AuthProvider = "google" | "apple";
+export type SessionUser = { id: string; identityKey: string; email: string | null; provider?: AuthProvider; appleAuthenticatedAt?: number };
 type SessionPayload = SessionUser & { exp: number };
 
 function sign(body: string) {

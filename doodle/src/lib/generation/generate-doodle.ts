@@ -1,3 +1,4 @@
+import { isPaperColorId, type PaperColorId } from "./paper-colors";
 import OpenAI from "openai";
 import { providerFailure, type ProviderFailure } from "@/lib/diagnostics/provider";
 import { normalizeScene } from "@/lib/scenes/scene";
@@ -71,7 +72,8 @@ function productionClient(): ImageClient {
   };
 }
 
-export async function generateDoodle(scene: string, client: ImageClient | undefined = undefined, detailLevel: DetailLevel = "simple"): Promise<GeneratedDoodle> {
+export async function generateDoodle(scene: string, client: ImageClient | undefined = undefined, detailLevel: DetailLevel = "simple", paperColor: PaperColorId = "yellow"): Promise<GeneratedDoodle> {
+  if (!isPaperColorId(paperColor)) throw new Error("Invalid paper color");
   if (!isDetailLevel(detailLevel)) throw new Error("Invalid detail level");
   const normalizedScene = normalizeScene(scene);
   const profile = generationProfile(detailLevel);
@@ -91,7 +93,7 @@ export async function generateDoodle(scene: string, client: ImageClient | undefi
   try {
     response = await imageClient.generate({
       model: profile.model,
-      prompt: buildDoodlePrompt(normalizedScene, profile),
+      prompt: buildDoodlePrompt(normalizedScene, profile, paperColor),
       n: 1,
       size: profile.size,
       quality: profile.quality,
@@ -114,7 +116,7 @@ export async function generateDoodle(scene: string, client: ImageClient | undefi
     if (bytes.length < pngSignature.length || !pngSignature.every((byte, index) => bytes[index] === byte)) {
       throw new Error("invalid PNG");
     }
-    const corrected = await correctPaperColor(bytes);
+    const corrected = await correctPaperColor(bytes, paperColor);
     return { bytes: corrected.bytes, mimeType: "image/png", paperCorrection: corrected.metadata };
   } catch {
     throw new GenerationError("malformed", "The image response was invalid.");

@@ -2,11 +2,13 @@ vi.mock("server-only", () => ({}));
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { GET } from "./route";
 
-const mocks = vi.hoisted(() => ({ getNativeAttestationConfig: vi.fn() }));
+const mocks = vi.hoisted(() => ({ getNativeAttestationConfig: vi.fn(), getAppleAttestationConfig: vi.fn() }));
 
 vi.mock("@/lib/native-attestation", () => ({
   getNativeAttestationConfig: mocks.getNativeAttestationConfig,
 }));
+
+vi.mock("@/lib/apple-attestation", () => ({ getAppleAttestationConfig: mocks.getAppleAttestationConfig }));
 
 describe("native config route", () => {
   beforeEach(() => {
@@ -56,4 +58,12 @@ describe("native config route", () => {
     expect(await response.json()).toEqual({ error: "native_generation_unavailable" });
     expect(response.headers.get("cache-control")).toBe("no-store");
   });
+
+it("exposes App Attest config only to iPhone clients", async () => {
+  mocks.getAppleAttestationConfig.mockReturnValue({ environment: "production" });
+  const result = await GET(new Request("https://doodle.samistudio.nl/api/native/config", { headers: { "x-doodle-client": "native-ios" } }));
+  expect(await result.json()).toMatchObject({ enabled: true, attestation: "app_attest", minimumBuild: "1", environment: "production" });
+  expect(mocks.getNativeAttestationConfig).not.toHaveBeenCalled();
+});
+
 });

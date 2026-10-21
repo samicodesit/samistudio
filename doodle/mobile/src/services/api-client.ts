@@ -1,13 +1,13 @@
+import { isPaperColorId, type PaperColorId } from "../../../src/lib/generation/paper-colors";
 import { PLAY_PACK_IDS, type PlayCatalog, type PlayPackId } from "../../../src/lib/billing/play-catalog";
-import type { NativeCheckoutIntent } from "../contracts/native";
+import type { NativeAppleCheckoutIntent, NativeCheckoutIntent } from "../contracts/native";
 import { isDetailLevel, type DetailLevel } from "../../../src/lib/generation/detail-level";
 import { isPhotoPayload, photoAttestationInput } from "../../../src/lib/generation/photo-input";
 import {
   isNativeConfig,
   MAX_SCENE_LENGTH,
   NATIVE_CLIENT,
-  NATIVE_MINIMUM_VERSION_CODE,
-  NATIVE_ORIGIN,
+  NATIVE_IOS_CLIENT,
   NATIVE_PACKAGE_NAME,
   NATIVE_PRODUCT_ID,
   type AccountSummary,
@@ -16,6 +16,8 @@ import {
   type NativeConfigResponse,
   type NativeGenerationResult,
   type NativeGoogleResponse,
+  type NativeAppleCredentials,
+  type NativeAppleResponse,
   type NativeGuestSessionResponse,
   type NativePlayConfig,
   type NativePlayVerifyResponse,
@@ -23,6 +25,7 @@ import {
 import { diagnosticCode, DIAGNOSTIC_UUID, type DiagnosticOperation, type DiagnosticStage } from "../../../src/lib/diagnostics/events";
 import type { NativeDiagnosticInput, NativeDiagnosticsSink } from "./diagnostics";
 import { NativeServiceError, type NativeServiceErrorCode } from "./errors";
+import type { NativeAppleAttestation } from "../platform/apple-attestation";
 
 type FetchLike = typeof fetch;
 
@@ -44,8 +47,9 @@ export interface NativeApiClientOptions {
   clearTrialToken?: () => Promise<void>;
   getInstallId?: () => Promise<string>;
   stagePng?: (bytes: ArrayBuffer) => Promise<string>;
-  createChallenge?: (input: { operation: "guest" | "generate"; installId: string; sceneHash?: string; detailLevel?: DetailLevel }) => Promise<NativeChallengeResponse>;
+  createChallenge?: (input: { operation: "guest" | "generate"; installId: string; sceneHash?: string; detailLevel?: DetailLevel; paperColor?: PaperColorId }) => Promise<NativeChallengeResponse>;
   requestIntegrity?: (requestHash: string) => Promise<string>;
+  appleAttestation?: NativeAppleAttestation;
   hashScene?: (scene: string) => Promise<string>;
   submitReport?: (payload: { locale: string; report: { reason: string; details: string; includeContent: boolean }; scene?: string; imageBase64?: string }) => Promise<{ id: string }>;
   diagnostics?: NativeDiagnosticsSink;
@@ -200,7 +204,7 @@ function validNativeGuestResponse(value: unknown): value is NativeGuestSessionRe
 }
 
 function validNativeConfig(value: unknown): value is NativeConfigResponse {
-  return isNativeConfig(value) && value.packageName === NATIVE_PACKAGE_NAME && value.minimumVersionCode >= NATIVE_MINIMUM_VERSION_CODE;
+  return isNativeConfig(value);
 }
 
 export class NativeApiClient implements NativeApi {
@@ -219,6 +223,7 @@ export class NativeApiClient implements NativeApi {
   private readonly stagePng: (bytes: ArrayBuffer) => Promise<string>;
   private readonly createChallengeOverride?: NativeApiClientOptions["createChallenge"];
   private readonly requestIntegrity?: NativeApiClientOptions["requestIntegrity"];
+  private readonly appleAttestation?: NativeAppleAttestation;
   private readonly hashScene: (scene: string) => Promise<string>;
   private readonly submitReportOverride?: NativeApiClientOptions["submitReport"];
   private readonly diagnostics?: NativeDiagnosticsSink;
@@ -226,6 +231,7 @@ export class NativeApiClient implements NativeApi {
   private readonly requestMetadata = new WeakMap<Response, RequestMetadata>();
   private paidBalance: number | null = null;
   private trialFreeRemaining: number | null = null;
+  private accountRevision = 0;
 
   constructor(options: NativeApiClientOptions) {
     this.baseUrl = normalizeBaseUrl(options.baseUrl);
@@ -247,6 +253,7 @@ export class NativeApiClient implements NativeApi {
     });
     this.createChallengeOverride = options.createChallenge;
     this.requestIntegrity = options.requestIntegrity;
+    this.appleAttestation = options.appleAttestation;
     this.hashScene = options.hashScene ?? sha256Hex;
     this.submitReportOverride = options.submitReport;
     this.diagnostics = options.diagnostics;
@@ -256,8 +263,8 @@ export class NativeApiClient implements NativeApi {
   private async headers(includeTrial: boolean, auth: AuthMode): Promise<Headers> {
     const headers = new Headers({
       Accept: "application/json",
-      Origin: NATIVE_ORIGIN,
-      "X-Doodle-Client": NATIVE_CLIENT,
+      Origin: new URL(this.baseUrl).origin,
+      "X-Doodle-Client": this.platform === "ios" ? NATIVE_IOS_CLIENT : NATIVE_CLIENT,
     });
     if (auth === "none") return headers;
     const accessToken = auth === "trial" ? null : await this.getAccessToken();
@@ -450,6 +457,7 @@ export class NativeApiClient implements NativeApi {
       this.safeRecordMalformedResponse(response, "startup", "config_fetch");
       throw new NativeServiceError("network", "Invalid native configuration", response.status);
     }
+    if (body.attestation !== (this.platform === "ios" ? "app_attest" : "play_integrity")) throw new NativeServiceError("native_generation_unavailable");
     return body;
   }
 
@@ -471,6 +479,7 @@ export class NativeApiClient implements NativeApi {
       throw new NativeServiceError("network", "Invalid sign-in response", response.status);
     }
     try {
+      this.accountRevision += 1;
       await this.setAccessToken(body);
     } catch {
       this.recordResponseDiagnostic(response, "auth", "google_token", "auth_unavailable");
@@ -480,7 +489,35 @@ export class NativeApiClient implements NativeApi {
     return body;
   }
 
+  async signInWithApple(input: NativeAppleCredentials): Promise<NativeAppleResponse> {
+    if (this.platform !== "ios" || !input.identityToken || input.identityToken.length > 12_000 ||
+        !input.authorizationCode || input.authorizationCode.length > 4_096 || !/^[a-f0-9]{64}$/.test(input.nonce)) {
+      throw new NativeServiceError("invalid_request");
+    }
+    const response = await this.request("/api/native/auth/apple", {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(input),
+      includeTrial: true, auth: "trial", diagnosticOperation: "auth", diagnosticStage: "apple_token",
+    });
+    const value = await this.requireOk(response);
+    const body = value as Partial<NativeAppleResponse> | null;
+    if (!body || body.authenticated !== true || body.provider !== "apple" ||
+        !(body.email === null || (typeof body.email === "string" && body.email.length <= 254)) ||
+        !ACCESS_TOKEN_PATTERN.test(body.accessToken ?? "") || !Number.isSafeInteger(body.expiresAt) || (body.expiresAt ?? 0) <= Date.now()) {
+      this.safeRecordMalformedResponse(response, "auth", "apple_token");
+      throw new NativeServiceError("network", "Invalid sign-in response", response.status);
+    }
+    const session = body as NativeAppleResponse;
+    try { this.accountRevision += 1; await this.setAccessToken(session); }
+    catch {
+      this.recordResponseDiagnostic(response, "auth", "apple_token", "auth_unavailable");
+      throw new NativeServiceError("auth_unavailable");
+    }
+    this.paidBalance = null;
+    return session;
+  }
+
   async signOut(): Promise<void> {
+    this.accountRevision += 1;
     const accessToken = await this.getAccessToken();
     if (!accessToken) {
       await this.clearAccessToken();
@@ -548,13 +585,14 @@ export class NativeApiClient implements NativeApi {
       diagnosticStage: "account_read",
     });
     if (!response.ok) await this.requireOk(response);
+    this.accountRevision += 1;
     await this.clearAccessToken();
     await this.clearTrialToken();
     this.paidBalance = null;
     this.trialFreeRemaining = null;
   }
 
-  private async requestChallenge(input: { operation: "guest" | "generate"; installId: string; sceneHash?: string; detailLevel?: DetailLevel }, auth: AuthMode = "none"): Promise<NativeChallengeResponse> {
+  private async requestChallenge(input: { operation: "guest" | "generate"; installId: string; sceneHash?: string; detailLevel?: DetailLevel; paperColor?: PaperColorId }, auth: AuthMode = "none"): Promise<NativeChallengeResponse> {
     if (!UUID_PATTERN.test(input.installId)) throw new NativeServiceError("invalid_request");
     if (input.operation === "generate" && !HASH_PATTERN.test(input.sceneHash ?? "")) throw new NativeServiceError("invalid_request");
     if (this.createChallengeOverride) {
@@ -567,7 +605,7 @@ export class NativeApiClient implements NativeApi {
     }
     const body = input.operation === "guest"
       ? { operation: input.operation, installId: input.installId }
-      : { operation: input.operation, installId: input.installId, sceneHash: input.sceneHash, ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}) };
+      : { operation: input.operation, installId: input.installId, sceneHash: input.sceneHash, ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}), ...(input.paperColor && input.paperColor !== "yellow" ? { paperColor: input.paperColor } : {}) };
     const response = await this.request("/api/native/attestation/challenge", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -584,26 +622,50 @@ export class NativeApiClient implements NativeApi {
     return value;
   }
 
+  private async requestNativeProof(input: { operation: "guest" | "generate"; installId: string; sceneHash?: string; detailLevel?: DetailLevel; paperColor?: PaperColorId }, auth: AuthMode = "none"): Promise<{ challenge: string; token: string; keyId?: string; keyScope?: string }> {
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const challenge = await this.requestChallenge(input, auth);
+      if (this.platform === "android") {
+        if (!this.requestIntegrity) throw new NativeServiceError("native_generation_unavailable");
+        const token = await this.requestIntegrity(challenge.requestHash);
+        if (!INTEGRITY_TOKEN_PATTERN.test(token)) throw new NativeServiceError("native_attestation_required");
+        return { challenge: challenge.challenge, token };
+      }
+      if (!this.appleAttestation || typeof challenge.keyScope !== "string" || !/^[a-f0-9]{64}$/.test(challenge.keyScope)) throw new NativeServiceError("native_generation_unavailable");
+      const result = await this.appleAttestation.prove({ ...challenge, keyScope: challenge.keyScope }, async registration => {
+        const response = await this.request("/api/native/attestation/apple/register", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ installId: input.installId, ...registration }), auth, includeTrial: auth === "trial", diagnosticStage: "attestation_verify" });
+        const body = await this.requireOk(response);
+        if (!body || typeof body !== "object" || !("registered" in body) || body.registered !== true) throw new NativeServiceError("network");
+      });
+      if ("registered" in result) continue;
+      if (!/^[A-Za-z0-9+/]{43}=$/.test(result.keyId) || !INTEGRITY_TOKEN_PATTERN.test(result.assertion)) throw new NativeServiceError("native_attestation_required");
+      return { challenge: challenge.challenge, token: result.assertion, keyId: result.keyId, keyScope: challenge.keyScope };
+    }
+    throw new NativeServiceError("native_generation_unavailable");
+  }
+
+  private async requireProofResponse(response: Response, scope?: string): Promise<unknown> {
+    try { return await this.requireOk(response); }
+    catch (error) {
+      if (scope && error instanceof NativeServiceError && error.code === "native_attestation_failed") await this.appleAttestation?.forget(scope).catch(() => undefined);
+      throw error;
+    }
+  }
+
   async createGuestSession(installId: string): Promise<NativeGuestSessionResponse> {
-    if (this.platform !== "android") throw new NativeServiceError("native_generation_unavailable");
     const config = await this.getConfig();
-    if (!config.enabled || !config.guestEnabled || !config.cloudProjectNumber) {
+    if (!config.enabled || !config.guestEnabled || (config.attestation === "play_integrity" && !config.cloudProjectNumber)) {
       throw new NativeServiceError("native_generation_unavailable");
     }
-    const challenge = await this.requestChallenge({ operation: "guest", installId });
-    if (!this.requestIntegrity) throw new NativeServiceError("native_generation_unavailable");
-    const integrityToken = await this.requestIntegrity(challenge.requestHash);
-    if (!INTEGRITY_TOKEN_PATTERN.test(integrityToken)) {
-      this.safeRecord({ operation: "integrity", stage: "attestation_verify", code: "native_attestation_required" });
-      throw new NativeServiceError("native_attestation_required");
-    }
+    const proof = await this.requestNativeProof({ operation: "guest", installId });
     const response = await this.request("/api/native/session/guest", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Doodle-Trial-Policy": "dynamic" },
-      body: JSON.stringify({ installId, challenge: challenge.challenge, integrityToken }),
+      body: JSON.stringify({ installId, challenge: proof.challenge, ...(this.platform === "ios" ? { keyId: proof.keyId, assertion: proof.token } : { integrityToken: proof.token }) }),
+      auth: "none",
       diagnosticStage: "session_create",
     });
-    const body = await this.requireOk(response);
+    const body = await this.requireProofResponse(response, proof.keyScope);
     if (!validNativeGuestResponse(body)) {
       this.safeRecordMalformedResponse(response, "guest", "session_create");
       throw new NativeServiceError("network", "Invalid guest session response", response.status);
@@ -613,18 +675,28 @@ export class NativeApiClient implements NativeApi {
     return body;
   }
 
-  async generate(scene: string, detailLevel: DetailLevel = "simple", photo?: string): Promise<NativeGenerationResult> {
-    if (this.platform !== "android") throw new NativeServiceError("native_generation_unavailable");
+  async generate(scene: string, detailLevel: DetailLevel = "medium", photo?: string, paperColor: PaperColorId = "yellow"): Promise<NativeGenerationResult> {
+    if (!isPaperColorId(paperColor)) throw new NativeServiceError("invalid_request");
     if (!isDetailLevel(detailLevel)) throw new NativeServiceError("invalid_request");
     if (photo !== undefined && !isPhotoPayload(photo)) throw new NativeServiceError("invalid_request");
     const normalizedScene = photo === undefined ? normalizeScene(scene) : photoAttestationInput(photo);
+    const revision = this.accountRevision;
     const installId = await this.getInstallId();
     const accessToken = await this.getAccessToken();
+    const assertCurrentAccount = async () => {
+      const currentToken = await this.getAccessToken();
+      const currentTrial = auth === "trial" ? await this.getTrialToken() : trialToken;
+      if (revision !== this.accountRevision || currentToken !== accessToken || currentTrial !== trialToken) throw new NativeServiceError("unauthorized");
+    };
     const config = await this.getConfig();
-    if (!config.enabled || !config.cloudProjectNumber) throw new NativeServiceError("native_generation_unavailable");
+    if (!config.enabled || (config.attestation === "play_integrity" && !config.cloudProjectNumber)) throw new NativeServiceError("native_generation_unavailable");
 
     let auth: AuthMode = isValidAccessToken(accessToken) ? "access" : "trial";
     let trialToken = await this.getTrialToken();
+    if (isValidAccessToken(accessToken) && !trialToken && (this.platform === "ios" || this.paidBalance === 0)) {
+      if (this.paidBalance === null) await this.getAccount();
+      if (this.paidBalance === 0) { await this.createGuestSession(installId); trialToken = await this.getTrialToken(); }
+    }
     if (!isValidAccessToken(accessToken)) {
       if (!trialToken) await this.createGuestSession(installId);
       trialToken = await this.getTrialToken();
@@ -641,28 +713,27 @@ export class NativeApiClient implements NativeApi {
     if (auth === "trial" && !isValidTrialToken(trialToken)) throw new NativeServiceError("native_generation_unavailable");
 
     const sceneHash = await this.hashScene(normalizedScene);
-    const challenge = await this.requestChallenge({ operation: "generate", installId, sceneHash, ...(detailLevel !== "simple" ? { detailLevel } : {}) }, auth);
-    if (!this.requestIntegrity) throw new NativeServiceError("native_generation_unavailable");
-    const integrityToken = await this.requestIntegrity(challenge.requestHash);
-    if (!INTEGRITY_TOKEN_PATTERN.test(integrityToken)) {
-      this.safeRecord({ operation: "integrity", stage: "attestation_verify", code: "native_attestation_required" });
-      throw new NativeServiceError("native_attestation_required");
-    }
+    await assertCurrentAccount();
+    const proof = await this.requestNativeProof({ operation: "generate", installId, sceneHash, ...(detailLevel !== "simple" ? { detailLevel } : {}), ...(paperColor !== "yellow" ? { paperColor } : {}) }, auth);
+    await assertCurrentAccount();
     const response = await this.request("/api/generate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        ...(auth === "access" ? { Authorization: `Bearer ${accessToken}` } : { "X-Doodle-Trial-Token": trialToken! }),
         "X-Doodle-Install-Id": installId,
-        "X-Doodle-Attestation-Challenge": challenge.challenge,
-        "X-Doodle-Attestation-Token": integrityToken,
+        "X-Doodle-Attestation-Challenge": proof.challenge,
+        "X-Doodle-Attestation-Token": proof.token,
+        ...(proof.keyId ? { "X-Doodle-App-Attest-Key": proof.keyId } : {}),
       },
-      body: JSON.stringify({ ...(photo === undefined ? { scene: normalizedScene } : { photo }), ...(detailLevel !== "simple" ? { detailLevel } : {}) }),
+      body: JSON.stringify({ ...(photo === undefined ? { scene: normalizedScene } : { photo }), ...(detailLevel !== "simple" ? { detailLevel } : {}), ...(paperColor !== "yellow" ? { paperColor } : {}) }),
       includeTrial: auth === "trial",
       auth,
       timeoutMs: this.generationTimeoutMs,
       diagnosticStage: "http_request",
     });
-    if (!response.ok) await this.requireOk(response);
+    await assertCurrentAccount();
+    if (!response.ok) await this.requireProofResponse(response, proof.keyScope);
     let imageBytes: ArrayBuffer;
     try {
       imageBytes = await this.readResponseBody(response, () => response.arrayBuffer());
@@ -671,12 +742,14 @@ export class NativeApiClient implements NativeApi {
       throw error;
     }
     let imageUri: string;
+    await assertCurrentAccount();
     try {
       imageUri = await this.stagePng(imageBytes);
     } catch (error) {
       this.recordResponseDiagnostic(response, "generation", "image_stage", "media_unavailable");
       throw error;
     }
+    await assertCurrentAccount();
     const freeRemaining = parseFiniteHeader(response, "X-Doodle-Free-Remaining");
     const paidRemaining = parseFiniteHeader(response, "X-Doodle-Paid-Remaining");
     if (typeof freeRemaining === "number") this.trialFreeRemaining = freeRemaining;
@@ -704,6 +777,42 @@ export class NativeApiClient implements NativeApi {
     if(response.status===409)throw new NativeServiceError("offer_changed");
     const value=await this.requireOk(response) as NativeCheckoutIntent;
     if(value.productId!==productId||value.credits!==expectedCredits||!/^[a-f0-9]{64}$/.test(value.obfuscatedAccountId)||!/^[a-f0-9]{64}$/.test(value.obfuscatedProfileId))throw new NativeServiceError("billing_unavailable");
+    return value;
+  }
+  async getAppleCatalog(): Promise<PlayCatalog> {
+    const response = await this.request("/api/apple/config", { auth: "access", diagnosticStage: "billing_prepare" });
+    if (response.status === 503) throw new NativeServiceError("billing_unavailable");
+    const value = await this.requireOk(response) as PlayCatalog & { enabled?: boolean; environment?: string };
+    if (!value || value.enabled !== true || !["Sandbox", "Production"].includes(value.environment ?? "") || value.version !== 1 ||
+        !Number.isFinite(Date.parse(value.offerEnd)) || !Array.isArray(value.packs) || value.packs.length !== 3 ||
+        !PLAY_PACK_IDS.every(id => value.packs.filter(pack => pack.productId === id).length === 1)) throw new NativeServiceError("billing_unavailable");
+    for (const pack of value.packs) {
+      const allowed = pack.productId === "pack_mini" ? [6] : pack.productId === "pack_regular" ? [20, 25] : [60];
+      if (!allowed.includes(pack.credits) || pack.normalCredits !== (pack.productId === "pack_regular" ? 20 : pack.credits) ||
+          pack.offerApplied !== (pack.productId === "pack_regular" && pack.credits === 25)) throw new NativeServiceError("billing_unavailable");
+    }
+    return value;
+  }
+  async createAppleIntent(productId: PlayPackId, expectedCredits: number): Promise<NativeAppleCheckoutIntent> {
+    const response = await this.request("/api/apple/intent", { method: "POST", auth: "access", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productId, expectedCredits }), diagnosticStage: "billing_prepare" });
+    if (response.status === 409) throw new NativeServiceError("offer_changed");
+    if (response.status === 503) throw new NativeServiceError("billing_unavailable");
+    const value = await this.requireOk(response) as NativeAppleCheckoutIntent;
+    if (!value || value.productId !== productId || value.credits !== expectedCredits || !UUID_PATTERN.test(value.appAccountToken)) throw new NativeServiceError("billing_unavailable");
+    return value;
+  }
+  async verifyApplePurchase(transactionId: string): Promise<NativePlayVerifyResponse> {
+    if (typeof transactionId !== "string" || !/^\d{1,32}$/.test(transactionId)) throw new NativeServiceError("invalid_request");
+    const response = await this.request("/api/apple/verify", { method: "POST", auth: "access", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ transactionId }), diagnosticStage: "billing_verify" });
+    if (response.status === 503) throw new NativeServiceError("billing_unavailable");
+    if (response.status === 409 || response.status === 400) throw new NativeServiceError("purchase_rejected");
+    const value = await this.requireOk(response) as NativePlayVerifyResponse;
+    const allowed = value?.productId === "pack_mini" ? [6] : value?.productId === "pack_regular" ? [20, 25] : value?.productId === "pack_big" ? [60] : [];
+    if (!value || !["granted", "already_granted"].includes(value.status) || !Number.isSafeInteger(value.balance) || value.balance < 0 ||
+        !allowed.includes(value.creditsGranted ?? 0) || value.offerApplied !== (value.productId === "pack_regular" && value.creditsGranted === 25) ||
+        !UUID_PATTERN.test(value.checkoutReference ?? "")) throw new NativeServiceError("billing_unavailable");
     return value;
   }
   async recordPaywall(trigger:"tapped_create"|"get_more"):Promise<void>{

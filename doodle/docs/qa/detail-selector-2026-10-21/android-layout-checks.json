@@ -1,0 +1,44 @@
+[
+  {
+    "case": "regular",
+    "sizePx": [
+      1080,
+      2400
+    ],
+    "density": 420,
+    "visualReviewPassed": true,
+    "closed": "android-regular-closed.png",
+    "open": "android-regular-open.png"
+  },
+  {
+    "case": "small",
+    "sizeDp": [
+      360,
+      640
+    ],
+    "visualReviewPassed": true,
+    "closed": "android-small-closed.png",
+    "open": "android-small-open.png"
+  },
+  {
+    "case": "large-text",
+    "fontScale": "1.5",
+    "composerInputBounds": [
+      49,
+      670,
+      896,
+      980
+    ],
+    "triggerBounds": [
+      47,
+      478,
+      782,
+      644
+    ],
+    "allLevelsPresent": true
+  },
+  {
+    "savedSimpleSurvivesRelaunch": true,
+    "returnedToMedium": true
+  }
+]

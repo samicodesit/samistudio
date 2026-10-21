@@ -1,3 +1,4 @@
+import { colorPaperPrompt, type PaperColorId } from "./paper-colors";
 import { DOODLE_PAPER_COLOR, SIMPLE_PROFILE, type GenerationProfile } from "./profile";
 
 const PAPER_RULES = `Paper background:
@@ -133,7 +134,8 @@ Draw the resolved subject with these Detailed rules.
 export function buildDoodlePrompt(
   scene: string,
   profile: GenerationProfile = SIMPLE_PROFILE,
+  paperColor: PaperColorId = "yellow",
 ): string {
   const prompt = profile.id === "medium" ? MEDIUM_PROMPT : profile.id === "detailed" ? DETAILED_PROMPT : SIMPLE_PROMPT;
-  return `${prompt}<scene>${scene}</scene>`;
+  return `${colorPaperPrompt(prompt, paperColor)}<scene>${scene}</scene>`;
 }

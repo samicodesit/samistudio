@@ -1,0 +1,1341 @@
+[
+  {
+    "config": {
+      "w": 320,
+      "h": 568,
+      "path": "/?runtime=app"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 330,
+        "height": 166,
+        "left": 20,
+        "right": 300,
+        "top": 164,
+        "width": 280,
+        "x": 20,
+        "y": 164
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 568,
+      "hint": {
+        "bottom": 144.671875,
+        "height": 19.59375,
+        "left": 20,
+        "right": 160,
+        "top": 125.078125,
+        "width": 140,
+        "x": 20,
+        "y": 125.078125
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 158.875,
+        "height": 48,
+        "left": 168,
+        "right": 300,
+        "top": 110.875,
+        "width": 132,
+        "x": 168,
+        "y": 110.875
+      },
+      "width": 320
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 12,
+            "right": 106.6640625,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 12,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 112.6640625,
+            "right": 207.328125,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 112.6640625,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 213.328125,
+            "right": 307.9921875,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 213.328125,
+            "y": 399.4375
+          },
+          "scroll": 93
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 568,
+        "height": 270.859375,
+        "left": 0,
+        "right": 320,
+        "top": 297.140625,
+        "width": 320,
+        "x": 0,
+        "y": 297.140625
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 390,
+      "h": 844,
+      "path": "/?runtime=app"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 330,
+        "height": 166,
+        "left": 20,
+        "right": 370,
+        "top": 164,
+        "width": 350,
+        "x": 20,
+        "y": 164
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 844,
+      "hint": {
+        "bottom": 147.5,
+        "height": 19.59375,
+        "left": 20,
+        "right": 223,
+        "top": 127.90625,
+        "width": 203,
+        "x": 20,
+        "y": 127.90625
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 161.703125,
+        "height": 48,
+        "left": 231,
+        "right": 370,
+        "top": 113.703125,
+        "width": 139,
+        "x": 231,
+        "y": 113.703125
+      },
+      "width": 390
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 112,
+          "loaded": true,
+          "rect": {
+            "bottom": 820,
+            "height": 166.59375,
+            "left": 16,
+            "right": 130,
+            "top": 653.40625,
+            "width": 114,
+            "x": 16,
+            "y": 653.40625
+          },
+          "scroll": 112
+        },
+        {
+          "client": 112,
+          "loaded": true,
+          "rect": {
+            "bottom": 820,
+            "height": 166.59375,
+            "left": 138,
+            "right": 252,
+            "top": 653.40625,
+            "width": 114,
+            "x": 138,
+            "y": 653.40625
+          },
+          "scroll": 112
+        },
+        {
+          "client": 112,
+          "loaded": true,
+          "rect": {
+            "bottom": 820,
+            "height": 166.59375,
+            "left": 260,
+            "right": 374,
+            "top": 653.40625,
+            "width": 114,
+            "x": 260,
+            "y": 653.40625
+          },
+          "scroll": 112
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 844,
+        "height": 292.890625,
+        "left": 0,
+        "right": 390,
+        "top": 551.109375,
+        "width": 390,
+        "x": 0,
+        "y": 551.109375
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 768,
+      "h": 1024,
+      "path": "/"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 476.390625,
+        "height": 190,
+        "left": 24,
+        "right": 520,
+        "top": 286.390625,
+        "width": 496,
+        "x": 24,
+        "y": 286.390625
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 1024,
+      "hint": {
+        "bottom": 253.890625,
+        "height": 1,
+        "left": 519,
+        "right": 520,
+        "top": 252.890625,
+        "width": 1,
+        "x": 519,
+        "y": 252.890625
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 277.390625,
+        "height": 48,
+        "left": 381,
+        "right": 520,
+        "top": 229.390625,
+        "width": 139,
+        "x": 381,
+        "y": 229.390625
+      },
+      "width": 768
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 135,
+          "loaded": true,
+          "rect": {
+            "bottom": 646.109375,
+            "height": 189.9296875,
+            "left": 170,
+            "right": 307.328125,
+            "top": 456.1796875,
+            "width": 137.328125,
+            "x": 170,
+            "y": 456.1796875
+          },
+          "scroll": 135
+        },
+        {
+          "client": 135,
+          "loaded": true,
+          "rect": {
+            "bottom": 646.109375,
+            "height": 189.9296875,
+            "left": 315.328125,
+            "right": 452.6640625,
+            "top": 456.1796875,
+            "width": 137.3359375,
+            "x": 315.328125,
+            "y": 456.1796875
+          },
+          "scroll": 135
+        },
+        {
+          "client": 135,
+          "loaded": true,
+          "rect": {
+            "bottom": 646.109375,
+            "height": 189.9296875,
+            "left": 460.6640625,
+            "right": 597.9921875,
+            "top": 456.1796875,
+            "width": 137.328125,
+            "x": 460.6640625,
+            "y": 456.1796875
+          },
+          "scroll": 135
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 670.109375,
+        "height": 316.2265625,
+        "left": 154,
+        "right": 614,
+        "top": 353.8828125,
+        "width": 460,
+        "x": 154,
+        "y": 353.8828125
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 1440,
+      "h": 900,
+      "path": "/"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 493.890625,
+        "height": 190,
+        "left": 160,
+        "right": 952,
+        "top": 303.890625,
+        "width": 792,
+        "x": 160,
+        "y": 303.890625
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 900,
+      "hint": {
+        "bottom": 271.390625,
+        "height": 1,
+        "left": 951,
+        "right": 952,
+        "top": 270.390625,
+        "width": 1,
+        "x": 951,
+        "y": 270.390625
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 294.890625,
+        "height": 48,
+        "left": 813,
+        "right": 952,
+        "top": 246.890625,
+        "width": 139,
+        "x": 813,
+        "y": 246.890625
+      },
+      "width": 1440
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 135,
+          "loaded": true,
+          "rect": {
+            "bottom": 584.109375,
+            "height": 189.9296875,
+            "left": 506,
+            "right": 643.328125,
+            "top": 394.1796875,
+            "width": 137.328125,
+            "x": 506,
+            "y": 394.1796875
+          },
+          "scroll": 135
+        },
+        {
+          "client": 135,
+          "loaded": true,
+          "rect": {
+            "bottom": 584.109375,
+            "height": 189.9296875,
+            "left": 651.328125,
+            "right": 788.6640625,
+            "top": 394.1796875,
+            "width": 137.3359375,
+            "x": 651.328125,
+            "y": 394.1796875
+          },
+          "scroll": 135
+        },
+        {
+          "client": 135,
+          "loaded": true,
+          "rect": {
+            "bottom": 584.109375,
+            "height": 189.9296875,
+            "left": 796.6640625,
+            "right": 933.9921875,
+            "top": 394.1796875,
+            "width": 137.328125,
+            "x": 796.6640625,
+            "y": 394.1796875
+          },
+          "scroll": 135
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 608.109375,
+        "height": 316.2265625,
+        "left": 490,
+        "right": 950,
+        "top": 291.8828125,
+        "width": 460,
+        "x": 490,
+        "y": 291.8828125
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 320,
+      "h": 568,
+      "path": "/ar?runtime=app"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 330,
+        "height": 166,
+        "left": 20,
+        "right": 300,
+        "top": 164,
+        "width": 280,
+        "x": 20,
+        "y": 164
+      },
+      "font": "Alexandria, \"Alexandria Fallback\"",
+      "height": 568,
+      "hint": {
+        "bottom": 144.671875,
+        "height": 19.59375,
+        "left": 160,
+        "right": 300,
+        "top": 125.078125,
+        "width": 140,
+        "x": 160,
+        "y": 125.078125
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 158.875,
+        "height": 48,
+        "left": 20,
+        "right": 152,
+        "top": 110.875,
+        "width": 132,
+        "x": 20,
+        "y": 110.875
+      },
+      "width": 320
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 213.3359375,
+            "right": 308,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 213.3359375,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 112.671875,
+            "right": 207.3359375,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 112.671875,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 12.0078125,
+            "right": 106.671875,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 12.0078125,
+            "y": 399.4375
+          },
+          "scroll": 93
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 568,
+        "height": 270.859375,
+        "left": 0,
+        "right": 320,
+        "top": 297.140625,
+        "width": 320,
+        "x": 0,
+        "y": 297.140625
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 320,
+      "h": 568,
+      "path": "/nl"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 354,
+        "height": 186,
+        "left": 20,
+        "right": 300,
+        "top": 168,
+        "width": 280,
+        "x": 20,
+        "y": 168
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 568,
+      "hint": {
+        "bottom": 148.671875,
+        "height": 19.59375,
+        "left": 20,
+        "right": 148.8984375,
+        "top": 129.078125,
+        "width": 128.8984375,
+        "x": 20,
+        "y": 129.078125
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 162.875,
+        "height": 48,
+        "left": 156.8984375,
+        "right": 300,
+        "top": 114.875,
+        "width": 143.1015625,
+        "x": 156.8984375,
+        "y": 114.875
+      },
+      "width": 320
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 161.4609375,
+            "left": 12,
+            "right": 106.6640625,
+            "top": 382.5390625,
+            "width": 94.6640625,
+            "x": 12,
+            "y": 382.5390625
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 161.4609375,
+            "left": 112.6640625,
+            "right": 207.328125,
+            "top": 382.5390625,
+            "width": 94.6640625,
+            "x": 112.6640625,
+            "y": 382.5390625
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 161.4609375,
+            "left": 213.328125,
+            "right": 307.9921875,
+            "top": 382.5390625,
+            "width": 94.6640625,
+            "x": 213.328125,
+            "y": 382.5390625
+          },
+          "scroll": 93
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 568,
+        "height": 321.5546875,
+        "left": 0,
+        "right": 320,
+        "top": 246.4453125,
+        "width": 320,
+        "x": 0,
+        "y": 246.4453125
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 320,
+      "h": 568,
+      "path": "/de"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 354,
+        "height": 186,
+        "left": 20,
+        "right": 300,
+        "top": 168,
+        "width": 280,
+        "x": 20,
+        "y": 168
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 568,
+      "hint": {
+        "bottom": 148.671875,
+        "height": 19.59375,
+        "left": 20,
+        "right": 160,
+        "top": 129.078125,
+        "width": 140,
+        "x": 20,
+        "y": 129.078125
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 162.875,
+        "height": 48,
+        "left": 168,
+        "right": 300,
+        "top": 114.875,
+        "width": 132,
+        "x": 168,
+        "y": 114.875
+      },
+      "width": 320
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 12,
+            "right": 106.6640625,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 12,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 112.6640625,
+            "right": 207.328125,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 112.6640625,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 213.328125,
+            "right": 307.9921875,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 213.328125,
+            "y": 399.4375
+          },
+          "scroll": 93
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 568,
+        "height": 291.15625,
+        "left": 0,
+        "right": 320,
+        "top": 276.84375,
+        "width": 320,
+        "x": 0,
+        "y": 276.84375
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 320,
+      "h": 568,
+      "path": "/fr"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 354,
+        "height": 186,
+        "left": 20,
+        "right": 300,
+        "top": 168,
+        "width": 280,
+        "x": 20,
+        "y": 168
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 568,
+      "hint": {
+        "bottom": 148.671875,
+        "height": 19.59375,
+        "left": 20,
+        "right": 160,
+        "top": 129.078125,
+        "width": 140,
+        "x": 20,
+        "y": 129.078125
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 162.875,
+        "height": 48,
+        "left": 168,
+        "right": 300,
+        "top": 114.875,
+        "width": 132,
+        "x": 168,
+        "y": 114.875
+      },
+      "width": 320
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 12,
+            "right": 106.6640625,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 12,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 112.6640625,
+            "right": 207.328125,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 112.6640625,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 213.328125,
+            "right": 307.9921875,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 213.328125,
+            "y": 399.4375
+          },
+          "scroll": 93
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 568,
+        "height": 270.859375,
+        "left": 0,
+        "right": 320,
+        "top": 297.140625,
+        "width": 320,
+        "x": 0,
+        "y": 297.140625
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 320,
+      "h": 568,
+      "path": "/pt-br"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 354,
+        "height": 186,
+        "left": 20,
+        "right": 300,
+        "top": 168,
+        "width": 280,
+        "x": 20,
+        "y": 168
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 568,
+      "hint": {
+        "bottom": 148.671875,
+        "height": 19.59375,
+        "left": 20,
+        "right": 160,
+        "top": 129.078125,
+        "width": 140,
+        "x": 20,
+        "y": 129.078125
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 162.875,
+        "height": 48,
+        "left": 168,
+        "right": 300,
+        "top": 114.875,
+        "width": 132,
+        "x": 168,
+        "y": 114.875
+      },
+      "width": 320
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 12,
+            "right": 106.6640625,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 12,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 112.6640625,
+            "right": 207.328125,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 112.6640625,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 213.328125,
+            "right": 307.9921875,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 213.328125,
+            "y": 399.4375
+          },
+          "scroll": 93
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 568,
+        "height": 291.15625,
+        "left": 0,
+        "right": 320,
+        "top": 276.84375,
+        "width": 320,
+        "x": 0,
+        "y": 276.84375
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 320,
+      "h": 568,
+      "path": "/ja"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 354,
+        "height": 186,
+        "left": 20,
+        "right": 300,
+        "top": 168,
+        "width": 280,
+        "x": 20,
+        "y": 168
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 568,
+      "hint": {
+        "bottom": 148.671875,
+        "height": 19.59375,
+        "left": 20,
+        "right": 160,
+        "top": 129.078125,
+        "width": 140,
+        "x": 20,
+        "y": 129.078125
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 162.875,
+        "height": 48,
+        "left": 168,
+        "right": 300,
+        "top": 114.875,
+        "width": 132,
+        "x": 168,
+        "y": 114.875
+      },
+      "width": 320
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 12,
+            "right": 106.6640625,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 12,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 112.6640625,
+            "right": 207.328125,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 112.6640625,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 213.328125,
+            "right": 307.9921875,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 213.328125,
+            "y": 399.4375
+          },
+          "scroll": 93
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 568,
+        "height": 270.859375,
+        "left": 0,
+        "right": 320,
+        "top": 297.140625,
+        "width": 320,
+        "x": 0,
+        "y": 297.140625
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 320,
+      "h": 568,
+      "path": "/ko"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 354,
+        "height": 186,
+        "left": 20,
+        "right": 300,
+        "top": 168,
+        "width": 280,
+        "x": 20,
+        "y": 168
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 568,
+      "hint": {
+        "bottom": 148.671875,
+        "height": 19.59375,
+        "left": 20,
+        "right": 160,
+        "top": 129.078125,
+        "width": 140,
+        "x": 20,
+        "y": 129.078125
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 162.875,
+        "height": 48,
+        "left": 168,
+        "right": 300,
+        "top": 114.875,
+        "width": 132,
+        "x": 168,
+        "y": 114.875
+      },
+      "width": 320
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 12,
+            "right": 106.6640625,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 12,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 112.6640625,
+            "right": 207.328125,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 112.6640625,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 213.328125,
+            "right": 307.9921875,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 213.328125,
+            "y": 399.4375
+          },
+          "scroll": 93
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 568,
+        "height": 270.859375,
+        "left": 0,
+        "right": 320,
+        "top": 297.140625,
+        "width": 320,
+        "x": 0,
+        "y": 297.140625
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 320,
+      "h": 568,
+      "path": "/es"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 354,
+        "height": 186,
+        "left": 20,
+        "right": 300,
+        "top": 168,
+        "width": 280,
+        "x": 20,
+        "y": 168
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 568,
+      "hint": {
+        "bottom": 148.671875,
+        "height": 19.59375,
+        "left": 20,
+        "right": 160,
+        "top": 129.078125,
+        "width": 140,
+        "x": 20,
+        "y": 129.078125
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 162.875,
+        "height": 48,
+        "left": 168,
+        "right": 300,
+        "top": 114.875,
+        "width": 132,
+        "x": 168,
+        "y": 114.875
+      },
+      "width": 320
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 12,
+            "right": 106.6640625,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 12,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 112.6640625,
+            "right": 207.328125,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 112.6640625,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 213.328125,
+            "right": 307.9921875,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 213.328125,
+            "y": 399.4375
+          },
+          "scroll": 93
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 568,
+        "height": 270.859375,
+        "left": 0,
+        "right": 320,
+        "top": 297.140625,
+        "width": 320,
+        "x": 0,
+        "y": 297.140625
+      }
+    }
+  },
+  {
+    "config": {
+      "w": 320,
+      "h": 568,
+      "path": "/it"
+    },
+    "closed": {
+      "composer": {
+        "bottom": 354,
+        "height": 186,
+        "left": 20,
+        "right": 300,
+        "top": 168,
+        "width": 280,
+        "x": 20,
+        "y": 168
+      },
+      "font": "\"IBM Plex Sans\", \"IBM Plex Sans Fallback\"",
+      "height": 568,
+      "hint": {
+        "bottom": 148.671875,
+        "height": 19.59375,
+        "left": 20,
+        "right": 160,
+        "top": 129.078125,
+        "width": 140,
+        "x": 20,
+        "y": 129.078125
+      },
+      "overflow": false,
+      "trigger": {
+        "bottom": 162.875,
+        "height": 48,
+        "left": 168,
+        "right": 300,
+        "top": 114.875,
+        "width": 132,
+        "x": 168,
+        "y": 114.875
+      },
+      "width": 320
+    },
+    "opened": {
+      "choices": [
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 12,
+            "right": 106.6640625,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 12,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 112.6640625,
+            "right": 207.328125,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 112.6640625,
+            "y": 399.4375
+          },
+          "scroll": 93
+        },
+        {
+          "client": 93,
+          "loaded": true,
+          "rect": {
+            "bottom": 544,
+            "height": 144.5625,
+            "left": 213.328125,
+            "right": 307.9921875,
+            "top": 399.4375,
+            "width": 94.6640625,
+            "x": 213.328125,
+            "y": 399.4375
+          },
+          "scroll": 93
+        }
+      ],
+      "overflow": false,
+      "sheet": {
+        "bottom": 568,
+        "height": 284.359375,
+        "left": 0,
+        "right": 320,
+        "top": 283.640625,
+        "width": 320,
+        "x": 0,
+        "y": 283.640625
+      }
+    }
+  }
+]

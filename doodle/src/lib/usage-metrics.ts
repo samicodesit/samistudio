@@ -6,7 +6,7 @@ import { redisCommand } from "./redis";
 
 export type UsageEvent = {
   metric: "drawings" | "purchases";
-  channel: "web" | "android";
+  channel: "web" | "android" | "ios";
   id: string;
   actor: string;
   email?: string | null;
@@ -18,7 +18,7 @@ export type OperationEvent = {
   actor?: string;
   email?: string | null;
 } & (
-  | { metric: "generation"; channel: "web" | "android"; outcome: GenerationOutcome; durationMs?: number }
+  | { metric: "generation"; channel: "web" | "android" | "ios"; outcome: GenerationOutcome; durationMs?: number }
   | { metric: "checkout" | "wallet_setup"; channel: "web"; outcome: "created" | "error" }
 );
 
@@ -101,7 +101,7 @@ export async function recordOperation(event: OperationEvent, at = new Date()): P
   try {
     if (QA_EMAILS.has(event.email?.trim().toLowerCase() ?? "")) return;
     if (event.metric === "generation") {
-      if (!["web", "android"].includes(event.channel) || !GENERATION_OUTCOMES.has(event.outcome)) return;
+      if (!["web", "android", "ios"].includes(event.channel) || !GENERATION_OUTCOMES.has(event.outcome)) return;
     } else if (!["checkout", "wallet_setup"].includes(event.metric) || event.channel !== "web" || !["created", "error"].includes(event.outcome)) {
       return;
     }

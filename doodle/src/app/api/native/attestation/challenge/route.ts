@@ -1,3 +1,4 @@
+import { isPaperColorId } from "@/lib/generation/paper-colors";
 import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { isDetailLevel } from "@/lib/generation/detail-level";
 import { getNativeBearer } from "@/lib/native-session";
@@ -13,6 +14,7 @@ import {
   type NativeAttestationOperation,
 } from "@/lib/native-attestation";
 import { NextRequest, NextResponse } from "next/server";
+import { createAppleChallenge } from "@/lib/apple-attestation";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -40,15 +42,16 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
   const operation = body.operation;
   const installId = body.installId;
   const sceneHash = body.sceneHash;
+  const paperColor = "paperColor" in body ? body.paperColor : "yellow";
   const detailLevel = "detailLevel" in body ? body.detailLevel : "simple";
   if (
     (operation !== "guest" && operation !== "generate") ||
     typeof installId !== "string" ||
     !hasExactKeys(
       body,
-      operation === "guest" ? ["operation", "installId"] : "detailLevel" in body ? ["operation", "installId", "sceneHash", "detailLevel"] : ["operation", "installId", "sceneHash"],
+      operation === "guest" ? ["operation", "installId"] : ["operation", "installId", "sceneHash", ...("detailLevel" in body ? ["detailLevel"] : []), ...("paperColor" in body ? ["paperColor"] : [])],
     ) ||
-    !isDetailLevel(detailLevel) ||
+    !isDetailLevel(detailLevel) || !isPaperColorId(paperColor) ||
     (operation === "guest" && sceneHash !== undefined) ||
     (operation === "generate" && typeof sceneHash !== "string")
   ) {
@@ -102,11 +105,13 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
 
   try {
     diagnostics.stage = "attestation_challenge";
-    const challenge = await createNativeChallenge({
+    const createChallenge = request.headers.get("x-doodle-client") === "native-ios" ? createAppleChallenge : createNativeChallenge;
+    const challenge = await createChallenge({
       operation: operation as NativeAttestationOperation,
       installId,
       sceneHash: operation === "generate" ? sceneHash as string : null,
       ...(detailLevel !== "simple" ? { detailLevel } : {}),
+      ...(paperColor !== "yellow" ? { paperColor } : {}),
       principal,
     });
     return NextResponse.json(challenge, { headers: { "Cache-Control": "no-store" } });

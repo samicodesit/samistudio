@@ -2,7 +2,9 @@ import { mergeFunnelIdentity } from "@/lib/funnel-metrics";
 import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { clearSessionCookie, getCurrentUser } from "@/lib/auth/session";
+import { revokeAppleAuthorization } from "@/lib/auth/apple-tokens";
 import { deletePaidAccount, getPaidBalance, getPurchaseHistory } from "@/lib/billing/credits";
+import { getAppleCreditScope } from "@/lib/billing/apple-credit-scope";
 import {
   isValidTrialToken,
   getFreeRemaining,
@@ -30,20 +32,23 @@ function errorResponse(error: string, status: number) {
 }
 
 async function handleGET(request: NextRequest, diagnostics: RequestDiagnostics) {
+  const client = request.headers.get("x-doodle-client");
+  const isNativeClient = client === "native-android" || client === "native-ios";
   diagnostics.stage = "session_read";
   const identity = getTrialIdentity(request);
   diagnostics.stage = "session_read";
   const user = await getCurrentUser(request);
+  const creditArgs: [] | ["apple-sandbox"] = user && await getAppleCreditScope(request, user.id) === "apple-sandbox" ? ["apple-sandbox"] : [];
   diagnostics.stage = "account_read";
   const trialToken=request.cookies.get("doodle_trial")?.value;
   // The cookie returns on this same-site GET after Google's cross-site POST.
-  if(user && request.headers.get("x-doodle-packs")==="v1" && trialToken && isValidTrialToken(trialToken))await mergeFunnelIdentity("trial:"+identity.id,"account:"+user.id,user.email);
+  if(user && request.headers.get("x-doodle-packs")==="v1" && trialToken && isValidTrialToken(trialToken))await mergeFunnelIdentity("trial:"+identity.id,"account:"+user.id,user.email ?? undefined);
   const summary: AccountSummary = user
     ? {
         authenticated: true,
         email: user.email,
-        balance: await getPaidBalance(user.id),
-        freeRemaining: request.headers.get("x-doodle-client") === "native-android" && request.headers.has("authorization")
+        balance: await getPaidBalance(user.id, ...creditArgs),
+        freeRemaining: isNativeClient && request.headers.has("authorization")
           ? null
           : await getFreeRemaining(identity),
       }
@@ -53,8 +58,8 @@ async function handleGET(request: NextRequest, diagnostics: RequestDiagnostics) 
         balance: 0,
         freeRemaining: await getFreeRemaining(identity),
       };
-  if (request.headers.get("x-doodle-client") === "native-android" || request.headers.get("x-doodle-packs") === "v1") {
-    summary.hasPurchased = user ? await getPurchaseHistory(user.id) : false;
+  if (isNativeClient || request.headers.get("x-doodle-packs") === "v1") {
+    summary.hasPurchased = user ? await getPurchaseHistory(user.id, ...creditArgs) : false;
   }
   const response = NextResponse.json(summary, {
     headers: { "Cache-Control": "no-store" },
@@ -91,7 +96,13 @@ async function handleDELETE(request: NextRequest, diagnostics: RequestDiagnostic
 
   try {
     diagnostics.stage = "account_read";
-    await deletePaidAccount(user.id, user.identityKey);
+    if (user.provider === "apple") {
+      const revokedAuthorization = await revokeAppleAuthorization(user.id);
+      if (!revokedAuthorization) throw new Error("Apple revocation unavailable");
+      await deletePaidAccount(user.id, user.identityKey, "apple", revokedAuthorization);
+    } else {
+      await deletePaidAccount(user.id, user.identityKey);
+    }
     await revokeNativeSession(request);
     const response = new NextResponse(null, {
       status: 204,

@@ -28,7 +28,7 @@ export function NativeAccountSlot({ locale, copy, account, onPress }: NativeAcco
       {loading ? <ActivityIndicator color={NATIVE_COLORS.moss} /> : null}
       {!loading && signedIn ? (
         <View style={styles.avatar}>
-          <Text style={[styles.avatarText, { fontFamily: nativeFontFamily(locale, "body") }]}>{account.initial || "?"}</Text>
+          {account.initial ? <Text style={[styles.avatarText, { fontFamily: nativeFontFamily(locale, "body") }]}>{account.initial}</Text> : <NativeIcon name="account" size={22} color={NATIVE_COLORS.moss} />}
         </View>
       ) : null}
       {!loading && !signedIn ? <NativeIcon name="signIn" size={18} color={NATIVE_COLORS.moss} /> : null}

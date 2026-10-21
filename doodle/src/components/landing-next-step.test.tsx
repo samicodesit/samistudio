@@ -30,12 +30,14 @@ afterEach(() => vi.unstubAllGlobals());
 describe("Homepage artwork previews", () => {
   it("preserves the draft by keyboard without changing input, detail level or spending credits", async () => {
     render(<DoodlePage locale="en" initialScene="A cat holding a flower" />);
-    await screen.findByText("2 free doodles left");
+    await screen.findByRole("button", { name: "Sign in" });
+    fireEvent.click(screen.getByRole("button", { name: /^Detail:/ }));
     fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
+    await waitFor(() => expect(screen.queryByRole("dialog",{name:"Drawing detail"})).not.toBeInTheDocument());
     const calls = vi.mocked(fetch).mock.calls.length;
     await preview();
     expect(screen.getByRole("textbox")).toHaveValue("A cat holding a flower");
-    expect(screen.getByRole("radio", { name: "Medium" })).toHaveAttribute("aria-checked", "true");
+    await waitFor(() => expect(screen.getByRole("button", { name: "Detail: Medium" })).toHaveAttribute("aria-expanded", "false"));
     expect(fetch).toHaveBeenCalledTimes(calls);
     expect(location.search).toBe("?utm_source=test");
     expect(location.hash).toBe("");
@@ -46,7 +48,7 @@ describe("Homepage artwork previews", () => {
     const pending = new Promise<Response>(resolve => { finish = resolve; });
     vi.mocked(fetch).mockImplementation(async input => input === "/api/account" ? account() : pending);
     const { container } = render(<DoodlePage locale="en" initialScene="A cat holding a flower" />);
-    await screen.findByText("2 free doodles left");
+    await screen.findByRole("button", { name: "Sign in" });
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
     await waitFor(() => expect(container.querySelector(".doodle-workspace-generating")).not.toBeNull());
     const calls = vi.mocked(fetch).mock.calls.length;
@@ -65,7 +67,7 @@ describe("Homepage artwork previews", () => {
   it("preserves an editable error state and retains the original idea", async () => {
     vi.mocked(fetch).mockImplementation(async input => input === "/api/account" ? account() : new Response(null, { status: 503 }));
     render(<DoodlePage locale="en" initialScene="A cat holding a flower" />);
-    await screen.findByText("2 free doodles left");
+    await screen.findByRole("button", { name: "Sign in" });
     fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
     await screen.findByRole("alert");
     const calls = vi.mocked(fetch).mock.calls.length;

@@ -26,7 +26,7 @@ for (const width of [1280, 390, 320]) {
     await expect(page.locator(".copy-grid-vertical")).toHaveCount(3);
     await expect(page.locator(".copy-grid-horizontal")).toHaveCount(3);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
-    await expect(page.locator(".primary-action")).toHaveAttribute("href", original!);
+    await expect(page.locator(".primary-action[download]")).toHaveAttribute("href", original!);
     if (evidence) await page.screenshot({ path: path.join(evidence, `web-${width}-on.png`), fullPage: true });
     await page.getByRole("button", { name: "View larger", exact: true }).click();
     await expect(page.getByRole("dialog").locator(".copy-grid-overlay")).toBeVisible();

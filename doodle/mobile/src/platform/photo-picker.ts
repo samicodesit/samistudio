@@ -2,7 +2,7 @@ import * as ImagePicker from "expo-image-picker";
 import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import { File, Paths } from "expo-file-system";
 import { Platform } from "react-native";
-import { prepareAndroidPhoto } from "../../modules/doodle-photo";
+import { prepareAndroidPhoto, prepareIosPhoto } from "../../modules/doodle-photo";
 import { MAX_PHOTO_BYTES, MAX_PHOTO_SOURCE_BYTES, MAX_PHOTO_SOURCE_PIXELS, PHOTO_MAX_EDGE, photoByteLength } from "../../../src/lib/generation/photo-input";
 
 export interface NativePhotoDraft { uri: string; base64: string }
@@ -38,7 +38,12 @@ async function preparePickedResult(result: ImagePicker.ImagePickerResult): Promi
   let normalized: NativePhotoDraft | null = null;
   try {
     if (!asset || asset.type === "video" || !Number.isFinite(asset.width) || !Number.isFinite(asset.height) || asset.width <= 0 || asset.height <= 0) throw new Error("invalid");
-    if ((asset.fileSize ?? 0) > MAX_PHOTO_SOURCE_BYTES || asset.width * asset.height > MAX_PHOTO_SOURCE_PIXELS) throw new Error("tooLarge");
+    const sourceBytes = Platform.OS === "ios" ? 128_000_000 : MAX_PHOTO_SOURCE_BYTES;
+    if ((asset.fileSize ?? 0) > sourceBytes || asset.width * asset.height > MAX_PHOTO_SOURCE_PIXELS) throw new Error("tooLarge");
+    if (Platform.OS === "ios") {
+      normalized = await prepareIosPhoto(asset.uri, sourceBytes, MAX_PHOTO_SOURCE_PIXELS, PHOTO_MAX_EDGE, MAX_PHOTO_BYTES);
+      return normalized;
+    }
     if (Platform.OS === "android") {
       normalized = await prepareAndroidPhoto(asset.uri, MAX_PHOTO_SOURCE_BYTES, MAX_PHOTO_SOURCE_PIXELS, PHOTO_MAX_EDGE, MAX_PHOTO_BYTES);
       return normalized;

@@ -1,3 +1,4 @@
+import { isPaperColorId } from "@/lib/generation/paper-colors";
 import { diagnoseRequest, type RequestDiagnostics } from "@/lib/diagnostics/request";
 import { trackFunnel } from "@/lib/funnel-metrics";
 import { createHash, randomUUID } from "node:crypto";
@@ -12,6 +13,7 @@ import { hasSameOrigin } from "@/lib/auth/same-origin";
 import { checkGenerationLimit } from "@/lib/generation/generation-limit";
 import { getCurrentUser } from "@/lib/auth/session";
 import { finalizePaidCredit, releasePaidCredit, reservePaidCredit } from "@/lib/billing/credits";
+import { getAppleCreditScope } from "@/lib/billing/apple-credit-scope";
 import {
   finalizeFreeDoodle,
   getTrialIdentity,
@@ -23,6 +25,7 @@ import {
 } from "@/lib/generation/free-allowance";
 import { getNativeBearer } from "@/lib/native-session";
 import { consumeNativeAttestation, nativePrincipal } from "@/lib/native-attestation";
+import { consumeAppleAssertion } from "@/lib/apple-attestation";
 import { hasExactKeys, NativeRequestError, readNativeJson } from "@/lib/native-contracts";
 import { checkBotId } from "botid/server";
 import { trackOperation, trackUsage, type GenerationOutcome } from "@/lib/usage-metrics";
@@ -57,7 +60,9 @@ async function finalizeWithReplay(operation: () => Promise<{ finalized: boolean;
 
 async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
   const startedAt = performance.now();
-  const nativeClient = request.headers.get("x-doodle-client") === "native-android";
+  const iosClient = request.headers.get("x-doodle-client") === "native-ios";
+  const nativeClient = iosClient || request.headers.get("x-doodle-client") === "native-android";
+  const generationChannel = iosClient ? "ios" : nativeClient ? "android" : "web";
   if (!hasSameOrigin(request)) {
     return nativeClient ? nativeError("forbidden", 403) : NextResponse.json({ error: "forbidden" }, { status: 403 });
   }
@@ -84,7 +89,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
   }
   const photoInput = typeof body === "object" && body !== null && "photo" in body;
   const inputKey = photoInput ? "photo" : "scene";
-  if ((nativeClient || photoInput) && (typeof body !== "object" || body === null || Array.isArray(body) || !hasExactKeys(body as Record<string, unknown>, "detailLevel" in body ? [inputKey, "detailLevel"] : [inputKey]))) {
+  if ((nativeClient || photoInput) && (typeof body !== "object" || body === null || Array.isArray(body) || !hasExactKeys(body as Record<string, unknown>, [inputKey, ...("detailLevel" in body ? ["detailLevel"] : []), ...("paperColor" in body ? ["paperColor"] : [])]))) {
     return nativeError("invalid_request", 400);
   }
 
@@ -94,6 +99,9 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     return nativeClient ? nativeError("invalid_request", 400) : NextResponse.json({ error: "invalid_request" }, { status: 400 });
   }
   const detailLevel = detailValue;
+  const paperColor = typeof body === "object" && body !== null && "paperColor" in body ? (body as { paperColor: unknown }).paperColor : "yellow";
+  if (!isPaperColorId(paperColor)) return nativeError("invalid_request", 400);
+  diagnostics.paperColor = paperColor;
 
   const sceneValue =
     typeof body === "object" && body !== null && "scene" in body
@@ -158,21 +166,25 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     const installId = request.headers.get("x-doodle-install-id");
     const challenge = request.headers.get("x-doodle-attestation-challenge");
     const integrityToken = request.headers.get("x-doodle-attestation-token");
-    if (!installId || !challenge || !integrityToken || !nativePrincipalValue) {
+    const appleKeyId = request.headers.get("x-doodle-app-attest-key");
+    if (!installId || !challenge || !integrityToken || !nativePrincipalValue || (iosClient && !appleKeyId)) {
       return nativeError("native_attestation_required", 403);
     }
     diagnostics.stage = "attestation_verify";
     let integrity: "verified" | "unavailable" | "invalid";
     try {
-      integrity = await consumeNativeAttestation({
+      const context = {
         operation: "generate",
         ...(detailLevel !== "simple" ? { detailLevel } : {}),
+        ...(paperColor !== "yellow" ? { paperColor } : {}),
         installId,
         sceneHash: createHash("sha256").update(scene).digest("hex"),
         principal: nativePrincipalValue,
         challenge,
-        integrityToken,
-      });
+      } as const;
+      integrity = iosClient
+        ? await consumeAppleAssertion({ ...context, keyId: appleKeyId!, assertion: integrityToken })
+        : await consumeNativeAttestation({ ...context, integrityToken });
     } catch {
       return nativeError("native_generation_unavailable", 503);
     }
@@ -193,7 +205,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
   let generationRequested = false;
   const finish = (response: NextResponse, outcome: GenerationOutcome) => {
     trackOperation({
-      metric: "generation", channel: nativeClient ? "android" : "web", outcome,
+      metric: "generation", channel: generationChannel, outcome,
       actor: metricsActor, email: user?.email,
       durationMs: generationRequested ? performance.now() - startedAt : undefined,
     });
@@ -201,6 +213,9 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
   };
 
   diagnostics.stage = "credit_reserve";
+  let creditArgs: [] | ["apple-sandbox"] = [];
+  try { if (user && await getAppleCreditScope(request, user.id) === "apple-sandbox") creditArgs = ["apple-sandbox"]; }
+  catch { return finish(unavailable(nativeClient), "service_unavailable"); }
   let reservation:
     | { kind: "paid"; userId: string }
     | { kind: "free"; identity: TrialIdentity }
@@ -209,11 +224,11 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
   if (user) {
     let paid: Awaited<ReturnType<typeof reservePaidCredit>> | undefined;
     try {
-      paid = await reservePaidCredit(user.id, reservationId);
+      paid = await reservePaidCredit(user.id, reservationId, ...creditArgs);
       if (paid.reserved) reservation = { kind: "paid", userId: user.id };
     } catch {
       try {
-        await releasePaidCredit(user.id, reservationId);
+        await releasePaidCredit(user.id, reservationId, ...creditArgs);
       } catch {}
       return finish(unavailable(nativeClient), "service_unavailable");
     }
@@ -276,7 +291,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     if (released) return;
     released = true;
     try {
-      if (reservation.kind === "paid") await releasePaidCredit(reservation.userId, reservationId);
+      if (reservation.kind === "paid") await releasePaidCredit(reservation.userId, reservationId, ...creditArgs);
       else await releaseFreeDoodle(reservation.identity, reservationId);
     } catch {
       // Holds expire after ten minutes, so release is only a latency optimization.
@@ -305,7 +320,7 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     infrastructureFailure = false;
     diagnostics.stage = "image_provider";
     generationRequested = true;
-    const result = photo ? await generatePhotoDoodle(photo, detailLevel) : await generateDoodle(scene, undefined, detailLevel);
+    const result = photo ? await generatePhotoDoodle(photo, detailLevel, undefined, paperColor) : await generateDoodle(scene, undefined, detailLevel, paperColor);
     diagnostics.paperCorrection = result.paperCorrection;
     infrastructureFailure = true;
     const response = new NextResponse(Buffer.from(result.bytes), {
@@ -318,16 +333,16 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     if (reservation.kind === "free" && !nativeClient) setTrialCookie(response, reservation.identity);
     const success = () => {
       trackUsage({
-        metric: "drawings", channel: nativeClient ? "android" : "web", id: reservationId,
+        metric: "drawings", channel: generationChannel, id: reservationId,
         actor: reservation.kind === "paid" ? `account:${reservation.userId}` : `trial:${reservation.identity.id}`,
-        email: user?.email,
+        email: user?.email, ...(creditArgs.length ? { isTest: true } : {}),
       });
       return finish(response, "success");
     };
     diagnostics.stage = "credit_finalize";
     const finalized = await finalizeWithReplay(
       reservation.kind === "paid"
-        ? () => finalizePaidCredit(reservation.userId, reservationId)
+        ? () => finalizePaidCredit(reservation.userId, reservationId, ...creditArgs)
         : () => finalizeFreeDoodle(reservation.identity, reservationId),
     );
     if (!finalized) {

@@ -14,7 +14,7 @@ function validCatalog(value: unknown): value is WebPackCatalog {
   const c=value as WebPackCatalog;
   return typeof c.offerEnd === "string" && Number.isFinite(Date.parse(c.offerEnd)) && Array.isArray(c.packs) && c.packs.length===3 && c.packs.every((p,i)=>p.productId===IDS[i] && p.currency==="EUR" && p.unitAmount===[199,499,999][i] && p.normalCredits===[6,20,60][i] && p.credits===(i===1 && p.offerApplied?25:p.normalCredits) && typeof p.offerApplied==="boolean");
 }
-export function WebPackPurchaseDialog({open,account,scene,locale,copy,errorMessage,confirmationBusy=false,paymentPending=false,onRetryConfirmation,onRestoreFocus,onClose,onAccountChange,onExpressCheckoutComplete,onBeforeCheckout}: PurchaseDialogProps) {
+export function WebPackPurchaseDialog({open,account,scene,paperColor="yellow",locale,copy,errorMessage,confirmationBusy=false,paymentPending=false,onRetryConfirmation,onRestoreFocus,onClose,onAccountChange,onExpressCheckoutComplete,onBeforeCheckout}: PurchaseDialogProps) {
   const inCheckout=useRef(false), refreshedExpiry=useRef<string|null>(null);
   const text=getPackCopy(locale), dialog=useRef<HTMLDialogElement>(null), previous=useRef<HTMLElement|null>(null), live=useRef(false);
   const [catalog,setCatalog]=useState<WebPackCatalog|null>(null), [loading,setLoading]=useState(true), [busy,setBusy]=useState(false), [walletBusy,setWalletBusy]=useState(false), [error,setError]=useState<string|null>(null), [signIn,setSignIn]=useState(false);
@@ -48,7 +48,7 @@ export function WebPackPurchaseDialog({open,account,scene,locale,copy,errorMessa
   const saveReturn=async(intent:"auth"|"checkout")=>{
     await onBeforeCheckout?.();
     sessionStorage.setItem("doodle:pack-selection",selected);
-    sessionStorage.setItem("doodle:return",JSON.stringify({scene,intent,path:location.pathname}));
+    sessionStorage.setItem("doodle:return",JSON.stringify({scene,paperColor,intent,path:location.pathname}));
   };
   const begin=async(authenticated=account.authenticated)=>{
     if(busy || walletBusy || confirmationBusy || paymentPending || !selectedPack)return;

@@ -8,7 +8,7 @@ export const metadata = legalMetadata(
 
 export default function TermsPage() {
   return (
-    <LegalPage title="Terms of service" intro="These terms apply when you use Doodle or buy doodle credits.">
+    <LegalPage title="Terms of service" intro="These terms apply when you use Doodle or buy doodle credits." updated="October 13, 2026">
       <section>
         <h2>The service</h2>
         <p>Doodle turns a short text description into an AI-generated drawing. Results can vary, take time, fail or be refused. We may change, suspend or discontinue features when reasonably necessary.</p>
@@ -21,7 +21,7 @@ export default function TermsPage() {
 
       <section>
         <h2>Purchases</h2>
-        <p>Doodle sells one-time packs of 10 doodle credits. There is no subscription. The price and final total, including any applicable tax, are shown before payment by Stripe on the web or Google Play where purchasing is available in the Android app. One credit is used only when a generation completes successfully. Credits have no cash value and cannot be transferred between accounts.</p>
+        <p>Doodle sells one-time packs of doodle credits. There is no subscription. The pack&apos;s credit quantity, price and final total, including any applicable tax, are shown before payment where purchasing is available. One credit is used only when a generation completes successfully. Credits have no cash value and cannot be transferred between accounts.</p>
       </section>
 
       <section>

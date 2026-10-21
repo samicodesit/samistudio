@@ -37,7 +37,7 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
   // Server-rendered controls exist before React has attached their handlers.
   await expect(page.locator(".usage-copy")).toContainText("2 free doodles left");
-  await expect(page.getByRole("radio", { name: "Simple", exact: true })).toBeEnabled();
+  await expect(page.locator(".detail-trigger")).toBeEnabled();
   await page.evaluate(() => document.fonts.ready);
 });
 
@@ -54,7 +54,9 @@ test("all camera rotations and mirrors preserve proportions and actual pixels", 
 });
 
 test("48 MP, transparency, panoramas and small WebP prepare without changing the detail setting", async ({ page }, testInfo) => {
+  await page.locator(".detail-trigger").click();
   await page.getByRole("radio", { name: "Detailed", exact: true }).click();
+  await expect(page.locator(".detail-picker")).toHaveCount(0);
   await choose(page, "camera-48mp.jpg");
   expect(await pixels(page)).toMatchObject({ width: 600, height: 450 });
   await choose(page, "transparent.png");
@@ -62,7 +64,7 @@ test("48 MP, transparency, panoramas and small WebP prepare without changing the
   expect(transparent).toMatchObject({ width: 600, height: 400 });
   expect(transparent.colors[4]).toEqual([255, 255, 255]);
   expect(transparent.colors[5]).toEqual([254, 0, 0]);
-  await expect(page.getByRole("radio", { name: "Detailed", exact: true })).toHaveAttribute("aria-checked", "true");
+  await expect(page.locator(".detail-trigger")).toHaveAccessibleName("Detail: Detailed");
   await fits(page);
   await page.locator(".composer-section").screenshot({ path: testInfo.outputPath("photo-composer.png") });
   await choose(page, "tall.png");
@@ -135,7 +137,9 @@ test("Create sends only the prepared photo and chosen detail; a recoverable erro
     return route.fulfill({ status: 502, json: { error: "temporary_error" } });
   });
   await page.getByRole("textbox").fill("Saved writing draft");
+  await page.locator(".detail-trigger").click();
   await page.getByRole("radio", { name: "Medium", exact: true }).click();
+  await expect(page.locator(".detail-picker")).toHaveCount(0);
   await choose(page, "orientation-6.jpg");
   const previous = await page.getByRole("img", { name: "Selected photo" }).getAttribute("src");
   await create(page).click();
@@ -145,7 +149,7 @@ test("Create sends only the prepared photo and chosen detail; a recoverable erro
   expect(Buffer.from(requests[0].photo as string, "base64").length).toBeLessThanOrEqual(512_000);
   expect(`data:image/jpeg;base64,${requests[0].photo}`).toBe(previous);
   await expect(page.getByRole("img", { name: "Selected photo" })).toHaveAttribute("src", previous!);
-  await expect(page.getByRole("radio", { name: "Medium", exact: true })).toHaveAttribute("aria-checked", "true");
+  await expect(page.locator(".detail-trigger")).toHaveAccessibleName("Detail: Medium");
   await expect(create(page)).toBeEnabled();
 });
 
@@ -161,7 +165,9 @@ for (const installed of [false, true]) {
       return route.fulfill({ contentType: "image/png", body: readFileSync(path.join(fixtures, "transparent.png")), headers: { "X-Doodle-Free-Remaining": "1" } });
     });
     await page.getByRole("textbox").fill("My saved writing");
-    await page.getByRole("radio", { name: "Medium", exact: true }).click();
+    await page.locator(".detail-trigger").click();
+  await page.getByRole("radio", { name: "Medium", exact: true }).click();
+  await expect(page.locator(".detail-picker")).toHaveCount(0);
     await choose(page, "orientation-6.jpg");
     const previous = await page.getByRole("img", { name: "Selected photo" }).getAttribute("src");
     await create(page).click();
@@ -183,7 +189,7 @@ for (const installed of [false, true]) {
     }
     await back.click();
     await expect(page.getByRole("img", { name: "Selected photo" })).toHaveAttribute("src", previous!);
-    await expect(page.getByRole("radio", { name: "Medium", exact: true })).toHaveAttribute("aria-checked", "true");
+    await expect(page.locator(".detail-trigger")).toHaveAccessibleName("Detail: Medium");
     await expect(page.locator(".usage-copy")).toContainText("1 free doodle left");
     await expect(create(page)).toBeFocused();
     expect(requests).toBe(1);

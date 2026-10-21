@@ -3,18 +3,21 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import type { PlayPackId } from "../contracts/native";
 import { getNativePackCopy } from "../services/pack-copy";
 import { getNativeCopy } from "../services/localization";
+import { NativeSignInChoices } from "./NativeSignInChoices";
 import { nativeFontFamily, nativeRowDirection, nativeTextAlign } from "./theme";
 import type { NativeDirection, NativeLocale, NativePurchaseUi } from "./types";
 
 interface Props {
   locale: NativeLocale; direction: NativeDirection; purchase?: NativePurchaseUi;
-  reducedMotion: boolean;
+  reducedMotion: boolean; pendingProvider?: "google" | "apple";
   onCancel(): void; onPurchase(): void; onSelectPack(productId: PlayPackId): void;
+  onSignIn?(): void; onAppleSignIn?(): void;
 }
 
 /** Opaque purchase surface. Drawing and prompt stay mounted underneath. */
-export function NativePackPaywall({ locale, direction, purchase, reducedMotion, onCancel, onPurchase, onSelectPack }: Props) {
+export function NativePackPaywall({ locale, direction, purchase, reducedMotion, pendingProvider, onCancel, onPurchase, onSelectPack, onSignIn, onAppleSignIn }: Props) {
   const copy = getNativePackCopy(locale);
+  const signIn = purchase?.mode === "signIn";
   const font = { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) };
   const display = { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) };
   const row = { flexDirection: nativeRowDirection(direction) };
@@ -29,11 +32,11 @@ export function NativePackPaywall({ locale, direction, purchase, reducedMotion, 
         <ScrollView style={styles.scroll} contentContainerStyle={styles.content} showsVerticalScrollIndicator keyboardShouldPersistTaps="handled">
           <View style={styles.handle} accessibilityElementsHidden importantForAccessibility="no-hide-descendants" />
           <View style={styles.header}>
-            <Text accessibilityRole="header" style={[styles.title, display]}>{purchase?.title || copy.title}</Text>
+            <Text accessibilityRole="header" style={[styles.title, display]}>{signIn ? getNativeCopy(locale).auth.signIn : purchase?.title || copy.title}</Text>
             <Text style={[styles.body, font]}>{purchase?.body || copy.terms}</Text>
           </View>
           {!ready ? <View style={styles.unavailable}><ActivityIndicator color="#195C47" animating={busy} /><Text accessibilityLiveRegion="polite" style={[styles.body, font]}>{busy ? copy.loading : copy.unavailable}</Text></View> : null}
-          <View accessibilityRole="radiogroup" style={styles.packs}>
+          {!signIn ? <View accessibilityRole="radiogroup" style={styles.packs}>
             {purchase?.packs?.map(pack => (
               <Pressable key={pack.productId} accessibilityRole="radio" accessibilityLabel={[pack.name, pack.quantityLabel, pack.priceLabel, pack.unitPriceLabel, pack.caption, pack.badge, pack.offerLabel].filter(Boolean).join(". ")} accessibilityState={{ checked: pack.selected, disabled: busy }} disabled={busy} onPress={() => onSelectPack(pack.productId)} style={({ pressed }) => [styles.pack, pack.productId === "pack_regular" && styles.regular, pack.selected && styles.selected, pressed && !busy && styles.pressed]}>
                 <View style={[styles.first, row]}>
@@ -52,15 +55,15 @@ export function NativePackPaywall({ locale, direction, purchase, reducedMotion, 
                 {pack.offerLabel ? <Text style={[styles.offer, font, pack.selected && styles.selectedOffer]}>{pack.offerLabel}</Text> : null}
               </Pressable>
             ))}
-          </View>
+          </View> : null}
         </ScrollView>
         <View style={styles.footer}>
           {ready && purchase?.errorLabel ? <Text accessibilityRole="alert" accessibilityLiveRegion="polite" style={[styles.error, font]}>{purchase.errorLabel}</Text> : null}
           <Text style={[styles.reassurance, font, { textAlign: "center" }]}>{copy.neverExpire}{"\n"}{copy.failedFree}</Text>
-          <Pressable accessibilityRole="button" accessibilityLabel={buyLabel} accessibilityState={{ disabled: busy, busy }} disabled={busy} onPress={onPurchase} style={({ pressed }) => [styles.buy, busy && styles.disabled, pressed && !busy && styles.pressed]}>
+          {signIn ? <NativeSignInChoices locale={locale} copy={getNativeCopy(locale)} busy={busy} pendingProvider={pendingProvider} onGoogle={onSignIn ?? onPurchase} onApple={onAppleSignIn} /> : <Pressable accessibilityRole="button" accessibilityLabel={buyLabel} accessibilityState={{ disabled: busy, busy }} disabled={busy} onPress={onPurchase} style={({ pressed }) => [styles.buy, busy && styles.disabled, pressed && !busy && styles.pressed]}>
             {busy ? <ActivityIndicator color="#FFFFFF" /> : null}
             <Text style={[styles.buyText, { fontFamily: nativeFontFamily(locale, "body") }]}>{buyLabel}</Text>
-          </Pressable>
+          </Pressable>}
           <Pressable accessibilityRole="button" accessibilityLabel={copy.notNow} accessibilityState={{ disabled: blocked }} disabled={blocked} onPress={onCancel} style={({ pressed }) => [styles.notNow, pressed && !blocked && styles.pressed]}>
             <Text style={[styles.notNowText, font]}>{copy.notNow}</Text>
           </Pressable>

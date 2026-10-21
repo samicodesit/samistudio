@@ -4,6 +4,7 @@ import { getFreeRemaining, signedTrialToken, TRIAL_TTL_SECONDS } from "@/lib/gen
 import { hasExactKeys, NativeRequestError, readNativeJson } from "@/lib/native-contracts";
 import { getOrCreateNativeTrialIdentity } from "@/lib/native-guest";
 import { consumeNativeAttestation, nativePrincipal } from "@/lib/native-attestation";
+import { consumeAppleAssertion } from "@/lib/apple-attestation";
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
@@ -18,6 +19,7 @@ function errorResponse(error: string, status: number) {
 
 async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics) {
   if (!hasSameOrigin(request)) return errorResponse("forbidden", 403);
+  const ios = request.headers.get("x-doodle-client") === "native-ios";
 
   let body: Record<string, unknown>;
   try {
@@ -29,10 +31,10 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
     return errorResponse("invalid_request", 400);
   }
   if (
-    !hasExactKeys(body, ["installId", "challenge", "integrityToken"]) ||
+    !hasExactKeys(body, ios ? ["installId", "challenge", "keyId", "assertion"] : ["installId", "challenge", "integrityToken"]) ||
     typeof body.installId !== "string" ||
     typeof body.challenge !== "string" ||
-    typeof body.integrityToken !== "string"
+    (ios ? typeof body.keyId !== "string" || typeof body.assertion !== "string" : typeof body.integrityToken !== "string")
   ) {
     return errorResponse("invalid_request", 400);
   }
@@ -40,14 +42,16 @@ async function handlePOST(request: NextRequest, diagnostics: RequestDiagnostics)
   diagnostics.stage = "attestation_verify";
   let integrity: "verified" | "unavailable" | "invalid";
   try {
-    integrity = await consumeNativeAttestation({
+    const context = {
       operation: "guest",
       installId: body.installId,
       sceneHash: null,
       principal: nativePrincipal("install", body.installId),
       challenge: body.challenge,
-      integrityToken: body.integrityToken,
-    });
+    } as const;
+    integrity = ios
+      ? await consumeAppleAssertion({ ...context, keyId: body.keyId as string, assertion: body.assertion as string })
+      : await consumeNativeAttestation({ ...context, integrityToken: body.integrityToken as string });
   } catch (error) {
     if (error instanceof Error && error.message === "Native attestation is unavailable") {
       return errorResponse("native_generation_unavailable", 503);

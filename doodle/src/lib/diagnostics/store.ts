@@ -1,3 +1,4 @@
+import type { PaperColorId } from "../generation/paper-colors";
 import "server-only";
 import type { DetailLevel, PROMPT_VERSIONS } from "../generation/detail-level";
 import { createHmac } from "node:crypto";
@@ -10,8 +11,8 @@ import type { PaperCorrectionMetadata } from "../generation/paper-color-metadata
 export type ServerDiagnostic = ProviderFailure & {
   source: "server"; timestamp: string; requestId: string; operation: DiagnosticOperation;
   stage: DiagnosticStage; code: DiagnosticCode | "ok"; status: number;
-  channel: "android" | "web"; durationMs: number;
-  detailLevel?: DetailLevel; promptVersion?: typeof PROMPT_VERSIONS[DetailLevel] | `photo-v3-${DetailLevel}`;
+  channel: "android" | "ios" | "web"; durationMs: number;
+  paperColor?: PaperColorId; detailLevel?: DetailLevel; promptVersion?: typeof PROMPT_VERSIONS[DetailLevel] | `photo-v3-${DetailLevel}` | `paper-v1:${string}`;
   paperCorrection?: PaperCorrectionMetadata;
 };
 export const DIAGNOSTIC_RETENTION_SECONDS = 30 * 86_400;

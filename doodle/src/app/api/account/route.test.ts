@@ -1,5 +1,7 @@
 const mergeFunnel = vi.hoisted(()=>vi.fn().mockResolvedValue(undefined));
 const deleteFunnel = vi.hoisted(()=>vi.fn().mockResolvedValue(undefined));
+const billingScope = vi.hoisted(() => vi.fn().mockResolvedValue("production"));
+vi.mock("@/lib/billing/apple-credit-scope", () => ({ getAppleCreditScope: billingScope }));
 vi.mock("@/lib/funnel-metrics",()=>({deleteFunnelIdentity:deleteFunnel,mergeFunnelIdentity:mergeFunnel}));
 import { createHmac } from "node:crypto";
 import { NextRequest } from "next/server";
@@ -16,11 +18,13 @@ const mocks = vi.hoisted(() => ({
   getPaidBalance: vi.fn(),
   getPurchaseHistory: vi.fn(),
   revokeNativeSession: vi.fn(),
+  revokeAppleAuthorization: vi.fn(),
 }));
 
 vi.mock("@/lib/auth/session", () => ({ getCurrentUser: mocks.getCurrentUser, clearSessionCookie: mocks.clearSessionCookie }));
 vi.mock("@/lib/billing/credits", () => ({ getPaidBalance: mocks.getPaidBalance, getPurchaseHistory: mocks.getPurchaseHistory, deletePaidAccount: mocks.deletePaidAccount }));
 vi.mock("@/lib/native-session", () => ({ revokeNativeSession: mocks.revokeNativeSession }));
+vi.mock("@/lib/auth/apple-tokens", () => ({ revokeAppleAuthorization: mocks.revokeAppleAuthorization }));
 vi.mock("@/lib/generation/free-allowance", async () => {
   const actual = await vi.importActual<typeof import("@/lib/generation/free-allowance")>(
     "@/lib/generation/free-allowance",
@@ -42,6 +46,41 @@ function request(
 }
 
 describe("account route", () => {
+  it("returns the iPhone sandbox balance after a verified test purchase", async () => {
+    billingScope.mockResolvedValueOnce("apple-sandbox");
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", email: null });
+    mocks.getPaidBalance.mockImplementation(async (_account, scope) => scope === "apple-sandbox" ? 6 : 87);
+    const response = await GET(request("GET", undefined, "https://doodle.test", { "x-doodle-client": "native-ios", authorization: `Bearer ${"a".repeat(43)}` }));
+    expect(await response.json()).toMatchObject({ balance: 6 });
+  });
+  it("reports an iPhone Apple account with a nullable email and its actual purchase history", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", provider: "apple", identityKey: "a".repeat(64), email: null });
+    mocks.getPaidBalance.mockResolvedValue(25);
+    mocks.getPurchaseHistory.mockResolvedValue(true);
+    const response = await GET(request("GET", undefined, "https://doodle.test", { "x-doodle-client": "native-ios", authorization: `Bearer ${"a".repeat(43)}` }));
+    expect(await response.json()).toEqual({ authenticated: true, email: null, balance: 25, freeRemaining: null, hasPurchased: true });
+    expect(mocks.getFreeRemaining).not.toHaveBeenCalled();
+  });
+
+  it("revokes Apple authorization before atomically deleting the Apple account", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", provider: "apple", identityKey: "a".repeat(64), email: null });
+    mocks.revokeAppleAuthorization.mockResolvedValue("revoked-authorization-snapshot");
+    const response = await DELETE(request("DELETE", { confirm: true }));
+    expect(response.status).toBe(204);
+    expect(mocks.revokeAppleAuthorization).toHaveBeenCalledWith("user");
+    expect(mocks.deletePaidAccount).toHaveBeenCalledWith("user", "a".repeat(64), "apple", "revoked-authorization-snapshot");
+    expect(mocks.revokeAppleAuthorization.mock.invocationCallOrder[0]).toBeLessThan(mocks.deletePaidAccount.mock.invocationCallOrder[0]);
+  });
+
+  it("does not report successful deletion or erase credits when Apple revocation is unavailable", async () => {
+    mocks.getCurrentUser.mockResolvedValue({ id: "user", provider: "apple", identityKey: "a".repeat(64), email: null });
+    mocks.revokeAppleAuthorization.mockRejectedValueOnce(new Error("temporary provider failure"));
+    const response = await DELETE(request("DELETE", { confirm: true }));
+    expect(response.status).toBe(500);
+    expect(mocks.deletePaidAccount).not.toHaveBeenCalled();
+    expect(mocks.revokeNativeSession).not.toHaveBeenCalled();
+  });
+
   beforeEach(() => {
     deleteFunnel.mockReset().mockResolvedValue(undefined);
     vi.unstubAllEnvs();

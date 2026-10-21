@@ -1,3 +1,4 @@
+import type { PaperColorId } from "../../../src/lib/generation/paper-colors";
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 import type {
   NativeAccountModalState,
@@ -13,6 +14,8 @@ import type { AccountSummary } from "../contracts/native";
 
 export interface NativeAppState {
   locale: NativeLocale;
+  paperColor: PaperColorId;
+  paperReady: boolean;
   detailLevel: DetailLevel;
   detailReady: boolean;
   tab: NativeTab;
@@ -24,7 +27,7 @@ export interface NativeAppState {
   accountModal: NativeAccountModalState;
   modal: NativeContentModal;
   purchase?: NativePurchaseUi;
-  usage: { status: "loading" | "ready"; label: string };
+  usage: { status: "loading" | "ready" | "error"; label: string };
   freeRemaining: number | null;
   paidRemaining: number | null;
 }
@@ -34,29 +37,33 @@ export function resultUsage(state: NativeAppState) {
 }
 
 export function isNativeCreditExhausted(freeRemaining: number | null, paidRemaining: number | null) {
-  // Signed-in users can still use their retained trial when paid credits are empty.
-  return (paidRemaining === 0 && !(freeRemaining !== null && freeRemaining > 0))
-    || (freeRemaining === 0 && paidRemaining === null);
+  // An unknown trial balance still needs to be resolved by the server. Signing
+  // in before the first drawing must not turn an uninitialized trial into zero.
+  return freeRemaining === 0 && (paidRemaining === null || paidRemaining === 0);
 }
 
 export const initialAppState: NativeAppState = {
   locale: "en",
-  detailLevel: "simple",
+  paperColor: "yellow",
+  paperReady: false,
+  detailLevel: "medium",
   detailReady: false,
   tab: "create",
   scene: "",
   sceneSource: "empty",
   revision: 0,
   generation: { status: "idle" },
-  account: { status: "signedOut", balanceLabel: "" },
+  account: { status: "loading", balanceLabel: "" },
   accountModal: "closed",
   modal: "none",
-  usage: { status: "ready", label: "Free doodles to get started" },
+  usage: { status: "loading", label: "" },
   freeRemaining: null,
   paidRemaining: null,
 };
 
 export type NativeAppAction =
+  | { type: "paperColorLoaded"; paperColor: PaperColorId }
+  | { type: "paperColorChanged"; paperColor: PaperColorId }
   | { type: "pendingPurchaseEnded" }
   | { type: "detailLevelLoaded"; detailLevel: DetailLevel }
   | { type: "detailLevelChanged"; detailLevel: DetailLevel }
@@ -72,7 +79,7 @@ export type NativeAppAction =
   | { type: "tabChanged"; tab: NativeTab }
   | { type: "modalChanged"; modal: NativeContentModal }
   | { type: "accountModalChanged"; modal: NativeAccountModalState }
-  | { type: "accountLoading" }
+  | { type: "accountLoading"; provider?: "google" | "apple" }
   | { type: "accountError" }
   | { type: "accountLoaded"; account: AccountSummary; balanceLabel?: string }
   | { type: "usageChanged"; label: string; freeRemaining?: number; paidRemaining?: number }
@@ -81,6 +88,8 @@ export type NativeAppAction =
 
 export function appReducer(state: NativeAppState, action: NativeAppAction): NativeAppState {
   switch (action.type) {
+    case "paperColorLoaded": return { ...state, paperColor: action.paperColor, paperReady: true };
+    case "paperColorChanged": return state.generation.status === "waiting" ? state : { ...state, paperColor: action.paperColor };
     case "detailLevelLoaded":
       return { ...state, detailLevel: action.detailLevel, detailReady: true };
     case "detailLevelChanged":
@@ -132,9 +141,9 @@ export function appReducer(state: NativeAppState, action: NativeAppAction): Nati
     case "accountModalChanged":
       return { ...state, accountModal: action.modal };
     case "accountLoading":
-      return { ...state, account: { ...state.account, status: "loading" } };
+      return { ...state, account: { ...state.account, status: "loading", balanceLabel: "", pendingProvider: action.provider }, usage: { status: "loading", label: "" } };
     case "accountError":
-      return { ...state, account: { ...state.account, status: "error" } };
+      return { ...state, account: { ...state.account, status: "error", balanceLabel: "", pendingProvider: undefined }, usage: { status: "error", label: "" } };
     case "accountLoaded":
       return {
         ...state,
@@ -164,7 +173,7 @@ export function appReducer(state: NativeAppState, action: NativeAppAction): Nati
 export function toAccountUi(account: AccountSummary, balanceLabel: string): NativeAccountUi {
   if (!account.authenticated) return { status: "signedOut", balanceLabel };
   const first = Array.from(account.email ?? "")[0];
-  return { status: "signedIn", email: account.email ?? undefined, initial: first?.toUpperCase() ?? "?", balanceLabel };
+  return { status: "signedIn", email: account.email ?? undefined, initial: first?.toUpperCase(), balanceLabel };
 }
 
 const emptyPurchaseUi: NativePurchaseUi = {

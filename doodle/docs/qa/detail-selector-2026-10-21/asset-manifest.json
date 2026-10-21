@@ -1,0 +1,26 @@
+[
+  {
+    "level": "simple",
+    "web": "/ideas/thumbs/birthday-dog-simple-320.webp",
+    "native": "mobile/assets/detail/dog-simple.webp",
+    "sha256": "8511bac9e3c6295e996811cdf78d43aeb16ea58023150515f2f0c073f6ede875",
+    "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+    "provenance": "Existing published gallery example, retained unchanged"
+  },
+  {
+    "level": "detailed",
+    "web": "/ideas/thumbs/birthday-dog-detailed-320.webp",
+    "native": "mobile/assets/detail/dog-detailed.webp",
+    "sha256": "f648dba19f5d053150153d93bb1db20117e87c3c4c9878c9f4a972cc51921596",
+    "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+    "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan"
+  },
+  {
+    "level": "medium",
+    "web": "/ideas/thumbs/birthday-dog-medium-320.webp",
+    "native": "mobile/assets/detail/dog-medium.webp",
+    "sha256": "5d5bf2cdb0dd113ea00a654b5bb15144c99003b784135955839d03b4fc2b204a",
+    "reviewStatus": "Selected in the approved plan; original, caption, level, thumbnails and shared preview verified locally on 2026-10-09",
+    "provenance": "Real saved generation, existing paper-corrected original; selected in the approved gallery plan"
+  }
+]

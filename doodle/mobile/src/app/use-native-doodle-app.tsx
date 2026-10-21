@@ -1,11 +1,12 @@
+import type { PaperColorId } from "../../../src/lib/generation/paper-colors";
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 import { getPhotoCopy, photoFailureMessage } from "../../../src/lib/photo-copy";
 import { pickPhoto, recoverPhoto, removePhotoFile, type NativePhotoDraft } from "../platform/photo-picker";
 import { useCallback, useEffect, useEffectEvent, useMemo, useReducer, useRef, useState } from "react";
 import { Alert, AppState, Linking } from "react-native";
-import type { NativeDoodleUiProps, NativeLocale, NativeReportSubmission } from "../ui/types";
+import type { NativeDoodleUiProps, NativeDrawingConsentChoice, NativeIdea, NativeLocale, NativeReportSubmission } from "../ui/types";
 import { canSubmitScene, characterCountLabel } from "../ui/ui-logic";
-import type { AccountSummary, NativePackCatalog, PlayPackId } from "../contracts/native";
+import type { AccountSummary, NativeAuthProvider, NativePackCatalog, PlayPackId } from "../contracts/native";
 import { serviceErrorCode } from "../services/errors";
 import { getNativeCopy, getNativeIdeas, getNativeLoadingMessages, getNativeLocales, getNativeSupportLinks, getNativeUsageLabel, isNativeLocale, localeFromDevice, nativeDirection } from "../services/localization";
 import { createFrontendFixtureServices } from "./fixture-runtime";
@@ -18,6 +19,7 @@ import type { SceneIdeaId } from "../../../src/lib/scenes/suggestions";
 import { makePurchaseUi } from "./purchase-ui";
 import { exhaustedPurchaseHistory, makePackPurchaseUi } from "./pack-purchase-ui";
 import { fillPackText, getNativePackCopy } from "../services/pack-copy";
+import { getDrawingConsentCopy } from "../services/drawing-consent-copy";
 
 export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodleUiProps {
   const runtime = useState(() => {
@@ -30,8 +32,33 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
   })[0];
   const [state, dispatch] = useReducer(appReducer, initialAppState);
   const [reportState, setReportState] = useState<{ pending: boolean; error?: string }>({ pending: false });
+  const [appleAvailable, setAppleAvailable] = useState(false);
+  const purchaseAuthentication = useRef(false);
+  useEffect(() => {
+    let active = true;
+    void runtime.auth.isAppleAvailable?.().then(value => { if (active) setAppleAvailable(value); }).catch(() => undefined);
+    return () => { active = false; };
+  }, [runtime]);
   const reportInFlight = useRef(false);
   const generationInFlight = useRef(false);
+  const [drawingConsentVisible, setDrawingConsentVisible] = useState(false);
+  const pendingConsent = useRef<{ resolve(accepted: boolean): void; choice: NativeDrawingConsentChoice | null } | null>(null);
+  const onDrawingConsentChoice = useCallback((choice: NativeDrawingConsentChoice) => {
+    if (!pendingConsent.current || pendingConsent.current.choice !== null) return;
+    pendingConsent.current.choice = choice;
+    setDrawingConsentVisible(false);
+  }, []);
+  const onDrawingConsentExit = useCallback(() => {
+    const pending = pendingConsent.current;
+    if (!pending || pending.choice === null) return;
+    pendingConsent.current = null;
+    pending.resolve(pending.choice === "allow");
+    if (pending.choice === "privacy") void Linking.openURL("https://doodle.samistudio.nl/privacy").catch(() => undefined);
+  }, []);
+  useEffect(() => () => {
+    pendingConsent.current?.resolve(false);
+    pendingConsent.current = null;
+  }, []);
   const [photo, setPhoto] = useState<NativePhotoDraft | null>(null);
   const [preparingPhoto, setPreparingPhoto] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
@@ -80,7 +107,8 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
       if (mounted.current && version === photoSelectionVersion.current) { const text = getPhotoCopy(state.locale); setPhotoError(error instanceof Error && error.message === "tooLarge" ? text.tooLarge : text.invalid); }
     } finally { pickerInFlight.current = false; if (mounted.current) setPreparingPhoto(false); }
   }, [state.locale]);
-  const lastResultInput = useRef<{ scene: string; detailLevel: DetailLevel; photo?: string } | null>(null);
+  const lastResultInput = useRef<{ scene: string; detailLevel: DetailLevel; paperColor: PaperColorId; photo?: string } | null>(null);
+  const lastAttemptInput = useRef<{ scene: string; detailLevel: DetailLevel; paperColor: PaperColorId; photo?: string } | null>(null);
   const preferenceWrite = useRef<Promise<void>>(Promise.resolve());
   const accountSummary = useRef<AccountSummary | null>(null);
   const [hasPurchased, setHasPurchased] = useState<boolean | undefined>();
@@ -113,7 +141,24 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     ...baseCopy,
     suggestions: { ...baseCopy.suggestions, items: selectedSuggestions },
   }), [baseCopy, selectedSuggestions]);
-  const ideas = useMemo(() => getNativeIdeas(state.locale, NATIVE_IDEA_ASSETS), [state.locale]);
+  const bundledIdeas = useMemo(() => getNativeIdeas(state.locale, NATIVE_IDEA_ASSETS), [state.locale]);
+  const [remoteIdeas, setRemoteIdeas] = useState<{ locale: NativeLocale; items: NativeIdea[] } | null>(null);
+  const ideas = remoteIdeas?.locale === state.locale ? remoteIdeas.items : bundledIdeas;
+  useEffect(() => {
+    if (!runtime.ideas || runtime.config.fixtureMode) return;
+    let active = true;
+    const refresh = () => { void runtime.ideas?.refresh(state.locale, items => {
+      if (!active) return;
+      setRemoteIdeas({ locale: state.locale, items: items.map(item => ({
+        id: item.id, prompt: item.prompt, actionLabel: baseCopy.ideas.tryIdea,
+        imageUri: new URL(item.thumbnail, runtime.config.apiBaseUrl).toString(),
+        previewImageUri: new URL(item.image, runtime.config.apiBaseUrl).toString(),
+      })) });
+    }); };
+    refresh();
+    const subscription = AppState.addEventListener("change", next => { if (next === "active") refresh(); });
+    return () => { active = false; subscription.remove(); };
+  }, [runtime, state.locale, baseCopy.ideas.tryIdea]);
   const locales = useMemo(() => getNativeLocales(), []);
   const supportLinks = useMemo(() => getNativeSupportLinks(state.locale), [state.locale]);
 
@@ -218,11 +263,18 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
 
   useEffect(() => {
     let active = true;
-    void runtime.session.getDetailLevel().catch(() => "simple" as DetailLevel).then(detailLevel => {
+    void runtime.session.getPaperColor().catch(() => "yellow" as PaperColorId).then(paperColor => { if (active) dispatch({ type: "paperColorLoaded", paperColor }); });
+    void runtime.session.getDetailLevel().catch(() => "medium" as DetailLevel).then(detailLevel => {
       if (active) dispatch({ type: "detailLevelLoaded", detailLevel });
     });
     return () => { active = false; };
   }, [runtime]);
+
+  const onPaperColorChange = useCallback((paperColor: PaperColorId) => {
+    if (!state.paperReady || generationInFlight.current) return;
+    dispatch({ type: "paperColorChanged", paperColor });
+    preferenceWrite.current = preferenceWrite.current.catch(() => undefined).then(() => runtime.session.setPaperColor(paperColor)).catch(() => undefined);
+  }, [runtime, state.paperReady]);
 
   const onDetailLevelChange = useCallback((detailLevel: DetailLevel) => {
     if (!state.detailReady || generationInFlight.current) return;
@@ -234,7 +286,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
   useEffect(() => {
     let active = true;
     void (async () => {
-      purchaseHistoryHint.current = await runtime.session.getPurchaseHistoryHint();
+      purchaseHistoryHint.current = await runtime.session.getPurchaseHistoryHint().catch(() => undefined);
       const persisted = await runtime.session.getLocale().catch(() => null);
       const deviceLocale = localeFromDevice(getDeviceLocales());
       const locale = isNativeLocale(persisted) ? persisted : deviceLocale;
@@ -247,9 +299,10 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
         await refreshAccount(locale);
         if (active) void recoverPendingPurchases(locale);
       } else if (await runtime.session.getTrialToken().catch(() => null)) {
-        const guest = await runtime.api.getTrialAccount().catch(() => ({ authenticated: false, email: null, balance: 0, freeRemaining: null } as AccountSummary));
+        const guest = await runtime.api.getTrialAccount().catch(() => null);
         if (!active) return;
-        applyAccount(guest, locale);
+        if (guest) applyAccount(guest, locale);
+        else dispatch({ type: "accountError" });
       } else {
         applyAccount({ authenticated: false, email: null, balance: 0, freeRemaining: null }, locale);
       }
@@ -307,8 +360,8 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     return () => subscription.remove();
   }, [recoverPendingPurchases, prepareOffer, state.locale, state.modal, state.purchase?.mode]);
 
-  const runGeneration = useCallback(async (scene: string, detailLevel: DetailLevel = state.detailLevel, photoInput: string | undefined = photo?.base64) => {
-    if (!state.detailReady || pickerInFlight.current || generationInFlight.current) return;
+  const runGeneration = useCallback(async (scene: string, detailLevel: DetailLevel = state.detailLevel, photoInput: string | undefined = photo?.base64, paperColor: PaperColorId = state.paperColor) => {
+    if (!state.detailReady || !state.paperReady || pickerInFlight.current || generationInFlight.current) return;
     photoSelectionVersion.current += 1;
     if (!photoInput && !canSubmitScene(scene, 180)) {
       dispatch({ type: "generationFailed", message: copy.errors.general, retryLabel: copy.actions.tryAgain });
@@ -320,10 +373,29 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
       return;
     }
     const previousGeneration = state.generation;
+    const revision = accountRevision.current;
+    let accessToken: string | null | undefined;
+    const isCurrentAccount = async () => {
+      const currentToken = await runtime.session.getAccessToken().catch(() => undefined);
+      return mounted.current && revision === accountRevision.current && currentToken === accessToken;
+    };
+    lastAttemptInput.current = { scene, detailLevel, paperColor, ...(photoInput ? { photo: photoInput } : {}) };
     generationInFlight.current = true;
-    dispatch({ type: "generationStarted", loadingMessages: getNativeLoadingMessages(state.locale), statusLabel: copy.stage.loadingSr });
     try {
-      const result = photoInput ? await runtime.api.generate(scene, detailLevel, photoInput) : await runtime.api.generate(scene, detailLevel);
+      accessToken = await runtime.session.getAccessToken();
+      if (!await runtime.session.hasDrawingConsent()) {
+        if (!mounted.current) return;
+        const accepted = await new Promise<boolean>(resolve => {
+          pendingConsent.current = { resolve, choice: null };
+          setDrawingConsentVisible(true);
+        });
+        if (!accepted) return;
+        await runtime.session.setDrawingConsent();
+      }
+      if (!await isCurrentAccount()) { dispatch({ type: "generationIdle" }); return; }
+      dispatch({ type: "generationStarted", loadingMessages: getNativeLoadingMessages(state.locale), statusLabel: copy.stage.loadingSr });
+      const result = paperColor !== "yellow" ? await runtime.api.generate(scene, detailLevel, photoInput, paperColor) : photoInput ? await runtime.api.generate(scene, detailLevel, photoInput) : await runtime.api.generate(scene, detailLevel);
+      if (!await isCurrentAccount()) { dispatch({ type: "generationIdle" }); return; }
       if (typeof result.paidRemaining === "number" || typeof result.freeRemaining === "number") {
         const summary = accountSummary.current;
         if (summary) {
@@ -340,9 +412,10 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
           paidRemaining: result.paidRemaining,
         });
       }
-      lastResultInput.current = { scene, detailLevel, ...(photoInput ? { photo: photoInput } : {}) };
+      lastResultInput.current = { scene, detailLevel, paperColor, ...(photoInput ? { photo: photoInput } : {}) };
       dispatch({ type: "generationReady", imageUri: result.imageUri, imageAlt: copy.stage.generatedAlt, freeRemaining: result.freeRemaining, paidRemaining: result.paidRemaining });
     } catch (error) {
+      if (!await isCurrentAccount()) { dispatch({ type: "generationIdle" }); return; }
       const code = serviceErrorCode(error);
       if (code === "payment_required") {
         dispatch({ type: "generationRestored", generation: previousGeneration });
@@ -366,11 +439,11 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     } finally {
       generationInFlight.current = false;
     }
-  }, [copy, prepareOffer, runtime, state.account.status, state.freeRemaining, state.generation, state.locale, state.paidRemaining, state.detailLevel, state.detailReady, photo]);
+  }, [copy, prepareOffer, runtime, state.account.status, state.freeRemaining, state.generation, state.locale, state.paidRemaining, state.detailLevel, state.detailReady, state.paperColor, state.paperReady, photo]);
 
   const onCreate = useCallback(() => { void runGeneration(state.scene); }, [runGeneration, state.scene]);
-  const onRetry = useCallback(() => { void runGeneration(state.scene); }, [runGeneration, state.scene]);
-  const onRedraw = useCallback(() => { dispatch({ type: "modalChanged", modal: "none" }); const input = lastResultInput.current; if (input) void runGeneration(input.scene, input.detailLevel, input.photo); }, [runGeneration]);
+  const onRetry = useCallback(() => { const input = lastAttemptInput.current; if (input) void runGeneration(input.scene, input.detailLevel, input.photo, input.paperColor); }, [runGeneration]);
+  const onRedraw = useCallback(() => { dispatch({ type: "modalChanged", modal: "none" }); const input = lastResultInput.current; if (input) void runGeneration(input.scene, input.detailLevel, input.photo, input.paperColor); }, [runGeneration]);
 
   const onSceneChange = useCallback((scene: string) => dispatch({ type: "sceneChanged", scene }), []);
   const refreshSuggestions = useCallback(() => {
@@ -379,7 +452,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     setSuggestionIds(ids);
   }, [baseCopy.suggestions.items]);
   const onNewScene = useCallback(() => {
-    onRemovePhoto(); lastResultInput.current = null;
+    onRemovePhoto(); lastResultInput.current = null; lastAttemptInput.current = null;
     refreshSuggestions();
     dispatch({ type: "newScene" });
   }, [refreshSuggestions, onRemovePhoto]);
@@ -407,7 +480,6 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
   const onShare = useCallback(() => {
     if (state.generation.status === "ready" && typeof state.generation.imageUri === "string") {
       void runtime.media.share(state.generation.imageUri)
-        .then(() => Alert.alert(copy.result.share, mediaFeedback(state.locale).shareSuccess))
         .catch(() => Alert.alert(copy.result.share, copy.errors.general));
     }
   }, [copy, runtime, state.generation, state.locale]);
@@ -427,15 +499,15 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     });
   }, [copy.report.error, copy.report.success, copy.report.title, runtime, state.generation, state.locale, state.scene]);
 
-  const onSignIn = useCallback(() => {
-    dispatch({ type: "accountLoading" });
-    void runtime.auth.signIn().then(async () => {
+  const signInAccount = useCallback((provider: NativeAuthProvider) => {
+    dispatch({ type: "accountLoading", provider });
+    void runtime.auth.signIn(provider).then(async () => {
+      dispatch({ type: "accountModalChanged", modal: "closed" });
       await refreshAccount(state.locale);
       await recoverPendingPurchases(state.locale);
-      dispatch({ type: "accountModalChanged", modal: "closed" });
     }).catch((error) => {
       void runtime.api.getTrialAccount().catch(() => ({ authenticated: false, email: null, balance: 0, freeRemaining: null } as AccountSummary)).then((guest) => applyAccount(guest, state.locale));
-      void error;
+      if (serviceErrorCode(error) !== "auth_cancelled") Alert.alert(copy.auth.signIn, copy.auth.authError);
     });
   }, [applyAccount, copy, recoverPendingPurchases, refreshAccount, runtime, state.locale, state.purchase?.mode]);
 
@@ -446,11 +518,11 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
       return;
     }
     if (state.account.status === "signedOut") {
-      onSignIn();
+      dispatch({ type: "accountModalChanged", modal: "signIn" });
       return;
     }
     dispatch({ type: "accountModalChanged", modal: "menu" });
-  }, [onSignIn, refreshAccount, state.account.status, state.locale]);
+  }, [refreshAccount, state.account.status, state.locale]);
   const onCloseAccount = useCallback(() => dispatch({ type: "accountModalChanged", modal: "closed" }), []);
 
   const onRefill = useCallback(() => {
@@ -458,7 +530,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     void prepareOffer();
   }, [prepareOffer, runtime, state.freeRemaining, state.paidRemaining]);
 
-  const completePurchase = useCallback(async (restore: boolean) => {
+  const completePurchase = useCallback(async (restore: boolean, provider?: NativeAuthProvider) => {
     if (checkoutInFlight.current || pendingProduct.current || !packCatalog) return;
     const pack = packCatalog.packs.find(item => item.productId === selectedPack);
     if (!pack) return;
@@ -467,8 +539,13 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     dispatch({ type: "purchaseChanged", purchase: { mode: "checkout", busy: true, errorLabel: undefined } });
     try {
       if (!await runtime.session.getAccessToken()) {
-        dispatch({ type: "accountLoading" });
-        await runtime.auth.signIn();
+        if (appleAvailable && !provider) {
+          purchaseAuthentication.current = restore;
+          dispatch({ type: "purchaseChanged", purchase: { mode: "signIn", busy: false, errorLabel: undefined } });
+          return;
+        }
+        dispatch({ type: "accountLoading", provider: provider ?? "google" });
+        await runtime.auth.signIn(provider ?? "google");
         await refreshAccount(state.locale);
       }
       if (revision !== accountRevision.current) return;
@@ -492,6 +569,11 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     } catch (error) {
       if (revision !== accountRevision.current) return;
       const code = serviceErrorCode(error);
+      if (code === "auth_cancelled" && appleAvailable) {
+        dispatch({ type: "purchaseChanged", purchase: { mode: "signIn", busy: false, errorLabel: undefined } });
+        await refreshAccount(state.locale);
+        return;
+      }
       if (code === "purchase_pending") { pendingProduct.current = runtime.billing.getPendingPack?.() ?? selectedPack; setSelectedPack(pendingProduct.current); setPaymentPending(true); }
       if (code === "offer_changed") {
         await prepareOffer(getNativePackCopy(state.locale).offerChanged);
@@ -502,7 +584,16 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     } finally {
       checkoutInFlight.current = false;
     }
-  }, [copy.purchase.checkoutError, packCatalog, prepareOffer, refreshAccount, runtime, savePurchaseHistoryHint, selectedPack, state.locale]);
+  }, [appleAvailable, copy.purchase.checkoutError, packCatalog, prepareOffer, refreshAccount, runtime, savePurchaseHistoryHint, selectedPack, state.locale]);
+
+  const onSignIn = useCallback(() => {
+    if (state.purchase?.mode === "signIn") void completePurchase(purchaseAuthentication.current, "google");
+    else signInAccount("google");
+  }, [completePurchase, signInAccount, state.purchase?.mode]);
+  const onAppleSignIn = useCallback(() => {
+    if (state.purchase?.mode === "signIn") void completePurchase(purchaseAuthentication.current, "apple");
+    else signInAccount("apple");
+  }, [completePurchase, signInAccount, state.purchase?.mode]);
 
   const onPurchase = useCallback(() => {
     if (!packCatalog) { void prepareOffer(); return; }
@@ -542,8 +633,8 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
       await runtime.session.clearPurchaseHistoryHint().catch(() => undefined);
       applyAccount({ authenticated: false, email: null, balance: 0, freeRemaining: null }, state.locale);
       dispatch({ type: "accountModalChanged", modal: "closed" });
-    }).catch(() => undefined),
-    [applyAccount, runtime, state.locale],
+    }).catch(() => { Alert.alert(copy.account.delete, copy.account.deleteError); }),
+    [applyAccount, copy.account.delete, copy.account.deleteError, runtime, state.locale],
   );
   const onLocaleChange = useCallback((locale: NativeLocale) => {
     void runtime.session.setLocale(locale).catch(() => undefined);
@@ -561,6 +652,14 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     });
   }, [copy.errors.general, copy.settings.shareDiagnostics, runtime]);
 
+  const onWithdrawDrawingConsent = useCallback(async () => {
+    const consent = getDrawingConsentCopy(state.locale);
+    try {
+      await runtime.session.clearDrawingConsent();
+      Alert.alert(consent.withdraw, consent.withdrawn);
+    } catch { Alert.alert(consent.withdraw, copy.errors.general); }
+  }, [runtime, state.locale, copy.errors.general]);
+
   const purchase = state.purchase ? packCatalog
     ? makePackPurchaseUi(state.locale, packCatalog, selectedPack, exhaustedPurchaseHistory(hasPurchased, state.freeRemaining, state.paidRemaining), {
         mode: state.purchase.mode, busy: state.purchase.busy, errorLabel: state.purchase.errorLabel,
@@ -570,7 +669,11 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
       }) : undefined;
   const draftCount = characterCountLabel(state.scene, 180);
   return {
+    drawingConsentVisible, onDrawingConsentChoice, onDrawingConsentExit,
     photo, preparingPhoto, photoError, onPickPhoto, onRemovePhoto,
+    paperColor: state.paperColor,
+    paperReady: state.paperReady,
+    onPaperColorChange,
     detailLevel: state.detailLevel,
     detailReady: state.detailReady,
     onDetailLevelChange,
@@ -610,6 +713,7 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     onOpenAccount,
     onCloseAccount,
     onSignIn,
+    onAppleSignIn: appleAvailable ? onAppleSignIn : undefined,
     onRefill,
     onPurchase,
     onSelectPack,
@@ -621,21 +725,22 @@ export function useNativeDoodleApp(providedRuntime?: NativeRuntime): NativeDoodl
     onLocaleChange,
     onSupportLink,
     onShareDiagnostics,
+    onWithdrawDrawingConsent,
   };
 }
 
 
-function mediaFeedback(locale: NativeLocale): { downloadSuccess: string; shareSuccess: string } {
+function mediaFeedback(locale: NativeLocale): { downloadSuccess: string } {
   return {
-    en: { downloadSuccess: "Saved to your photos.", shareSuccess: "Ready to share." },
-    nl: { downloadSuccess: "Opgeslagen in je foto's.", shareSuccess: "Klaar om te delen." },
-    de: { downloadSuccess: "In deinen Fotos gespeichert.", shareSuccess: "Bereit zum Teilen." },
-    fr: { downloadSuccess: "Enregistré dans vos photos.", shareSuccess: "Prêt à être partagé." },
-    es: { downloadSuccess: "Guardado en tus fotos.", shareSuccess: "Listo para compartir." },
-    "pt-br": { downloadSuccess: "Salvo nas suas fotos.", shareSuccess: "Pronto para compartilhar." },
-    it: { downloadSuccess: "Salvato nelle tue foto.", shareSuccess: "Pronto per la condivisione." },
-    ja: { downloadSuccess: "写真に保存しました。", shareSuccess: "共有する準備ができました。" },
-    ko: { downloadSuccess: "사진에 저장했어요.", shareSuccess: "공유할 준비가 됐어요." },
-    ar: { downloadSuccess: "تم الحفظ في صورك.", shareSuccess: "الرسمة جاهزة للمشاركة." },
+    en: { downloadSuccess: "Saved to your photos." },
+    nl: { downloadSuccess: "Opgeslagen in je foto's." },
+    de: { downloadSuccess: "In deinen Fotos gespeichert." },
+    fr: { downloadSuccess: "Enregistré dans vos photos." },
+    es: { downloadSuccess: "Guardado en tus fotos." },
+    "pt-br": { downloadSuccess: "Salvo nas suas fotos." },
+    it: { downloadSuccess: "Salvato nelle tue foto." },
+    ja: { downloadSuccess: "写真に保存しました。" },
+    ko: { downloadSuccess: "사진에 저장했어요." },
+    ar: { downloadSuccess: "تم الحفظ في صورك." },
   }[locale];
 }

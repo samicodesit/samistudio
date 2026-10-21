@@ -51,7 +51,7 @@ export function NativeIdeasView({ locale, direction, copy, ideas, isGenerating, 
         ))}
       </View>
     </ScrollView>
-    {preview ? <NativeImageModal key={preview.id} visible locale={locale} direction={direction} copy={copy} imageUri={preview.imageUri} imageAlt={preview.prompt} onClose={() => setPreview(null)} actionLabel={preview.actionLabel} actionIcon="create" onAction={() => { setPreview(null); onSelectIdea(preview.id); }} reducedMotion={reducedMotion} /> : null}
+    {preview ? <NativeImageModal key={preview.id} visible locale={locale} direction={direction} copy={copy} imageUri={preview.previewImageUri ?? preview.imageUri} imageAlt={preview.prompt} onClose={() => setPreview(null)} actionLabel={preview.actionLabel} actionIcon="create" onAction={() => { setPreview(null); onSelectIdea(preview.id); }} reducedMotion={reducedMotion} /> : null}
     </>
   );
 }

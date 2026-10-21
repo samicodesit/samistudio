@@ -5,6 +5,7 @@ import { isNativeFixtureMode } from "./fixture-gate";
 export interface NativeRuntimeConfig {
   apiBaseUrl: string;
   googleWebClientId: string | null;
+  googleIosClientId?: string | null;
   integrityCloudProjectNumber: string | null;
   fixtureMode: boolean;
 }
@@ -28,7 +29,9 @@ export function getNativeRuntimeConfig(): NativeRuntimeConfig {
   // the explicit build flag. This keeps production and live preview packages
   // fail-closed even if a stale public extra value is present.
   const fixtureMode = isNativeFixtureMode(Application.applicationId, extra.nativeFixtureMode);
-  return { apiBaseUrl, googleWebClientId, integrityCloudProjectNumber, fixtureMode };
+  const configuredIosClient = typeof extra.googleIosClientId === "string" ? extra.googleIosClientId.trim() : "";
+  const googleIosClientId = /^[0-9]+-[^\s]+\.apps\.googleusercontent\.com$/.test(configuredIosClient) ? configuredIosClient : null;
+  return { apiBaseUrl, googleWebClientId, googleIosClientId, integrityCloudProjectNumber, fixtureMode };
 }
 
 export function assertNativeRuntimeConfig(config: NativeRuntimeConfig): void {

@@ -6,7 +6,7 @@ vi.mock("server-only", () => ({}));
 
 const mocks = vi.hoisted(() => ({
   checkNativeChallengeLimit: vi.fn(),
-  createNativeChallenge: vi.fn(),
+  createNativeChallenge: vi.fn(), createAppleChallenge: vi.fn(),
   getCurrentUser: vi.fn(),
   getNativeBearer: vi.fn(),
   getTrialIdentity: vi.fn(),
@@ -42,6 +42,8 @@ function request(
     body: JSON.stringify(body),
   });
 }
+
+vi.mock("@/lib/apple-attestation", () => ({ createAppleChallenge: mocks.createAppleChallenge }));
 
 describe("native attestation challenge route", () => {
   beforeEach(() => {
@@ -189,6 +191,12 @@ describe("native attestation challenge route", () => {
     expect(mocks.createNativeChallenge).not.toHaveBeenCalled();
   });
 
+  it("binds a chosen paper to a challenge and rejects color on guest challenges", async () => {
+    const result=await POST(request({operation:"generate",installId,sceneHash:"a".repeat(64),paperColor:"mint"},undefined,{"x-doodle-trial-token":"signed-trial-token"}));
+    expect(result.status).toBe(200);
+    expect(mocks.createNativeChallenge).toHaveBeenCalledWith(expect.objectContaining({paperColor:"mint"}));
+    expect((await POST(request({operation:"guest",installId,paperColor:"yellow"}))).status).toBe(400);
+  });
   it.each(["medium", "detailed"])("binds a %s challenge to the trial principal", async (detailLevel) => {
     const result = await POST(request({ operation: "generate", installId, sceneHash: "a".repeat(64), detailLevel }, undefined, { "x-doodle-trial-token": "signed-trial-token" }));
     expect(result.status).toBe(200);
@@ -203,5 +211,13 @@ describe("native attestation challenge route", () => {
   it("rejects detail on a guest challenge", async () => {
     expect((await POST(request({ operation: "guest", installId, detailLevel: "simple" }))).status).toBe(400);
   });
+
+
+it("routes iPhone challenges to App Attest with the verified principal", async () => {
+  mocks.createNativeChallenge.mockClear(); mocks.createAppleChallenge.mockResolvedValue({ challenge: "a".repeat(43), requestHash: "b".repeat(43), keyScope: "c".repeat(64), expiresAt: Date.now() + 300000 });
+  const result = await POST(request({ operation: "guest", installId }, "https://doodle.samistudio.nl", { "x-doodle-client": "native-ios" }));
+  expect(result.status).toBe(200); expect(await result.json()).toMatchObject({ keyScope: "c".repeat(64) });
+  expect(mocks.createNativeChallenge).not.toHaveBeenCalled(); expect(mocks.createAppleChallenge).toHaveBeenCalledWith({ operation: "guest", installId, sceneHash: null, principal: `install:${installId}` });
+});
 
 });

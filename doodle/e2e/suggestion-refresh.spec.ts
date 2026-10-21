@@ -12,7 +12,7 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
           if (new URL(request.url()).pathname === "/api/generate") generationCalls += 1;
         });
         await page.route("**/api/account", (route) => route.fulfill({ json: { authenticated: false, email: null, balance: 0, freeRemaining: 2 } }));
-        await page.goto(`${localePath(locale)}?runtime=play`);
+        await page.goto(`${localePath(locale)}?runtime=app`);
         const copy = getCopy(locale);
         const refresh = page.getByRole("button", { name: copy.suggestions.refresh, exact: true });
         const ideas = page.locator(".suggestions-list button");
@@ -93,7 +93,7 @@ for (const viewport of [{ width: 320, height: 740 }, { width: 390, height: 844 }
 
 test("refresh animates only the icon and list, with a reduced-motion alternative", async ({ page }) => {
   await page.route("**/api/account", (route) => route.fulfill({ json: { authenticated: false, email: null, balance: 0, freeRemaining: 2 } }));
-  await page.goto("/?runtime=play");
+  await page.goto("/?runtime=app");
   const refresh = page.getByRole("button", { name: "Refresh ideas", exact: true });
   await expect(refresh).toBeVisible();
   await expect(page.locator(".suggestions-list")).toHaveAttribute("data-refresh-phase", "idle");

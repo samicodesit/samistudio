@@ -21,7 +21,8 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI && !useProductionServer,
     timeout: 120_000,
     env: {
-      STRIPE_PACKS_CHECKOUT_ENABLED: process.env.PLAYWRIGHT_WEB_PACKS_ENABLED === "false" ? "false" : "true",
+      // The established suite exercises legacy checkout; pack checkout has its own opt-in suite.
+      STRIPE_PACKS_CHECKOUT_ENABLED: process.env.PLAYWRIGHT_WEB_PACKS_ENABLED === "true" ? "true" : "false",
       SESSION_SECRET: "test-session-secret-with-at-least-32-characters",
       OPENAI_API_KEY: "test-key-not-used-because-generation-is-mocked",
       OPENAI_IMAGE_MODEL: "gpt-image-1-mini",

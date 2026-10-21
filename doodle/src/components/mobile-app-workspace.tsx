@@ -57,7 +57,8 @@ export function MobileAppWorkspace({ locale, copy, initialScene = "", initialDet
 
   useEffect(() => {
     const media = window.matchMedia("(display-mode: standalone), (display-mode: fullscreen)");
-    const update = () => setInstalled(isPlayRuntime() || media.matches || new URLSearchParams(location.search).get("runtime") === "app");
+    // Desktop Chrome fullscreen also matches this media query; it is not an app install.
+    const update = () => setInstalled(isPlayRuntime() || window.matchMedia("(display-mode: standalone)").matches || new URLSearchParams(location.search).get("runtime") === "app");
     const frame = requestAnimationFrame(() => { update(); setTab(currentTab()); });
     const onBack = () => setTab(currentTab());
     media.addEventListener("change", update);

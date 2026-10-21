@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("expo-asset", () => ({
   Asset: { fromModule: () => ({ downloadAsync: async () => undefined, localUri: "file:///fixture.png", uri: "file:///fixture.png" }) },
 }));
-vi.mock("../platform/assets", () => ({ NATIVE_REFERENCE_IMAGE: 1 }));
+vi.mock("../platform/assets", () => ({ NATIVE_REFERENCE_IMAGE: 1, NATIVE_PAPER_FIXTURES: {yellow:1,pink:2,peach:3,mint:4,blue:5,lavender:6,white:7} }));
 
 import { createFrontendFixtureServices } from "./fixture-runtime";
 

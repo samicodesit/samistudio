@@ -2,8 +2,23 @@ import { describe, expect, it } from "vitest";
 import { appReducer, initialAppState, resultUsage, isNativeCreditExhausted } from "./native-app-state";
 
 describe("native app state", () => {
+  it("waits for the restored session before displaying any credit count", () => {
+    expect(initialAppState.usage).toEqual({ status: "loading", label: "" });
+    expect(initialAppState.account.status).toBe("loading");
+  });
+
+  it("hides a previous guest count while the signed-in balance loads, then reveals the verified balance", () => {
+    const guest = appReducer(initialAppState, { type: "accountLoaded", account: { authenticated: false, email: null, balance: 0, freeRemaining: 3 }, balanceLabel: "3 free doodles left" });
+    const loading = appReducer(guest, { type: "accountLoading" });
+    expect(loading.usage).toEqual({ status: "loading", label: "" });
+    const verified = appReducer(loading, { type: "accountLoaded", account: { authenticated: true, email: "reviewer@example.test", balance: 230, freeRemaining: 3 }, balanceLabel: "230 doodles left" });
+    expect(verified.usage).toEqual({ status: "ready", label: "230 doodles left" });
+    const failed = appReducer(loading, { type: "accountError" });
+    expect(failed.usage).toEqual({ status: "error", label: "" });
+    expect(failed.account.status).toBe("error");
+  });
   it("opens checkout only after the retained free and paid balances are exhausted", () => {
-    expect(isNativeCreditExhausted(null, 0)).toBe(true);
+    expect(isNativeCreditExhausted(null, 0)).toBe(false);
     expect(isNativeCreditExhausted(3, 0)).toBe(false);
     expect(isNativeCreditExhausted(4, 0)).toBe(false);
     expect(isNativeCreditExhausted(0, 0)).toBe(true);
@@ -160,4 +175,12 @@ describe("native app state", () => {
     }
   });
 
+});
+
+it("restores paper preference and retains it for a new scene", () => {
+ const restored=appReducer(initialAppState,{type:"paperColorLoaded",paperColor:"pink"});
+ expect(restored.paperColor).toBe("pink");expect(restored.paperReady).toBe(true);
+ expect(appReducer(restored,{type:"newScene"}).paperColor).toBe("pink");
+ const waiting={...restored,generation:{status:"waiting" as const,loadingMessageIndex:0,loadingMessages:[],statusLabel:"Drawing"}};
+ expect(appReducer(waiting,{type:"paperColorChanged",paperColor:"blue"}).paperColor).toBe("pink");
 });

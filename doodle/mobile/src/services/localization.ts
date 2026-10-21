@@ -30,6 +30,32 @@ const NATIVE_NAVIGATION: Record<NativeLocale, { create: string; ideas: string; s
   ar: { create: "إنشاء", ideas: "أفكار", settings: "الإعدادات", appLabel: "تنقّل Doodle", settingsTitle: "الإعدادات", supportTitle: "الدعم", shareDiagnostics: "مشاركة بيانات التشخيص" },
 };
 
+const ACCOUNT_GUIDANCE: Record<NativeLocale, { providerHint: string; deleteError: string }> = {
+  en: { providerHint: "Use the same sign-in method to keep your doodle balance. Apple and Google accounts have separate balances.", deleteError: "Your account could not be deleted. Please try again." },
+  nl: { providerHint: "Gebruik dezelfde inlogmethode om je doodles terug te vinden. Apple- en Google-accounts hebben elk een eigen saldo.", deleteError: "Je account kon niet worden verwijderd. Probeer het opnieuw." },
+  de: { providerHint: "Melde dich immer mit derselben Methode an, um deine Doodles wiederzufinden. Apple- und Google-Konten haben getrennte Guthaben.", deleteError: "Dein Konto konnte nicht gelöscht werden. Versuch es noch einmal." },
+  fr: { providerHint: "Utilisez la même méthode de connexion pour retrouver vos dessins. Les comptes Apple et Google ont des soldes distincts.", deleteError: "Votre compte n’a pas pu être supprimé. Veuillez réessayer." },
+  es: { providerHint: "Usa el mismo método de inicio de sesión para recuperar tus dibujos. Las cuentas de Apple y Google tienen saldos separados.", deleteError: "No se pudo eliminar tu cuenta. Inténtalo de nuevo." },
+  "pt-br": { providerHint: "Use o mesmo método de acesso para recuperar seus desenhos. As contas Apple e Google têm saldos separados.", deleteError: "Não foi possível excluir sua conta. Tente novamente." },
+  it: { providerHint: "Usa lo stesso metodo di accesso per ritrovare i tuoi disegni. Gli account Apple e Google hanno saldi separati.", deleteError: "Non è stato possibile eliminare il tuo account. Riprova." },
+  ja: { providerHint: "イラストの残数を引き継ぐには、同じ方法でログインしてください。AppleとGoogleのアカウントは残数が別々です。", deleteError: "アカウントを削除できませんでした。もう一度お試しください。" },
+  ko: { providerHint: "남은 그림을 계속 사용하려면 같은 방법으로 로그인하세요. Apple과 Google 계정의 잔액은 별개예요.", deleteError: "계정을 삭제하지 못했어요. 다시 시도해 주세요." },
+  ar: { providerHint: "استخدم طريقة تسجيل الدخول نفسها لاستعادة رصيد رسوماتك. لحسابات Apple وGoogle أرصدة منفصلة.", deleteError: "تعذّر حذف حسابك. حاول مرة أخرى." },
+};
+
+const BALANCE_STATUS: Record<NativeLocale, { loading: string; unavailable: string }> = {
+  en: { loading: "Loading balance", unavailable: "Balance unavailable" },
+  nl: { loading: "Saldo laden", unavailable: "Saldo niet beschikbaar" },
+  de: { loading: "Guthaben wird geladen", unavailable: "Guthaben nicht verfügbar" },
+  fr: { loading: "Chargement du solde", unavailable: "Solde indisponible" },
+  es: { loading: "Cargando saldo", unavailable: "Saldo no disponible" },
+  "pt-br": { loading: "Carregando saldo", unavailable: "Saldo indisponível" },
+  it: { loading: "Caricamento del saldo", unavailable: "Saldo non disponibile" },
+  ja: { loading: "残数を読み込み中", unavailable: "残数を取得できません" },
+  ko: { loading: "잔액 불러오는 중", unavailable: "잔액을 불러올 수 없어요" },
+  ar: { loading: "جارٍ تحميل الرصيد", unavailable: "الرصيد غير متاح" },
+};
+
 function sanitize(value: unknown): unknown {
   if (typeof value === "string") return value.replace(/[—–]/g, "-");
   if (Array.isArray(value)) return value.map(sanitize);
@@ -58,10 +84,10 @@ export function getNativeCopy(locale: NativeLocale): NativeDoodleUiCopy {
     stage: source.stage,
     actions: source.actions,
     dialog: source.dialog,
-    usage: source.usage,
+    usage: { ...source.usage, ...BALANCE_STATUS[locale] },
     purchase: source.purchase,
-    auth: source.auth,
-    account: source.account,
+    auth: { ...source.auth, providerHint: ACCOUNT_GUIDANCE[locale].providerHint },
+    account: { ...source.account, deleteError: ACCOUNT_GUIDANCE[locale].deleteError },
     navigation: {
       create: navigation.create,
       ideas: navigation.ideas,
@@ -150,7 +176,6 @@ export function getNativeUsageLabel(locale: NativeLocale, freeRemaining: number 
   const copy = getCopy(locale as Locale);
   if (typeof paidRemaining === "number" && paidRemaining > 0) return formatCount(locale as Locale, copy.usage.paidLeft as PluralTemplates, paidRemaining);
   if (typeof freeRemaining === "number") return formatCount(locale as Locale, copy.usage.freeLeft as PluralTemplates, freeRemaining);
-  if (typeof paidRemaining === "number") return formatCount(locale as Locale, copy.usage.paidLeft as PluralTemplates, paidRemaining);
   return sanitize(copy.usage.freeTrial) as string;
 }
 

@@ -1,3 +1,4 @@
+import type { PaperColorId } from "@web/lib/generation/paper-colors";
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 export type NativeLocale = "en" | "nl" | "de" | "fr" | "es" | "pt-br" | "it" | "ja" | "ko" | "ar";
 export type NativeDirection = "ltr" | "rtl";
@@ -38,7 +39,7 @@ export interface NativeDoodleUiCopy {
   };
   actions: { back: string; download: string; tryAgain: string; redraw: string; newScene: string };
   dialog: { label: string; close: string; imageAlt: string; download: string };
-  usage: { freeTrial: string; freeLeft: NativePluralTemplates; paidLeft: NativePluralTemplates };
+  usage: { freeTrial: string; freeLeft: NativePluralTemplates; paidLeft: NativePluralTemplates; loading: string; unavailable: string };
   purchase: {
     label: string;
     title: string;
@@ -52,7 +53,7 @@ export interface NativeDoodleUiCopy {
     startDrawing: string;
     checkoutError: string;
   };
-  auth: { signIn: string; google: string; loading: string; authError: string };
+  auth: { signIn: string; google: string; loading: string; authError: string; providerHint: string };
   account: {
     label: string;
     signOut: string;
@@ -60,6 +61,7 @@ export interface NativeDoodleUiCopy {
     deleteWarning: string;
     confirmDelete: string;
     cancelDelete: string;
+    deleteError: string;
   };
   navigation: { create: string; ideas: string; settings: string; appLabel: string };
   ideas: { title: string; hint: string; tryIdea: string };
@@ -133,6 +135,7 @@ export type NativeGenerationUiState =
 
 export interface NativeAccountUi {
   status: "loading" | "signedOut" | "signedIn" | "error";
+  pendingProvider?: "google" | "apple";
   email?: string;
   balanceLabel: string;
   initial?: string;
@@ -174,6 +177,7 @@ export interface NativePurchaseUi {
 export interface NativeIdea {
   id: string;
   imageUri: NativeImageSource;
+  previewImageUri?: NativeImageSource;
   prompt: string;
   actionLabel: string;
 }
@@ -202,13 +206,20 @@ export interface NativeReportUiState {
 export const NATIVE_REPORT_DETAILS_MAX_LENGTH = 500;
 
 export type NativeContentModal = "none" | "more" | "image" | "purchase" | "report";
+export type NativeDrawingConsentChoice = "allow" | "cancel" | "privacy";
 
 export interface NativeDoodleUiProps {
+  drawingConsentVisible?: boolean;
+  onDrawingConsentChoice?(choice: NativeDrawingConsentChoice): void;
+  onDrawingConsentExit?(): void;
   photo?: { uri: string; base64: string } | null;
   preparingPhoto?: boolean;
   photoError?: string | null;
   onPickPhoto?(): void;
   onRemovePhoto?(): void;
+  paperColor?: PaperColorId;
+  paperReady?: boolean;
+  onPaperColorChange?(color: PaperColorId): void;
   detailLevel: DetailLevel;
   detailReady: boolean;
   onDetailLevelChange(level: DetailLevel): void;
@@ -218,7 +229,7 @@ export interface NativeDoodleUiProps {
   copy: NativeDoodleUiCopy;
   draft: NativeDraftUi;
   generation: NativeGenerationUiState;
-  usage: { status: "loading" | "ready"; label: string; lastFree?: boolean };
+  usage: { status: "loading" | "ready" | "error"; label: string; lastFree?: boolean };
   account: NativeAccountUi;
   accountModal: NativeAccountModalState;
   ideas: readonly NativeIdea[];
@@ -253,6 +264,7 @@ export interface NativeDoodleUiProps {
   onOpenAccount(): void;
   onCloseAccount(): void;
   onSignIn(): void;
+  onAppleSignIn?(): void;
   onRefill(): void;
   onPurchase(): void;
   onSelectPack?(productId: import("../contracts/native").PlayPackId): void;
@@ -264,4 +276,5 @@ export interface NativeDoodleUiProps {
   onLocaleChange(locale: NativeLocale): void;
   onSupportLink(id: NativeSupportLink["id"]): void;
   onShareDiagnostics(): void;
+  onWithdrawDrawingConsent?(): void;
 }

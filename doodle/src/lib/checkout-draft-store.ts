@@ -1,9 +1,10 @@
+import { storedPaperColor, type PaperColorId } from "./generation/paper-colors";
 import type { DetailLevel } from "./generation/detail-level";
-type CheckoutData = { image: Blob; scene: string; detailLevel: DetailLevel; photo?: string; lastFree: boolean };
+type CheckoutData = { image: Blob; scene: string; detailLevel: DetailLevel; paperColor?: PaperColorId; photo?: string; lastFree: boolean };
 
 const TTL = 30 * 60_000;
 const STORE = "drafts";
-type StoredDraft = { id: string; image: Blob; scene: string; detailLevel: DetailLevel; photo?: string; lastFree: boolean; expiresAt: number };
+type StoredDraft = { id: string; image: Blob; scene: string; detailLevel: DetailLevel; paperColor?: PaperColorId; photo?: string; lastFree: boolean; expiresAt: number };
 
 export function discardCheckoutDraft() {
   try {
@@ -48,7 +49,7 @@ export async function checkoutDraftStore(action: "read" | "write" | "remove", id
           const value = request.result as (StoredDraft & { imageBytes?: ArrayBuffer; imageType?: string }) | undefined;
           const image = value?.imageBytes instanceof ArrayBuffer && typeof value.imageType === "string"
             ? new Blob([value.imageBytes], { type: value.imageType }) : value?.image;
-          if (value && value.expiresAt > Date.now() && image instanceof Blob && image.size > 0 && image.size <= 20*1024*1024 && typeof value.scene === "string" && ["simple","medium","detailed"].includes(value.detailLevel)) result = { ...value, image };
+          if (value && value.expiresAt > Date.now() && image instanceof Blob && image.size > 0 && image.size <= 20*1024*1024 && typeof value.scene === "string" && ["simple","medium","detailed"].includes(value.detailLevel)) result = { ...value, image, paperColor: storedPaperColor(value.paperColor) };
         };
       }
       tx.oncomplete = () => resolve(result);

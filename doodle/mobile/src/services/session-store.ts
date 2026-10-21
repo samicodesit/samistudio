@@ -1,4 +1,5 @@
-import { DETAIL_STORAGE_KEY, storedDetailLevel, isDetailLevel, type DetailLevel } from "../../../src/lib/generation/detail-level";
+import { PAPER_COLOR_STORAGE_KEY, isPaperColorId, storedPaperColor, type PaperColorId } from "../../../src/lib/generation/paper-colors";
+import { DEFAULT_DETAIL_LEVEL, DETAIL_STORAGE_KEY, storedDetailLevel, isDetailLevel, type DetailLevel } from "../../../src/lib/generation/detail-level";
 import type { NativeGoogleResponse } from "../contracts/native";
 
 export interface NativeSecureStorage {
@@ -13,6 +14,7 @@ export const NATIVE_STORAGE_KEYS = {
   install: "doodle.native.install",
   locale: "doodle.native.locale",
   purchaseHistory: "doodle.native.purchase-history",
+  drawingConsent: "doodle.native.drawing-consent",
 } as const;
 
 const ACCESS_TOKEN_PATTERN = /^[A-Za-z0-9_-]{43}$/;
@@ -38,6 +40,14 @@ export class NativeSessionStore {
       if (!uuid) throw new Error("Could not create a native installation id");
       return uuid;
     });
+  }
+
+  async getPaperColor(): Promise<PaperColorId> {
+    try { return storedPaperColor(await this.storage.getItem(PAPER_COLOR_STORAGE_KEY)); } catch { return "yellow"; }
+  }
+  async setPaperColor(color: PaperColorId): Promise<void> {
+    if (!isPaperColorId(color)) throw new Error("Invalid paper color");
+    await this.storage.setItem(PAPER_COLOR_STORAGE_KEY, color);
   }
 
   async getAccessToken(): Promise<string | null> {
@@ -100,6 +110,19 @@ export class NativeSessionStore {
     return value && TRIAL_TOKEN_PATTERN.test(value) ? value : null;
   }
 
+  async hasDrawingConsent(): Promise<boolean> {
+    try { return await this.storage.getItem(NATIVE_STORAGE_KEYS.drawingConsent) === "openai-drawing-v1"; }
+    catch { return false; }
+  }
+
+  async setDrawingConsent(): Promise<void> {
+    await this.storage.setItem(NATIVE_STORAGE_KEYS.drawingConsent, "openai-drawing-v1");
+  }
+
+  async clearDrawingConsent(): Promise<void> {
+    await this.storage.deleteItem(NATIVE_STORAGE_KEYS.drawingConsent);
+  }
+
   async setTrialToken(value: string): Promise<void> {
     if (!TRIAL_TOKEN_PATTERN.test(value)) throw new Error("Invalid native trial token");
     await this.storage.setItem(NATIVE_STORAGE_KEYS.trial, value);
@@ -120,7 +143,7 @@ export class NativeSessionStore {
   }
 
   async getDetailLevel(): Promise<DetailLevel> {
-    try { return storedDetailLevel(await this.storage.getItem(DETAIL_STORAGE_KEY)); } catch { return "simple"; }
+    try { return storedDetailLevel(await this.storage.getItem(DETAIL_STORAGE_KEY)); } catch { return DEFAULT_DETAIL_LEVEL; }
   }
   async setDetailLevel(level: DetailLevel): Promise<void> {
     if (!isDetailLevel(level)) return;

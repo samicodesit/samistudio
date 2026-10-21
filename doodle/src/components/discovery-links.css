@@ -51,6 +51,6 @@ body:has(.mobile-app-workspace[data-installed="true"]) .drawing-guides { display
 @media (max-width: 699px) {
   .drawing-guides-grid { grid-template-columns: 1fr; gap: 28px; }
 }
-@media (display-mode: standalone), (display-mode: fullscreen) {
+@media (display-mode: standalone) {
   .android-app-link, .drawing-guides { display: none; }
 }

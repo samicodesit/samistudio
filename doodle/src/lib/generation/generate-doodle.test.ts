@@ -8,7 +8,7 @@ describe("generateDoodle", () => {
     const result = await generateDoodle("Two cats hug", { generate: async () => ({ data: [{ b64_json: original.toString("base64") }] }) });
     const pixels = await sharp(result.bytes).raw().toBuffer();
     expect([...pixels.subarray(0, 3)]).toEqual([255, 235, 138]);
-    expect(result.paperCorrection).toMatchObject({ status: "corrected", version: "paper-v1" });
+    expect(result.paperCorrection).toMatchObject({ status: "corrected", version: "paper-v2" });
     expect(result.mimeType).toBe("image/png");
   });
   it("requests one medium-quality square and decodes it", async () => {

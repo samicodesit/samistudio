@@ -3,6 +3,7 @@ import {
   fetchProducts,
   finishTransaction,
   getAvailablePurchases,
+  getPendingTransactionsIOS,
   initConnection,
   purchaseErrorListener,
   purchaseUpdatedListener,
@@ -21,6 +22,7 @@ export const expoIapModule: IapModule = {
   purchaseErrorListener,
   requestPurchase: (input) => requestPurchase(input),
   getAvailablePurchases: async () => getAvailablePurchases(),
+  getPendingTransactionsIOS: async () => getPendingTransactionsIOS(),
   finishTransaction: async (input) => {
     await finishTransaction(input as unknown as Parameters<typeof finishTransaction>[0]);
   },

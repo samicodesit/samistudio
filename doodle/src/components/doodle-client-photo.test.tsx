@@ -9,6 +9,8 @@ vi.mock("@vercel/analytics", () => ({ track: vi.fn() }));
 vi.mock("@/lib/photo-draft-store", async importOriginal => ({ ...await importOriginal<typeof import("@/lib/photo-draft-store")>(), photoDraftStore: vi.fn().mockResolvedValue(undefined) }));
 
 beforeEach(() => {
+ const accountHost=document.createElement("div");accountHost.dataset.accountHost="web";document.body.append(accountHost);
+
   // Node's optional Web Storage global can shadow JSDOM's browser storage.
   const preferences = new Map<string, string>();
   vi.stubGlobal("localStorage", {
@@ -51,20 +53,22 @@ it.each([
 ] as const)("gives photo-specific recovery for status %s without losing the input", async (status, message) => {
   generationResponse(status);
   render(<DoodleClient locale="en" copy={getCopy("en")} />);
-  await screen.findByText("2 free doodles left");
-  fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
+  await screen.findByRole("button", { name: "Sign in" });
+  fireEvent.click(screen.getByRole("button", { name: /^Detail:/ }));
+    fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
+  await waitFor(() => expect(screen.queryByRole("dialog",{name:"Drawing detail"})).not.toBeInTheDocument());
   await choosePhoto();
   fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
   await screen.findByText(message);
   expect(screen.getByRole("img", { name: "Selected photo" })).toBeVisible();
-  expect(screen.getByRole("radio", { name: "Medium" })).toHaveAttribute("aria-checked", "true");
+  await waitFor(() => expect(screen.getByRole("button", { name: "Detail: Medium" })).toHaveAttribute("aria-expanded", "false"));
   expect(screen.queryByText(getCopy("en").errors.refused)).toBeNull();
 });
 
 it("keeps the existing guidance for a refused text idea", async () => {
   generationResponse(422);
   render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="Two cats" />);
-  await screen.findByText("2 free doodles left");
+  await screen.findByRole("button", { name: "Sign in" });
   fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
   await screen.findByText(getCopy("en").errors.refused);
   expect(screen.getByRole("textbox")).toHaveValue("Two cats");
@@ -73,7 +77,7 @@ it("keeps the existing guidance for a refused text idea", async () => {
 it("clears an old generation failure only after a successful replacement or Remove", async () => {
   generationResponse(502);
   render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="My saved idea" />);
-  await screen.findByText("2 free doodles left");
+  await screen.findByRole("button", { name: "Sign in" });
   await choosePhoto();
   fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
   await screen.findByText(getCopy("en").errors.general);
@@ -96,13 +100,14 @@ it("clears an old generation failure only after a successful replacement or Remo
 it.each([true, false])("returns from a result to the same draft without another generation (photo: %s)", async withPhoto => {
   generationResponse(200);
   render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="My earlier idea" />);
-  await screen.findByText("2 free doodles left");
-  fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
+  await screen.findByRole("button", { name: "Sign in" });
+  fireEvent.click(screen.getByRole("button", { name: /^Detail:/ }));
+    fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
+  await waitFor(() => expect(screen.queryByRole("dialog",{name:"Drawing detail"})).not.toBeInTheDocument());
   if (withPhoto) await choosePhoto();
   fireEvent.click(screen.getByRole("button", { name: "Create doodle" }));
   fireEvent.click(await screen.findByRole("button", { name: "Back" }));
-  expect(screen.getByRole("radio", { name: "Medium" })).toHaveAttribute("aria-checked", "true");
-  expect(screen.getByText("1 free doodle left")).toBeVisible();
+  await waitFor(() => expect(screen.getByRole("button", { name: "Detail: Medium" })).toHaveAttribute("aria-expanded", "false"));
   expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === "/api/generate")).toHaveLength(1);
   expect(URL.revokeObjectURL).toHaveBeenCalledWith("blob:doodle-result");
   if (withPhoto) {
@@ -112,18 +117,24 @@ it.each([true, false])("returns from a result to the same draft without another 
   }
   expect(screen.getByRole("textbox")).toHaveValue("My earlier idea");
   expect(screen.getByRole("textbox")).toHaveFocus();
+  fireEvent.click(screen.getByRole("button", { name: "Sign in" }));
+  expect(await screen.findByText("1 free doodle left", {selector:".account-usage"})).toBeVisible();
+  fireEvent(screen.getByRole("dialog"), new Event("cancel", {cancelable:true}));
+
 });
 
 it("keeps selection local, restores the draft and retains the chosen detail", async () => {
   render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="My earlier idea" />);
-  await screen.findByText("2 free doodles left");
-  fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
+  await screen.findByRole("button", { name: "Sign in" });
+  fireEvent.click(screen.getByRole("button", { name: /^Detail:/ }));
+    fireEvent.click(screen.getByRole("radio", { name: "Medium" }));
+  await waitFor(() => expect(screen.queryByRole("dialog",{name:"Drawing detail"})).not.toBeInTheDocument());
   await choosePhoto();
   expect(vi.mocked(fetch).mock.calls.filter(([url]) => url === "/api/generate")).toHaveLength(0);
   expect(screen.queryByRole("textbox")).toBeNull();
   fireEvent.click(screen.getByRole("button", { name: "Remove" }));
   expect(screen.getByRole("textbox")).toHaveValue("My earlier idea");
-  expect(screen.getByRole("radio", { name: "Medium" })).toHaveAttribute("aria-checked", "true");
+  await waitFor(() => expect(screen.getByRole("button", { name: "Detail: Medium" })).toHaveAttribute("aria-expanded", "false"));
 });
 
 it("submits only the photo once and retains it after a recoverable failure", async () => {
@@ -131,13 +142,13 @@ it("submits only the photo once and retains it after a recoverable failure", asy
   const pending = new Promise<Response>(done => { resolve = done; });
   vi.mocked(fetch).mockImplementation(async input => input === "/api/account" ? Response.json({ authenticated: false, email: null, balance: 0, freeRemaining: 2 }) : pending);
   render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="Private draft" />);
-  await screen.findByText("2 free doodles left");
+  await screen.findByRole("button", { name: "Sign in" });
   await choosePhoto();
   const create = screen.getByRole("button", { name: "Create doodle" });
   act(() => { fireEvent.click(create); fireEvent.click(create); });
   const requests = vi.mocked(fetch).mock.calls.filter(([url]) => url === "/api/generate");
   expect(requests).toHaveLength(1);
-  expect(JSON.parse(String(requests[0][1]?.body))).toEqual({ photo: "AQID", detailLevel: "simple" });
+  expect(JSON.parse(String(requests[0][1]?.body))).toEqual({ photo: "AQID", detailLevel: "medium" });
   await act(async () => resolve(new Response(null, { status: 502 })));
   await waitFor(() => expect(screen.getByRole("img", { name: "Selected photo" })).toBeVisible());
   expect(screen.getByRole("button", { name: "Create doodle" })).toBeEnabled();
@@ -149,7 +160,7 @@ it("starts an Ideas selection without restoring the previous photo", async () =>
   vi.mocked(photoDraftStore).mockImplementation(async (action, id) => action === "read" && id === previousId ? { id, base64: "AQID", scene: "Previous text", expiresAt: Date.now() + 60_000 } : undefined);
   discardPhotoDraft();
   render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="A new idea" />);
-  await screen.findByText("2 free doodles left");
+  await screen.findByRole("button", { name: "Sign in" });
   expect(screen.getByRole("textbox")).toHaveValue("A new idea");
   expect(screen.queryByRole("img", { name: "Selected photo" })).toBeNull();
 });
@@ -157,7 +168,7 @@ it("starts an Ideas selection without restoring the previous photo", async () =>
 it("keeps a valid selection when a replacement is damaged or cancelled", async () => {
   vi.mocked(photoDraftStore).mockResolvedValue(undefined);
   render(<DoodleClient locale="en" copy={getCopy("en")} initialScene="My saved idea" />);
-  await screen.findByText("2 free doodles left");
+  await screen.findByRole("button", { name: "Sign in" });
   await choosePhoto();
   const input = document.querySelector<HTMLInputElement>('input[type="file"]')!;
   fireEvent.change(input, { target: { files: [new NodeFile(["damaged"], "photo.jpg", { type: "image/jpeg" })] } });

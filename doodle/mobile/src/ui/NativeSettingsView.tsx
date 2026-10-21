@@ -2,6 +2,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { NativeIcon } from "./NativeIcon";
 import { NATIVE_COLORS, NATIVE_SPACING, nativeFontFamily, nativeRowDirection, nativeTextAlign } from "./theme";
 import type { NativeDirection, NativeDoodleUiCopy, NativeLocale, NativeLocaleOption, NativeSupportLink } from "./types";
+import { getDrawingConsentCopy } from "../services/drawing-consent-copy";
 
 interface NativeSettingsViewProps {
   locale: NativeLocale;
@@ -12,9 +13,10 @@ interface NativeSettingsViewProps {
   onLocaleChange(locale: NativeLocale): void;
   onSupportLink(id: NativeSupportLink["id"]): void;
   onShareDiagnostics(): void;
+  onWithdrawDrawingConsent?(): void;
 }
 
-export function NativeSettingsView({ locale, direction, copy, locales, supportLinks, onLocaleChange, onSupportLink, onShareDiagnostics }: NativeSettingsViewProps) {
+export function NativeSettingsView({ locale, direction, copy, locales, supportLinks, onLocaleChange, onSupportLink, onShareDiagnostics, onWithdrawDrawingConsent }: NativeSettingsViewProps) {
   return (
     <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <Text accessibilityRole="header" style={[styles.title, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>
@@ -52,6 +54,14 @@ export function NativeSettingsView({ locale, direction, copy, locales, supportLi
           {copy.settings.supportTitle}
         </Text>
         <View style={styles.supportList}>
+          {onWithdrawDrawingConsent ? <Pressable
+            accessibilityRole="button"
+            onPress={onWithdrawDrawingConsent}
+            style={({ pressed }) => [styles.supportRow, { flexDirection: nativeRowDirection(direction) }, pressed && styles.pressed]}
+          >
+            <Text style={[styles.supportText, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{getDrawingConsentCopy(locale).withdraw}</Text>
+            <NativeIcon name="chevronForward" size={18} color={NATIVE_COLORS.muted} />
+          </Pressable> : null}
           {supportLinks.map((link) => (
             <Pressable
               key={link.id}

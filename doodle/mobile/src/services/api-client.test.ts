@@ -11,6 +11,72 @@ function response(body: unknown, init?: ResponseInit) {
 }
 
 describe("NativeApiClient", () => {
+  it("rejects an old account's generation before staging or caching its response", async () => {
+    let token: string | null = "a".repeat(43);
+    let finish!: (value: Response) => void;
+    const fetchImpl = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(response({ enabled: true, packageName: "nl.samistudio.doodle", minimumVersionCode: 2, attestation: "play_integrity", guestEnabled: true, cloudProjectNumber: "123" }))
+      .mockImplementationOnce(() => new Promise(resolve => { finish = resolve; }));
+    const stagePng = vi.fn(async () => "file:///private-account-a.png");
+    const client = new NativeApiClient({ baseUrl: "https://doodle.samistudio.nl", fetchImpl, stagePng,
+      getAccessToken: async () => token, getTrialToken: async () => null,
+      getInstallId: async () => "11111111-1111-4111-8111-111111111111",
+      hashScene: async () => "a".repeat(64),
+      createChallenge: async () => ({ challenge: "c".repeat(43), requestHash: "h".repeat(43), expiresAt: Date.now() + 1000 }),
+      requestIntegrity: async () => "integrity-token-123" });
+    const pending = client.generate("A private scene");
+    const rejected = expect(pending).rejects.toMatchObject({ code: "unauthorized" });
+    await vi.waitFor(() => expect(fetchImpl).toHaveBeenCalledTimes(2));
+    token = "b".repeat(43);
+    finish(new Response(new Uint8Array([137, 80, 78, 71]), { headers: { "Content-Type": "image/png", "X-Doodle-Paid-Remaining": "86" } }));
+    await rejected;
+    expect(stagePng).not.toHaveBeenCalled();
+    expect((client as unknown as { paidBalance: number | null }).paidBalance).toBeNull();
+  });
+
+  it.each(["proof", "staging"] as const)("discards generation when the account changes during %s", async phase => {
+    let token = "a".repeat(43);
+    let finish!: () => void;
+    const fetchImpl = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(response({ enabled: true, packageName: "nl.samistudio.doodle", minimumVersionCode: 2, attestation: "play_integrity", guestEnabled: true, cloudProjectNumber: "123" }))
+      .mockResolvedValueOnce(new Response(new Uint8Array([137, 80, 78, 71]), { headers: { "Content-Type": "image/png", "X-Doodle-Paid-Remaining": "86" } }));
+    const wait = (value: string) => new Promise<string>(resolve => { finish = () => resolve(value); });
+    const requestIntegrity = vi.fn(() => phase === "proof" ? wait("integrity-token-123") : Promise.resolve("integrity-token-123"));
+    const stagePng = vi.fn(() => phase === "staging" ? wait("file:///private-account-a.png") : Promise.resolve("file:///private-account-a.png"));
+    const client = new NativeApiClient({ baseUrl: "https://doodle.samistudio.nl", fetchImpl, stagePng,
+      getAccessToken: async () => token, getTrialToken: async () => null,
+      getInstallId: async () => "11111111-1111-4111-8111-111111111111", hashScene: async () => "a".repeat(64),
+      createChallenge: async () => ({ challenge: "c".repeat(43), requestHash: "h".repeat(43), expiresAt: Date.now() + 1000 }), requestIntegrity });
+    const rejected = expect(client.generate("A private scene")).rejects.toMatchObject({ code: "unauthorized" });
+    await vi.waitFor(() => expect(phase === "proof" ? requestIntegrity : stagePng).toHaveBeenCalledTimes(1));
+    token = "b".repeat(43); finish();
+    await rejected;
+    expect(fetchImpl).toHaveBeenCalledTimes(phase === "proof" ? 1 : 2);
+    expect((client as unknown as { paidBalance: number | null }).paidBalance).toBeNull();
+  });
+
+  it("exchanges Apple credentials as an iPhone client and persists a session with no display email", async () => {
+    const result = { authenticated: true, provider: "apple", email: null, accessToken: "a".repeat(43), expiresAt: Date.now() + 60_000 };
+    const fetchImpl = vi.fn<typeof fetch>().mockResolvedValue(response(result));
+    const persist = vi.fn();
+    const client = new NativeApiClient({ baseUrl: "https://doodle.samistudio.nl", platform: "ios", fetchImpl, setAccessToken: persist, getTrialToken: async () => "trial-token-123456789012345" });
+    const input = { identityToken: "signed-apple-token", authorizationCode: "one-time-code", nonce: "a".repeat(64) };
+    await expect(client.signInWithApple(input)).resolves.toEqual(result);
+    const [url, init] = fetchImpl.mock.calls[0];
+    expect(url).toBe("https://doodle.samistudio.nl/api/native/auth/apple");
+    expect(new Headers(init?.headers).get("X-Doodle-Client")).toBe("native-ios");
+    expect(new Headers(init?.headers).get("X-Doodle-Trial-Token")).toBe("trial-token-123456789012345");
+    expect(JSON.parse(init?.body as string)).toEqual(input);
+    expect(persist).toHaveBeenCalledWith(result);
+  });
+
+  it("uses the iPhone client marker for Google login on iOS", async () => {
+    const fetchImpl = vi.fn<typeof fetch>().mockResolvedValue(response({ authenticated: true, email: "test@example.com", accessToken: "a".repeat(43), expiresAt: Date.now() + 60_000 }));
+    const client = new NativeApiClient({ baseUrl: "https://doodle.samistudio.nl", platform: "ios", fetchImpl });
+    await client.signInWithGoogle("signed-google-token");
+    expect(new Headers(fetchImpl.mock.calls[0][1]?.headers).get("X-Doodle-Client")).toBe("native-ios");
+  });
+
   it.each([[422, "refused"], [400, "invalid_photo"], [413, "request_too_large"]] as const)("preserves photo failure %s for the correct recovery message", async (status, code) => {
     const fetchImpl = vi.fn<typeof fetch>()
       .mockResolvedValueOnce(response({ enabled: true, packageName: "nl.samistudio.doodle", minimumVersionCode: 2, attestation: "play_integrity", guestEnabled: true, cloudProjectNumber: "123" }))
@@ -94,7 +160,7 @@ describe("NativeApiClient", () => {
     expect(result).toEqual({ imageUri: "file:///cache/doodle.png", paidRemaining: 8 });
     expect(stagePng).toHaveBeenCalledWith(png);
     const [, init] = fetchImpl.mock.calls[1] ?? [];
-    expect(JSON.parse(String(init?.body))).toEqual({ scene: "Two cats hug" });
+    expect(JSON.parse(String(init?.body))).toEqual({ scene: "Two cats hug", detailLevel: "medium" });
     const headers = new Headers(init?.headers);
     expect(headers.get("X-Doodle-Attestation-Challenge")).toBe("c".repeat(43));
     expect(headers.get("X-Doodle-Attestation-Token")).toBe("integrity-token-123");
@@ -284,27 +350,54 @@ describe("NativeApiClient", () => {
     const challengeHeaders = new Headers(challengeInit?.headers);
     expect(challengeHeaders.get("X-Doodle-Trial-Token")).toBe(trialToken);
     expect(challengeHeaders.get("Authorization")).toBeNull();
-    expect(JSON.parse(String(challengeInit?.body))).toEqual({ operation: "generate", installId: "11111111-1111-4111-8111-111111111111", sceneHash: "a".repeat(64) });
+    expect(JSON.parse(String(challengeInit?.body))).toEqual({ operation: "generate", installId: "11111111-1111-4111-8111-111111111111", sceneHash: "a".repeat(64), detailLevel: "medium" });
   });
 
-  it("retains the trial token when Google sign-in creates an account session", async () => {
+  it.each(["apple", "google"] as const)("retains the trial token when %s sign-in creates an account session", async provider => {
     const clearTrialToken = vi.fn().mockResolvedValue(undefined);
     const responseBody = {
       authenticated: true,
+      ...(provider === "apple" ? { provider: "apple" } : {}),
       email: "sam@example.com",
       accessToken: "a".repeat(43),
       expiresAt: Date.now() + 60_000,
     };
     const client = new NativeApiClient({
       baseUrl: "https://doodle.samistudio.nl",
+      platform: "ios",
       fetchImpl: vi.fn<typeof fetch>().mockResolvedValue(response(responseBody)),
       setAccessToken: vi.fn().mockResolvedValue(undefined),
       clearTrialToken,
     });
 
-    await client.signInWithGoogle("google-id-token");
+    if (provider === "apple") await client.signInWithApple({ identityToken: "apple-id-token", authorizationCode: "one-time-code", nonce: "a".repeat(64) });
+    else await client.signInWithGoogle("google-id-token");
 
     expect(clearTrialToken).not.toHaveBeenCalled();
+  });
+
+  it("initializes the installation's trial after signing into Android before drawing", async () => {
+    let trial: string | null = null;
+    const fetchImpl = vi.fn<typeof fetch>(async input => {
+      const path = new URL(String(input)).pathname;
+      if (path === "/api/account") return response({ authenticated: true, email: "sam@example.com", balance: 0, freeRemaining: null });
+      if (path === "/api/native/config") return response({ enabled: true, packageName: "nl.samistudio.doodle", minimumVersionCode: 2, attestation: "play_integrity", guestEnabled: true, cloudProjectNumber: "123" });
+      if (path === "/api/native/attestation/challenge") return response({ challenge: "c".repeat(43), requestHash: "h".repeat(43), expiresAt: Date.now() + 60_000 });
+      if (path === "/api/native/session/guest") return response({ trialToken: "trial-token-123456789012345", expiresAt: Date.now() + 60_000, freeRemaining: 4 });
+      if (path === "/api/generate") return new Response(new Uint8Array([137, 80, 78, 71]), { headers: { "Content-Type": "image/png", "X-Doodle-Free-Remaining": "3" } });
+      throw new Error(`Unexpected path: ${path}`);
+    });
+    const client = new NativeApiClient({ baseUrl: "https://doodle.samistudio.nl", fetchImpl,
+      getAccessToken: async () => "a".repeat(43), getTrialToken: async () => trial,
+      setTrialToken: async value => { trial = value; },
+      getInstallId: async () => "11111111-1111-4111-8111-111111111111",
+      requestIntegrity: async () => "integrity-token-123", hashScene: async () => "a".repeat(64), stagePng: async () => "file:///doodle.png" });
+    await client.getAccount();
+    await expect(client.generate("A bear giving a heart to a bunny")).resolves.toMatchObject({ freeRemaining: 3 });
+    expect(fetchImpl.mock.calls.some(([url]) => String(url).endsWith("/api/native/session/guest"))).toBe(true);
+    const generation = fetchImpl.mock.calls.find(([url]) => String(url).endsWith("/api/generate"))!;
+    expect(new Headers(generation[1]?.headers).get("Authorization")).toBeNull();
+    expect(new Headers(generation[1]?.headers).get("X-Doodle-Trial-Token")).toBe(trial);
   });
 
   it("records a token persistence failure once with the sign-in request reference", async () => {
@@ -499,6 +592,16 @@ describe("NativeApiClient", () => {
     expect(JSON.parse(String(fetchImpl.mock.calls[1][1]?.body))).toEqual({ operation: "generate", installId: "11111111-1111-4111-8111-111111111111", sceneHash: "b".repeat(64), detailLevel });
     expect(JSON.parse(String(fetchImpl.mock.calls[2][1]?.body))).toEqual({ scene: "Two cats hug", detailLevel });
     expect(requestIntegrity).toHaveBeenCalledWith("h".repeat(43));
+  });
+  it("carries the same paper choice through challenge and generation", async () => {
+    const fetchImpl=vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(response({enabled:true,packageName:"nl.samistudio.doodle",minimumVersionCode:2,attestation:"play_integrity",guestEnabled:true,cloudProjectNumber:"123"}))
+      .mockResolvedValueOnce(response({challenge:"c".repeat(43),requestHash:"h".repeat(43),expiresAt:Date.now()+1000}))
+      .mockResolvedValueOnce(new Response(new Uint8Array([137,80,78,71]),{headers:{"Content-Type":"image/png"}}));
+    const client=new NativeApiClient({baseUrl:"https://doodle.samistudio.nl",fetchImpl,requestIntegrity:async()=>"integrity-token-123",getInstallId:async()=>"11111111-1111-4111-8111-111111111111",getAccessToken:async()=>"a".repeat(43),hashScene:async()=>"b".repeat(64),stagePng:async()=>"file:///pink.png"});
+    await client.generate("A flower","medium",undefined,"pink");
+    expect(JSON.parse(String(fetchImpl.mock.calls[1][1]?.body))).toMatchObject({paperColor:"pink",detailLevel:"medium"});
+    expect(JSON.parse(String(fetchImpl.mock.calls[2][1]?.body))).toMatchObject({paperColor:"pink",scene:"A flower",detailLevel:"medium"});
   });
   it("rejects an invalid level before reading a session or making requests", async () => {
     const fetchImpl = vi.fn(), getAccessToken = vi.fn();

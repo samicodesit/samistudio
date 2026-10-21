@@ -5,7 +5,7 @@ import { POST } from "./route";
 vi.mock("server-only", () => ({}));
 
 const mocks = vi.hoisted(() => ({
-  consumeNativeAttestation: vi.fn(),
+  consumeNativeAttestation: vi.fn(), consumeAppleAssertion: vi.fn(),
   nativePrincipal: vi.fn(),
   getOrCreateNativeTrialIdentity: vi.fn(),
   getFreeRemaining: vi.fn(),
@@ -34,6 +34,8 @@ function request(body: unknown, origin = "https://doodle.samistudio.nl") {
     body: JSON.stringify(body),
   });
 }
+
+vi.mock("@/lib/apple-attestation", () => ({ consumeAppleAssertion: mocks.consumeAppleAssertion }));
 
 describe("native guest session route", () => {
   beforeEach(() => {
@@ -90,5 +92,13 @@ describe("native guest session route", () => {
     expect(result.status).toBe(200);
     expect(await result.json()).toMatchObject({ freeRemaining: 4 });
   });
+
+
+it.each(["verified", "invalid", "unavailable"] as const)("requires verified iPhone proof before guest creation: %s", async verdict => {
+  mocks.consumeNativeAttestation.mockClear(); mocks.getOrCreateNativeTrialIdentity.mockClear(); mocks.consumeAppleAssertion.mockResolvedValue(verdict);
+  const req = request({ installId, challenge: "a".repeat(43), keyId: Buffer.alloc(32, 1).toString("base64"), assertion: "signed-assertion" }); req.headers.set("x-doodle-client", "native-ios");
+  const result = await POST(req); expect(result.status).toBe(verdict === "verified" ? 200 : verdict === "invalid" ? 403 : 503);
+  expect(mocks.consumeNativeAttestation).not.toHaveBeenCalled(); if (verdict !== "verified") expect(mocks.getOrCreateNativeTrialIdentity).not.toHaveBeenCalled();
+});
 
 });

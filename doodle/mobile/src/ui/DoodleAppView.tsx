@@ -9,6 +9,7 @@ import { NativeIdeasView } from "./NativeIdeasView";
 import { NativeSettingsView } from "./NativeSettingsView";
 import {
   NativeAccountModal,
+  NativeDrawingConsentModal,
   NativeImageModal,
   NativeMoreModal,
   NativeReportModal,
@@ -64,6 +65,9 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
               photoError={props.photoError}
               onPickPhoto={props.onPickPhoto}
               onRemovePhoto={props.onRemovePhoto}
+              paperColor={props.paperColor}
+              paperReady={props.paperReady}
+              onPaperColorChange={props.onPaperColorChange}
               detailLevel={props.detailLevel}
               detailReady={props.detailReady}
               onDetailLevelChange={props.onDetailLevelChange}
@@ -87,13 +91,12 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
               onOpenMore={props.onOpenMore}
               onOpenLarger={props.onOpenLarger}
               onGetMore={props.onRefill}
-              onOpenIdeas={() => props.onTabChange("ideas")}
               gridEnabled={gridEnabled}
               onToggleGrid={() => setGridImageUri(current => props.generation.status === "ready" && current !== props.generation.imageUri ? props.generation.imageUri : null)}
             />
           ) : null}
           {props.tab === "ideas" ? <NativeIdeasView locale={props.locale} direction={props.direction} copy={props.copy} ideas={props.ideas} isGenerating={props.generation.status === "waiting"} onSelectIdea={props.onSelectIdea} reducedMotion={reducedMotion} /> : null}
-          {props.tab === "settings" ? <NativeSettingsView locale={props.locale} direction={props.direction} copy={props.copy} locales={props.locales} supportLinks={props.supportLinks} onLocaleChange={props.onLocaleChange} onSupportLink={props.onSupportLink} onShareDiagnostics={props.onShareDiagnostics} /> : null}
+          {props.tab === "settings" ? <NativeSettingsView locale={props.locale} direction={props.direction} copy={props.copy} locales={props.locales} supportLinks={props.supportLinks} onLocaleChange={props.onLocaleChange} onSupportLink={props.onSupportLink} onShareDiagnostics={props.onShareDiagnostics} onWithdrawDrawingConsent={props.onWithdrawDrawingConsent} /> : null}
         </View>
         <NativeBottomTabs locale={props.locale} direction={props.direction} copy={props.copy} tab={props.tab} onTabChange={props.onTabChange} />
         {props.purchaseNotice ? <View pointerEvents="none" style={styles.purchaseNotice}><Text accessibilityLiveRegion="polite" style={{ color: NATIVE_COLORS.white, fontSize: 16, fontFamily: nativeFontFamily(props.locale, "body") }}>{props.purchaseNotice}</Text></View> : null}
@@ -101,9 +104,10 @@ export function DoodleAppView(props: NativeDoodleUiProps) {
 
       <NativeMoreModal locale={props.locale} direction={props.direction} copy={props.copy} visible={props.modal === "more"} onClose={props.onCloseModal} onRedraw={() => startDoodle(props.onRedraw)} onOpenReport={props.onOpenReport} />
       <NativeReportModal locale={props.locale} direction={props.direction} copy={props.copy} visible={props.modal === "report"} reportState={props.reportState} onClose={props.onCloseModal} onSubmit={props.onReportSubmit} />
-      <NativePackPaywall locale={props.locale} direction={props.direction} reducedMotion={reducedMotion} purchase={props.modal === "purchase" ? props.purchase : undefined} onCancel={props.onCancelPurchase} onPurchase={props.onPurchase} onSelectPack={productId => props.onSelectPack?.(productId)} />
+      <NativePackPaywall locale={props.locale} direction={props.direction} reducedMotion={reducedMotion} pendingProvider={props.account.pendingProvider} purchase={props.modal === "purchase" ? props.purchase : undefined} onCancel={props.onCancelPurchase} onPurchase={props.onPurchase} onSelectPack={productId => props.onSelectPack?.(productId)} onSignIn={props.onSignIn} onAppleSignIn={props.onAppleSignIn} />
       <NativeImageModal locale={props.locale} direction={props.direction} copy={props.copy} visible={props.modal === "image"} imageUri={readyImage} imageAlt={readyAlt} onClose={props.onCloseModal} onAction={props.onDownload} gridEnabled={props.generation.status === "ready" ? gridEnabled : undefined} onToggleGrid={props.generation.status === "ready" ? () => setGridImageUri(current => current === readyImage ? null : readyImage) : undefined} reducedMotion={reducedMotion} />
-      <NativeAccountModal locale={props.locale} direction={props.direction} copy={props.copy} account={props.account} state={props.accountModal} onClose={props.onCloseAccount} onSignIn={props.onSignIn} onRefill={props.onRefill} onSignOut={props.onSignOut} onDeleteRequest={props.onDeleteRequest} onDeleteConfirm={props.onDeleteConfirm} />
+      <NativeAccountModal locale={props.locale} direction={props.direction} copy={props.copy} account={props.account} usage={props.usage} state={props.accountModal} onClose={props.onCloseAccount} onSignIn={props.onSignIn} onAppleSignIn={props.onAppleSignIn} onRefill={props.onRefill} onSignOut={props.onSignOut} onDeleteRequest={props.onDeleteRequest} onDeleteConfirm={props.onDeleteConfirm} />
+      <NativeDrawingConsentModal locale={props.locale} direction={props.direction} visible={!!props.drawingConsentVisible} onChoice={choice => props.onDrawingConsentChoice?.(choice)} onExitComplete={props.onDrawingConsentExit} />
     </SafeAreaView>
   );
 }

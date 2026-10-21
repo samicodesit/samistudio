@@ -4,7 +4,7 @@ test.use({ viewport: { width: 390, height: 844 } });
 
 test("installed workspace has focused tabs and preserves a draft while browsing", async ({ page }) => {
   await page.route("**/api/account", route => route.fulfill({ json: { authenticated: false, email: null, balance: 0, freeRemaining: 2 } }));
-  await page.goto("/?runtime=play");
+  await page.goto("/?runtime=app");
   const nav = page.getByRole("navigation", { name: "Doodle app" });
   await expect(nav).toBeVisible();
   expect(await page.locator("#scene-title").evaluate(element => {
@@ -33,4 +33,20 @@ test("website retains its header and has no installed app navigation", async ({ 
   await page.goto("/");
   await expect(page.locator(".doodle-header")).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Doodle app" })).toHaveCount(0);
+});
+
+test("fullscreen desktop browser retains the wide website and discovery sections", async ({ page }) => {
+  await page.setViewportSize({ width: 1512, height: 900 });
+  await page.addInitScript(() => {
+    const original = window.matchMedia.bind(window);
+    window.matchMedia = query => query.includes("display-mode")
+      ? { matches: query.includes("fullscreen"), media: query, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, onchange: null, dispatchEvent: () => true } as MediaQueryList
+      : original(query);
+  });
+  await page.goto("/");
+  await expect(page.locator('.mobile-app-workspace')).toHaveAttribute('data-installed', 'false');
+  await expect(page.locator(".doodle-header")).toBeVisible();
+  await expect(page.locator(".site-footer")).toBeVisible();
+  await expect(page.getByRole("navigation", { name: "Doodle app" })).toHaveCount(0);
+  expect(await page.locator(".doodle-main").evaluate(element => element.getBoundingClientRect().width)).toBeGreaterThan(900);
 });

@@ -58,7 +58,7 @@ describe("DoodlePage", () => {
       name: "Doodle",
       inLanguage: "ja",
       offers: [
-        { "@type": "Offer", price: "0", priceCurrency: "EUR", description: "無料でお試しください" },
+        { "@type": "Offer", price: "0", priceCurrency: "EUR", description: "4枚まで無料。アカウント不要。" },
       ],
     });
   });

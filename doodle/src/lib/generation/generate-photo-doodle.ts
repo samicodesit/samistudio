@@ -1,3 +1,4 @@
+import { isPaperColorId, type PaperColorId } from "./paper-colors";
 import OpenAI, { toFile } from "openai";
 import { providerFailure } from "@/lib/diagnostics/provider";
 import { GenerationError, type GeneratedDoodle } from "./generate-doodle";
@@ -10,7 +11,8 @@ export interface PhotoImageClient {
   edit(input: OpenAI.Images.ImageEditParamsNonStreaming): Promise<{ data?: Array<{ b64_json?: string | null }> }>;
 }
 
-export async function generatePhotoDoodle(photo: Buffer, detailLevel: DetailLevel, imageClient?: PhotoImageClient): Promise<GeneratedDoodle> {
+export async function generatePhotoDoodle(photo: Buffer, detailLevel: DetailLevel, imageClient?: PhotoImageClient, paperColor: PaperColorId = "yellow"): Promise<GeneratedDoodle> {
+  if (!isPaperColorId(paperColor)) throw new Error("Invalid paper color");
   if (!isDetailLevel(detailLevel)) throw new Error("Invalid detail level");
   if (!imageClient && !process.env.OPENAI_API_KEY) throw new GenerationError("upstream", "OpenAI is not configured.");
   const profile = generationProfile(detailLevel);
@@ -20,7 +22,7 @@ export async function generatePhotoDoodle(photo: Buffer, detailLevel: DetailLeve
     const response = await client.edit({
       model: profile.model,
       image: await toFile(photo, "photo.jpg", { type: "image/jpeg" }),
-      prompt: buildPhotoPrompt(detailLevel),
+      prompt: buildPhotoPrompt(detailLevel, paperColor),
       quality: "medium",
       size: profile.size,
       n: 1,
@@ -38,7 +40,7 @@ export async function generatePhotoDoodle(photo: Buffer, detailLevel: DetailLeve
   try {
     const bytes = Buffer.from(encoded, "base64");
     if (!bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) throw new Error("invalid PNG");
-    const corrected = await correctPaperColor(bytes);
+    const corrected = await correctPaperColor(bytes, paperColor);
     return { bytes: corrected.bytes, mimeType: "image/png", paperCorrection: corrected.metadata };
   } catch { throw new GenerationError("malformed", "Photo conversion returned an invalid image."); }
 }

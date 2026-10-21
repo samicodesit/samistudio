@@ -26,7 +26,7 @@ describe("Google account registry", () => {
 
     expect(account).toEqual({ id: ACCOUNT_ID, identityKey });
     const command = mocks.command.mock.calls[0][0];
-    expect(command.slice(0, 3)).toEqual(["EVAL", expect.stringContaining("SET"), "1"]);
+    expect(command.slice(0, 3)).toEqual(["EVAL", expect.stringContaining("SET"), "2"]);
     expect(command).toContain(`doodle:auth:google:${identityKey}`);
     expect(command).not.toContain("google-sub");
     expect(command).toContain("doodle:account:");

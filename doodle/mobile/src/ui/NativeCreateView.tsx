@@ -1,14 +1,16 @@
+import { NativePaperColorSelector } from "./NativePaperColorSelector";
+import type { PaperColorId } from "@web/lib/generation/paper-colors";
 import type { DetailLevel } from "../../../src/lib/generation/detail-level";
 import { getComposerIntro } from "../../../src/lib/composer-intro";
 import { getPhotoCopy } from "../../../src/lib/photo-copy";
-import { NativeDetailSelector, NATIVE_DETAIL_GEOMETRY } from "./NativeDetailSelector";
-import { NativeArtExamples } from "./NativeArtExamples";
+import { NativeDetailSelector } from "./NativeDetailSelector";
 import { Image } from "expo-image";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import LottieView from "lottie-react-native";
 import {
   AppState,
+  ActivityIndicator,
   Animated,
   Easing,
   KeyboardAvoidingView,
@@ -42,6 +44,9 @@ interface NativeCreateViewProps {
   photoError?: string | null;
   onPickPhoto?(): void;
   onRemovePhoto?(): void;
+  paperColor?: PaperColorId;
+  paperReady?: boolean;
+  onPaperColorChange?(color: PaperColorId): void;
   detailLevel: DetailLevel;
   detailReady: boolean;
   onDetailLevelChange(level: DetailLevel): void;
@@ -50,7 +55,7 @@ interface NativeCreateViewProps {
   copy: NativeDoodleUiCopy;
   draft: NativeDraftUi;
   generation: NativeGenerationUiState;
-  usage: { status: "loading" | "ready"; label: string; lastFree?: boolean };
+  usage: { status: "loading" | "ready" | "error"; label: string; lastFree?: boolean };
   referenceImageUri: NativeImageSource;
   reducedMotion: boolean;
   onSceneChange(scene: string): void;
@@ -65,13 +70,11 @@ interface NativeCreateViewProps {
   onOpenMore(): void;
   onOpenLarger(): void;
   onGetMore?(): void;
-  onOpenIdeas(): void;
   gridEnabled?: boolean;
   onToggleGrid?(): void;
 }
 
 const PENCIL_DRAW_ANIMATION = require("../../assets/pencil-loader.json");
-
 export function NativeCreateView(props: NativeCreateViewProps) {
   const { generation } = props;
   const scrollView = useRef<ScrollView | null>(null);
@@ -88,6 +91,7 @@ export function NativeCreateView(props: NativeCreateViewProps) {
       <ScrollView
         ref={scrollView}
         keyboardShouldPersistTaps="handled"
+        keyboardDismissMode={Platform.OS === "ios" ? "interactive" : "on-drag"}
         contentContainerStyle={[styles.scrollContent, generation.status === "waiting" && styles.waitingScrollContent]}
         showsVerticalScrollIndicator={false}
       >
@@ -107,6 +111,9 @@ function NativeComposer({
   photoError,
   onPickPhoto,
   onRemovePhoto,
+  paperColor = "yellow",
+  paperReady = true,
+  onPaperColorChange,
   detailLevel,
   detailReady,
   onDetailLevelChange,
@@ -121,7 +128,6 @@ function NativeComposer({
   onRetry,
   onSelectSuggestion,
   onRefreshSuggestions,
-  onOpenIdeas,
   reducedMotion,
   usage,
 }: NativeCreateViewProps & { error?: string; onDetailFocus(tile: View): void }) {
@@ -169,11 +175,9 @@ function NativeComposer({
   const { width, fontScale } = useWindowDimensions();
   const compact = width < 360;
   const intro = getComposerIntro(locale);
-  const stackedHeading = compact || fontScale > 1.3;
+  const stackedHeading = true;
   const stackedFooter = width < 360 || fontScale > 1.3;
-  // The heading can use the dock's empty upper space, stopping before its pull target.
-  const inlineTitleWidth = width - 2 * NATIVE_SPACING.screen - NATIVE_DETAIL_GEOMETRY.toggleInset - NATIVE_DETAIL_GEOMETRY.toggleSize - 8;
-  const disabled = preparingPhoto || !detailReady || (!photo && !canSubmitScene(draft.scene, draft.maxLength));
+  const disabled = preparingPhoto || (!detailReady || !paperReady) || (!photo && !canSubmitScene(draft.scene, draft.maxLength));
   return (
     <View style={[styles.composerScreen, compact && styles.compactComposerScreen]}>
       {error ? (
@@ -194,12 +198,12 @@ function NativeComposer({
       <View style={[styles.composerBlock, compact && styles.compactComposerBlock]}>
         {stackedHeading ? <Text accessibilityRole="header" style={[styles.composerTitle, locale === "ar" && styles.arabicComposerTitle, { fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text> : null}
         <View style={styles.inputStack}>
-          <View style={[styles.detailRow, { flexDirection: nativeRowDirection(direction) }]}>
+          <View style={[styles.detailRow, { flexDirection: fontScale > 1.3 ? "column" : nativeRowDirection(direction), alignItems: fontScale > 1.3 ? (direction === "rtl" ? "flex-end" : "flex-start") : "center" }]}>
             <View style={styles.sceneHeading}>
-              {stackedHeading ? null : <Text accessibilityRole="header" style={[styles.composerTitle, locale === "ar" && styles.arabicComposerTitle, { width: inlineTitleWidth, alignSelf: direction === "rtl" ? "flex-end" : "flex-start", fontFamily: nativeFontFamily(locale, "display"), textAlign: nativeTextAlign(direction) }]}>{intro.title}</Text>}
+
               <Text style={[styles.composerHint, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{photo ? photoCopy.hint : intro.hint}</Text>
             </View>
-            <NativeDetailSelector locale={locale} direction={direction} value={detailLevel} reducedMotion={reducedMotion} disabled={!detailReady} onChange={onDetailLevelChange} onFocusVisible={onDetailFocus} />
+            <NativeDetailSelector locale={locale} direction={direction} value={detailLevel} reducedMotion={reducedMotion} disabled={(!detailReady || !paperReady)} onChange={onDetailLevelChange} onFocusVisible={onDetailFocus} />
           </View>
           <View style={[styles.scenePaper, !photo && focused && styles.sceneInputFocused]}>
           {photo ? <View style={styles.photoSelection}>
@@ -248,7 +252,7 @@ function NativeComposer({
       </View>
 
       {photoError ? <Text accessibilityRole="alert" accessibilityLiveRegion="assertive" style={[styles.photoError, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{photoError}</Text> : null}
-      <Text accessibilityLiveRegion="polite" style={[styles.composerUsage, styles.usageBelowComposer, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{usage.status === "ready" ? usage.label : ""}</Text>
+      <NativePaperColorSelector value={paperColor} onChange={onPaperColorChange ?? (() => undefined)} locale={locale} direction={direction} disabled={!paperReady || preparingPhoto} />
 
       {!photo ? <View style={styles.suggestionsBlock}>
         <View style={[styles.suggestionsHeading, { flexDirection: nativeRowDirection(direction) }]}>
@@ -284,7 +288,6 @@ function NativeComposer({
         ))}
         </Animated.View>
       </View> : null}
-      {!photo ? <NativeArtExamples locale={locale} direction={direction} copy={copy} onOpenIdeas={onOpenIdeas} /> : null}
     </View>
   );
 }
@@ -365,6 +368,19 @@ function NativeWaitingCard({ locale, copy, direction, reducedMotion, state }: Na
   );
 }
 
+function NativeBalanceStatus({ usage, copy, locale, direction, result = false }: Pick<NativeCreateViewProps, "usage" | "copy" | "locale" | "direction"> & { result?: boolean }) {
+  const loading = usage.status === "loading";
+  const label = loading ? copy.usage.loading : usage.status === "error" ? copy.usage.unavailable
+    : usage.lastFree && result ? getNativePackCopy(locale).lastFree : usage.label;
+  return (
+    <View accessible accessibilityLabel={label} accessibilityRole={loading ? "progressbar" : "text"} accessibilityState={{ busy: loading }}
+      accessibilityLiveRegion="polite" style={{ flexDirection: nativeRowDirection(direction), alignItems: "center", gap: 6 }}>
+      {loading ? <ActivityIndicator accessible={false} size="small" color={NATIVE_COLORS.moss} /> : null}
+      <Text style={[result ? styles.usageLabel : styles.composerUsage, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{label}</Text>
+    </View>
+  );
+}
+
 function NativeResultCard({ locale, direction, copy, state, usage, reducedMotion, onDownload, onShare, onNewScene, onResultBack, onOpenMore, onOpenLarger, onGetMore, gridEnabled = false, onToggleGrid }: NativeCreateViewProps & { state: Extract<NativeGenerationUiState, { status: "ready" }> }) {
   const reveal = useMemo(() => new Animated.Value(0), []);
   const { width } = useWindowDimensions();
@@ -423,10 +439,10 @@ function NativeResultCard({ locale, direction, copy, state, usage, reducedMotion
           <NativeIcon name="more" size={23} color={NATIVE_COLORS.graphite} />
         </Pressable>
       </View>
-      <View style={[styles.freeNotice, { flexDirection: nativeRowDirection(direction) }]}>
-        <Text style={[styles.usageLabel, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{usage.lastFree ? getNativePackCopy(locale).lastFree : usage.label}</Text>
-        {usage.lastFree ? <Pressable accessibilityRole="button" onPress={onGetMore} style={styles.getMore}><Text style={[styles.getMoreText, { fontFamily: nativeFontFamily(locale, "body") }]}>{getNativePackCopy(locale).getMore}</Text></Pressable> : null}
-      </View>
+      {usage.status === "ready" && usage.lastFree ? <View style={[styles.freeNotice, { flexDirection: nativeRowDirection(direction) }]}>
+        <View style={{ flex: 1 }}><NativeBalanceStatus usage={usage} copy={copy} locale={locale} direction={direction} result /></View>
+        {usage.status === "ready" && usage.lastFree ? <Pressable accessibilityRole="button" onPress={onGetMore} style={styles.getMore}><Text style={[styles.getMoreText, { fontFamily: nativeFontFamily(locale, "body") }]}>{getNativePackCopy(locale).getMore}</Text></Pressable> : null}
+      </View> : null}
     </Animated.View>
   );
 }
@@ -464,8 +480,8 @@ const styles = StyleSheet.create({
   arabicComposerTitle: { lineHeight: 34 },
   composerHint: { color: NATIVE_COLORS.muted, fontSize: 16, lineHeight: 22 },
   inputStack: {},
-  detailRow: { alignItems: "flex-end", gap: 8 },
-  sceneHeading: { flex: 1, minWidth: 0, gap: 5, paddingBottom: 12 },
+  detailRow: { alignItems: "center", gap: 8, minHeight: 48, marginBottom: 9 },
+  sceneHeading: { flex: 1, minWidth: 0, gap: 5 },
   scenePaper: { zIndex: 1, backgroundColor: NATIVE_COLORS.paper, borderColor: NATIVE_COLORS.line, borderRadius: 16, borderWidth: 1 },
   sceneInput: { color: NATIVE_COLORS.graphite, fontSize: 17, lineHeight: 24, minHeight: 118, paddingHorizontal: 16, paddingVertical: 16, textAlignVertical: "top" },
   compactSceneInput: { fontSize: 16, lineHeight: 22 },

@@ -293,7 +293,7 @@ describe("Native multi-pack checkout",()=>{
   vi.mocked(iap.fetchProducts).mockResolvedValue([{id:"pack_regular",type:"in-app",displayPrice:"?4.49",price:4.49,currency:"GBP"}]);
   vi.mocked(iap.requestPurchase).mockImplementation(async(input)=>{
    const listener=vi.mocked(iap.purchaseUpdatedListener).mock.calls[0][0];
-   expect(input.request.google).toEqual({skus:["pack_regular"],obfuscatedAccountId:binding,obfuscatedProfileId:reference});
+   expect("google" in input.request ? input.request.google : null).toEqual({skus:["pack_regular"],obfuscatedAccountId:binding,obfuscatedProfileId:reference});
    listener({productId:"pack_regular",purchaseState:"purchased",purchaseToken:"real-shaped-receipt",obfuscatedAccountIdAndroid:binding});
   });
   const pack={productId:"pack_regular",credits:25,normalCredits:20,offerApplied:true} as const;

@@ -51,9 +51,18 @@ describe("native request contracts", () => {
 });
 
 describe("native Redis sessions", () => {
+  it("accepts absent display email only for an explicit Apple identity", async () => {
+    await expect(createNativeSession({ ...USER, provider: "apple", email: null, appleAuthenticatedAt: 100 })).resolves.toHaveProperty("accessToken");
+    await expect(createNativeSession({ ...USER, email: null })).rejects.toThrow("Invalid native session user");
+    mocks.redisCommand.mockResolvedValueOnce(JSON.stringify({ ...USER, provider: "apple", email: null, appleAuthenticatedAt: 100 }));
+    await expect(getNativeSessionUser("b".repeat(43))).resolves.toMatchObject({ provider: "apple", email: null, appleAuthenticatedAt: 100 });
+    mocks.redisCommand.mockResolvedValueOnce(JSON.stringify({ ...USER, provider: "untrusted" }));
+    await expect(getNativeSessionUser("b".repeat(43))).resolves.toBeNull();
+  });
+
   beforeEach(() => {
     mocks.redisCommand.mockReset();
-    mocks.redisCommand.mockResolvedValue("OK");
+    mocks.redisCommand.mockResolvedValue(1);
   });
 
   it("stores a random opaque token with the cookie session TTL", async () => {
@@ -61,12 +70,15 @@ describe("native Redis sessions", () => {
     expect(result.accessToken).toMatch(/^[A-Za-z0-9_-]{43}$/);
     expect(result.expiresAt).toBeGreaterThan(Date.now());
     expect(mocks.redisCommand).toHaveBeenCalledWith([
-      "SET",
+      "EVAL", expect.any(String), "5",
       expect.stringMatching(/^doodle:auth:native:[a-f0-9]{64}$/),
+      `doodle:account:${USER.id}:active`,
+      `doodle:account:${USER.id}:deleted`,
+      `doodle:account:${USER.id}:native-sessions`,
+      `doodle:auth:apple:${USER.identityKey}:state`,
       JSON.stringify(USER),
-      "EX",
       2_592_000,
-      "NX",
+      "google", 0,
     ]);
   });
 

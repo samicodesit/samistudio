@@ -353,3 +353,11 @@ describe("native Integrity challenges", () => {
   });
 
 });
+
+it("binds non-yellow paper and keeps the legacy yellow hash identical", () => {
+  const input = { challenge: "a".repeat(43), operation: "generate" as const, installId, sceneHash: "b".repeat(64), principal: accountPrincipal };
+  const legacy = createNativeRequestHash(input);
+  expect(createNativeRequestHash({ ...input, paperColor: "yellow" })).toBe(legacy);
+  expect(createNativeRequestHash({ ...input, paperColor: "pink" })).not.toBe(legacy);
+  expect(createNativeRequestHash({ ...input, paperColor: "pink" })).not.toBe(createNativeRequestHash({ ...input, paperColor: "blue" }));
+});

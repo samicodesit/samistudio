@@ -1,0 +1,34 @@
+{
+  "web": {
+    "filesPassed": 131,
+    "testsPassed": 1146,
+    "paidTestsSkipped": 1,
+    "productionBuild": "passed",
+    "typecheck": "passed",
+    "lintErrors": 0,
+    "existingLintWarnings": 3,
+    "responsiveLayouts": 13,
+    "consoleErrorsObserved": 0
+  },
+  "native": {
+    "filesPassed": 29,
+    "testsPassed": 276,
+    "typecheck": "passed",
+    "iosFixtureBuild": "passed",
+    "androidFixtureBuild": "passed",
+    "iosUITests": [
+      "iPhone 17 regular",
+      "iPhone SE 3 regular",
+      "iPhone SE 3 largest accessibility text with scrolling"
+    ],
+    "androidLayouts": [
+      "regular",
+      "360x640 dp",
+      "360x640 dp with 150% text"
+    ],
+    "savedSimplePreserved": true
+  },
+  "generationRequestsSubmitted": 0,
+  "storeUploads": 0,
+  "deployment": "pending"
+}

@@ -12,6 +12,25 @@ function googleModule(response: any): GoogleSignInApi {
 }
 
 describe("GoogleAuthService", () => {
+  it("uses the iOS OAuth client without checking Android Play Services", async () => {
+    const google = googleModule({ type: "success", data: { idToken: "ios-google-token" } });
+    google.hasPlayServices = vi.fn().mockRejectedValue(new Error("Unavailable on iOS"));
+    const exchange = vi.fn().mockResolvedValue({ authenticated: true, email: "sam@example.com", accessToken: "a".repeat(43), expiresAt: Date.now() + 60_000 });
+    const service = new GoogleAuthService({ google, platform: "ios", webClientId: "123.apps.googleusercontent.com", iosClientId: "456.apps.googleusercontent.com", signInWithGoogle: exchange });
+    await expect(service.signIn()).resolves.toMatchObject({ authenticated: true });
+    expect(google.configure).toHaveBeenCalledWith({ webClientId: "123.apps.googleusercontent.com", iosClientId: "456.apps.googleusercontent.com", offlineAccess: false });
+    expect(google.hasPlayServices).not.toHaveBeenCalled();
+    expect(exchange).toHaveBeenCalledWith("ios-google-token");
+  });
+
+  it("rejects a missing iOS OAuth configuration before starting sign-in", async () => {
+    const google = googleModule({ type: "success", data: { idToken: "ios-google-token" } });
+    const service = new GoogleAuthService({ google, platform: "ios", webClientId: "123.apps.googleusercontent.com", signInWithGoogle: vi.fn() });
+    await expect(service.signIn()).rejects.toMatchObject({ code: "auth_unavailable" });
+    expect(google.configure).not.toHaveBeenCalled();
+    expect(google.signIn).not.toHaveBeenCalled();
+  });
+
   it("configures the native SDK for the public web audience and exchanges only the ID token", async () => {
     const google = googleModule({ type: "success", data: { idToken: "google-id-token" } });
     const signInWithGoogle = vi.fn().mockResolvedValue({ authenticated: true, email: "sam@example.com", accessToken: "a".repeat(43), expiresAt: Date.now() + 60_000 });

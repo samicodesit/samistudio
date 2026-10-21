@@ -12,6 +12,27 @@ function storage() {
 }
 
 describe("NativeSessionStore", () => {
+  it("remembers paper across sessions and sign-out, with a safe corrupt-storage fallback", async () => {
+    const data=storage(), store=new NativeSessionStore(data);
+    expect(await store.getPaperColor()).toBe("yellow");
+    await store.setPaperColor("lavender");await store.clearAccessToken();
+    expect(await new NativeSessionStore(data).getPaperColor()).toBe("lavender");
+    data.values.set("doodle.paper-color","#bad");expect(await store.getPaperColor()).toBe("yellow");
+    data.getItem=async()=>{throw new Error("Unavailable");};expect(await store.getPaperColor()).toBe("yellow");
+  });
+  it("requires current consent and persists withdrawal across sessions", async () => {
+    const data = storage();
+    const store = new NativeSessionStore(data);
+    expect(await store.hasDrawingConsent()).toBe(false);
+    data.values.set("doodle.native.drawing-consent", "old-version");
+    expect(await store.hasDrawingConsent()).toBe(false);
+    await store.setDrawingConsent();
+    expect(await new NativeSessionStore(data).hasDrawingConsent()).toBe(true);
+    await store.clearDrawingConsent();
+    expect(await new NativeSessionStore(data).hasDrawingConsent()).toBe(false);
+    data.getItem = async () => { throw new Error("Storage unavailable"); };
+    expect(await store.hasDrawingConsent()).toBe(false);
+  });
   it("knows a fresh installation is new, without treating a legacy installation as a first buyer", async () => {
     const fresh = new NativeSessionStore(storage());
     expect(await fresh.getPurchaseHistoryHint()).toBe(false);
@@ -53,21 +74,23 @@ describe("NativeSessionStore", () => {
     expect(storeData.values.get("doodle.native.install")).toBe("11111111-1111-4111-8111-111111111111");
   });
 
-  it("persists a validated detail preference and defaults corrupt storage to Simple", async () => {
+  it("persists a validated detail preference and defaults corrupt storage to Medium", async () => {
     const values = new Map<string, string>();
     const storage = { getItem: async (key: string) => values.get(key) ?? null, setItem: async (key: string, value: string) => { values.set(key, value); }, deleteItem: async (key: string) => { values.delete(key); } };
     const store = new NativeSessionStore(storage);
-    expect(await store.getDetailLevel()).toBe("simple");
+    expect(await store.getDetailLevel()).toBe("medium");
+    await store.setDetailLevel("simple");
+    expect(await new NativeSessionStore(storage).getDetailLevel()).toBe("simple");
     await store.setDetailLevel("detailed");
     expect(await new NativeSessionStore(storage).getDetailLevel()).toBe("detailed");
     values.set("doodle.detail-level", "hard");
-    expect(await store.getDetailLevel()).toBe("simple");
+    expect(await store.getDetailLevel()).toBe("medium");
   });
 
-  it("falls back to Simple when device storage cannot be read", async () => {
+  it("falls back to Medium when device storage cannot be read", async () => {
     const data = storage();
     data.getItem = async () => { throw new Error("Storage unavailable"); };
-    expect(await new NativeSessionStore(data).getDetailLevel()).toBe("simple");
+    expect(await new NativeSessionStore(data).getDetailLevel()).toBe("medium");
   });
   it("retains the level when account and trial credentials are cleared", async () => {
     const data = storage();

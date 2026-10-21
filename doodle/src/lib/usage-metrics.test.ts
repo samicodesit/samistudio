@@ -8,6 +8,12 @@ vi.mock("next/server", () => ({ after: schedule }));
 const event = { metric: "drawings", channel: "web", id: "one", actor: "trial:one" } as const;
 
 describe("non-blocking counting", () => {
+  it("retains iPhone generation outcomes in the existing metrics store", async () => {
+    const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response('{"result":1}'));
+    await recordOperation({ metric: "generation", channel: "ios", outcome: "success" });
+    expect(fetch).toHaveBeenCalledOnce();
+    expect(String(fetch.mock.calls[0][1]?.body)).toContain("generation:ios:success");
+  });
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.unstubAllEnvs();

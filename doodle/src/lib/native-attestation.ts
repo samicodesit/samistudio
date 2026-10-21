@@ -1,3 +1,4 @@
+import { isPaperColorId, storedPaperColor, type PaperColorId } from "./generation/paper-colors";
 import "server-only";
 import { isDetailLevel, storedDetailLevel, type DetailLevel } from "./generation/detail-level";
 
@@ -72,6 +73,7 @@ type ChallengeRecord = {
   installId: string;
   sceneHash: string | null;
   detailLevel?: DetailLevel;
+  paperColor?: PaperColorId;
   principal: string;
   requestHash: string;
 };
@@ -186,6 +188,7 @@ function stableRequestHash(record: {
   installId: string;
   sceneHash: string | null;
   detailLevel?: DetailLevel;
+  paperColor?: PaperColorId;
   principal: string;
 }) {
   return createHash("sha256")
@@ -212,6 +215,7 @@ export function createNativeRequestHash(input: {
   installId: string;
   sceneHash: string | null;
   detailLevel?: DetailLevel;
+  paperColor?: PaperColorId;
   principal: string;
 }) {
   return stableRequestHash({
@@ -220,7 +224,7 @@ export function createNativeRequestHash(input: {
     installId: input.installId,
     sceneHash: input.sceneHash,
     principal: input.principal,
-    ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}),
+    ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}), ...(input.paperColor && input.paperColor !== "yellow" ? { paperColor: input.paperColor } : {}),
   });
 }
 
@@ -229,6 +233,7 @@ export async function createNativeChallenge(input: {
   installId: string;
   sceneHash: string | null;
   detailLevel?: DetailLevel;
+  paperColor?: PaperColorId;
   principal: string;
 }): Promise<NativeChallenge> {
   if (!getNativeAttestationConfig()) throw new NativeAttestationUnavailableError();
@@ -236,8 +241,8 @@ export async function createNativeChallenge(input: {
   if (
     !install ||
     !validOperation(input.operation) ||
-    (input.detailLevel !== undefined && !isDetailLevel(input.detailLevel)) ||
-    (input.operation === "guest" && input.detailLevel !== undefined) ||
+    (input.detailLevel !== undefined && !isDetailLevel(input.detailLevel)) || (input.paperColor !== undefined && !isPaperColorId(input.paperColor)) ||
+    (input.operation === "guest" && (input.detailLevel !== undefined || input.paperColor !== undefined)) ||
     !validSceneHash(input.sceneHash) ||
     !PRINCIPAL_PATTERN.test(input.principal) ||
     (input.operation === "guest" && input.sceneHash !== null) ||
@@ -255,7 +260,7 @@ export async function createNativeChallenge(input: {
     installId: install,
     sceneHash: input.sceneHash,
     principal: input.principal.toLowerCase(),
-    ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}),
+    ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}), ...(input.paperColor && input.paperColor !== "yellow" ? { paperColor: input.paperColor } : {}),
   };
   const requestHash = createNativeRequestHash(recordWithoutHash);
   const record: ChallengeRecord = {
@@ -264,7 +269,7 @@ export async function createNativeChallenge(input: {
     sceneHash: input.sceneHash,
     principal: input.principal.toLowerCase(),
     requestHash,
-    ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}),
+    ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}), ...(input.paperColor && input.paperColor !== "yellow" ? { paperColor: input.paperColor } : {}),
   };
   const result = await redisCommand([
     "SET",
@@ -289,8 +294,8 @@ function parsedChallenge(value: string): ChallengeRecord | null {
     const record = parsed as Partial<ChallengeRecord>;
     if (
       !validOperation(record.operation) ||
-      (record.detailLevel !== undefined && !isDetailLevel(record.detailLevel)) ||
-      (record.operation === "guest" && record.detailLevel !== undefined) ||
+      (record.detailLevel !== undefined && !isDetailLevel(record.detailLevel)) || (record.paperColor !== undefined && !isPaperColorId(record.paperColor)) ||
+      (record.operation === "guest" && (record.detailLevel !== undefined || record.paperColor !== undefined)) ||
       typeof record.installId !== "string" ||
       !UUID_PATTERN.test(record.installId) ||
       (record.sceneHash !== null && (typeof record.sceneHash !== "string" || !SHA256_HEX_PATTERN.test(record.sceneHash))) ||
@@ -307,7 +312,7 @@ function parsedChallenge(value: string): ChallengeRecord | null {
       sceneHash: record.sceneHash,
       principal: record.principal.toLowerCase(),
       requestHash: record.requestHash,
-      ...(record.detailLevel && record.detailLevel !== "simple" ? { detailLevel: record.detailLevel } : {}),
+      ...(record.detailLevel && record.detailLevel !== "simple" ? { detailLevel: record.detailLevel } : {}), ...(record.paperColor && record.paperColor !== "yellow" ? { paperColor: record.paperColor } : {}),
     };
   } catch {
     return null;
@@ -410,6 +415,7 @@ export async function consumeNativeAttestation(input: {
   installId: string;
   sceneHash: string | null;
   detailLevel?: DetailLevel;
+  paperColor?: PaperColorId;
   principal: string;
   challenge: string;
   integrityToken: string;
@@ -426,8 +432,8 @@ export async function consumeNativeAttestation(input: {
   if (
     !install ||
     !validOperation(input.operation) ||
-    (input.detailLevel !== undefined && !isDetailLevel(input.detailLevel)) ||
-    (input.operation === "guest" && input.detailLevel !== undefined) ||
+    (input.detailLevel !== undefined && !isDetailLevel(input.detailLevel)) || (input.paperColor !== undefined && !isPaperColorId(input.paperColor)) ||
+    (input.operation === "guest" && (input.detailLevel !== undefined || input.paperColor !== undefined)) ||
     !validSceneHash(input.sceneHash) ||
     !PRINCIPAL_PATTERN.test(input.principal) ||
     !CHALLENGE_PATTERN.test(input.challenge) ||
@@ -450,6 +456,7 @@ export async function consumeNativeAttestation(input: {
     record.operation !== input.operation ||
     record.installId !== install ||
     record.sceneHash !== input.sceneHash ||
+    storedPaperColor(record.paperColor) !== storedPaperColor(input.paperColor) ||
     storedDetailLevel(record.detailLevel) !== storedDetailLevel(input.detailLevel) ||
     record.principal !== input.principal.toLowerCase() ||
     record.requestHash !== createNativeRequestHash({
@@ -458,7 +465,7 @@ export async function consumeNativeAttestation(input: {
       installId: install,
       sceneHash: input.sceneHash,
       principal: input.principal.toLowerCase(),
-      ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}),
+      ...(input.detailLevel && input.detailLevel !== "simple" ? { detailLevel: input.detailLevel } : {}), ...(input.paperColor && input.paperColor !== "yellow" ? { paperColor: input.paperColor } : {}),
     })
   ) {
     return "invalid";

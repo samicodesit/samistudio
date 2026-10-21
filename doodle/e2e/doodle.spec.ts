@@ -136,8 +136,8 @@ test.describe("Doodle mobile workflow", () => {
     await expectNoOverflow(page);
     await testInfo.attach("result.png", { body: await page.screenshot(), contentType: "image/png" });
 
-    await expect(page.getByRole("button", { name: /View larger/ })).toBeVisible();
-    await page.getByRole("button", { name: /View larger/ }).click();
+    await expect(page.getByRole("button", { name: "View larger", exact: true })).toBeVisible();
+    await page.getByRole("button", { name: "View larger", exact: true }).click();
     const dialog = page.getByRole("dialog");
     await expect(dialog).toBeVisible();
     await expect(dialog.getByText("Doodle, up close")).toBeHidden();
@@ -307,7 +307,7 @@ test.describe("Task 7 purchase and account QA", () => {
     await expect(accountTrigger).toBeFocused();
     await page.keyboard.press("Enter");
     await page.keyboard.press("Tab");
-    await expect(page.getByRole("button", { name: "Get 10 doodles" })).toBeFocused();
+    await expect(page.getByRole("button", { name: "Get more", exact: true })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("button", { name: "Sign out" })).toBeFocused();
     await page.keyboard.press("Tab");
@@ -378,9 +378,11 @@ test.describe("Task 8 monetized workflow", () => {
     await page.getByRole("button", { name: "More options" }).click();
     await page.getByRole("button", { name: "Redraw this idea" }).click();
     await expect(page.getByRole("dialog", { name: "Keep doodling" })).toBeVisible();
-    await expect(page.getByRole("textbox")).toHaveValue("A cat under an umbrella");
     await expectNoOverflow(page);
     await testInfo.attach("task-8-mobile-gate.png", { body: await page.screenshot(), contentType: "image/png" });
+    await page.keyboard.press("Escape");
+    await page.getByRole("button", { name: "Back", exact: true }).click();
+    await expect(page.getByRole("textbox")).toHaveValue("A cat under an umbrella");
   });
 
   test("restores a cancelled Checkout scene and spends confirmed paid credit", async ({ page, baseURL }, testInfo) => {
@@ -419,8 +421,8 @@ test.describe("Task 8 monetized workflow", () => {
       body: JSON.stringify({ balance: 10 }),
     }));
     await page.goto("/?checkout=cs_paid");
-    await expect(page.getByRole("dialog", { name: "10 doodles added" })).toBeVisible();
-    await page.getByRole("button", { name: "Start drawing" }).click();
+    await expect(page.getByRole("status")).toHaveText("Added 10 doodles");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
     await expect(page.getByRole("textbox")).toHaveValue("A kite above the sea");
 
     await page.unroute("**/api/generate");
@@ -485,8 +487,10 @@ test.describe("Task 8 monetized workflow", () => {
       body: JSON.stringify({ balance: 10 }),
     }));
     await page.goto("/ar?checkout=cs_ar_paid");
-    await expect(page.getByRole("dialog", { name: "تمت إضافة 10 رسومات" })).toBeVisible();
-    await expectFullyInViewport(page, slip);
+    const confirmation = page.getByRole("status");
+    await expect(confirmation).toHaveText("تمت إضافة 10 رسومات");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await expectFullyInViewport(page, confirmation);
     await expectNoOverflow(page);
     await testInfo.attach("arabic-success-390x844.png", { body: await page.screenshot(), contentType: "image/png" });
   });
@@ -510,7 +514,7 @@ test.describe("Doodle desktop and accessibility", () => {
       await page.setViewportSize({ width: item.width, height: item.height });
       await page.goto(item.path);
       await page.getByRole("textbox").fill("A small cat holding a heart");
-      await page.locator(".composer-footer button").click();
+      await page.locator(".composer-footer > button").click();
       await expect(page.locator(".doodle-workspace-ready")).toBeVisible();
       await expectResultActionHierarchy(page, item.newScene, item.redraw);
       await expectNoOverflow(page);
@@ -531,7 +535,7 @@ test.describe("Doodle desktop and accessibility", () => {
     await expectNoOverflow(page);
     await page.getByRole("textbox").fill("Two cats hug");
 
-    const focusableSelector = ".doodle-header .doodle-wordmark, .landing-examples-link, .language-switcher summary, .account-sign-in-action, textarea, .detail-tile[tabindex=\"0\"], .detail-toggle, .composer-footer button, .landing-suggestions button, .doodle-stage-reference";
+    const focusableSelector = ".doodle-header .doodle-wordmark, .landing-examples-link, .language-switcher summary, .account-sign-in-action, textarea, .detail-trigger, .composer-footer button, .landing-suggestions button, .doodle-stage-reference";
     const controls = page.locator(focusableSelector);
     await controls.first().focus();
     for (let index = 0; index < await controls.count(); index += 1) {

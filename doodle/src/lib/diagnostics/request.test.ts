@@ -9,26 +9,33 @@ const id = "11111111-1111-4111-8111-111111111111";
 function request(reference = id) { return new NextRequest("https://doodle.test/api/generate?secret=private", { headers: { "x-doodle-request-id": reference, "x-doodle-client": "native-android", authorization: "Bearer private-token" } }); }
 
 describe("request failure diagnostics", () => {
+  it("identifies iPhone failures without recording authentication or request content", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    await diagnoseRequest(new Request("https://doodle.test/api/generate", { method: "POST", headers: { "x-doodle-client": "native-ios", authorization: "Bearer private-token" }, body: "private-scene" }), "generation", async () => Response.json({ error: "native_attestation_failed" }, { status: 403 }));
+    const event = JSON.parse(warn.mock.calls[0][1] as string);
+    expect(event.channel).toBe("ios");
+    expect(JSON.stringify(event)).not.toContain("private");
+  });
   it("copies only allowlisted correction metadata and excludes arbitrary attached content", async () => {
     const info = vi.spyOn(console, "info").mockImplementation(() => {});
     await diagnoseRequest(new Request("https://doodle.test/api/generate", { method: "POST" }), "generation", async (context) => {
-      context.paperCorrection = Object.assign({ status: "uncertain" as const, version: "paper-v1" as const, durationMs: 40 }, { scene: "private-scene", image: "private-image", error: "private-error" });
+      context.paperCorrection = Object.assign({ status: "uncertain" as const, version: "paper-v2" as const, durationMs: 40 }, { scene: "private-scene", image: "private-image", error: "private-error" });
       return new Response("png");
     });
     const event = JSON.parse(info.mock.calls[0][1] as string);
-    expect(event.paperCorrection).toEqual({ status: "uncertain", version: "paper-v1", durationMs: 40 });
+    expect(event.paperCorrection).toEqual({ status: "uncertain", version: "paper-v2", durationMs: 40 });
     expect(JSON.stringify(event)).not.toContain("private");
   });
   it("correlates correction status and timing with a successful generation without storing image content", async () => {
     vi.mocked(trackServerDiagnostic).mockClear();
     const info = vi.spyOn(console, "info").mockImplementation(() => {});
     const response = await diagnoseRequest(new Request("https://doodle.test/api/generate", { method: "POST", body: "private-scene" }), "generation", async (context) => {
-      context.paperCorrection = { status: "corrected", version: "paper-v1", durationMs: 133 };
+      context.paperCorrection = { status: "corrected", version: "paper-v2", durationMs: 133 };
       return new Response("private-image", { headers: { "content-type": "image/png" } });
     });
     expect(await response.text()).toBe("private-image");
     const event = JSON.parse(info.mock.calls[0][1] as string);
-    expect(event).toMatchObject({ code: "ok", paperCorrection: { status: "corrected", version: "paper-v1", durationMs: 133 } });
+    expect(event).toMatchObject({ code: "ok", paperCorrection: { status: "corrected", version: "paper-v2", durationMs: 133 } });
     expect(event.requestId).toBe(response.headers.get("x-doodle-request-id"));
     expect(JSON.stringify(event)).not.toContain("private");
     expect(trackServerDiagnostic).not.toHaveBeenCalled();

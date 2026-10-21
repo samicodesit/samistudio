@@ -40,8 +40,7 @@ for (const { width, locale } of [{ width: 1280, locale: "en" }, { width: 390, lo
       await page.locator(".doodle-stage-reference").click();
     } else {
       await expect(page.locator(".doodle-stage-reference")).toBeHidden();
-      await page.locator(".landing-example-papers a").click();
-      await page.locator(".idea-image-button").first().click();
+      await page.locator(".landing-example-targets button").first().click();
     }
     await dialog.getByRole("button", { name: GRID_COPY[locale].show, exact: true }).click();
     await expect(dialog.locator(".copy-grid-overlay")).toHaveCSS("opacity", "1");

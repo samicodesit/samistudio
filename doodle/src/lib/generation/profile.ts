@@ -1,8 +1,9 @@
+import { paperColorHex } from "./paper-colors";
 import type { DetailLevel } from "./detail-level";
 
 export type ImageQuality = "low" | "medium" | "high";
 
-export const DOODLE_PAPER_COLOR = "#FFEB8A";
+export const DOODLE_PAPER_COLOR = paperColorHex("yellow");
 
 export interface GenerationProfile {
   id: DetailLevel;

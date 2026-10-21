@@ -1,7 +1,19 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function simulateInstalledPlayWindow(page: Page) {
+  await page.addInitScript(() => {
+    const matchMedia = window.matchMedia.bind(window);
+    window.matchMedia = query => {
+      const media = matchMedia(query);
+      if (query.includes("display-mode: standalone")) Object.defineProperty(media, "matches", { value: true });
+      return media;
+    };
+  });
+}
 
 for (const width of [320, 1440]) {
   test(`Play purchase uses catalog and server verification at ${width}px`, async ({ page }, testInfo) => {
+    await simulateInstalledPlayWindow(page);
     await page.setViewportSize({ width, height: 900 });
     let balance = 0;
     let stripeCalls = 0;
@@ -48,6 +60,7 @@ for (const width of [320, 1440]) {
 }
 
 test("Play runtime does not fall back to Stripe when its API is missing", async ({ page }) => {
+  await simulateInstalledPlayWindow(page);
   let stripeCalls = 0;
   await page.route("**/api/account", route => route.fulfill({ json: { authenticated: true, email: "test@example.com", balance: 0, freeRemaining: null } }));
   await page.route("**/api/generate", route => route.fulfill({ status: 402, json: { error: "payment_required" } }));

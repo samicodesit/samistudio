@@ -12,6 +12,29 @@ const brandAdaptiveIcon = "./assets/doodle-adaptive-icon-maskable.png";
 const defaultGoogleWebClientId = "368967912119-eg869v0671g2kvg215l1ru91n1p1ihsn.apps.googleusercontent.com";
 const defaultIntegrityCloudProjectNumber = "368967912119";
 const iosGoogleUrlScheme = process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME?.trim();
+const iosGoogleClientId = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID?.trim();
+const appleTeamId = process.env.DOODLE_APPLE_TEAM_ID?.trim();
+const iosBuildVariant = process.env.DOODLE_IOS_BUILD_VARIANT?.trim() || "production";
+if (iosBuildVariant !== "production" && iosBuildVariant !== "fixture") {
+  throw new Error("DOODLE_IOS_BUILD_VARIANT must be production or fixture");
+}
+const iosFixture = iosBuildVariant === "fixture";
+const appAttestEnvironment = process.env.DOODLE_APP_ATTEST_ENVIRONMENT?.trim() || "production";
+if (appAttestEnvironment !== "production" && appAttestEnvironment !== "development") {
+  throw new Error("DOODLE_APP_ATTEST_ENVIRONMENT must be production or development");
+}
+if (appleTeamId && !/^[A-Z0-9]{10}$/.test(appleTeamId)) {
+  throw new Error("DOODLE_APPLE_TEAM_ID must be a 10-character Apple team ID");
+}
+if (iosGoogleClientId && !/^\d+-[^\s]+\.apps\.googleusercontent\.com$/.test(iosGoogleClientId)) {
+  throw new Error("EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID must be an iOS OAuth client ID");
+}
+if (iosGoogleClientId && iosGoogleUrlScheme && iosGoogleUrlScheme !== `com.googleusercontent.apps.${iosGoogleClientId.replace(/\.apps\.googleusercontent\.com$/, "")}`) {
+  throw new Error("Google iOS client ID and URL scheme must match");
+}
+const resolvedIosGoogleUrlScheme = iosGoogleUrlScheme || (iosGoogleClientId
+  ? `com.googleusercontent.apps.${iosGoogleClientId.replace(/\.apps\.googleusercontent\.com$/, "")}`
+  : undefined);
 
 const googleWebClientId = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID?.trim() || defaultGoogleWebClientId;
 const integrityCloudProjectNumber = process.env.EXPO_PUBLIC_GOOGLE_CLOUD_PROJECT_NUMBER?.trim() || defaultIntegrityCloudProjectNumber;
@@ -29,7 +52,12 @@ const plugins: NonNullable<ExpoConfig["plugins"]> = [
   "./plugins/withDoodleConfigurationChanges",
   "./plugins/withDoodleReleaseSigning",
   "expo-dev-client",
-  ["expo-image-picker", { cameraPermission: false, microphonePermission: false, photosPermission: "Choose a photo to turn into a doodle." }],
+  "expo-asset",
+  "expo-image",
+  "expo-localization",
+  "expo-apple-authentication",
+  "expo-sharing",
+  ["expo-image-picker", { cameraPermission: false, microphonePermission: false, photosPermission: false }],
   [
     "expo-font",
     {
@@ -76,13 +104,21 @@ const plugins: NonNullable<ExpoConfig["plugins"]> = [
       },
     },
   ],
-  ["expo-media-library", { granularPermissions: ["photo"], isAccessMediaLocationEnabled: false }],
-  "expo-secure-store",
+  ["expo-media-library", {
+    granularPermissions: ["photo"],
+    isAccessMediaLocationEnabled: false,
+    photosPermission: false,
+    savePhotosPermission: "Save the doodle you create to your photo library when you tap Save.",
+  }],
+  ["expo-secure-store", { faceIDPermission: false }],
   "expo-splash-screen",
   "expo-iap",
   [
     "expo-build-properties",
     {
+      ios: {
+        enableSceneSupport: true,
+      },
       android: {
         compileSdkVersion: 36,
         targetSdkVersion: 36,
@@ -93,8 +129,8 @@ const plugins: NonNullable<ExpoConfig["plugins"]> = [
   ],
 ];
 
-if (iosGoogleUrlScheme) {
-  plugins.push(["@react-native-google-signin/google-signin", { iosUrlScheme: iosGoogleUrlScheme }]);
+if (resolvedIosGoogleUrlScheme) {
+  plugins.push(["@react-native-google-signin/google-signin", { iosUrlScheme: resolvedIosGoogleUrlScheme }]);
 }
 
 const config: NativeExpoConfig = {
@@ -114,7 +150,7 @@ const config: NativeExpoConfig = {
   runtimeVersion: { policy: "appVersion" },
   android: {
     package: packageName,
-    versionCode: 12,
+    versionCode: 13,
     // Doodle uses the system picker for access to one selected photo. Keep
     // legacy save support for Android <= 12, while
     // preventing modern gallery and overlay permissions from entering the
@@ -131,19 +167,31 @@ const config: NativeExpoConfig = {
       // The approved asset is a complete opaque composition. Keep it as the
       // foreground and do not layer a second background tile beneath it.
       foregroundImage: brandAdaptiveIcon,
-      backgroundColor: "#eef1ea",
+      backgroundColor: "#ffeb8a",
     },
   },
   ios: {
-    bundleIdentifier: packageName,
-    supportsTablet: true,
+    bundleIdentifier: iosFixture ? `${packageName}.fixture` : packageName,
+    buildNumber: "5",
+    deploymentTarget: "16.4",
+    supportsTablet: false,
+    usesAppleSignIn: true,
+    entitlements: {
+      "com.apple.developer.devicecheck.appattest-environment": appAttestEnvironment,
+    },
+    ...(appleTeamId ? { appleTeamId } : {}),
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+      ...(iosFixture ? { CFBundleDisplayName: "Doodle QA" } : {}),
+    },
   },
   plugins,
   extra: {
     apiBaseUrl: process.env.EXPO_PUBLIC_API_BASE_URL ?? "https://doodle.samistudio.nl",
     googleWebClientId,
+    googleIosClientId: iosGoogleClientId || null,
     integrityCloudProjectNumber,
-    nativeFixtureMode: process.env.EXPO_PUBLIC_NATIVE_FIXTURE_MODE === "true",
+    nativeFixtureMode: iosFixture || process.env.EXPO_PUBLIC_NATIVE_FIXTURE_MODE === "true",
   },
 };
 

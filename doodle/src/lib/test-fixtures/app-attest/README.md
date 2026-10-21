@@ -1,0 +1,1 @@
+Public Apple-signed verification fixtures from node-app-attest 1.0.1, MIT license. Source: https://github.com/uebelack/node-app-attest/tree/main/test/fixtures . Captured certificates date from 2024, so positive tests validate at 2024-03-01; current-time validation must reject them. These are upstream test identities, never owner or production data.

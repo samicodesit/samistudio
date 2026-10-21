@@ -1,4 +1,6 @@
 "use client";
+import { usePaperColor } from "./use-paper-color";
+import { storedPaperColor, type PaperColorId } from "@/lib/generation/paper-colors";
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
@@ -25,7 +27,7 @@ import { getPackCopy, fillPackText } from "@/lib/pack-copy";
 import { saveCheckoutDraft, readCheckoutDraft, discardCheckoutDraft } from "@/lib/checkout-draft-store";
 import { getPhotoCopy, photoFailureMessage } from "@/lib/photo-copy";
 
-type DoodleInput = { scene: string; detailLevel: DetailLevel; photo?: string };
+type DoodleInput = { paperColor: PaperColorId; scene: string; detailLevel: DetailLevel; photo?: string };
 
 type GenerationState =
   | { status: "idle"; imageUrl: null; error: null }
@@ -56,7 +58,7 @@ const INITIAL_ACCOUNT: AccountSummary = {
 };
 
 type ReturnIntent = "auth" | "account" | "checkout";
-type SavedReturn = { scene?: string; intent?: ReturnIntent; path?: string };
+type SavedReturn = { paperColor?: PaperColorId; scene?: string; intent?: ReturnIntent; path?: string };
 const DOODLE_HOME_PATHS = new Set(SUPPORTED_LOCALES.map(localePath));
 
 function readSavedReturn(): SavedReturn | null {
@@ -65,6 +67,7 @@ function readSavedReturn(): SavedReturn | null {
     if (!saved || typeof saved !== "object") return null;
     const value = saved as Record<string, unknown>;
     return {
+      paperColor: storedPaperColor(value.paperColor),
       scene: typeof value.scene === "string" ? value.scene : undefined,
       intent: value.intent === "auth" || value.intent === "account" || value.intent === "checkout" ? value.intent : undefined,
       path: typeof value.path === "string" ? value.path : undefined,
@@ -95,6 +98,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
   const [scene, setScene] = useState(initialScene);
   const { photo, preparing: preparingPhoto, error: photoError, input: photoInputRef, select: selectPhoto, remove: removePhoto, pick: pickPhoto } = usePhotoDraft(scene, setScene, getPhotoCopy(locale));
   const generationInFlight = useRef(false);
+  const { paperColor, paperReady, selectPaperColor } = usePaperColor();
   const { detailLevel, detailReady, selectDetailLevel } = useDetailLevel(initialDetailLevel);
   const initialIds = initialSuggestionIds ?? DEFAULT_SUGGESTION_IDS;
   const [suggestionIds, setSuggestionIds] = useState<readonly SceneIdeaId[]>(initialIds);
@@ -103,6 +107,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
   const [generation, setGeneration] = useState<GenerationState>(IDLE_STATE);
   const [account, setAccount] = useState<AccountSummary>(INITIAL_ACCOUNT);
   const [accountReady, setAccountReady] = useState(false);
+  const [accountUnavailable, setAccountUnavailable] = useState(false);
   const [isPurchaseOpen, setIsPurchaseOpen] = useState(false);
   const [signInOnly, setSignInOnly] = useState(false);
   const [purchaseError, setPurchaseError] = useState<string | null>(null);
@@ -185,6 +190,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
   }, [accountHost]);
 
   const replaceAccount = useCallback((nextAccount: AccountSummary) => {
+    setAccountUnavailable(false);
     identityRevision.current += 1;
     usageRevision.current += 1;
     if(nextAccount.hasPurchased===true)rememberPurchase();
@@ -310,7 +316,8 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
       let returnedAccount: AccountSummary | null = null;
       try {
         const response = await fetch("/api/account", { cache: "no-store", headers: { "x-doodle-packs": "v1" } });
-        if (response.ok && active) {
+        if (!response.ok) throw new Error("Account unavailable");
+        if (active) {
           const nextAccount = (await response.json()) as AccountSummary;
           returnedAccount = nextAccount;
           if(nextAccount.hasPurchased===true)rememberPurchase();
@@ -322,17 +329,18 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
             hasPurchased: identityRevision.current === identity ? nextAccount.hasPurchased : current.hasPurchased,
           }));
         }
-      } catch {}
+      } catch { if (active && usageRevision.current === usage) setAccountUnavailable(true); }
       if (active) setAccountReady(true);
       if (!active) return;
       if (restoredScene !== null) setScene(restoredScene);
+      if ((authReturn || checkoutReturn) && savedReturn?.paperColor) selectPaperColor(savedReturn.paperColor);
       if (authReturn || checkoutReturn) {
         try {
           const draft=await readCheckoutDraft();
           if(draft && active){
             revokeCurrentUrl();
             const imageUrl=URL.createObjectURL(draft.image);currentObjectUrl.current=imageUrl;
-            setGeneration({status:"ready",imageUrl,imageFile:new File([draft.image],"doodle.png",{type:draft.image.type||"image/png"}),error:null,input:{scene:draft.scene,detailLevel:draft.detailLevel,...(draft.photo?{photo:draft.photo}:{})},lastFree:draft.lastFree});
+            setGeneration({status:"ready",imageUrl,imageFile:new File([draft.image],"doodle.png",{type:draft.image.type||"image/png"}),error:null,input:{scene:draft.scene,detailLevel:draft.detailLevel,paperColor:storedPaperColor(draft.paperColor),...(draft.photo?{photo:draft.photo}:{})},lastFree:draft.lastFree});
             setScene(draft.scene);
             discardCheckoutDraft();
           }
@@ -367,7 +375,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
     return () => {
       active = false;
     };
-  }, [confirmCheckout, copy.auth.authError, removeQuery, revokeCurrentUrl]);
+  }, [selectPaperColor, confirmCheckout, copy.auth.authError, removeQuery, revokeCurrentUrl]);
 
   function updateRemaining(response: Response) {
     const paid = response.headers.get("X-Doodle-Paid-Remaining");
@@ -391,11 +399,11 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
   }
 
   async function preserveCheckoutDrawing() {
-    if(generation.status==="ready")await saveCheckoutDraft({image:generation.imageFile,scene:generation.input.scene,detailLevel:generation.input.detailLevel,photo:generation.input.photo,lastFree:generation.lastFree===true});
+    if(generation.status==="ready")await saveCheckoutDraft({image:generation.imageFile,scene:generation.input.scene,detailLevel:generation.input.detailLevel,paperColor:generation.input.paperColor,photo:generation.input.photo,lastFree:generation.lastFree===true});
   }
 
-  async function createDoodle(input: DoodleInput = { scene, detailLevel, ...(photo ? { photo: photo.base64 } : {}) }) {
-    if (!detailReady || preparingPhoto || (!input.photo && !input.scene.trim()) || generationInFlight.current) return;
+  async function createDoodle(input: DoodleInput = { scene, detailLevel, paperColor, ...(photo ? { photo: photo.base64 } : {}) }) {
+    if (!detailReady || !paperReady || preparingPhoto || (!input.photo && !input.scene.trim()) || generationInFlight.current) return;
     if (accountReady && account.balance === 0 && account.freeRemaining === 0) { openPaywall("tapped_create"); return; }
     const previousGeneration = generation;
     generationInFlight.current = true;
@@ -408,7 +416,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(input.photo ? { photo: input.photo, detailLevel: input.detailLevel } : { scene: input.scene, detailLevel: input.detailLevel }),
+        body: JSON.stringify({ ...(input.photo ? { photo: input.photo } : { scene: input.scene }), detailLevel: input.detailLevel, ...(input.paperColor !== "yellow" ? { paperColor: input.paperColor } : {}) }),
       });
 
       updateRemaining(response);
@@ -496,7 +504,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
       ? generation.imageUrl
       : landing ? LANDING_EXAMPLE : "/references/doodle-reference-kiss.png";
   const usage = accountReady
-    ? account.authenticated && (account.balance > 0 || account.freeRemaining === null)
+    ? accountUnavailable ? copy.errors.unavailable : account.authenticated && (account.balance > 0 || account.freeRemaining === null)
       ? formatCount(locale, copy.usage.paidLeft, account.balance + (account.freeRemaining ?? 0))
       : account.freeRemaining !== null
         ? formatCount(locale, copy.usage.freeLeft, account.freeRemaining)
@@ -557,11 +565,7 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
             <h1 id="ready-title">{copy.status.readyTitle}</h1>
             <ResultActions imageUrl={generation.imageUrl} imageFile={generation.imageFile} scene={generation.input.photo ? "Photo doodle" : generation.input.scene} locale={locale} onTryAgain={() => createDoodle(generation.input)} onNewScene={handleNewScene} copy={copy.actions} />
             {generation.lastFree && account.balance === 0 ? <div className="doodle-last-free"><span>{packCopy.lastFree}</span><button type="button" onClick={()=>openPaywall("get_more")}>{packCopy.getMore}</button></div> : null}
-            <div className="workspace-usage">
-              {usage === null
-                ? <span className="usage-loading" role="status" aria-label={copy.account.label} />
-                : <span>{usage}</span>}
-            </div>
+
           </section>
         ) : (
           <SceneComposer
@@ -576,7 +580,9 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
             onCreate={() => createDoodle()}
             locale={locale}
             detailLevel={detailLevel}
-            detailReady={detailReady}
+            detailReady={detailReady && paperReady}
+            paperColor={paperColor}
+            onPaperColorChange={selectPaperColor}
             onDetailLevelChange={selectDetailLevel}
             copy={{ ...copy.composer, ...getComposerIntro(locale), ...(landing ? { placeholder: landing.examplePrompt } : {}) }}
             usage={usage}
@@ -677,6 +683,8 @@ export function DoodleClient({ locale, copy, initialScene = "", initialDetailLev
           onClose={closePurchase}
           onAccountChange={replaceAccount}
           signInOnly={signInOnly}
+          usageLabel={usage}
+          paperColor={paperColor}
         />
       ) : null}
     </div>

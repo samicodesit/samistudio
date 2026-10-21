@@ -105,7 +105,7 @@ android {
         applicationId 'nl.samistudio.doodle'
         minSdk = rootProject.ext.minSdkVersion
         targetSdk = rootProject.ext.targetSdkVersion
-        versionCode 10
+        versionCode 13
         versionName "0.1.8"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
@@ -157,7 +157,6 @@ android {
         // package id, and is never suitable for distribution verification.
         fixture {
             initWith release
-            signingConfig = signingConfigs.debug
             applicationIdSuffix '.fixture'
             matchingFallbacks = ['release']
             debuggable false
@@ -225,5 +224,19 @@ dependencies {
         implementation("com.facebook.react:hermes-android")
     } else {
         implementation jscFlavor
+    }
+}
+
+// Doodle shared source and public build configuration are bundle inputs.
+tasks.withType(com.facebook.react.tasks.BundleHermesCTask).configureEach {
+    inputs.dir(new File(rootDir, '../../src')).withPropertyName('doodleSharedSource')
+    [
+        'EXPO_PUBLIC_NATIVE_FIXTURE_MODE',
+        'EXPO_PUBLIC_API_BASE_URL',
+        'EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID',
+        'EXPO_PUBLIC_GOOGLE_CLOUD_PROJECT_NUMBER',
+        'EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME',
+    ].each { name ->
+        inputs.property("doodlePublicConfig.${name}", System.getenv(name) ?: '')
     }
 }

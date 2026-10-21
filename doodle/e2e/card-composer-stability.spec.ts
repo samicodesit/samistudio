@@ -80,7 +80,7 @@ async function openComposer(page: Page, locale: LocaleCase) {
   await page.getByRole("button", { name: locale.more, exact: true }).click();
   await page.getByRole("button", { name: locale.card, exact: true }).click();
   await expect(page.locator(".card-composer-dialog")).toBeVisible();
-  await expect(page.locator(".share-action")).toBeVisible();
+  await expect(page.locator(".card-composer-actions .share-action")).toBeVisible();
   await expect(page.locator(".card-composer-actions")).not.toHaveClass(/is-single/);
   await expect(page.locator(".card-composer-actions .primary-action")).toBeEnabled();
 }

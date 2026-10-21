@@ -1,86 +1,89 @@
 "use client";
 
 import Image from "next/image";
-import { useId, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } from "react";
+import { createPortal } from "react-dom";
+import { Check, ChevronDown, X } from "lucide-react";
 import { DETAIL_LEVELS, type DetailLevel } from "@/lib/generation/detail-level";
-import { detailDockSwipe } from "@/lib/detail-dock";
 import { getDetailLevelCopy } from "@/lib/detail-level-copy";
 import type { Locale } from "@/lib/i18n";
+
+export const DETAIL_EXAMPLES: Record<DetailLevel, string> = {
+  simple: "/ideas/thumbs/birthday-dog-simple-320.webp",
+  medium: "/ideas/thumbs/birthday-dog-medium-320.webp",
+  detailed: "/ideas/thumbs/birthday-dog-detailed-320.webp",
+};
 
 export function DetailLevelSelector({ locale, value, disabled = false, onChange }: {
   locale: Locale; value: DetailLevel; disabled?: boolean; onChange(level: DetailLevel): void;
 }) {
   const copy = getDetailLevelCopy(locale);
   const id = useId();
-  const [expanded, setExpanded] = useState(true);
-  const buttons = useRef<Array<HTMLButtonElement | null>>([]);
-  const toggle = useRef<HTMLButtonElement | null>(null);
-  const pointer = useRef<{ x: number; y: number } | null>(null);
-  const swiped = useRef(false);
-  function reveal(next: boolean) {
-    if (disabled) return;
-    if (!next) toggle.current?.focus({ preventScroll: true });
-    setExpanded(next);
-  }
-  function endSwipe(event: PointerEvent<HTMLDivElement>) {
-    if (!pointer.current || disabled) return;
-    const next = detailDockSwipe(event.clientX - pointer.current.x, event.clientY - pointer.current.y);
-    pointer.current = null;
-    if (next !== null) {
-      swiped.current = true;
-      event.preventDefault();
-      reveal(next);
-    }
-  }
+  const [expanded, setExpanded] = useState(false);
+  const trigger = useRef<HTMLButtonElement>(null);
+  const close = useCallback(() => setExpanded(false), []);
+  return <div className="detail-selector">
+    <button ref={trigger} className="detail-trigger" type="button" disabled={disabled}
+      aria-label={`${copy.heading}: ${copy.levels[value]}`} aria-haspopup="dialog" aria-expanded={expanded} aria-controls={expanded ? id : undefined}
+      onClick={() => setExpanded(true)}>
+      <Image src={DETAIL_EXAMPLES[value]} width={38} height={38} alt="" unoptimized />
+      <span className="detail-trigger-label"><small>{copy.heading}</small><strong>{copy.levels[value]}</strong></span>
+      <ChevronDown size={14} aria-hidden="true" />
+    </button>
+    {expanded && !disabled ? createPortal(<DetailPicker id={id} locale={locale} value={value} onChange={onChange} onClose={close} restoreFocus={() => trigger.current?.focus({ preventScroll: true })} />, document.body) : null}
+  </div>;
+}
+
+function DetailPicker({ id, locale, value, onChange, onClose, restoreFocus }: {
+  id: string; locale: Locale; value: DetailLevel; onChange(level: DetailLevel): void; onClose(): void; restoreFocus(): void;
+}) {
+  const copy = getDetailLevelCopy(locale);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const radios = useRef<Array<HTMLButtonElement | null>>([]);
+  const [closing, setClosing] = useState(false);
+  const requestClose = useCallback(() => setClosing(true), []);
+  useEffect(() => {
+    if (!closing) return;
+    const timer = window.setTimeout(onClose, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 160);
+    return () => window.clearTimeout(timer);
+  }, [closing, onClose]);
+  const initialValue = useRef(value);
+  const restore = useRef(restoreFocus);
+  useEffect(() => {
+    const element = dialog.current;
+    const restoreFocus = restore.current;
+    if (typeof element?.showModal === "function") element.showModal();
+    else element?.setAttribute("open", "");
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    radios.current[DETAIL_LEVELS.indexOf(initialValue.current)]?.focus({ preventScroll: true });
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      if (element?.open && typeof element.close === "function") element.close();
+      restoreFocus();
+    };
+  }, []);
   function navigate(event: KeyboardEvent<HTMLButtonElement>, index: number) {
-    if (disabled || !expanded) return;
-    if (event.key === "Escape") {
-      event.preventDefault();
-      reveal(false);
-      return;
-    }
     const forward = locale === "ar" ? "ArrowLeft" : "ArrowRight";
     const backward = locale === "ar" ? "ArrowRight" : "ArrowLeft";
-    let next: number;
-    if (event.key === forward || event.key === "ArrowDown") next = (index + 1) % 3;
-    else if (event.key === backward || event.key === "ArrowUp") next = (index + 2) % 3;
-    else if (event.key === "Home") next = 0;
-    else if (event.key === "End") next = 2;
-    else return;
-    event.preventDefault();
-    onChange(DETAIL_LEVELS[next]);
-    buttons.current[next]?.focus();
+    const next = event.key === forward || event.key === "ArrowDown" ? (index + 1) % 3
+      : event.key === backward || event.key === "ArrowUp" ? (index + 2) % 3
+      : event.key === "Home" ? 0 : event.key === "End" ? 2 : null;
+    if (next === null) return;
+    event.preventDefault();onChange(DETAIL_LEVELS[next]);radios.current[next]?.focus();
   }
-  return <div className="detail-selector" data-expanded={expanded}
-    onPointerDown={event => {
-      swiped.current = false;
-      if (event.pointerType === "touch" || event.pointerType === "pen") pointer.current = { x: event.clientX, y: event.clientY };
-    }} onPointerMove={event => {
-      if (pointer.current && detailDockSwipe(event.clientX - pointer.current.x, event.clientY - pointer.current.y) !== null) {
-        swiped.current = true;
-        event.currentTarget.setPointerCapture(event.pointerId);
-      }
-    }} onPointerUp={endSwipe} onPointerCancel={() => { pointer.current = null; }}>
-    <div id={id} className="detail-drawer" aria-hidden={!expanded} inert={!expanded}>
-      <div className="detail-tiles" role="radiogroup" aria-label={copy.label}>
-        {DETAIL_LEVELS.map((level, index) => <button
-          key={level} ref={node => { buttons.current[index] = node; }}
-          type="button" role="radio" aria-label={copy.levels[level]} aria-checked={value === level}
-          disabled={disabled || !expanded} tabIndex={value === level && expanded ? 0 : -1}
-          className="detail-tile" onClick={event => { if (event.detail === 0 || !swiped.current) onChange(level); }} onKeyDown={event => navigate(event, index)}
-        >
-          <Image src={"/detail/" + level + ".svg"} width={56} height={56} alt="" draggable={false} />
-          <span className="detail-check" aria-hidden="true">{value === level ? <Check size={10} strokeWidth={3} /> : null}</span>
-          <span className="detail-tooltip" aria-hidden="true">{copy.levels[level]}</span>
-        </button>)}
-      </div>
+  return <dialog ref={dialog} id={id} className="detail-picker" data-closing={closing} dir={locale === "ar" ? "rtl" : "ltr"} aria-labelledby={`${id}-title`} aria-describedby={`${id}-description`}
+    onCancel={event => { event.preventDefault();requestClose(); }}
+    onKeyDown={event => { if (event.key === "Escape") { event.preventDefault();requestClose(); } }}
+    onClick={event => { if(event.target === event.currentTarget) { const bounds=event.currentTarget.getBoundingClientRect();if(event.clientX<bounds.left || event.clientX>bounds.right || event.clientY<bounds.top || event.clientY>bounds.bottom) requestClose(); } }}>
+    <div className="detail-picker-heading"><h2 id={`${id}-title`}>{copy.title}</h2><button className="detail-picker-close" type="button" aria-label={copy.close} onClick={requestClose}><X size={20} aria-hidden="true" /></button></div>
+    <p id={`${id}-description`} className="detail-picker-description">{copy.description}</p>
+    <div className="detail-options" role="radiogroup" aria-label={copy.label}>
+      {DETAIL_LEVELS.map((level,index) => <button ref={node => {radios.current[index]=node;}} key={level} type="button" role="radio" aria-label={copy.levels[level]} aria-checked={value === level} disabled={closing} tabIndex={value === level ? 0 : -1} className="detail-choice" onKeyDown={event => navigate(event,index)} onClick={() => {onChange(level);requestClose();}}>
+        <Image src={DETAIL_EXAMPLES[level]} width={128} height={128} alt="" unoptimized />
+        <strong>{copy.levels[level]}</strong><small>{copy.descriptions[level]}</small>
+        {value === level ? <span className="detail-choice-check" aria-hidden="true"><Check size={13} /></span> : null}
+      </button>)}
     </div>
-    <button ref={toggle} type="button" className="detail-toggle" disabled={disabled}
-      aria-label={`${expanded ? copy.hide : copy.show} (${copy.levels[value]})`}
-      aria-expanded={expanded} aria-controls={id}
-      onClick={event => { if (event.detail === 0 || !swiped.current) reveal(!expanded); }}>
-      <span className="detail-handle" aria-hidden="true">{expanded ? <ChevronDown size={16} /> : <ChevronUp size={16} />}</span>
-    </button>
-  </div>;
+  </dialog>;
 }

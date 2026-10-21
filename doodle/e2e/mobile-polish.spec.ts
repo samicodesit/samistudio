@@ -64,7 +64,7 @@ test('installed tabs retain a result and background generation does not move Ide
     await generation;
     await route.fulfill({contentType:'image/png',body:fs.readFileSync('public/references/doodle-reference-kiss.png')});
   });
-  await page.goto('/?runtime=play');
+  await page.goto('/?runtime=app');
   const nav = page.locator('.app-bottom-nav');
   await expect(nav).toBeVisible();
   await page.getByRole('textbox').fill('A little love note');
@@ -88,7 +88,7 @@ test('installed tabs retain a result and background generation does not move Ide
 test('installed Arabic shell fits 320px and preserves RTL navigation', async ({ page }) => {
   await page.setViewportSize({width:320,height:700});
   await page.route('**/api/account', route => route.fulfill({ json: { authenticated: false, email: null, balance: 0, freeRemaining: 2 } }));
-  await page.goto('/ar?runtime=play');
+  await page.goto('/ar?runtime=app');
   await expect(page.locator('html')).toHaveAttribute('dir','rtl');
   const nav = page.locator('.app-bottom-nav');
   await expect(nav).toBeVisible();

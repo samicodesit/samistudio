@@ -1,10 +1,12 @@
 import { Image } from "expo-image";
+import { NativeSignInChoices } from "./NativeSignInChoices";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import {
   AccessibilityInfo,
   ActivityIndicator,
   Animated,
   Easing,
+  Keyboard,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -17,7 +19,7 @@ import {
   View,
   type LayoutChangeEvent,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { NativeIcon, type NativeIconName } from "./NativeIcon";
 import { NativeDoodleGridFrame } from "./NativeDoodleGridFrame";
 import { NATIVE_COLORS, NATIVE_SPACING, nativeFontFamily, nativeRowDirection, nativeTextAlign } from "./theme";
@@ -33,6 +35,8 @@ import type {
   NativeReportUiState,
   NativeReportSubmission,
 } from "./types";
+import { getDrawingConsentCopy } from "../services/drawing-consent-copy";
+import type { NativeDrawingConsentChoice } from "./types";
 import { canSubmitReport } from "./ui-logic";
 
 interface NativeModalFrameProps {
@@ -46,14 +50,16 @@ interface NativeModalFrameProps {
   contentKey: string;
   dismissible?: boolean;
   onExitComplete?(): void;
+  titleMaxFontSizeMultiplier?: number;
 }
 
 const MODAL_SHEET_OFFSET = 44;
 
-function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClose, children, contentKey, dismissible = true, onExitComplete }: NativeModalFrameProps) {
+export function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClose, children, contentKey, dismissible = true, onExitComplete, titleMaxFontSizeMultiplier }: NativeModalFrameProps) {
   const [mounted, setMounted] = useState(false);
   const [scrimOpacity] = useState(() => new Animated.Value(0));
   const [sheetTranslateY] = useState(() => new Animated.Value(MODAL_SHEET_OFFSET));
+  const sheetOffsetRef = useRef(MODAL_SHEET_OFFSET);
   const [retainedFrame, setRetainedFrame] = useState(() => ({ title, closeLabel, locale, direction, children }));
   const [retainedFrameKey, setRetainedFrameKey] = useState<string | undefined>();
   const [layoutReady, setLayoutReady] = useState(false);
@@ -135,9 +141,13 @@ function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClo
   }, [animateIn]);
 
   const handleSheetLayout = useCallback((event: LayoutChangeEvent) => {
-    if (!visibleRef.current || !mountedRef.current || entranceStartedRef.current) return;
+    if (!visibleRef.current || !mountedRef.current) return;
     const { height, width } = event.nativeEvent.layout;
     if (height <= 0 || width <= 0) return;
+    // A closing drawer must travel its full current height, including inset changes.
+    sheetOffsetRef.current = height + 8;
+    if (entranceStartedRef.current) return;
+    sheetTranslateY.setValue(sheetOffsetRef.current);
     layoutReadyRef.current = false;
     setLayoutReady(false);
     cancelLayoutCheck();
@@ -153,7 +163,7 @@ function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClo
         startEntrance();
       });
     });
-  }, [cancelLayoutCheck, startEntrance]);
+  }, [cancelLayoutCheck, sheetTranslateY, startEntrance]);
 
   useLayoutEffect(() => {
     visibleRef.current = visible;
@@ -175,13 +185,13 @@ function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClo
     stopAnimation();
     if (reduceMotionRef.current) {
       scrimOpacity.setValue(0);
-      sheetTranslateY.setValue(MODAL_SHEET_OFFSET);
+      sheetTranslateY.setValue(sheetOffsetRef.current);
       finishExit();
       return;
     }
     startAnimation(Animated.parallel([
       Animated.timing(scrimOpacity, { duration: 120, easing: Easing.in(Easing.cubic), toValue: 0, useNativeDriver: true }),
-      Animated.timing(sheetTranslateY, { duration: 190, easing: Easing.in(Easing.cubic), toValue: MODAL_SHEET_OFFSET, useNativeDriver: true }),
+      Animated.timing(sheetTranslateY, { duration: 190, easing: Easing.in(Easing.cubic), toValue: sheetOffsetRef.current, useNativeDriver: true }),
     ]), (finished) => {
       if (finished && !visible) finishExit();
     });
@@ -199,7 +209,7 @@ function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClo
           sheetTranslateY.setValue(0);
         } else {
           scrimOpacity.setValue(0);
-          sheetTranslateY.setValue(MODAL_SHEET_OFFSET);
+          sheetTranslateY.setValue(sheetOffsetRef.current);
           finishExit();
         }
       }
@@ -213,7 +223,7 @@ function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClo
         sheetTranslateY.setValue(0);
       } else {
         scrimOpacity.setValue(0);
-        sheetTranslateY.setValue(MODAL_SHEET_OFFSET);
+        sheetTranslateY.setValue(sheetOffsetRef.current);
         finishExit();
       }
     });
@@ -229,7 +239,7 @@ function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClo
       stopAnimation();
       if (!mountedRef.current) {
         scrimOpacity.setValue(0);
-        sheetTranslateY.setValue(MODAL_SHEET_OFFSET);
+        sheetTranslateY.setValue(sheetOffsetRef.current);
         mountedRef.current = true;
         setMounted(true);
       } else {
@@ -267,25 +277,57 @@ function NativeModalFrame({ visible, title, closeLabel, locale, direction, onClo
       transparent
       visible
     >
-      <View accessibilityElementsHidden={!visible || !layoutReady} importantForAccessibility={visible && layoutReady ? "yes" : "no-hide-descendants"} pointerEvents={visible && layoutReady ? "auto" : "none"} style={styles.modalRoot}>
-        <Animated.View style={[styles.scrim, { opacity: scrimOpacity }]}>
-          <Pressable accessibilityRole="button" accessibilityLabel={frame.closeLabel} accessibilityState={{ disabled: !dismissible }} disabled={!dismissible} onPress={handleRequestClose} style={styles.scrimTouchTarget} />
-        </Animated.View>
-        <Animated.View accessibilityViewIsModal onLayout={handleSheetLayout} style={[styles.sheet, { opacity: layoutReady ? 1 : 0, transform: [{ translateY: sheetTranslateY }] }]}> 
-          <SafeAreaView edges={["top", "bottom"]} style={styles.sheetSafe}>
-            <View style={[styles.sheetHeader, { flexDirection: nativeRowDirection(frame.direction) }]}> 
-              <Text accessibilityRole="header" style={[styles.sheetTitle, { fontFamily: nativeFontFamily(frame.locale, "display"), textAlign: nativeTextAlign(frame.direction) }]}> 
-                {frame.title}
-              </Text>
-              <Pressable accessibilityRole="button" accessibilityLabel={frame.closeLabel} accessibilityState={{ disabled: !dismissible }} disabled={!dismissible} onPress={handleRequestClose} style={({ pressed }) => [styles.closeButton, !dismissible && styles.closeButtonDisabled, pressed && dismissible && styles.pressed]}>
-                <NativeIcon name="close" size={23} color={NATIVE_COLORS.graphite} />
-              </Pressable>
-            </View>
-            {frame.children}
-          </SafeAreaView>
-        </Animated.View>
-      </View>
+      <SafeAreaProvider>
+        <View accessibilityElementsHidden={!visible || !layoutReady} importantForAccessibility={visible && layoutReady ? "yes" : "no-hide-descendants"} pointerEvents={visible && layoutReady ? "auto" : "none"} style={styles.modalRoot}>
+          <Animated.View style={[styles.scrim, { opacity: scrimOpacity }]}>
+            <Pressable accessibilityRole="button" accessibilityLabel={frame.closeLabel} accessibilityState={{ disabled: !dismissible }} disabled={!dismissible} onPress={handleRequestClose} style={styles.scrimTouchTarget} />
+          </Animated.View>
+          <Animated.View accessibilityViewIsModal onLayout={handleSheetLayout} style={[styles.sheet, contentKey === "drawing-consent" && styles.consentSheet, { opacity: layoutReady ? 1 : 0, transform: [{ translateY: sheetTranslateY }] }]}>
+            <SafeAreaView edges={["bottom"]} style={styles.sheetSafe}>
+              <View style={[styles.sheetHeader, { flexDirection: nativeRowDirection(frame.direction) }]}>
+                <Text accessibilityRole="header" maxFontSizeMultiplier={titleMaxFontSizeMultiplier} style={[styles.sheetTitle, { fontFamily: nativeFontFamily(frame.locale, "display"), textAlign: nativeTextAlign(frame.direction) }]}>
+                  {frame.title}
+                </Text>
+                <Pressable accessibilityRole="button" accessibilityLabel={frame.closeLabel} accessibilityState={{ disabled: !dismissible }} disabled={!dismissible} onPress={handleRequestClose} style={({ pressed }) => [styles.closeButton, !dismissible && styles.closeButtonDisabled, pressed && dismissible && styles.pressed]}>
+                  <NativeIcon name="close" size={23} color={NATIVE_COLORS.graphite} />
+                </Pressable>
+              </View>
+              {frame.children}
+            </SafeAreaView>
+          </Animated.View>
+        </View>
+      </SafeAreaProvider>
     </Modal>
+  );
+}
+
+export function NativeDrawingConsentModal({ locale, direction, visible, onChoice, onExitComplete }: {
+  locale: NativeLocale;
+  direction: NativeDirection;
+  visible: boolean;
+  onChoice(choice: NativeDrawingConsentChoice): void;
+  onExitComplete?(): void;
+}) {
+  useEffect(() => { if (visible) Keyboard.dismiss(); }, [visible]);
+  const copy = getDrawingConsentCopy(locale);
+  const font = { fontFamily: nativeFontFamily(locale, "body") };
+  return (
+    <NativeModalFrame contentKey="drawing-consent" visible={visible} title={copy.title} closeLabel={copy.cancel} locale={locale} direction={direction} onClose={() => onChoice("cancel")} onExitComplete={onExitComplete}>
+      <ScrollView style={styles.modalScroll} contentContainerStyle={[styles.modalBody, styles.consentBody]} keyboardShouldPersistTaps="handled">
+        <Text style={[styles.modalParagraph, font, { textAlign: nativeTextAlign(direction) }]}>{copy.body}</Text>
+        <Pressable accessibilityRole="button" onPress={() => onChoice("allow")} style={({ pressed }) => [styles.primaryModalButton, styles.consentAllow, pressed && styles.pressed]}>
+          <Text style={[styles.primaryModalButtonText, font]}>{copy.continue}</Text>
+        </Pressable>
+        <View style={[styles.consentActions, { flexDirection: nativeRowDirection(direction) }]}>
+          <Pressable accessibilityRole="button" onPress={() => onChoice("cancel")} style={({ pressed }) => [styles.consentSecondary, pressed && styles.pressed]}>
+            <Text style={[styles.quietModalButtonText, font]}>{copy.cancel}</Text>
+          </Pressable>
+          <Pressable accessibilityRole="link" onPress={() => onChoice("privacy")} style={({ pressed }) => [styles.consentSecondary, pressed && styles.pressed]}>
+            <Text style={[styles.quietModalButtonText, font, { textDecorationLine: "underline" }]}>{copy.privacy}</Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+    </NativeModalFrame>
   );
 }
 
@@ -326,7 +368,7 @@ export function NativeMoreModal({ locale, direction, copy, visible, onClose, onR
     onRedraw();
   }, [onClose, onRedraw]);
   return (
-    <NativeModalFrame contentKey="more" onExitComplete={handleExitComplete} visible={visible} title={copy.result.more} closeLabel={copy.dialog.close} locale={locale} direction={direction} onClose={onClose}>
+    <NativeModalFrame contentKey="more" onExitComplete={handleExitComplete} visible={visible} title={copy.result.more} closeLabel={copy.report.close} locale={locale} direction={direction} onClose={onClose}>
       <View style={styles.modalBody}>
         <ModalAction locale={locale} icon="redraw" label={copy.actions.redraw} onPress={handleRedraw} />
         <ModalAction locale={locale} icon="report" label={copy.result.report} onPress={handleOpenReport} destructive />
@@ -446,6 +488,28 @@ function NativeReportForm({ visible, locale, direction, copy, reportState, onClo
   const [reason, setReason] = useState<string>("");
   const [details, setDetails] = useState("");
   const [includeContent, setIncludeContent] = useState(false);
+  const scrollRef = useRef<ScrollView>(null);
+  const detailsRef = useRef<TextInput>(null);
+  const revealDetails = useCallback(() => {
+    // Native keyboard insets reveal the caret. Scroll the whole multiline
+    // field into view once the ScrollView has received the keyboard metrics.
+    const input = detailsRef.current;
+    const scroll = scrollRef.current;
+    if (Platform.OS === "ios" && input?.isFocused() && scroll) {
+      // The helper measures relative to scroll content, while keyboard metrics
+      // use screen coordinates. Include this modal viewport's measured offset.
+      scroll.getNativeScrollRef()?.measureInWindow((_x, viewportY) => {
+        if (detailsRef.current === input && input.isFocused()) {
+          scroll.scrollResponderScrollNativeHandleToKeyboard(input, viewportY + 8, true);
+        }
+      });
+    }
+  }, []);
+  useEffect(() => {
+    if (Platform.OS !== "ios" || !visible) return;
+    const subscription = Keyboard.addListener("keyboardDidShow", revealDetails);
+    return () => subscription.remove();
+  }, [revealDetails, visible]);
   const resetForm = useCallback(() => {
     setReason("");
     setDetails("");
@@ -456,8 +520,8 @@ function NativeReportForm({ visible, locale, direction, copy, reportState, onClo
   const disabled = !canSubmitReport(reason, details, reportState.pending);
   return (
     <NativeModalFrame contentKey={`report:${reason}:${details.length}:${includeContent}:${reportState.pending}:${reportState.error || ""}`} dismissible={!reportState.pending} onExitComplete={resetForm} visible={visible} title={copy.report.title} closeLabel={copy.report.close} locale={locale} direction={direction} onClose={onClose}>
-      <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={styles.keyboardAvoiding}>
-        <ScrollView contentContainerStyle={styles.modalBody} keyboardShouldPersistTaps="handled" style={styles.modalScroll}>
+      <KeyboardAvoidingView behavior="height" enabled={Platform.OS !== "ios"} style={styles.keyboardAvoiding}>
+        <ScrollView ref={scrollRef} automaticallyAdjustKeyboardInsets={Platform.OS === "ios"} contentContainerStyle={styles.modalBody} keyboardShouldPersistTaps="handled" style={styles.modalScroll}>
           <Text style={[styles.modalParagraph, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{copy.report.intro}</Text>
           <Text style={[styles.fieldLabel, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{copy.report.reasonLabel}</Text>
           <View style={styles.reasonList}>
@@ -472,7 +536,7 @@ function NativeReportForm({ visible, locale, direction, copy, reportState, onClo
             })}
           </View>
           <Text style={[styles.fieldLabel, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{detailsRequired ? copy.report.detailsRequired : copy.report.detailsOptional}</Text>
-          <TextInput accessibilityLabel={detailsRequired ? copy.report.detailsRequired : copy.report.detailsOptional} editable={!reportState.pending} maxLength={NATIVE_REPORT_DETAILS_MAX_LENGTH} multiline onChangeText={setDetails} placeholder={copy.report.detailsPlaceholder} placeholderTextColor={NATIVE_COLORS.muted} selectionColor={NATIVE_COLORS.moss} style={[styles.detailsInput, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]} value={details} />
+          <TextInput ref={detailsRef} accessibilityLabel={detailsRequired ? copy.report.detailsRequired : copy.report.detailsOptional} editable={!reportState.pending} maxLength={NATIVE_REPORT_DETAILS_MAX_LENGTH} multiline onChangeText={setDetails} placeholder={copy.report.detailsPlaceholder} placeholderTextColor={NATIVE_COLORS.muted} selectionColor={NATIVE_COLORS.moss} style={[styles.detailsInput, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]} value={details} />
           <View style={styles.includeRow}>
             <Switch accessibilityLabel={copy.report.includeContent} disabled={reportState.pending} onValueChange={setIncludeContent} thumbColor={NATIVE_COLORS.paper} trackColor={{ false: NATIVE_COLORS.line, true: NATIVE_COLORS.moss }} value={includeContent} />
             <Text style={[styles.includeText, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{copy.report.includeContent}</Text>
@@ -509,28 +573,31 @@ export function NativeImageModal({ locale, copy, direction, visible, imageUri, i
   if (!visible) return null;
   return (
     <Modal animationType="fade" navigationBarTranslucent onRequestClose={onClose} statusBarTranslucent visible>
-      <SafeAreaView accessibilityViewIsModal edges={["top", "bottom"]} style={styles.viewerRoot}>
-        <View style={[styles.viewerHeader, { flexDirection: nativeRowDirection(direction) }]}>
-          <View style={styles.viewerHeaderSpacer} />
-          <Pressable accessibilityRole="button" accessibilityLabel={copy.dialog.close} onPress={onClose} style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}>
-            <NativeIcon name="close" size={24} color={NATIVE_COLORS.graphite} />
+      <SafeAreaProvider>
+        <SafeAreaView accessibilityViewIsModal edges={["top", "bottom"]} style={styles.viewerRoot}>
+          <View style={[styles.viewerHeader, { flexDirection: nativeRowDirection(direction) }]}>
+            <View style={styles.viewerHeaderSpacer} />
+            <Pressable accessibilityRole="button" accessibilityLabel={copy.dialog.close} onPress={onClose} style={({ pressed }) => [styles.closeButton, pressed && styles.pressed]}>
+              <NativeIcon name="close" size={24} color={NATIVE_COLORS.graphite} />
+            </Pressable>
+          </View>
+          <View style={styles.viewerImageFrame} onLayout={event => setImageSize(Math.min(event.nativeEvent.layout.width, event.nativeEvent.layout.height - 24))}>
+            <NativeDoodleGridFrame key={String(imageUri)} locale={locale} direction={direction} reducedMotion={reducedMotion} enabled={gridEnabled} onToggle={onToggleGrid} style={{ width: imageSize, height: imageSize }}>
+            <Image accessibilityLabel={imageAlt} cachePolicy={typeof imageUri === "number" ? "memory" : "disk"} contentFit="contain" source={imageUri} style={styles.viewerImage} />
+            </NativeDoodleGridFrame>
+          </View>
+          <Pressable accessibilityRole="button" accessibilityLabel={actionLabel} onPress={onAction} style={({ pressed }) => [styles.viewerDownload, pressed && styles.pressed]}>
+            <NativeIcon name={actionIcon} size={20} color={NATIVE_COLORS.white} />
+            <Text style={[styles.primaryModalButtonText, { fontFamily: nativeFontFamily(locale, "body") }]}>{actionLabel}</Text>
           </Pressable>
-        </View>
-        <View style={styles.viewerImageFrame} onLayout={event => setImageSize(Math.min(event.nativeEvent.layout.width, event.nativeEvent.layout.height - 24))}>
-          <NativeDoodleGridFrame key={String(imageUri)} locale={locale} direction={direction} reducedMotion={reducedMotion} enabled={gridEnabled} onToggle={onToggleGrid} style={{ width: imageSize, height: imageSize }}>
-          <Image accessibilityLabel={imageAlt} cachePolicy={typeof imageUri === "number" ? "memory" : "disk"} contentFit="contain" source={imageUri} style={styles.viewerImage} />
-          </NativeDoodleGridFrame>
-        </View>
-        <Pressable accessibilityRole="button" accessibilityLabel={actionLabel} onPress={onAction} style={({ pressed }) => [styles.viewerDownload, pressed && styles.pressed]}>
-          <NativeIcon name={actionIcon} size={20} color={NATIVE_COLORS.white} />
-          <Text style={[styles.primaryModalButtonText, { fontFamily: nativeFontFamily(locale, "body") }]}>{actionLabel}</Text>
-        </Pressable>
-      </SafeAreaView>
+        </SafeAreaView>
+      </SafeAreaProvider>
     </Modal>
   );
 }
 
 export interface NativeAccountModalProps {
+  usage?: { status: "loading" | "ready" | "error"; label: string };
   locale: NativeLocale;
   direction: NativeDirection;
   copy: NativeDoodleUiCopy;
@@ -538,13 +605,14 @@ export interface NativeAccountModalProps {
   state: NativeAccountModalState;
   onClose(): void;
   onSignIn(): void;
+  onAppleSignIn?(): void;
   onRefill(): void;
   onSignOut(): void;
   onDeleteRequest(): void;
   onDeleteConfirm(): void | PromiseLike<void>;
 }
 
-export function NativeAccountModal({ locale, direction, copy, account, state, onClose, onSignIn, onRefill, onSignOut, onDeleteRequest, onDeleteConfirm }: NativeAccountModalProps) {
+export function NativeAccountModal({ usage, locale, direction, copy, account, state, onClose, onSignIn, onAppleSignIn, onRefill, onSignOut, onDeleteRequest, onDeleteConfirm }: NativeAccountModalProps) {
   const visible = state !== "closed";
   const isSignIn = state === "signIn";
   const isDelete = state === "deleteConfirm";
@@ -562,15 +630,12 @@ export function NativeAccountModal({ locale, direction, copy, account, state, on
     onClose();
   }, [onClose, onRefill]);
   return (
-    <NativeModalFrame contentKey={`account:${state}:${account.status}:${account.email || ""}:${account.balanceLabel}`} onExitComplete={handleExitComplete} visible={visible} title={isSignIn ? copy.auth.signIn : copy.account.label} closeLabel={copy.dialog.close} locale={locale} direction={direction} onClose={onClose}>
+    <NativeModalFrame contentKey={`account:${state}:${account.status}:${account.email || ""}:${account.balanceLabel}`} onExitComplete={handleExitComplete} visible={visible} title={isSignIn ? copy.auth.signIn : copy.account.label} closeLabel={copy.report.close} locale={locale} direction={direction} onClose={onClose}>
       <View style={styles.modalBody}>
+        {!isDelete && usage && account.status !== "signedIn" ? <Text accessibilityRole="text" style={[styles.accountEmail, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{usage.status === "loading" ? copy.usage.loading : usage.status === "error" ? copy.usage.unavailable : usage.label}</Text> : null}
         {isSignIn ? (
           <>
-            <Text style={[styles.modalParagraph, { fontFamily: nativeFontFamily(locale, "body"), textAlign: nativeTextAlign(direction) }]}>{copy.auth.signIn}</Text>
-            <Pressable accessibilityRole="button" accessibilityLabel={copy.auth.google} onPress={onSignIn} style={({ pressed }) => [styles.primaryModalButton, pressed && styles.pressed]}>
-              <NativeIcon name="signIn" size={20} color={NATIVE_COLORS.white} />
-              <Text style={[styles.primaryModalButtonText, { fontFamily: nativeFontFamily(locale, "body") }]}>{copy.auth.google}</Text>
-            </Pressable>
+            <NativeSignInChoices locale={locale} copy={copy} busy={account.status === "loading"} pendingProvider={account.pendingProvider} onGoogle={onSignIn} onApple={onAppleSignIn} />
           </>
         ) : null}
 
@@ -650,6 +715,11 @@ const styles = StyleSheet.create({
   offerFinePrint: { color: NATIVE_COLORS.muted, fontSize: 13, lineHeight: 19, textAlign: "center" },
   purchaseError: { color: NATIVE_COLORS.coral, fontSize: 14, lineHeight: 20 },
   reportError: { color: NATIVE_COLORS.coral, fontSize: 14, lineHeight: 20 },
+  consentActions: { alignItems: "center", gap: 12 },
+  consentBody: { paddingBottom: 0 },
+  consentSheet: { paddingBottom: 0 },
+  consentSecondary: { alignItems: "center", justifyContent: "center", flex: 1, minHeight: 44, paddingHorizontal: 8 },
+  consentAllow: { backgroundColor: "#315f86", minHeight: 52, marginTop: 8 },
   primaryModalButton: { alignItems: "center", backgroundColor: NATIVE_COLORS.moss, borderRadius: 12, flexDirection: "row", gap: 8, justifyContent: "center", minHeight: NATIVE_SPACING.control, paddingHorizontal: 16 },
   primaryModalButtonText: { color: NATIVE_COLORS.white, fontSize: 15, fontWeight: "700" },
   quietModalButton: { alignItems: "center", justifyContent: "center", minHeight: 44, paddingHorizontal: 10 },

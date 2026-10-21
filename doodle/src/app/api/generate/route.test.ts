@@ -9,11 +9,13 @@ vi.mock("server-only", () => ({}));
 
 const trialIdentity = { id: "trial" };
 const png = { bytes: Buffer.from("png"), mimeType: "image/png" as const };
+const billingScope = vi.hoisted(() => vi.fn().mockResolvedValue("production"));
+vi.mock("@/lib/billing/apple-credit-scope", () => ({ getAppleCreditScope: billingScope }));
 
 const mocks = vi.hoisted(() => ({
   checkBotId: vi.fn(),
   checkGenerationLimit: vi.fn(),
-  consumeNativeAttestation: vi.fn(),
+  consumeNativeAttestation: vi.fn(), consumeAppleAssertion: vi.fn(),
   finalizeFreeDoodle: vi.fn(),
   finalizePaidCredit: vi.fn(),
   generateDoodle: vi.fn(),
@@ -61,6 +63,8 @@ vi.mock("@/lib/native-attestation", () => ({
   consumeNativeAttestation: mocks.consumeNativeAttestation,
   nativePrincipal: mocks.nativePrincipal,
 }));
+
+vi.mock("@/lib/apple-attestation", () => ({ consumeAppleAssertion: mocks.consumeAppleAssertion }));
 
 function request(
   scene: unknown,
@@ -122,6 +126,17 @@ describe("generate route", () => {
     });
   }
 
+  it.each(["pink", "peach", "mint", "blue", "lavender", "white"])("passes %s through verified native generation", async paperColor => {
+    const result = await POST(photoRequest({ scene: "A small flower", detailLevel: "medium", paperColor }, true));
+    expect(result.status).toBe(200);
+    expect(mocks.consumeNativeAttestation).toHaveBeenCalledWith(expect.objectContaining({ paperColor, detailLevel: "medium" }));
+    expect(mocks.generateDoodle).toHaveBeenCalledWith("A small flower", undefined, "medium", paperColor);
+  });
+  it.each([null, "#FFEB8A", "red", 123])("rejects invalid paper before spending: %j", async paperColor => {
+    expect((await POST(photoRequest({ scene: "A flower", paperColor }))).status).toBe(400);
+    expectNoReservation();expect(mocks.generateDoodle).not.toHaveBeenCalled();
+  });
+
   it("validates photos before charging and rejects mixed text/photo requests", async () => {
     for (const body of [{ photo: "!!!!" }, { scene: "cat", photo: "AAAA" }]) {
       expect((await POST(photoRequest(body))).status).toBe(400);
@@ -137,9 +152,17 @@ describe("generate route", () => {
     const photo = (await sharp({ create: { width: 60, height: 40, channels: 3, background: "red" } }).jpeg().toBuffer()).toString("base64");
     const response = await POST(photoRequest({ photo, detailLevel: "detailed" }));
     expect(response.status).toBe(200);
-    expect(mocks.generatePhotoDoodle).toHaveBeenCalledWith(expect.any(Buffer), "detailed");
+    expect(mocks.generatePhotoDoodle).toHaveBeenCalledWith(expect.any(Buffer), "detailed", undefined, "yellow");
     expect(mocks.generateDoodle).not.toHaveBeenCalled();
     expect(kind === "paid" ? mocks.finalizePaidCredit : mocks.finalizeFreeDoodle).toHaveBeenCalledOnce();
+  });
+
+  it("passes selected paper through photo conversion before finalizing one drawing", async () => {
+    const photo=(await sharp({create:{width:60,height:40,channels:3,background:"red"}}).jpeg().toBuffer()).toString("base64");
+    const result=await POST(photoRequest({photo,detailLevel:"medium",paperColor:"mint"}));
+    expect(result.status).toBe(200);
+    expect(mocks.generatePhotoDoodle).toHaveBeenCalledWith(expect.any(Buffer),"medium",undefined,"mint");
+    expect(mocks.finalizeFreeDoodle).toHaveBeenCalledOnce();
   });
 
   it.each(["free", "paid"])("releases the %s held credit when photo conversion fails", async kind => {
@@ -219,7 +242,7 @@ describe("generate route", () => {
     expect(kind === "paid" ? mocks.finalizePaidCredit : mocks.finalizeFreeDoodle).toHaveBeenCalledTimes(1);
     expect(mocks.releasePaidCredit).not.toHaveBeenCalled();
     expect(mocks.releaseFreeDoodle).not.toHaveBeenCalled();
-    expect(JSON.parse(info.mock.calls[0][1] as string)).toMatchObject({ code: "ok", paperCorrection: { status: "error", version: "paper-v1" } });
+    expect(JSON.parse(info.mock.calls[0][1] as string)).toMatchObject({ code: "ok", paperCorrection: { status: "error", version: "paper-v2" } });
   });
 
   it("correlates provider failure without exposing scene or exception text", async () => {
@@ -762,7 +785,7 @@ describe("generate route", () => {
     });
     const response = await POST(req);
     expect(response.status).toBe(200);
-    expect(mocks.generateDoodle).toHaveBeenCalledWith("Two cats hug", undefined, detailLevel);
+    expect(mocks.generateDoodle).toHaveBeenCalledWith("Two cats hug", undefined, detailLevel, "yellow");
     expect(mocks.reserveFreeDoodle).toHaveBeenCalledTimes(1);
     expect(mocks.finalizeFreeDoodle).toHaveBeenCalledTimes(1);
     expect(mocks.releaseFreeDoodle).not.toHaveBeenCalled();
@@ -789,7 +812,7 @@ describe("generate route", () => {
     }));
     expect(result.status).toBe(200);
     expect(mocks.consumeNativeAttestation).toHaveBeenCalledWith(expect.objectContaining({ detailLevel: "detailed" }));
-    expect(mocks.generateDoodle).toHaveBeenCalledWith("Two cats hug", undefined, "detailed");
+    expect(mocks.generateDoodle).toHaveBeenCalledWith("Two cats hug", undefined, "detailed", "yellow");
   });
   it("returns an existing generation failure and releases the selected-level credit", async () => {
     mocks.generateDoodle.mockRejectedValue(new GenerationError("timeout", "timeout"));
@@ -798,5 +821,24 @@ describe("generate route", () => {
     expect(mocks.releaseFreeDoodle).toHaveBeenCalledTimes(1);
     expect(mocks.finalizeFreeDoodle).not.toHaveBeenCalled();
   });
+
+
+it.each(["invalid", "unavailable"] as const)("rejects unverified iPhone generation before spending credits: %s", async verdict => {
+  mocks.consumeAppleAssertion.mockResolvedValue(verdict);
+  const result = await POST(request("Two cats hug", "http://localhost:3000", { "x-doodle-client": "native-ios", "x-doodle-trial-token": "signed-trial-token", "x-doodle-install-id": "11111111-1111-4111-8111-111111111111", "x-doodle-attestation-challenge": "c".repeat(43), "x-doodle-attestation-token": "signed-assertion", "x-doodle-app-attest-key": Buffer.alloc(32, 1).toString("base64") }));
+  expect(result.status).toBe(verdict === "invalid" ? 403 : 503); expectNoReservation(); expect(mocks.checkBotId).not.toHaveBeenCalled(); expect(mocks.consumeNativeAttestation).not.toHaveBeenCalled();
+});
+it("uses the same sandbox ledger for iPhone reservation and final delivery", async () => {
+  billingScope.mockResolvedValueOnce("apple-sandbox");
+  mocks.getNativeBearer.mockReturnValue("a".repeat(43));
+  mocks.getCurrentUser.mockResolvedValue({ id: "user", email: null });
+  mocks.consumeAppleAssertion.mockResolvedValue("verified");
+  mocks.reservePaidCredit.mockResolvedValue({ reserved: true, remaining: 5 });
+  mocks.finalizePaidCredit.mockResolvedValue({ finalized: true, remaining: 5 });
+  const result = await POST(request("Two cats hug", "http://localhost:3000", { "x-doodle-client": "native-ios", authorization: "Bearer " + "a".repeat(43), "x-doodle-install-id": "11111111-1111-4111-8111-111111111111", "x-doodle-attestation-challenge": "c".repeat(43), "x-doodle-attestation-token": "signed-assertion", "x-doodle-app-attest-key": Buffer.alloc(32, 1).toString("base64") }));
+  expect(result.status).toBe(200);
+  expect(mocks.reservePaidCredit).toHaveBeenCalledWith("user", expect.any(String), "apple-sandbox");
+  expect(mocks.finalizePaidCredit).toHaveBeenCalledWith("user", expect.any(String), "apple-sandbox");
+});
 
 });
