@@ -30,5 +30,19 @@
   },
   "generationRequestsSubmitted": 0,
   "storeUploads": 0,
-  "deployment": "pending"
+  "deployment": {
+    "id": "dpl_AZ41oLF5v1d8jq1GMkgGcmN1U1Dq",
+    "url": "https://doodle-kjb3gm62c-ahmed-samis-projects-e6ef0336.vercel.app",
+    "promotedDomain": "https://doodle.samistudio.nl",
+    "sourceCommit": "b8b1a2c0bc4dc7cab312fe4e8bf97a2e0c3ff0b9",
+    "ready": true,
+    "liveChecks": [
+      "390x844 app",
+      "1440x900 web",
+      "320x568 Arabic app"
+    ],
+    "newOriginDefault": "medium",
+    "savedSimpleSurvivesReload": true,
+    "consoleErrorsObserved": 0
+  }
 }

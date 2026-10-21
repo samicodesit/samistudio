@@ -10,4 +10,4 @@ Steps:
 3. Verify targeted and full suites, types, production build, actual responsive browser and native layouts.
 4. Push a coherent source change and deploy web after layout verification. Verify the live result.
 
-Status: implementation starting. Existing dirty Apple and sticky-color work predates this task and must be preserved.
+Status: complete. The compact picker is implemented and tested on web, iOS and Android. The source push checkpoints existing Apple and sticky-color dependencies without discarding the remaining local documentation/marketing work. Web is live; native store uploads were not performed.

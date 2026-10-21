@@ -20,10 +20,14 @@ The composer input, photo controls and footer retain their existing dimensions a
 
 ## Verification
 
-Web and native production/fixture builds, TypeScript, full unit suites and lint were run. Lint has three pre-existing warnings and no errors. The paid provider test remains skipped. Final counts and deployment identity are added in verification.json after the release checks finish.
+Web and native production/fixture builds, TypeScript, full unit suites and lint were run. Lint has three pre-existing warnings and no errors. The paid provider test remains skipped. Final results: 131 web test files with 1,146 passing tests, one paid test skipped; 29 native files with 276 passing tests. Both TypeScript checks and production/fixture builds passed. See verification.json.
 
 Browser E2E source was updated for the new dialog contract. This task used direct browser verification through the app browser rather than claiming the entire Playwright suite ran. Native screens use fixture builds and do not establish Play/App Store release, production attestation, paid generation quality or spoken VoiceOver/TalkBack acceptance.
 
 ## Source scope
 
 The source push checkpoints the current app source, including the earlier local color and iOS dependencies, so the remote source matches the tested application. Existing unrelated marketing and documentation work remains in the checkout. No native store upload is part of this delivery.
+
+## Live deployment
+
+Deployment `dpl_AZ41oLF5v1d8jq1GMkgGcmN1U1Dq` was promoted to https://doodle.samistudio.nl. Fresh-origin Medium, saved Simple after reload, live 390px app layout, 1440px desktop and 320px Arabic passed. All three examples loaded and no horizontal overflow was found. No generation was submitted.
