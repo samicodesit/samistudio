@@ -1,0 +1,44 @@
+[
+  {
+    "view": "desktop",
+    "state": "home",
+    "pixels": 1296000,
+    "changedPixels": 0,
+    "box": null
+  },
+  {
+    "view": "desktop",
+    "state": "restored",
+    "pixels": 1296000,
+    "changedPixels": 0,
+    "box": null
+  },
+  {
+    "view": "phone",
+    "state": "home",
+    "pixels": 334836,
+    "changedPixels": 0,
+    "box": null
+  },
+  {
+    "view": "phone",
+    "state": "restored",
+    "pixels": 334836,
+    "changedPixels": 0,
+    "box": null
+  },
+  {
+    "view": "preview",
+    "state": "home",
+    "pixels": 579510,
+    "changedPixels": 0,
+    "box": null
+  },
+  {
+    "view": "preview",
+    "state": "restored",
+    "pixels": 579510,
+    "changedPixels": 0,
+    "box": null
+  }
+]

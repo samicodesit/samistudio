@@ -1,0 +1,401 @@
+{
+  "url": "https://samistudio.nl",
+  "date": "2026-10-21T12:40:49.382Z",
+  "assets": [
+    {
+      "file": "assets/terminal-scene-motion.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-room.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-renderer.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-construction.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-inner-board.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-inner-shell.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-viewport.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "motion-study.css",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "motion-study.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/motion-preferences.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-exploded.css",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-exploded.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "entry-paths.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "favicon.svg",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/studio.css",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "og-image.jpg",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "index.html",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/studio.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/secret-terminal.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/key-spring.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-housing-mobile.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-controls.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-housing.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/javascript-playground.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/project-gallery.js",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-wide.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/project-data.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/project-gallery.css",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-keycaps-mobile.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-keycaps.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery-loading.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery-navigation.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery-geometry.mjs",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-art/autolister.png",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-art/cryptik.png",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/terminal-art/doodle.png",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-landscape.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-atelier-desktop.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-atelier-landscape.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-atelier-panorama.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-atelier-portrait-room.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/stage-background.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-mobile-room.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-landscape.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-portrait-room.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/cryptik-landscape.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-portrait-room.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/cryptik-portrait-room.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/cryptik-mobile-room.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-mobile-room.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-room-wide-v2.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-mobile-v2.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-desktop-v2.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/doodle-stage-reference.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-desktop-patch-wordmark.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-mobile-patch-wordmark.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-desktop-patch-back.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-desktop-patch-caption.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-mobile.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-desktop.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/cryptik-desktop-patch-back.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-mobile-patch-back.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/cryptik-desktop-patch-wordmark.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-mobile-patch-caption.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/cryptik-mobile-intro.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/cryptik-desktop.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/fonts/dmserifdisplay-OFL.txt",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/fonts/dm-serif-display-latin.woff2",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/cryptik-desktop-patch-caption.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/fonts/inter-latin.woff2",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/autolister-room-wide.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/gallery/cryptik-room-wide.webp",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/icons/caret-right.svg",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/icons/arrow-left.svg",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/fonts/inter-OFL.txt",
+      "status": 200,
+      "matches": true
+    },
+    {
+      "file": "assets/icons/LICENSE.txt",
+      "status": 200,
+      "matches": true
+    }
+  ],
+  "cases": [
+    {
+      "name": "desktop",
+      "openDragRestoreGalleryAndReducedMotion": true
+    },
+    {
+      "name": "phone",
+      "openDragRestoreGalleryAndReducedMotion": true
+    },
+    {
+      "name": "preview",
+      "openDragRestoreGalleryAndReducedMotion": true
+    }
+  ],
+  "errors": []
+}

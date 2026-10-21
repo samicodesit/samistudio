@@ -25,3 +25,12 @@ The actual in-app browser was inspected as well as current saved screenshots. QA
 ## Release procedure
 
 Reuse the existing `codex/studio-gallery-release` checkout, based on remote main `c180e97085552acfdd286965c3b612300154f5fc`. Copy only this change and reusable construction assets. Do not alter root main or unrelated Doodle changes. Run required tests, syntax and packaging in the release checkout, push without force, check Studio CI, then deploy the exact allowlisted prebuilt output to the existing Vercel project. Verify public response hashes and real live behavior afterward. Deployment result is recorded separately after publication.
+
+## Published result
+
+- Runtime release: `89289153ae8fca53d0f8dba8b83ce205af424d88`, pushed without force from the isolated release checkout. Root main and unrelated work remain untouched.
+- Studio CI passed: https://github.com/samicodesit/samistudio/actions/runs/39601079661.
+- Vercel reported Ready and aliased https://samistudio.nl to https://samistudio-4mon71mmo-ahmed-samis-projects-e6ef0336.vercel.app.
+- All 76 anonymous public responses returned HTTP 200 and matched the tested build byte-for-byte. No access controls were changed.
+- Live desktop, phone and preview checks pass for opening, pointer dragging, closing, gallery return and reduced motion. No page errors. Actual in-app browser opening, keyboard part movement and reassembly were also inspected.
+- Six complete live homepage/restored screenshots match the original pre-release live homepage: 4420692 pixels checked, zero differences. Screenshots and reports are retained under `design-assets/terminal-exploded/qa-live/`.
