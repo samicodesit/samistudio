@@ -34,6 +34,10 @@ Open `http://localhost:8090`. The preview disables asset caching so edits appear
 
 The project view opens from the terminal screen and returns to the selected row. Arrow keys select projects; Enter opens one; Escape closes it. Browser Back and Forward work with `#work/doodle`, `#work/autolister`, and `#work/cryptik`. Reduced-motion preferences disable the animated reveal and depth movement.
 
+Hold the amber indicator for 700 ms, or focus it and press Enter, to explode the terminal directly in the homepage. The hidden playground also accepts `explode`. Drag the five assemblies to inspect them. Arrow keys move the focused part; Home or a double click resets it. Click the amber indicator again or press Escape to reassemble. The existing camera, scale, room, screen, keys and page layout remain in place. Reduced motion settles immediately.
+
+Construction sources, lossless exported layers, source-pixel checks, browser QA helpers and the retained 3D study are documented in `design-assets/terminal-exploded/README.md`. These construction assets stay outside the public build.
+
 ## Vercel
 
 Connect the **samistudio** project to this repository's `main` branch with root directory `./`. The checked-in `vercel.json` sets the build command and `dist` output directory, overriding old dashboard build/output settings. The build runs the asset tests before packaging the website. DNS and the `www` redirect remain dashboard configuration; this repository does not change them.

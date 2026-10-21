@@ -1,0 +1,398 @@
+[
+  {
+    "view": "desktop",
+    "frame": "handoff",
+    "pixelsChecked": 1296000,
+    "changedPixels": 0
+  },
+  {
+    "view": "desktop",
+    "frame": "restored",
+    "pixelsChecked": 1296000,
+    "changedPixels": 0
+  },
+  {
+    "view": "desktop",
+    "frame": 0,
+    "unchangedRegion": [
+      800,
+      0,
+      1440,
+      900
+    ],
+    "pixelsChecked": 576000,
+    "changedPixels": 0
+  },
+  {
+    "view": "desktop",
+    "frame": 1,
+    "unchangedRegion": [
+      800,
+      0,
+      1440,
+      900
+    ],
+    "pixelsChecked": 576000,
+    "changedPixels": 0
+  },
+  {
+    "view": "desktop",
+    "frame": 2,
+    "unchangedRegion": [
+      800,
+      0,
+      1440,
+      900
+    ],
+    "pixelsChecked": 576000,
+    "changedPixels": 0
+  },
+  {
+    "view": "desktop",
+    "frame": 3,
+    "unchangedRegion": [
+      800,
+      0,
+      1440,
+      900
+    ],
+    "pixelsChecked": 576000,
+    "changedPixels": 0
+  },
+  {
+    "view": "desktop",
+    "frame": 4,
+    "unchangedRegion": [
+      800,
+      0,
+      1440,
+      900
+    ],
+    "pixelsChecked": 576000,
+    "changedPixels": 0
+  },
+  {
+    "view": "desktop",
+    "frame": 5,
+    "unchangedRegion": [
+      800,
+      0,
+      1440,
+      900
+    ],
+    "pixelsChecked": 576000,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": "handoff",
+    "pixelsChecked": 334836,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": "restored",
+    "pixelsChecked": 334836,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 0,
+    "unchangedRegion": [
+      0,
+      0,
+      393,
+      280
+    ],
+    "pixelsChecked": 110040,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 0,
+    "unchangedRegion": [
+      0,
+      790,
+      393,
+      852
+    ],
+    "pixelsChecked": 24366,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 1,
+    "unchangedRegion": [
+      0,
+      0,
+      393,
+      280
+    ],
+    "pixelsChecked": 110040,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 1,
+    "unchangedRegion": [
+      0,
+      790,
+      393,
+      852
+    ],
+    "pixelsChecked": 24366,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 2,
+    "unchangedRegion": [
+      0,
+      0,
+      393,
+      280
+    ],
+    "pixelsChecked": 110040,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 2,
+    "unchangedRegion": [
+      0,
+      790,
+      393,
+      852
+    ],
+    "pixelsChecked": 24366,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 3,
+    "unchangedRegion": [
+      0,
+      0,
+      393,
+      280
+    ],
+    "pixelsChecked": 110040,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 3,
+    "unchangedRegion": [
+      0,
+      790,
+      393,
+      852
+    ],
+    "pixelsChecked": 24366,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 4,
+    "unchangedRegion": [
+      0,
+      0,
+      393,
+      280
+    ],
+    "pixelsChecked": 110040,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 4,
+    "unchangedRegion": [
+      0,
+      790,
+      393,
+      852
+    ],
+    "pixelsChecked": 24366,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 5,
+    "unchangedRegion": [
+      0,
+      0,
+      393,
+      280
+    ],
+    "pixelsChecked": 110040,
+    "changedPixels": 0
+  },
+  {
+    "view": "phone",
+    "frame": 5,
+    "unchangedRegion": [
+      0,
+      790,
+      393,
+      852
+    ],
+    "pixelsChecked": 24366,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": "handoff",
+    "pixelsChecked": 579510,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": "restored",
+    "pixelsChecked": 579510,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 0,
+    "unchangedRegion": [
+      0,
+      0,
+      685,
+      300
+    ],
+    "pixelsChecked": 205500,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 0,
+    "unchangedRegion": [
+      600,
+      0,
+      685,
+      846
+    ],
+    "pixelsChecked": 71910,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 1,
+    "unchangedRegion": [
+      0,
+      0,
+      685,
+      300
+    ],
+    "pixelsChecked": 205500,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 1,
+    "unchangedRegion": [
+      600,
+      0,
+      685,
+      846
+    ],
+    "pixelsChecked": 71910,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 2,
+    "unchangedRegion": [
+      0,
+      0,
+      685,
+      300
+    ],
+    "pixelsChecked": 205500,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 2,
+    "unchangedRegion": [
+      600,
+      0,
+      685,
+      846
+    ],
+    "pixelsChecked": 71910,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 3,
+    "unchangedRegion": [
+      0,
+      0,
+      685,
+      300
+    ],
+    "pixelsChecked": 205500,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 3,
+    "unchangedRegion": [
+      600,
+      0,
+      685,
+      846
+    ],
+    "pixelsChecked": 71910,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 4,
+    "unchangedRegion": [
+      0,
+      0,
+      685,
+      300
+    ],
+    "pixelsChecked": 205500,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 4,
+    "unchangedRegion": [
+      600,
+      0,
+      685,
+      846
+    ],
+    "pixelsChecked": 71910,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 5,
+    "unchangedRegion": [
+      0,
+      0,
+      685,
+      300
+    ],
+    "pixelsChecked": 205500,
+    "changedPixels": 0
+  },
+  {
+    "view": "preview",
+    "frame": 5,
+    "unchangedRegion": [
+      600,
+      0,
+      685,
+      846
+    ],
+    "pixelsChecked": 71910,
+    "changedPixels": 0
+  }
+]

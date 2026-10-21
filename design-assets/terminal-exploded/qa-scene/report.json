@@ -1,0 +1,29 @@
+{
+  "cases": [
+    {
+      "name": "desktop",
+      "pass": true
+    },
+    {
+      "name": "phone",
+      "pass": true
+    },
+    {
+      "name": "preview",
+      "pass": true
+    },
+    {
+      "name": "pointer hold, release, cancellation and repeated entry",
+      "pass": true
+    },
+    {
+      "name": "reduced motion keeps the same scene and settles immediately",
+      "pass": true
+    },
+    {
+      "name": "playground state and the existing project gallery survive the teardown",
+      "pass": true
+    }
+  ],
+  "errors": []
+}

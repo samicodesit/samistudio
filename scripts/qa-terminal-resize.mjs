@@ -1,0 +1,12 @@
+import {chromium} from '../design-assets/terminal-exploded/node_modules/playwright/index.mjs';
+import {writeFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch({headless:true,executablePath:process.env.TERMINAL_QA_BROWSER});const page=await browser.newPage({viewport:{width:1440,height:900}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.route('**/assets/terminal-renderer.mjs',async route=>{await new Promise(r=>setTimeout(r,500));await route.continue();});
+await page.goto(process.env.TERMINAL_QA_URL||'http://127.0.0.1:43128');await page.waitForSelector('.scene.is-ready');await page.waitForFunction(()=>getComputedStyle(document.querySelector('.experience')).opacity==='1');
+await page.locator('.pilot-light').focus();await page.keyboard.press('Enter');await page.setViewportSize({width:393,height:852});await page.waitForFunction(()=>document.querySelector('.terminal-exploded').dataset.state==='open');
+assert.equal(await page.locator('.te-part-handle').first().evaluate(e=>e.style.width),'416px','orientation changed during construction, but the old exterior was opened');
+await page.setViewportSize({width:1440,height:900});await page.waitForFunction(()=>document.querySelector('.terminal-exploded').hidden);await page.locator('.pilot-light').focus();await page.keyboard.press('Enter');await page.waitForFunction(()=>document.querySelector('.terminal-exploded').dataset.state==='open');assert.equal(await page.locator('.te-part-handle').first().evaluate(e=>e.style.width),'1686px');
+await page.setViewportSize({width:1365,height:768});await page.waitForTimeout(250);assert.equal(await page.locator('.te-reference').evaluate(e=>e.width),await page.locator('.scene-extension').evaluate(e=>e.width));await page.keyboard.press('Escape');await page.waitForFunction(()=>document.querySelector('.terminal-exploded').hidden);assert.equal(await page.locator('#terminal-display').evaluate(e=>e.style.translate),'');
+await browser.close();assert.equal(errors.length,0);const report={orientationDuringConstruction:true,orientationWhileOpen:true,resizeWhileOpen:true,restored:true,errors};await writeFile(fileURLToPath(new URL('../design-assets/terminal-exploded/qa-release/resize-report.json',import.meta.url)),JSON.stringify(report,null,2));console.log(JSON.stringify(report));

@@ -1,0 +1,102 @@
+{
+  "cases": [
+    {
+      "name": "renderer stays unloaded before entry",
+      "pass": true
+    },
+    {
+      "name": "desktop keyboard entry and exploded composition",
+      "pass": true
+    },
+    {
+      "name": "reassemble and slider are reversible",
+      "pass": true
+    },
+    {
+      "name": "part descriptions and Escape focus return",
+      "pass": true
+    },
+    {
+      "name": "phone portrait composition",
+      "pass": true
+    },
+    {
+      "name": "phone landscape composition",
+      "pass": true
+    },
+    {
+      "name": "pointer hold opens and releasing it cannot cancel the reveal",
+      "pass": true
+    },
+    {
+      "name": "short taps and moved holds preserve normal terminal navigation",
+      "pass": true
+    },
+    {
+      "name": "REPL command preserves its screen and restores focus without opening a keyboard",
+      "pass": true
+    },
+    {
+      "name": "part inspection, responsive resizing and native modal keyboard focus",
+      "pass": true
+    },
+    {
+      "name": "reduced motion settles immediately and does not leave a running animation",
+      "pass": true
+    },
+    {
+      "name": "the existing project gallery still opens and returns",
+      "pass": true
+    },
+    {
+      "name": "runtime requests are local and no renderer errors were raised",
+      "pass": true
+    }
+  ],
+  "errors": [],
+  "requests": [
+    "http://127.0.0.1:43128/",
+    "http://127.0.0.1:43128/assets/fonts/dm-serif-display-latin.woff2",
+    "http://127.0.0.1:43128/assets/fonts/inter-latin.woff2",
+    "http://127.0.0.1:43128/assets/terminal-housing.webp",
+    "http://127.0.0.1:43128/assets/terminal-keycaps.webp",
+    "http://127.0.0.1:43128/assets/terminal-wide.webp",
+    "http://127.0.0.1:43128/assets/studio.css",
+    "http://127.0.0.1:43128/assets/project-gallery.css",
+    "http://127.0.0.1:43128/assets/terminal-exploded.css",
+    "http://127.0.0.1:43128/assets/studio.js",
+    "http://127.0.0.1:43128/motion-study.css?v=viewport-20261017",
+    "http://127.0.0.1:43128/motion-study.mjs",
+    "http://127.0.0.1:43128/assets/terminal-art/doodle.png",
+    "http://127.0.0.1:43128/assets/terminal-art/autolister.png",
+    "http://127.0.0.1:43128/assets/terminal-art/cryptik.png",
+    "http://127.0.0.1:43128/assets/icons/arrow-left.svg",
+    "http://127.0.0.1:43128/assets/gallery-geometry.mjs",
+    "http://127.0.0.1:43128/entry-paths.mjs",
+    "http://127.0.0.1:43128/assets/motion-preferences.mjs",
+    "http://127.0.0.1:43128/assets/key-spring.mjs",
+    "http://127.0.0.1:43128/assets/project-gallery.js",
+    "http://127.0.0.1:43128/assets/terminal-controls.mjs",
+    "http://127.0.0.1:43128/assets/secret-terminal.mjs",
+    "http://127.0.0.1:43128/assets/terminal-viewport.mjs",
+    "http://127.0.0.1:43128/assets/terminal-exploded.mjs",
+    "http://127.0.0.1:43128/assets/javascript-playground.mjs",
+    "http://127.0.0.1:43128/assets/project-data.mjs",
+    "http://127.0.0.1:43128/assets/terminal-assembly.mjs",
+    "http://127.0.0.1:43128/assets/gallery-loading.mjs",
+    "http://127.0.0.1:43128/assets/gallery-navigation.mjs",
+    "http://127.0.0.1:43128/assets/terminal-keycaps.webp",
+    "http://127.0.0.1:43128/favicon.svg",
+    "http://127.0.0.1:43128/assets/gallery/doodle-atelier-desktop.webp",
+    "http://127.0.0.1:43128/assets/gallery/autolister-room-wide.webp",
+    "http://127.0.0.1:43128/assets/gallery/cryptik-room-wide.webp",
+    "http://127.0.0.1:43128/assets/terminal-renderer.mjs",
+    "http://127.0.0.1:43128/assets/terminal-construction.mjs",
+    "http://127.0.0.1:43128/assets/terminal-keycaps-mobile.webp",
+    "http://127.0.0.1:43128/assets/terminal-housing-mobile.webp",
+    "http://127.0.0.1:43128/assets/terminal-housing-mobile.webp",
+    "http://127.0.0.1:43128/favicon.svg",
+    "http://127.0.0.1:43128/favicon.svg",
+    "http://127.0.0.1:43128/assets/terminal-keycaps.webp"
+  ]
+}

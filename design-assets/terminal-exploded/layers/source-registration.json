@@ -1,0 +1,23 @@
+{
+  "sources": {
+    "terminal-housing.webp": "16716c4519b5f9647fc13f1611fb4268ffbe7bee1244b0149a90378bad6a73de",
+    "terminal-keycaps.webp": "c6103925a809bba55ee5722511a53cb7a08bb798dd026679efd39bb1c19e87cf"
+  },
+  "checks": [
+    {
+      "part": "housing",
+      "opaqueInteriorPixelsChecked": 101529,
+      "mismatchingPixels": 0
+    },
+    {
+      "part": "display",
+      "opaqueInteriorPixelsChecked": 114822,
+      "mismatchingPixels": 0
+    },
+    {
+      "part": "keys",
+      "opaqueInteriorPixelsChecked": 39046,
+      "mismatchingPixels": 0
+    }
+  ]
+}

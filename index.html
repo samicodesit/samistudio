@@ -34,6 +34,7 @@
   <link rel="preload" href="./assets/terminal-wide.webp" as="image" type="image/webp" media="(min-width: 1024px)">
   <link rel="stylesheet" href="./assets/studio.css">
   <link rel="stylesheet" href="./assets/project-gallery.css">
+  <link rel="stylesheet" href="./assets/terminal-exploded.css">
   <script src="./assets/studio.js" type="module" onerror="document.documentElement.classList.remove('is-loading')"></script>
 <link rel="stylesheet" href="./motion-study.css?v=viewport-20261017"><script type="module" src="./motion-study.mjs"></script></head>
 <body>
@@ -67,7 +68,8 @@
       </div>
       <div class="composition" id="terminal-workspace">
         <div class="terminal" role="region" aria-label="Interactive Sami Studio terminal">
-          <span class="pilot-light" aria-hidden="true"></span>
+          <button class="pilot-light te-trigger" type="button" aria-label="Inspect terminal assembly" aria-expanded="false" aria-describedby="assembly-entry-hint"></button>
+          <span class="sr-only" id="assembly-entry-hint">Hold the amber indicator to take the terminal apart, or focus it and press Enter.</span>
           <div class="display" id="terminal-display" aria-label="Terminal display">
             <div class="display-topline"><button type="button" id="display-title" aria-controls="secret-terminal" aria-expanded="false" aria-describedby="secret-entry-hint">Work</button><div class="display-pagination"><button type="button" data-page="previous" aria-label="Previous project">&#8249;</button><span id="display-number">1/3</span><button type="button" data-page="next" aria-label="Next project">&#8250;</button></div><button class="shell-exit" type="button" aria-label="Exit secret terminal" hidden>exit</button></div>
             <span class="sr-only" id="secret-entry-hint">Hold Work, or focus it and press Enter, to open a hidden command prompt. The backtick key also opens it.</span>

@@ -1,0 +1,18 @@
+[
+  {
+    "name": "desktop",
+    "cpuSlowdown": 4,
+    "frames": 246,
+    "p95FrameMs": 8.200000000000273,
+    "maxFrameMs": 47.5,
+    "longTasks": []
+  },
+  {
+    "name": "phone",
+    "cpuSlowdown": 4,
+    "frames": 249,
+    "p95FrameMs": 8.099999999999909,
+    "maxFrameMs": 8.5,
+    "longTasks": []
+  }
+]

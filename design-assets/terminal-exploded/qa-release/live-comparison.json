@@ -1,0 +1,101 @@
+[
+  {
+    "view": "desktop",
+    "state": "work",
+    "changed": 0,
+    "box": null,
+    "mean": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "view": "desktop",
+    "state": "about",
+    "changed": 0,
+    "box": null,
+    "mean": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "view": "desktop",
+    "state": "contact",
+    "changed": 0,
+    "box": null,
+    "mean": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "view": "phone",
+    "state": "work",
+    "changed": 0,
+    "box": null,
+    "mean": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "view": "phone",
+    "state": "about",
+    "changed": 0,
+    "box": null,
+    "mean": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "view": "phone",
+    "state": "contact",
+    "changed": 0,
+    "box": null,
+    "mean": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "view": "preview",
+    "state": "work",
+    "changed": 0,
+    "box": null,
+    "mean": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "view": "preview",
+    "state": "about",
+    "changed": 0,
+    "box": null,
+    "mean": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  {
+    "view": "preview",
+    "state": "contact",
+    "changed": 0,
+    "box": null,
+    "mean": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+]

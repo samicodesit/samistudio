@@ -1,0 +1,117 @@
+{
+  "cases": [
+    {
+      "name": "desktop",
+      "width": 1440,
+      "height": 900,
+      "dpr": 1,
+      "reachableParts": [
+        "rear",
+        "housing",
+        "display",
+        "board",
+        "keys"
+      ],
+      "dragKeyboardAndReset": true
+    },
+    {
+      "name": "phone",
+      "width": 393,
+      "height": 852,
+      "dpr": 3,
+      "reachableParts": [
+        "rear",
+        "board",
+        "display",
+        "housing",
+        "keys"
+      ],
+      "dragKeyboardAndReset": true
+    },
+    {
+      "name": "preview",
+      "width": 685,
+      "height": 846,
+      "dpr": 1,
+      "reachableParts": [
+        "rear",
+        "board",
+        "display",
+        "housing",
+        "keys"
+      ],
+      "dragKeyboardAndReset": true
+    },
+    {
+      "name": "small-phone",
+      "width": 320,
+      "height": 568,
+      "dpr": 2,
+      "reachableParts": [
+        "rear",
+        "housing",
+        "display",
+        "board",
+        "keys"
+      ],
+      "dragKeyboardAndReset": true
+    },
+    {
+      "name": "landscape",
+      "width": 844,
+      "height": 390,
+      "dpr": 2,
+      "reachableParts": [
+        "rear",
+        "board",
+        "display",
+        "housing",
+        "keys"
+      ],
+      "dragKeyboardAndReset": true
+    },
+    {
+      "name": "tablet",
+      "width": 768,
+      "height": 1024,
+      "dpr": 2,
+      "reachableParts": [
+        "rear",
+        "board",
+        "display",
+        "housing",
+        "keys"
+      ],
+      "dragKeyboardAndReset": true
+    },
+    {
+      "name": "compact-desktop",
+      "width": 1024,
+      "height": 768,
+      "dpr": 1,
+      "reachableParts": [
+        "rear",
+        "housing",
+        "display",
+        "board",
+        "keys"
+      ],
+      "dragKeyboardAndReset": true
+    },
+    {
+      "name": "wide",
+      "width": 2560,
+      "height": 1080,
+      "dpr": 1,
+      "reachableParts": [
+        "rear",
+        "housing",
+        "display",
+        "board",
+        "keys"
+      ],
+      "dragKeyboardAndReset": true
+    }
+  ],
+  "errors": []
+}

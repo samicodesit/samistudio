@@ -1,4 +1,7 @@
 import './terminal-viewport.test.mjs';
+import './terminal-exploded.test.mjs';
+import './terminal-scene-motion.test.mjs';
+import './terminal-construction.test.mjs';
 import './motion-policy.test.mjs';
 import './portal-path.test.mjs';
 import './javascript-playground.test.mjs';
@@ -23,6 +26,9 @@ import { tmpdir } from 'node:os';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const runtimeFiles = [
+  'assets/terminal-inner-board.webp','assets/terminal-inner-shell.webp',
+  'assets/terminal-scene-motion.mjs','assets/terminal-room.mjs',
+  'assets/terminal-construction.mjs', 'assets/terminal-renderer.mjs', 'assets/terminal-exploded.mjs', 'assets/terminal-exploded.css',
   'assets/terminal-viewport.mjs', 'assets/motion-preferences.mjs', 'motion-study.mjs', 'motion-study.css', 'entry-paths.mjs',
   'index.html', 'favicon.svg', 'og-image.jpg', 'assets/studio.css', 'assets/studio.js',
   'assets/key-spring.mjs', 'assets/terminal-controls.mjs', 'assets/terminal-housing.webp',

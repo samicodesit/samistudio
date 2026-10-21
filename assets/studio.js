@@ -5,6 +5,7 @@ import { initTerminalControls, initTerminalReflection } from './terminal-control
 import { initSecretTerminal } from './secret-terminal.mjs';
 import { initTerminalViewport } from './terminal-viewport.mjs';
 import { motionPreference } from './motion-preferences.mjs';
+import { initExplodedTerminal } from './terminal-exploded.mjs';
 
 (() => {
   'use strict';
@@ -21,9 +22,9 @@ import { motionPreference } from './motion-preferences.mjs';
   reflectionMask.className='terminal-reflection';reflectionMask.setAttribute('aria-hidden','true');
   const reflectionSurface=document.createElement('span');reflectionSurface.className='terminal-reflection-glint';
   reflectionMask.append(reflectionSurface);display.append(reflectionMask);
-  let terminalInView=true;
+  let terminalInView=true,explodedTerminal;
   const reflection=initTerminalReflection({surface:reflectionSurface,container:document.querySelector('.terminal'),reducedMotion,
-    isVisible:()=>terminalInView&&!projectDialog.open&&display.dataset.shell!=='true'});
+    isVisible:()=>terminalInView&&!projectDialog.open&&display.dataset.shell!=='true'&&!explodedTerminal?.isOpen});
   new MutationObserver(()=>reflection.refresh()).observe(projectDialog,{attributes:true,attributeFilter:['open']});
   if('IntersectionObserver' in window)new IntersectionObserver(entries=>{
     const visible=entries[0].isIntersecting;
@@ -70,12 +71,18 @@ import { motionPreference } from './motion-preferences.mjs';
     onSelect:(index,total)=>terminalControls.projectChanged(index,total),
   });
   secretTerminal=initSecretTerminal({display,reducedMotion,
-    isAvailable:()=>terminalInView&&!projectDialog.open,
+    isAvailable:()=>terminalInView&&!projectDialog.open&&!explodedTerminal?.isOpen,
     canType:()=>true,
     onEnter:()=>{showView('work');gallery.cancelPending();terminalControls.pulse();},
     onExit:()=>showView('work'),
     onOpenProject:id=>{showView('work');gallery.openProject(id);},
+    onExplode:()=>explodedTerminal?.open(),
     onChange:()=>{reflection.refresh();terminalEditor?.refresh();},
+  });
+  explodedTerminal=initExplodedTerminal({trigger:document.querySelector('.pilot-light'),reducedMotion,
+    isAvailable:()=>terminalInView&&!projectDialog.open,
+    onEnter:()=>{gallery.cancelPending();reflection.refresh();},
+    onExit:()=>reflection.refresh(),
   });
   const fittedPhoto = document.createElement('canvas');
   fittedPhoto.width = 1260;

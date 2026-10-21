@@ -1,0 +1,100 @@
+{
+  "surfaces": [
+    {
+      "view": "desktop",
+      "state": "work",
+      "pixels": 1296000,
+      "changedPixels": 0
+    },
+    {
+      "view": "desktop",
+      "state": "about",
+      "pixels": 1296000,
+      "changedPixels": 0
+    },
+    {
+      "view": "desktop",
+      "state": "contact",
+      "pixels": 1296000,
+      "changedPixels": 0
+    },
+    {
+      "view": "phone",
+      "state": "work",
+      "pixels": 334836,
+      "changedPixels": 0
+    },
+    {
+      "view": "phone",
+      "state": "about",
+      "pixels": 334836,
+      "changedPixels": 0
+    },
+    {
+      "view": "phone",
+      "state": "contact",
+      "pixels": 334836,
+      "changedPixels": 0
+    },
+    {
+      "view": "preview",
+      "state": "work",
+      "pixels": 579510,
+      "changedPixels": 0
+    },
+    {
+      "view": "preview",
+      "state": "about",
+      "pixels": 579510,
+      "changedPixels": 0
+    },
+    {
+      "view": "preview",
+      "state": "contact",
+      "pixels": 579510,
+      "changedPixels": 0
+    }
+  ],
+  "closing": [
+    {
+      "timeMs": 300,
+      "meanDifference": 0.8737718621399176,
+      "changedPixels": 160825
+    },
+    {
+      "timeMs": 500,
+      "meanDifference": 0.32165252057613164,
+      "changedPixels": 137955
+    },
+    {
+      "timeMs": 700,
+      "meanDifference": 0.0,
+      "changedPixels": 0
+    },
+    {
+      "timeMs": 900,
+      "meanDifference": 0.0,
+      "changedPixels": 0
+    },
+    {
+      "timeMs": 1100,
+      "meanDifference": 0.0,
+      "changedPixels": 0
+    },
+    {
+      "timeMs": 1300,
+      "meanDifference": 0.0,
+      "changedPixels": 0
+    },
+    {
+      "timeMs": 1500,
+      "meanDifference": 0.0,
+      "changedPixels": 0
+    },
+    {
+      "timeMs": 1800,
+      "meanDifference": 0.0,
+      "changedPixels": 0
+    }
+  ]
+}

@@ -6,14 +6,14 @@ export function parseTerminalCommand(value) {
   if(typeof value!=='string'||value.length>80)return {type:'unknown'};
   const command=value.trim().toLowerCase().replace(/\s+/g,' ');
   if(!command)return {type:'empty'};
-  if(['ls','whoami','help','exit'].includes(command))return {type:command};
+  if(['ls','whoami','help','exit','explode'].includes(command))return {type:command};
   if(command==='open')return {type:'ls'};
   const match=/^open ([a-z]+)$/.exec(command);
   return match&&getProject(match[1]) ? {type:'open',id:match[1]} : {type:'unknown'};
 }
 
 export function initSecretTerminal({display,page=document,reducedMotion={matches:false},isAvailable=()=>true,
-  canType=()=>true,onEnter,onExit,onOpenProject,onChange,setTimer=setTimeout,clearTimer=clearTimeout,makePlayground=()=>createPlayground({page})}) {
+  canType=()=>true,onEnter,onExit,onOpenProject,onExplode,onChange,setTimer=setTimeout,clearTimer=clearTimeout,makePlayground=()=>createPlayground({page})}) {
   const trigger=display.querySelector('#display-title');
   const screen=display.querySelector('.screen-shell');
   const output=display.querySelector('.shell-output');
@@ -86,7 +86,8 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
     switch(command.type){
       case 'ls':listProjects();return;
       case 'whoami':response('Just me, Sami.\nI design and build everything here.');return;
-      case 'help':response('JavaScript REPL\nclear / reset / ls / whoami / exit');return;
+      case 'help':response('JavaScript REPL\nclear / reset / ls / whoami / explode / exit');return;
+      case 'explode':onExplode?.();return;
       case 'open':close({restore:false});onOpenProject?.(command.id);return;
       case 'exit':close();return;
     }
@@ -115,7 +116,7 @@ export function initSecretTerminal({display,page=document,reducedMotion={matches
   listen(trigger,'contextmenu',event=>{if(hold||active)event.preventDefault();});
   listen(page,'keydown',event=>{
     if(event.isComposing)return;
-    if(active&&event.key==='Escape'){event.preventDefault();close();return;}
+    if(active&&event.key==='Escape'&&isAvailable()){event.preventDefault();close();return;}
     if(event.key!=='`'||event.repeat||event.altKey||event.ctrlKey||event.metaKey||event.target?.closest('input,textarea,select,[contenteditable]'))return;
     if(!active&&isAvailable()){event.preventDefault();open({keyboard:true});}
   });

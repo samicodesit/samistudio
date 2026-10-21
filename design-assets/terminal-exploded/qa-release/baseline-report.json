@@ -1,0 +1,631 @@
+{
+  "errors": [],
+  "surfaces": [
+    {
+      "name": "desktop",
+      "source": "live",
+      "url": "https://samistudio.nl"
+    },
+    {
+      "name": "desktop",
+      "source": "local",
+      "url": "http://127.0.0.1:43128"
+    },
+    {
+      "name": "phone",
+      "source": "live",
+      "url": "https://samistudio.nl"
+    },
+    {
+      "name": "phone",
+      "source": "local",
+      "url": "http://127.0.0.1:43128"
+    },
+    {
+      "name": "preview",
+      "source": "live",
+      "url": "https://samistudio.nl"
+    },
+    {
+      "name": "preview",
+      "source": "local",
+      "url": "http://127.0.0.1:43128"
+    }
+  ],
+  "assets": [
+    {
+      "file": "assets/terminal-inner-board.webp",
+      "status": 404,
+      "matches": false,
+      "liveHash": "705ade851e62d736ef7c07ad0c2fcbeb995b8c5eac39c8ad24612de3a4d537f7",
+      "localHash": "02d1468ec1b99961758d4386b97f0fd348bf082c6efe5fc8195a01dc2d83ca4a"
+    },
+    {
+      "file": "assets/terminal-inner-shell.webp",
+      "status": 404,
+      "matches": false,
+      "liveHash": "e8875ebd71f44b509f29633f64401200feabcc97faa5f3331f44139924af9bec",
+      "localHash": "5ba90f9201665a01096af44d1538d5c6a734ec22b60489d0c978384dfc3b99e3"
+    },
+    {
+      "file": "assets/terminal-scene-motion.mjs",
+      "status": 404,
+      "matches": false,
+      "liveHash": "efbc255cee8766bdebe87635b6d00907ca1f6a33d13aaa306145921086bec73e",
+      "localHash": "6fe381fde476f3d1082b4f6fd9c4f79e84227ce930fbdacb87f5b7da7045af90"
+    },
+    {
+      "file": "assets/terminal-room.mjs",
+      "status": 404,
+      "matches": false,
+      "liveHash": "274a0154ea447a29588fbd32c63cd3b52cbe99969a91ad2184fe5c5cf707b07d",
+      "localHash": "de18e3d63082515957f901af243c981e254e549636e43ff5c21cfafcc278c938"
+    },
+    {
+      "file": "assets/terminal-construction.mjs",
+      "status": 404,
+      "matches": false,
+      "liveHash": "9053e705a35ae26f3052f26e43ad7b86fa27407323217d907a97a489c8cb7dd3",
+      "localHash": "b6aa5aa31bafe989fda22b00d670e7ce023afc60979a230e50a2b04bf89f2b4e"
+    },
+    {
+      "file": "assets/terminal-renderer.mjs",
+      "status": 404,
+      "matches": false,
+      "liveHash": "f71aee4b1aea5196576e7548f0d7012b068f157be8eb8e4712450562e8b0034e",
+      "localHash": "dcf52e7103a751c6f35ebbff78d87a5bf76a19298cd5c13927ad81757c3398fb"
+    },
+    {
+      "file": "assets/terminal-exploded.mjs",
+      "status": 404,
+      "matches": false,
+      "liveHash": "ca436b01f51047ace8b791e57d8a4d5bb1f153529b9852687b6c1505358dbfb5",
+      "localHash": "b75466e99af0a055910ed9f07e56c4e91dfa5ebdd47cee7ac928efddf282c0e6"
+    },
+    {
+      "file": "assets/terminal-exploded.css",
+      "status": 404,
+      "matches": false,
+      "liveHash": "e2b2a128bb4b5f1c6bd9e19b8ead2a16dc68e542da4084aa1a2b7696630ca62f",
+      "localHash": "bf5fa29e69aa5b567b00fce02e6a68fe4359d3f19ed92ff9f93ed1309497f389"
+    },
+    {
+      "file": "assets/terminal-viewport.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "93d05b43ddf3f2e34978f4da135b73da9a1bfc4e1b86de126254d723cceff329",
+      "localHash": "098422c846409cdd79755aefc9827c40991f96c13b610d17c666ee48b6b131a1"
+    },
+    {
+      "file": "assets/motion-preferences.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "444a77d1fb594b64aa4f3a0f5822615b1a36589497c0103287f6d590df6389a5",
+      "localHash": "f934b8fb18ea4b1952f7f9e3c4910983a7e8623d1f154adc3a4af9d263e9610f"
+    },
+    {
+      "file": "motion-study.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "c9c7ae42aacd4f7abd640ffa1a380d4413e458fd9c15bbcc9f138921fe17ad74",
+      "localHash": "e377f3b15c49adde66e862d1e2531612f157aa6bc6d472a07cb7e32dd8c8b7e4"
+    },
+    {
+      "file": "motion-study.css",
+      "status": 200,
+      "matches": false,
+      "liveHash": "e15437b7584dac0fb41b2fb614b0ae8f9b963feccd487c065e6b403d6b456966",
+      "localHash": "2f0abb63af308b98c415b1401f4a7cc7d8ba41b0296b64aee599c469d43f6fb7"
+    },
+    {
+      "file": "entry-paths.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "7704359c894e1ae4d558513ead612ff09f831d83dcf6f77e8129b16eb8e08b91",
+      "localHash": "142db88b336e65ae53b121e8254f6d7223abc764e09a6151caaef43d153aeba6"
+    },
+    {
+      "file": "index.html",
+      "status": 200,
+      "matches": false,
+      "liveHash": "2682e91ebccb496715f046d8010cee04791bf2c1c84ab5c3ef8972a07023ef14",
+      "localHash": "e074aee27ee5bf1b8dbdc552650e383d5972c9734cb20286e801061a68d8d5bb"
+    },
+    {
+      "file": "favicon.svg",
+      "status": 200,
+      "matches": false,
+      "liveHash": "85d4494e9883cd0962179491a661469f03cb39a1bf370ca61ca0eddb0f22d965",
+      "localHash": "2c8b4f12ab5fd5eba362ef6c788f8bf7c8ac7bf0b988e78c8263bfe9db347f01"
+    },
+    {
+      "file": "og-image.jpg",
+      "status": 200,
+      "matches": true,
+      "liveHash": "b5d522be1d1bd1da0936e83ce6416af05777175ef909ccda901989b756e9a305",
+      "localHash": "b5d522be1d1bd1da0936e83ce6416af05777175ef909ccda901989b756e9a305"
+    },
+    {
+      "file": "assets/studio.css",
+      "status": 200,
+      "matches": true,
+      "liveHash": "c3f2792faf5d725d988581443dc2272e4bb2979ed7fa2ac3a7c5a19b535a7886",
+      "localHash": "c3f2792faf5d725d988581443dc2272e4bb2979ed7fa2ac3a7c5a19b535a7886"
+    },
+    {
+      "file": "assets/studio.js",
+      "status": 200,
+      "matches": false,
+      "liveHash": "19d2e53dfd0087e43da48f63fbe45626909f70e3cdf374cd1567f05c16fb57a8",
+      "localHash": "474dc9d63268ce3637f6945939759c0429c3477a08a02de4e29c1c206deffc85"
+    },
+    {
+      "file": "assets/key-spring.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "e2b1e4238ce9e37b825985555309ea44a4f9608d5cf4ad1a3275828eb3d105a2",
+      "localHash": "77225b36de91d57eebba4afe130ad94630f7a7fe20277da6f1e72a9560f86115"
+    },
+    {
+      "file": "assets/terminal-controls.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "177d2bb7f116899a2299ee6dde013165a43a19e9b1c5f4985b47e78789aecd28",
+      "localHash": "8002403b084c09c1d6761409f0b23eca8a61af809564e37d0cb1b8746f85d913"
+    },
+    {
+      "file": "assets/terminal-housing.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "16716c4519b5f9647fc13f1611fb4268ffbe7bee1244b0149a90378bad6a73de",
+      "localHash": "16716c4519b5f9647fc13f1611fb4268ffbe7bee1244b0149a90378bad6a73de"
+    },
+    {
+      "file": "assets/secret-terminal.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "d2abdb20a7a8306c15a1c1750b3d563fa573b0e370cfa7a40531a3c2e6186389",
+      "localHash": "3d1642e99feb87e3b162fd109df805b4dd639b6b777f48cc8f533f5f4bf8e2b0"
+    },
+    {
+      "file": "assets/javascript-playground.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "f89b1e2f01877269ec985887ed50fb9a98eda43f8d42fc69285f26f82a5f2b26",
+      "localHash": "ce21d82793702c737af6fb597614860d2cd20d8144f9a820306ce9b2fe5b68ed"
+    },
+    {
+      "file": "assets/terminal-housing-mobile.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "851a3981102479ee6c039d847153d22cadbb19b458faca4bd7d793f3a88d4949",
+      "localHash": "851a3981102479ee6c039d847153d22cadbb19b458faca4bd7d793f3a88d4949"
+    },
+    {
+      "file": "assets/terminal-keycaps.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "c6103925a809bba55ee5722511a53cb7a08bb798dd026679efd39bb1c19e87cf",
+      "localHash": "c6103925a809bba55ee5722511a53cb7a08bb798dd026679efd39bb1c19e87cf"
+    },
+    {
+      "file": "assets/terminal-keycaps-mobile.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "41fb7c25f75f09c27b77304756eaf3da7e65b43fb182e5bd85e67de5e2177877",
+      "localHash": "41fb7c25f75f09c27b77304756eaf3da7e65b43fb182e5bd85e67de5e2177877"
+    },
+    {
+      "file": "assets/terminal-wide.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "7207658c2b1f86f8bb587d155ce6a0f8dd7dbfcd165a22230ed4e755f842427a",
+      "localHash": "7207658c2b1f86f8bb587d155ce6a0f8dd7dbfcd165a22230ed4e755f842427a"
+    },
+    {
+      "file": "assets/project-gallery.js",
+      "status": 200,
+      "matches": false,
+      "liveHash": "fa501b05864a48155cc46c87f02d4040bf255e1db538059dba62ec5c68578db5",
+      "localHash": "8733091936cf57bbb03c82c871c0d6ed0863ec04aeceb3f64c35604615ef8514"
+    },
+    {
+      "file": "assets/project-gallery.css",
+      "status": 200,
+      "matches": false,
+      "liveHash": "564a30c9589b95b7d97dcea89113a619d0a47787bd271fc179750c54bfde3d91",
+      "localHash": "f5fda90ca8000db252dc83586a01885febf34eff1c9b2c01308f4063db1daf02"
+    },
+    {
+      "file": "assets/project-data.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "b98c579d62cb57120d82a50d3aa795ff7840d5986986c4f7edee6c6ceb014341",
+      "localHash": "07a221fd1f1d6e334a82d757d736054b2d460f512b22c5b8c41f8af0d62671df"
+    },
+    {
+      "file": "assets/gallery-geometry.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "4ad39a3321554b4cf280bf214264d71cfd4747e6e5ea735a1c30163c7a774f1a",
+      "localHash": "eecfc2cab10a8bee617f15e3684c4cebee073f1adf710409bb9b9ae416c8cb9c"
+    },
+    {
+      "file": "assets/gallery-loading.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "fdda2f9c3282ec643e3ade50cd22a268744c78e64fb6b1cfc9d4fa1ddad86115",
+      "localHash": "c111b08737bdd128e013e74b770f1ee824c96fc0aaeb79cbfcdecdf928a477f6"
+    },
+    {
+      "file": "assets/gallery-navigation.mjs",
+      "status": 200,
+      "matches": false,
+      "liveHash": "1fc356d6ae956f0e4a477faab2ca96e0e3fdbe5bde80eb623c605149a02365dc",
+      "localHash": "069b6fb321dd2bb879facb24b20010c2cfa8ca6f094291abae636370fffa8cf9"
+    },
+    {
+      "file": "assets/terminal-art/doodle.png",
+      "status": 200,
+      "matches": true,
+      "liveHash": "2b70c0f0f3d9746479996ffdd75bccc886987e285407381a9a484519bfe9d720",
+      "localHash": "2b70c0f0f3d9746479996ffdd75bccc886987e285407381a9a484519bfe9d720"
+    },
+    {
+      "file": "assets/terminal-art/autolister.png",
+      "status": 200,
+      "matches": true,
+      "liveHash": "9e36eff5e654e64c2552f9c92dca9bc808e5f79010cc64105d362db9a62b713f",
+      "localHash": "9e36eff5e654e64c2552f9c92dca9bc808e5f79010cc64105d362db9a62b713f"
+    },
+    {
+      "file": "assets/terminal-art/cryptik.png",
+      "status": 200,
+      "matches": true,
+      "liveHash": "68fc981bdec071cd83ee1530baffc7312c383d823758555acd28cfe60691b16d",
+      "localHash": "68fc981bdec071cd83ee1530baffc7312c383d823758555acd28cfe60691b16d"
+    },
+    {
+      "file": "assets/gallery/stage-background.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "e4b4f3b4a1c3457cfed0905d3bc348d6a63a5a996fbe717e40c3f3098ada4d9a",
+      "localHash": "e4b4f3b4a1c3457cfed0905d3bc348d6a63a5a996fbe717e40c3f3098ada4d9a"
+    },
+    {
+      "file": "assets/gallery/doodle-atelier-desktop.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "f293f1c1f5003f0eadb8b0e5808a0cde0286702bdfd63503d4e36524049aae28",
+      "localHash": "f293f1c1f5003f0eadb8b0e5808a0cde0286702bdfd63503d4e36524049aae28"
+    },
+    {
+      "file": "assets/gallery/doodle-atelier-portrait-room.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "74e8c39410eca35a2484aad77dd713bd845f1044cbed89cf12fdb9dda07307d7",
+      "localHash": "74e8c39410eca35a2484aad77dd713bd845f1044cbed89cf12fdb9dda07307d7"
+    },
+    {
+      "file": "assets/gallery/doodle-atelier-landscape.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "7d8bced3af69800e301e191f3fe41da85f37e072658927b5524b652e87248d45",
+      "localHash": "7d8bced3af69800e301e191f3fe41da85f37e072658927b5524b652e87248d45"
+    },
+    {
+      "file": "assets/gallery/doodle-atelier-panorama.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "4faf0640fd8963826e2bf73a4784aecfb743581202dcada180ad9e683ef1efbb",
+      "localHash": "4faf0640fd8963826e2bf73a4784aecfb743581202dcada180ad9e683ef1efbb"
+    },
+    {
+      "file": "assets/gallery/doodle-landscape.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "2f68f80ce967768f3762f106d37773e25a0c76781c1274e21b1ed21faed5ff83",
+      "localHash": "2f68f80ce967768f3762f106d37773e25a0c76781c1274e21b1ed21faed5ff83"
+    },
+    {
+      "file": "assets/gallery/autolister-landscape.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "f5b82359f928ea6419fa16096f49454fd50b21dbd4bf9a8f7a3717682f9f1b49",
+      "localHash": "f5b82359f928ea6419fa16096f49454fd50b21dbd4bf9a8f7a3717682f9f1b49"
+    },
+    {
+      "file": "assets/gallery/cryptik-landscape.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "a7e15d7e2ac3a4eaf6431bb0a2ce13186f10fb12d999921e6c009ec225edd8e2",
+      "localHash": "a7e15d7e2ac3a4eaf6431bb0a2ce13186f10fb12d999921e6c009ec225edd8e2"
+    },
+    {
+      "file": "assets/gallery/doodle-portrait-room.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "f17572ddecd78be043597e2670e79c4d80f47f15ea44161cd81d7e8a7d937101",
+      "localHash": "f17572ddecd78be043597e2670e79c4d80f47f15ea44161cd81d7e8a7d937101"
+    },
+    {
+      "file": "assets/gallery/autolister-portrait-room.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "66c18d3d547f68003aac2ab549a8a4de4808220cd0a013653feb51a9c91f3fcd",
+      "localHash": "66c18d3d547f68003aac2ab549a8a4de4808220cd0a013653feb51a9c91f3fcd"
+    },
+    {
+      "file": "assets/gallery/cryptik-portrait-room.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "8f917abdd4eef50258810cded4f8b9fc2e179a0638789cd214a24da1118dcd68",
+      "localHash": "8f917abdd4eef50258810cded4f8b9fc2e179a0638789cd214a24da1118dcd68"
+    },
+    {
+      "file": "assets/gallery/doodle-mobile-room.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "9699e564a1e08e94228942d9c8a4a01aaf5d15b08cff336018e779d081e447dc",
+      "localHash": "9699e564a1e08e94228942d9c8a4a01aaf5d15b08cff336018e779d081e447dc"
+    },
+    {
+      "file": "assets/gallery/autolister-mobile-room.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "d9faa377f436d5ac0353d2a555a95778d60215c9bb75ae9a6a30de6037fcf4e5",
+      "localHash": "d9faa377f436d5ac0353d2a555a95778d60215c9bb75ae9a6a30de6037fcf4e5"
+    },
+    {
+      "file": "assets/gallery/cryptik-mobile-room.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "dcb53436854e0e603a0064f44f0ceaba24e36ff697c6d56af0c64bb2b51e34bf",
+      "localHash": "dcb53436854e0e603a0064f44f0ceaba24e36ff697c6d56af0c64bb2b51e34bf"
+    },
+    {
+      "file": "assets/gallery/doodle-stage-reference.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "c7ab6837c6c1ee583d972a8f05802d49396c8a05bc29da5ed6e318fe0f10d752",
+      "localHash": "c7ab6837c6c1ee583d972a8f05802d49396c8a05bc29da5ed6e318fe0f10d752"
+    },
+    {
+      "file": "assets/gallery/doodle-mobile-v2.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "670cab09bc0d904e92e8d5dd3a10b736b7c9e6ab29627e3e18be3c92cd70c562",
+      "localHash": "670cab09bc0d904e92e8d5dd3a10b736b7c9e6ab29627e3e18be3c92cd70c562"
+    },
+    {
+      "file": "assets/gallery/doodle-desktop-v2.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "29d5a4c3f5671962d15adac9277d4aaa1656698a1a45bb0c195b179b0a6d23e4",
+      "localHash": "29d5a4c3f5671962d15adac9277d4aaa1656698a1a45bb0c195b179b0a6d23e4"
+    },
+    {
+      "file": "assets/gallery/doodle-room-wide-v2.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "9f7334021b90f3e1d5a95f1f55e79df9a5c95ee0e2fa4653f46bbc682f635240",
+      "localHash": "9f7334021b90f3e1d5a95f1f55e79df9a5c95ee0e2fa4653f46bbc682f635240"
+    },
+    {
+      "file": "assets/gallery/autolister-desktop.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "d9b38b7f44bcf18d07b42f5b3c5dc72c18b4c5ef562c6e559fc1efb9025d062d",
+      "localHash": "d9b38b7f44bcf18d07b42f5b3c5dc72c18b4c5ef562c6e559fc1efb9025d062d"
+    },
+    {
+      "file": "assets/gallery/autolister-mobile.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "1400a65637b6387b588e51dfbc26807fa2457ec48571c633c5848251c23d0896",
+      "localHash": "1400a65637b6387b588e51dfbc26807fa2457ec48571c633c5848251c23d0896"
+    },
+    {
+      "file": "assets/gallery/autolister-desktop-patch-wordmark.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "7b2247c3b085ff3d53adcd0025ac62566fa7290fa860166ae9f21199ab6aaaba",
+      "localHash": "7b2247c3b085ff3d53adcd0025ac62566fa7290fa860166ae9f21199ab6aaaba"
+    },
+    {
+      "file": "assets/gallery/autolister-desktop-patch-back.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "6dac48e3e892b80104cf69302e975ca5c0d7a6fc03b4dca5fd60cdd892787550",
+      "localHash": "6dac48e3e892b80104cf69302e975ca5c0d7a6fc03b4dca5fd60cdd892787550"
+    },
+    {
+      "file": "assets/gallery/autolister-desktop-patch-caption.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "08e9d48c96514a627abaa3e6e9ab29686cd1332e1e4ebfc32b7ee4ad5e53bf7e",
+      "localHash": "08e9d48c96514a627abaa3e6e9ab29686cd1332e1e4ebfc32b7ee4ad5e53bf7e"
+    },
+    {
+      "file": "assets/gallery/autolister-mobile-patch-wordmark.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "bc9e1567d183f6c3d126ac4e1fa076dfca5b5f43069a34bb8d8f8ce2345a6f4a",
+      "localHash": "bc9e1567d183f6c3d126ac4e1fa076dfca5b5f43069a34bb8d8f8ce2345a6f4a"
+    },
+    {
+      "file": "assets/gallery/autolister-mobile-patch-back.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "68af1f7b5d2cd7ceaec88c0c2b0f3d1db23348cb66472f94108f41bd34b12226",
+      "localHash": "68af1f7b5d2cd7ceaec88c0c2b0f3d1db23348cb66472f94108f41bd34b12226"
+    },
+    {
+      "file": "assets/gallery/autolister-mobile-patch-caption.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "20e8ccd5ffc8fbcf6ce80e23cdb70b0b01d0d4167a2e62944ec76baa097de04f",
+      "localHash": "20e8ccd5ffc8fbcf6ce80e23cdb70b0b01d0d4167a2e62944ec76baa097de04f"
+    },
+    {
+      "file": "assets/gallery/cryptik-desktop.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "806aecd8e25a2f0a87e2327b47ef6acb52afd4113deb4d4e43b739e4490e68cf",
+      "localHash": "806aecd8e25a2f0a87e2327b47ef6acb52afd4113deb4d4e43b739e4490e68cf"
+    },
+    {
+      "file": "assets/gallery/cryptik-mobile-intro.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "4ae04b9e82c4d5579b462fa1d5970a9ce12bad9a71148fe9141718eb217d1997",
+      "localHash": "4ae04b9e82c4d5579b462fa1d5970a9ce12bad9a71148fe9141718eb217d1997"
+    },
+    {
+      "file": "assets/gallery/cryptik-desktop-patch-wordmark.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "fb7883d0bad2b6b73219b23a92565e7d838d6af51a59d41dc97da8c59494694e",
+      "localHash": "fb7883d0bad2b6b73219b23a92565e7d838d6af51a59d41dc97da8c59494694e"
+    },
+    {
+      "file": "assets/gallery/cryptik-desktop-patch-back.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "c9ac4abbcc11bb6b41d19f401b10f2014d8785f4aa99ab69aa9213f939c6c696",
+      "localHash": "c9ac4abbcc11bb6b41d19f401b10f2014d8785f4aa99ab69aa9213f939c6c696"
+    },
+    {
+      "file": "assets/gallery/cryptik-desktop-patch-caption.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "b25fa7e2ddfb0a94b32fa20d6e423324afa01bbd16b5a89c5fa043a6f6657d49",
+      "localHash": "b25fa7e2ddfb0a94b32fa20d6e423324afa01bbd16b5a89c5fa043a6f6657d49"
+    },
+    {
+      "file": "assets/gallery/autolister-room-wide.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "1e4268918090f1b61ccd38c5067f8aee79c766b32fdf53c03c57a05a40dfb7a4",
+      "localHash": "1e4268918090f1b61ccd38c5067f8aee79c766b32fdf53c03c57a05a40dfb7a4"
+    },
+    {
+      "file": "assets/gallery/cryptik-room-wide.webp",
+      "status": 200,
+      "matches": true,
+      "liveHash": "923cef97b881ca51624dfe7454dab80d05b406b2d78b5a90ab50765eef6e147d",
+      "localHash": "923cef97b881ca51624dfe7454dab80d05b406b2d78b5a90ab50765eef6e147d"
+    },
+    {
+      "file": "assets/fonts/dm-serif-display-latin.woff2",
+      "status": 200,
+      "matches": true,
+      "liveHash": "fdf61e20fd2c0108e0ea28da4daca0035205b4b7fc031a3974b865b704de160a",
+      "localHash": "fdf61e20fd2c0108e0ea28da4daca0035205b4b7fc031a3974b865b704de160a"
+    },
+    {
+      "file": "assets/fonts/inter-latin.woff2",
+      "status": 200,
+      "matches": true,
+      "liveHash": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62",
+      "localHash": "3100e775e8616cd2611beecfa23a4263d7037586789b43f035236a2e6fbd4c62"
+    },
+    {
+      "file": "assets/fonts/dmserifdisplay-OFL.txt",
+      "status": 200,
+      "matches": true,
+      "liveHash": "a3e5cdd67d4571dd0a24fcc968de0efde7ae97ef752daf0906e4767619dd7231",
+      "localHash": "a3e5cdd67d4571dd0a24fcc968de0efde7ae97ef752daf0906e4767619dd7231"
+    },
+    {
+      "file": "assets/fonts/inter-OFL.txt",
+      "status": 200,
+      "matches": false,
+      "liveHash": "f14f2b95a38f4f20cad4d27f7710593f37534c046641be0348da7c28365f4e39",
+      "localHash": "5b9321a4298cfeb6b34354164a1c3afc3db114569984c502b9b35d988fd58c57"
+    },
+    {
+      "file": "assets/icons/caret-right.svg",
+      "status": 200,
+      "matches": true,
+      "liveHash": "e6dec01e074807965b7f3146b976a9b5e82c31d9c2c88aeb52e77cc2ab16c1d7",
+      "localHash": "e6dec01e074807965b7f3146b976a9b5e82c31d9c2c88aeb52e77cc2ab16c1d7"
+    },
+    {
+      "file": "assets/icons/arrow-left.svg",
+      "status": 200,
+      "matches": true,
+      "liveHash": "3c2001cf957d182fc54927e4b286cc8cf66dd97830f441ca2650d42a63a9006a",
+      "localHash": "3c2001cf957d182fc54927e4b286cc8cf66dd97830f441ca2650d42a63a9006a"
+    },
+    {
+      "file": "assets/icons/LICENSE.txt",
+      "status": 200,
+      "matches": false,
+      "liveHash": "ddbe6082ec3cf979db47e5af549d2849c5d6182b3e005ef91ce1dbb9eb122f11",
+      "localHash": "b5b1f1da112d18ea2147decfd48ddc1bf2b5aeb6c265381579340e95b15a2bb2"
+    }
+  ],
+  "closing": [
+    {
+      "time": 0,
+      "progress": "1.0000",
+      "state": "open",
+      "hidden": false
+    },
+    {
+      "time": 100,
+      "progress": "0.6085",
+      "state": "closing",
+      "hidden": false
+    },
+    {
+      "time": 300,
+      "progress": "0.1203",
+      "state": "closing",
+      "hidden": false
+    },
+    {
+      "time": 500,
+      "progress": "0.0152",
+      "state": "closing",
+      "hidden": false
+    },
+    {
+      "time": 700,
+      "progress": "0.0000",
+      "state": "closing",
+      "hidden": false
+    },
+    {
+      "time": 900,
+      "progress": "0.0000",
+      "state": "closing",
+      "hidden": false
+    },
+    {
+      "time": 1100,
+      "progress": "0.0000",
+      "state": "idle",
+      "hidden": true
+    },
+    {
+      "time": 1300,
+      "progress": "0.0000",
+      "state": "idle",
+      "hidden": true
+    },
+    {
+      "time": 1500,
+      "progress": "0.0000",
+      "state": "idle",
+      "hidden": true
+    },
+    {
+      "time": 1800,
+      "progress": "0.0000",
+      "state": "idle",
+      "hidden": true
+    }
+  ]
+}

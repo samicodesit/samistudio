@@ -4,6 +4,9 @@ import { fileURLToPath } from 'node:url';
 
 // Explicitly publish the current homepage only, never repository or Doodle sources.
 export const studioFiles = [
+  'assets/terminal-inner-board.webp','assets/terminal-inner-shell.webp',
+  'assets/terminal-scene-motion.mjs','assets/terminal-room.mjs',
+  'assets/terminal-construction.mjs', 'assets/terminal-renderer.mjs', 'assets/terminal-exploded.mjs', 'assets/terminal-exploded.css',
   'assets/terminal-viewport.mjs', 'assets/motion-preferences.mjs', 'motion-study.mjs', 'motion-study.css', 'entry-paths.mjs',
   'index.html', 'favicon.svg', 'og-image.jpg', 'assets/studio.css', 'assets/studio.js',
   'assets/key-spring.mjs', 'assets/terminal-controls.mjs', 'assets/terminal-housing.webp',
