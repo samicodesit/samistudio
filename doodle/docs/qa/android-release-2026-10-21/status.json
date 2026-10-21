@@ -40,17 +40,34 @@
     "productionNativeConfig": "HTTP 200, enabled, same package and cloud project, Play Integrity required",
     "priorLayoutEvidence": "../detail-selector-2026-10-21/report.md",
     "reviewerIntegrity": "Read-only verified existing list contains only doodlereview889@gmail.com, Android device integrity, Licensed Play-recognized app. No changes saved.",
-    "licenseTesting": "Existing Doodle Integrity reviewer list checked in developer License testing, RESPOND_NORMALLY; same list membership already verified today. No settings changed."
+    "licenseTesting": "Existing Doodle Integrity reviewer list checked in developer License testing, RESPOND_NORMALLY; same list membership already verified today. No settings changed.",
+    "nativePlaySmoke": {
+      "freshGoogleSignIn": "passed, existing reviewer account",
+      "defaultDetail": "Medium on first launch",
+      "savedPreferences": "Simple and Pink persisted after force-stop and cold launch",
+      "detailDrawer": "Actual Play build visually inspected; three examples fit with safe area and readable labels",
+      "paperRow": "All seven presets visible at regular width; actual source layout checks for smaller and larger text remain in detail QA",
+      "text": "Pink, Medium; real result visually passed; balance 229 to 228",
+      "photo": "White, Detailed; approved pet input through system picker; real result visually passed; balance 228 to 227",
+      "integrity": "Both requests succeeded through production native attestation with unchanged existing reviewer test-verdict configuration; this is integration evidence, not physical device certification",
+      "billing": "All three localized prices loaded; Mini selected; Play checkout opened; cancelled at Google immediate-performance consent, before accepting new purchase terms or creating an order; returned to paywall and composer. No purchase/refund regression claimed.",
+      "remainingScope": "Focused release smoke per owner instruction to keep release lean. Earlier full payment-ledger regression was not repeated."
+    }
   },
   "localPlayDevice": {
     "name": "Doodle_Play_API_36_Mac",
     "image": "system-images;android-36;google_apis_playstore;arm64-v8a",
     "imageRevision": 7,
     "sdkLicense": "Owner explicitly approved additional android-sdk-arm-dbt-license",
-    "state": "Password and recovery-phone SMS verification succeeded. Google Terms of Service and Google Play Terms of Service acceptance awaiting explicit owner approval.",
-    "playCandidateInstalled": false,
+    "state": "Google sign-in and terms completed with explicit owner authorization. Version 14 updated through Google Play and tested.",
+    "playCandidateInstalled": true,
     "renderer": "auto after repeated SwiftShader warnings and UI input stalls; paused idle iOS QA simulator to reduce memory pressure",
-    "credentialReadbackCorrection": "Console DOM/clipboard returned redacted placeholders, but the ordinary visual Console view showed the existing credential. User authorized entry, and password was submitted successfully. No password is stored in this record."
+    "credentialReadbackCorrection": "Console DOM/clipboard returned redacted placeholders, but the ordinary visual Console view showed the existing credential. User authorized entry, and password was submitted successfully. No password is stored in this record.",
+    "installedVersionCode": 14,
+    "installedVersionName": "0.1.9",
+    "installer": "com.android.vending",
+    "playSigningSha256": "bd31be25a8573c65e00206aee4ca472b59bfa40acd257289ea49395884913e64",
+    "internalEligibility": "Existing reviewer list enabled for internal track; reviewer accepted the internal invitation. Closed beta to internal propagation completed after a normal emulator restart. No data reset."
   },
   "providerBudget": {
     "ownerApprovedEur": 1,
@@ -58,10 +75,23 @@
     "estimatedUsageCostUsd": 0.119127,
     "automaticRetries": 0,
     "scope": "Current-source provider output probes, not Play-installed native requests",
-    "record": "provider-quality.json"
+    "record": "provider-quality.json",
+    "nativeRequestsCompleted": 2,
+    "nativeUsageCost": "Usage tokens not collected from native UI. EUR 0.40 conservatively reserved for the two requests; existing seven source probes USD 0.119127. Total within EUR 1 approved cap; no automatic/manual retries."
   },
   "productionSubmission": {
-    "submitted": false,
-    "reason": "Play-installed candidate sign-in, attestation, native generation and billing checks not yet complete."
+    "submitted": true,
+    "readbackAt": "2026-10-21T18:36:14.012946+00:00",
+    "status": "Changes in review",
+    "releaseName": "14 (0.1.9) Colors and detail picker",
+    "rolloutPercent": 100,
+    "countryAvailability": "All existing targeted countries",
+    "managedPublishing": false,
+    "pendingChangeCount": 1,
+    "promotedArtifact": "Exact existing internal-track version 14, no rebuild or replacement",
+    "quickChecks": "Pre-submission ready signal observed. After submitting, Console shows Changes in review with quick checks still running, up to 7 minutes remaining.",
+    "publicAvailable": false,
+    "lastConfirmedPublicVersionCode": 13,
+    "proof": "play-production-in-review.png"
   }
 }
