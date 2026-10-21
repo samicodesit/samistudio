@@ -1,0 +1,451 @@
+{
+  "sha256": "edb5e7d4a8ef0ce857eda3200be8799be8f6f759f48e26e5b3f8940ffd1c9e2c",
+  "bytes": 56965596,
+  "abi": [
+    "arm64-v8a",
+    "armeabi-v7a",
+    "x86",
+    "x86_64"
+  ],
+  "nativeLibraries": [
+    {
+      "name": "base/lib/arm64-v8a/libandroidx.graphics.path.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libanimation-decoder-gif.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libappmodules.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libavif_android.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libc++_shared.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libexpo-modules-core.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libfbjni.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libgifimage.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libhermestooling.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libhermesvm.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libimagepipeline.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libjsi.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libnative-filters.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libnative-imagetranscoder.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libreact_codegen_safeareacontext.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libreactnative.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libstatic-webp.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/arm64-v8a/libzstd-kmp.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libandroidx.graphics.path.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libanimation-decoder-gif.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libappmodules.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libavif_android.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libc++_shared.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libexpo-modules-core.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libfbjni.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libgifimage.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libhermestooling.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libhermesvm.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libimagepipeline.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libjsi.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libnative-filters.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libnative-imagetranscoder.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libreact_codegen_safeareacontext.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libreactnative.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libstatic-webp.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/armeabi-v7a/libzstd-kmp.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libandroidx.graphics.path.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libanimation-decoder-gif.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libappmodules.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libavif_android.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libc++_shared.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libexpo-modules-core.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libfbjni.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libgifimage.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libhermestooling.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libhermesvm.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libimagepipeline.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libjsi.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libnative-filters.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libnative-imagetranscoder.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libreact_codegen_safeareacontext.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libreactnative.so",
+      "loadAlignment": 4096,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libstatic-webp.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86/libzstd-kmp.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libandroidx.graphics.path.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libanimation-decoder-gif.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libappmodules.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libavif_android.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libc++_shared.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libexpo-modules-core.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libfbjni.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libgifimage.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libhermestooling.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libhermesvm.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libimagepipeline.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libjsi.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libnative-filters.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libnative-imagetranscoder.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libreact_codegen_safeareacontext.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libreactnative.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libstatic-webp.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    },
+    {
+      "name": "base/lib/x86_64/libzstd-kmp.so",
+      "loadAlignment": 16384,
+      "passes16k": true
+    }
+  ],
+  "all64bitLibrariesAligned16kb": true,
+  "manifest": {
+    "package": "nl.samistudio.doodle",
+    "versionCode": "14",
+    "versionName": "0.1.9",
+    "usesSdk": {
+      "{http://schemas.android.com/apk/res/android}minSdkVersion": "24",
+      "{http://schemas.android.com/apk/res/android}targetSdkVersion": "36"
+    },
+    "debuggable": "false",
+    "permissionsMatchRelease13": true,
+    "permissions": [
+      [
+        "android.permission.ACCESS_NETWORK_STATE",
+        ""
+      ],
+      [
+        "android.permission.INTERNET",
+        ""
+      ],
+      [
+        "android.permission.USE_BIOMETRIC",
+        ""
+      ],
+      [
+        "android.permission.USE_FINGERPRINT",
+        ""
+      ],
+      [
+        "android.permission.VIBRATE",
+        ""
+      ],
+      [
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "32"
+      ],
+      [
+        "com.android.vending.BILLING",
+        ""
+      ],
+      [
+        "com.google.android.finsky.permission.BIND_GET_INSTALL_REFERRER_SERVICE",
+        ""
+      ],
+      [
+        "nl.samistudio.doodle.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION",
+        ""
+      ]
+    ]
+  },
+  "embeddedExpoExtra": {
+    "apiBaseUrl": "https://doodle.samistudio.nl",
+    "googleWebClientId": "368967912119-eg869v0671g2kvg215l1ru91n1p1ihsn.apps.googleusercontent.com",
+    "googleIosClientId": "368967912119-ecoi57vl2430a05hgo9l1fepbftfinqk.apps.googleusercontent.com",
+    "integrityCloudProjectNumber": "368967912119",
+    "nativeFixtureMode": false
+  },
+  "bundlePageAlignment": {
+    "enabled": true,
+    "alignment": "PAGE_ALIGNMENT_16K"
+  },
+  "jarSignature": "verified",
+  "uploadCertificateSha256": "CA:AA:B7:44:11:C3:7B:97:DD:3D:AA:3F:47:35:94:CD:D6:6C:DC:CB:E0:AF:6D:EB:AE:C5:03:CE:0C:34:BC:C1",
+  "detailAssets": {
+    "dog-medium.webp": {
+      "sha256": "5d5bf2cdb0dd113ea00a654b5bb15144c99003b784135955839d03b4fc2b204a",
+      "archiveEntry": "base/res/drawable-mdpi-v4/assets_detail_dogmedium.webp"
+    },
+    "dog-detailed.webp": {
+      "sha256": "f648dba19f5d053150153d93bb1db20117e87c3c4c9878c9f4a972cc51921596",
+      "archiveEntry": "base/res/drawable-mdpi-v4/assets_detail_dogdetailed.webp"
+    },
+    "dog-simple.webp": {
+      "sha256": "8511bac9e3c6295e996811cdf78d43aeb16ea58023150515f2f0c073f6ede875",
+      "archiveEntry": "base/res/drawable-mdpi-v4/assets_detail_dogsimple.webp"
+    }
+  },
+  "sourceCommit": "2adfae6",
+  "providerQuality": "Two current-source real-provider probes passed visual inspection: pink text Medium and white photo Detailed. These do not establish Play-installed end-to-end behavior."
+}

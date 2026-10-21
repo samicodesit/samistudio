@@ -1,0 +1,64 @@
+{
+  "date": "2026-10-21",
+  "candidate": {
+    "versionCode": 14,
+    "versionName": "0.1.9",
+    "sourceCommit": "2adfae6",
+    "sha256": "edb5e7d4a8ef0ce857eda3200be8799be8f6f759f48e26e5b3f8940ffd1c9e2c",
+    "artifact": "/Users/sam/Projects/Doodle/.superpowers/sdd/2026-10-21-android-release/build/Doodle-0.1.9-14.aab"
+  },
+  "productionBeforeTask": {
+    "versionCode": 13,
+    "name": "13 (0.1.8) Cats icon",
+    "status": "Available on Google Play",
+    "rolloutPercent": 100,
+    "countries": 178,
+    "pendingChanges": 0
+  },
+  "internalTrack": {
+    "releaseName": "14 (0.1.9) Colors and detail picker",
+    "status": "Available to internal testers",
+    "consoleReleasedAt": "Oct 21 7:22 PM",
+    "url": "https://play.google.com/console/u/0/developers/5843530199260119810/app/4973301025063263916/tracks/4701262981282017852/releases/12/details",
+    "supportedDevicesLost": 0,
+    "proof": "play-internal-published.png"
+  },
+  "verification": {
+    "nativeTestFiles": 29,
+    "nativeTests": 276,
+    "nativeTypecheck": "passed",
+    "bundleRelease": "passed",
+    "lintRelease": "passed",
+    "bundletoolValidation": "passed",
+    "signature": "verified, existing upload key",
+    "fixtureMode": false,
+    "targetSdk": 36,
+    "permissionsMatchRelease13": true,
+    "allFourAbis": true,
+    "all64bitLoadSegmentsAligned16kb": true,
+    "bundlePageAlignment": "PAGE_ALIGNMENT_16K",
+    "productionNativeConfig": "HTTP 200, enabled, same package and cloud project, Play Integrity required",
+    "priorLayoutEvidence": "../detail-selector-2026-10-21/report.md",
+    "reviewerIntegrity": "Read-only verified existing list contains only doodlereview889@gmail.com, Android device integrity, Licensed Play-recognized app. No changes saved."
+  },
+  "localPlayDevice": {
+    "name": "Doodle_Play_API_36_Mac",
+    "image": "system-images;android-36;google_apis_playstore;arm64-v8a",
+    "imageRevision": 7,
+    "sdkLicense": "Owner explicitly approved additional android-sdk-arm-dbt-license",
+    "state": "At Google reviewer password screen, awaiting owner sign-in",
+    "playCandidateInstalled": false
+  },
+  "providerBudget": {
+    "ownerApprovedEur": 1,
+    "attemptsCompleted": 2,
+    "estimatedUsageCostUsd": 0.038507,
+    "automaticRetries": 0,
+    "scope": "Current-source provider output probes, not Play-installed native requests",
+    "record": "provider-quality.json"
+  },
+  "productionSubmission": {
+    "submitted": false,
+    "reason": "Play-installed candidate sign-in, attestation, native generation and billing checks not yet complete."
+  }
+}

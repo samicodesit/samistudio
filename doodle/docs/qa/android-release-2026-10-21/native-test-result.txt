@@ -1,0 +1,7 @@
+   ✓ signing in with google before the first drawing preserves all four free drawings  369ms
+
+ Test Files  29 passed (29)
+      Tests  276 passed (276)
+   Start at  19:14:35
+   Duration  12.45s (transform 1.88s, setup 0ms, collect 4.39s, tests 10.91s, environment 1.27s, prepare 3.65s)
+

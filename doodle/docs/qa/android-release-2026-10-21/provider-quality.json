@@ -1,0 +1,71 @@
+{
+  "scope": "Real provider output through current source generation functions. Does not establish Play-installed app flow.",
+  "approval": "Owner approved up to EUR 1 total for Android release checks on 21 October 2026.",
+  "model": "gpt-image-2.5-flare",
+  "quality": "medium",
+  "size": "1024x1024",
+  "automaticRetries": 0,
+  "pricingSource": "https://developers.openai.com/api/docs/pricing",
+  "ratesUsdPerMillion": {
+    "textInput": 5,
+    "imageInput": 8,
+    "output": 30
+  },
+  "attempts": [
+    {
+      "kind": "text-pink-medium",
+      "startedAt": "2026-10-21T17:32:08.026Z",
+      "status": "complete",
+      "providerRequestId": "req_c0203967169e498ead8523122e9e360a",
+      "usage": {
+        "input_tokens": 524,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 524
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 963
+      },
+      "paperCorrection": {
+        "version": "paper-v2",
+        "status": "corrected",
+        "durationMs": 300
+      },
+      "sha256": "7b08c5fd930b39786d054b631af872b8ccdd54b97d8818569b357bb63ee75996",
+      "estimatedCostUsd": 0.01579,
+      "finishedAt": "2026-10-21T17:32:19.660Z"
+    },
+    {
+      "kind": "photo-white-detailed",
+      "startedAt": "2026-10-21T17:32:19.660Z",
+      "status": "complete",
+      "providerRequestId": "req_d53e77677d5247f5a1aaa3ac56099a05",
+      "usage": {
+        "input_tokens": 1487,
+        "input_tokens_details": {
+          "image_tokens": 704,
+          "text_tokens": 783
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 1926
+      },
+      "paperCorrection": {
+        "version": "paper-v2",
+        "status": "corrected",
+        "durationMs": 119
+      },
+      "sha256": "8113245a2f0115a7c55fb22fd272303ab2e23a3eeca1a3ac3434c4fbc135dca6",
+      "estimatedCostUsd": 0.022717,
+      "finishedAt": "2026-10-21T17:32:30.630Z"
+    }
+  ],
+  "estimatedCostUsd": 0.038507
+}
