@@ -39,20 +39,23 @@
     "bundlePageAlignment": "PAGE_ALIGNMENT_16K",
     "productionNativeConfig": "HTTP 200, enabled, same package and cloud project, Play Integrity required",
     "priorLayoutEvidence": "../detail-selector-2026-10-21/report.md",
-    "reviewerIntegrity": "Read-only verified existing list contains only doodlereview889@gmail.com, Android device integrity, Licensed Play-recognized app. No changes saved."
+    "reviewerIntegrity": "Read-only verified existing list contains only doodlereview889@gmail.com, Android device integrity, Licensed Play-recognized app. No changes saved.",
+    "licenseTesting": "Existing Doodle Integrity reviewer list checked in developer License testing, RESPOND_NORMALLY; same list membership already verified today. No settings changed."
   },
   "localPlayDevice": {
     "name": "Doodle_Play_API_36_Mac",
     "image": "system-images;android-36;google_apis_playstore;arm64-v8a",
     "imageRevision": 7,
     "sdkLicense": "Owner explicitly approved additional android-sdk-arm-dbt-license",
-    "state": "At Google reviewer password screen, awaiting owner sign-in",
-    "playCandidateInstalled": false
+    "state": "Password and recovery-phone SMS verification succeeded. Google Terms of Service and Google Play Terms of Service acceptance awaiting explicit owner approval.",
+    "playCandidateInstalled": false,
+    "renderer": "auto after repeated SwiftShader warnings and UI input stalls; paused idle iOS QA simulator to reduce memory pressure",
+    "credentialReadbackCorrection": "Console DOM/clipboard returned redacted placeholders, but the ordinary visual Console view showed the existing credential. User authorized entry, and password was submitted successfully. No password is stored in this record."
   },
   "providerBudget": {
     "ownerApprovedEur": 1,
-    "attemptsCompleted": 2,
-    "estimatedUsageCostUsd": 0.038507,
+    "attemptsCompleted": 7,
+    "estimatedUsageCostUsd": 0.119127,
     "automaticRetries": 0,
     "scope": "Current-source provider output probes, not Play-installed native requests",
     "record": "provider-quality.json"

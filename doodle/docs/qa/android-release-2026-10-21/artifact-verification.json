@@ -447,5 +447,5 @@
     }
   },
   "sourceCommit": "2adfae6",
-  "providerQuality": "Two current-source real-provider probes passed visual inspection: pink text Medium and white photo Detailed. These do not establish Play-installed end-to-end behavior."
+  "providerQuality": "Seven current-source real-provider probes passed visual inspection, covering all paper presets and all three detail levels, including white Detailed photo conversion. Does not establish Play-installed app flow."
 }

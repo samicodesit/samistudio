@@ -65,7 +65,142 @@
       "sha256": "8113245a2f0115a7c55fb22fd272303ab2e23a3eeca1a3ac3434c4fbc135dca6",
       "estimatedCostUsd": 0.022717,
       "finishedAt": "2026-10-21T17:32:30.630Z"
+    },
+    {
+      "kind": "text-yellow-medium",
+      "startedAt": "2026-10-21T18:11:08.333Z",
+      "status": "complete",
+      "providerRequestId": "req_1435389ed36f4e8f97d755c11c59fb14",
+      "usage": {
+        "input_tokens": 536,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 536
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 975
+      },
+      "paperCorrection": {
+        "version": "paper-v2",
+        "status": "corrected",
+        "durationMs": 293
+      },
+      "sha256": "c296f085c3749391c07851bc6ab340b0b535754a927c3bb2414ac39c2eeb3216",
+      "estimatedCostUsd": 0.01585,
+      "finishedAt": "2026-10-21T18:11:20.808Z"
+    },
+    {
+      "kind": "text-peach-medium",
+      "startedAt": "2026-10-21T18:11:20.808Z",
+      "status": "complete",
+      "providerRequestId": "req_0f4eca1484254fae8f301a1e6680923c",
+      "usage": {
+        "input_tokens": 524,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 524
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 963
+      },
+      "paperCorrection": {
+        "version": "paper-v2",
+        "status": "corrected",
+        "durationMs": 159
+      },
+      "sha256": "2d3e6700edbb507c3adc66773fc679be046aeb93f3f902aa311944c3657867ec",
+      "estimatedCostUsd": 0.01579,
+      "finishedAt": "2026-10-21T18:11:31.184Z"
+    },
+    {
+      "kind": "text-mint-medium",
+      "startedAt": "2026-10-21T18:11:31.184Z",
+      "status": "complete",
+      "providerRequestId": "req_4e7b1c14e56f4c34b1a273d025c28026",
+      "usage": {
+        "input_tokens": 526,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 526
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 965
+      },
+      "paperCorrection": {
+        "version": "paper-v2",
+        "status": "corrected",
+        "durationMs": 170
+      },
+      "sha256": "497c70bdffbb0514cea57a4b5edd6eb3d2f66902ed9f25051c6bf37459659725",
+      "estimatedCostUsd": 0.0158,
+      "finishedAt": "2026-10-21T18:11:41.994Z"
+    },
+    {
+      "kind": "text-blue-simple",
+      "startedAt": "2026-10-21T18:11:41.994Z",
+      "status": "complete",
+      "providerRequestId": "req_b84c6ad506fd4fffba7b4626f447defd",
+      "usage": {
+        "input_tokens": 800,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 800
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 1239
+      },
+      "paperCorrection": {
+        "version": "paper-v2",
+        "status": "corrected",
+        "durationMs": 187
+      },
+      "sha256": "f6a198c8c07499a58e6fd8868a9e86609d174d011e4058020ee3b079a57904f5",
+      "estimatedCostUsd": 0.01717,
+      "finishedAt": "2026-10-21T18:11:52.627Z"
+    },
+    {
+      "kind": "text-lavender-detailed",
+      "startedAt": "2026-10-21T18:11:52.628Z",
+      "status": "complete",
+      "providerRequestId": "req_bdf720c9107c46db928ac24c3defe904",
+      "usage": {
+        "input_tokens": 568,
+        "input_tokens_details": {
+          "image_tokens": 0,
+          "text_tokens": 568
+        },
+        "output_tokens": 439,
+        "output_tokens_details": {
+          "image_tokens": 439,
+          "text_tokens": 0
+        },
+        "total_tokens": 1007
+      },
+      "paperCorrection": {
+        "version": "paper-v2",
+        "status": "corrected",
+        "durationMs": 168
+      },
+      "sha256": "014615a94ce579cefb4975279fff28b8d18f56f3e818f9c2986582cb01bf8832",
+      "estimatedCostUsd": 0.01601,
+      "finishedAt": "2026-10-21T18:12:07.167Z"
     }
   ],
-  "estimatedCostUsd": 0.038507
+  "estimatedCostUsd": 0.119127
 }
