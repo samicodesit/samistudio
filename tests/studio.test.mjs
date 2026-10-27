@@ -1,4 +1,6 @@
 import './terminal-viewport.test.mjs';
+import './contact-terminal.test.mjs';
+import './terminal-preparation.test.mjs';
 import './terminal-exploded.test.mjs';
 import './terminal-scene-motion.test.mjs';
 import './terminal-construction.test.mjs';
@@ -12,6 +14,7 @@ import './terminal-key-input.test.mjs';
 import './terminal-reflection.test.mjs';
 import './secret-terminal.test.mjs';
 import './hero-background.test.mjs';
+import './terminal-volume-calibration.test.mjs';
 import './gallery-startup.test.mjs';
 import './gallery-navigation.test.mjs';
 import './og-image.test.mjs';
@@ -26,9 +29,15 @@ import { tmpdir } from 'node:os';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const runtimeFiles = [
+  'assets/contact-terminal.mjs','assets/contact-terminal.css','assets/contact-screen-frame.png',
   'assets/terminal-inner-board.webp','assets/terminal-inner-shell.webp',
   'assets/terminal-scene-motion.mjs','assets/terminal-room.mjs',
   'assets/terminal-construction.mjs', 'assets/terminal-renderer.mjs', 'assets/terminal-exploded.mjs', 'assets/terminal-exploded.css',
+  'assets/terminal-photo-renderer.mjs', 'assets/terminal-volume/calibration.mjs', 'assets/terminal-volume/model.mjs',
+  'assets/terminal-volume/native-surfaces.mjs', 'assets/terminal-volume/room-clean.mjs',
+  'assets/terminal-volume/internal-skins.mjs',
+  'assets/terminal-volume/environment.mjs', 'assets/terminal-volume/studio-environment.bin.gz',
+  'assets/terminal-volume/vendor/three.mjs', 'assets/terminal-volume/vendor/LICENSE-three.txt',
   'assets/terminal-viewport.mjs', 'assets/motion-preferences.mjs', 'motion-study.mjs', 'motion-study.css', 'entry-paths.mjs',
   'index.html', 'favicon.svg', 'og-image.jpg', 'assets/studio.css', 'assets/studio.js',
   'assets/key-spring.mjs', 'assets/terminal-controls.mjs', 'assets/terminal-housing.webp',
@@ -106,6 +115,7 @@ test('all runtime files exist and image formats are valid', async () => {
 
 test('HTML, CSS and JavaScript relative asset references resolve locally', async () => {
   for (const path of ['index.html', 'assets/studio.css', 'assets/studio.js', 'assets/key-spring.mjs',
+    'assets/contact-terminal.css', 'assets/contact-terminal.mjs',
     'assets/project-gallery.css', 'assets/project-gallery.js', 'assets/project-data.mjs']) {
     const source = await text(path);
     const refs = [...source.matchAll(/["']((?:\.\/|\.\.\/)[^"'\s]+\.(?:mjs|js|css|webp|svg|png|woff2?))["']/g)];

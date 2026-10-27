@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="./assets/studio.css">
   <link rel="stylesheet" href="./assets/project-gallery.css">
   <link rel="stylesheet" href="./assets/terminal-exploded.css">
+  <link rel="stylesheet" href="./assets/contact-terminal.css">
   <script src="./assets/studio.js" type="module" onerror="document.documentElement.classList.remove('is-loading')"></script>
 <link rel="stylesheet" href="./motion-study.css?v=viewport-20261017"><script type="module" src="./motion-study.mjs"></script></head>
 <body>
@@ -47,7 +48,13 @@
       <clipPath id="terminal-socket-about" clipPathUnits="objectBoundingBox"><path d="M 0.02740 0.24031 Q 0.02740 0.20930 0.04452 0.18992 Q 0.06164 0.17054 0.06849 0.16667 Q 0.07534 0.16279 0.08562 0.15891 Q 0.09589 0.15504 0.20205 0.13953 Q 0.30822 0.12403 0.47603 0.10078 Q 0.64384 0.07752 0.68151 0.07364 Q 0.71918 0.06977 0.74315 0.06977 Q 0.76712 0.06977 0.78082 0.07752 Q 0.79452 0.08527 0.80479 0.09302 Q 0.81507 0.10078 0.82877 0.11240 Q 0.84247 0.12403 0.84932 0.13178 Q 0.85616 0.13953 0.85959 0.14729 Q 0.86301 0.15504 0.92123 0.44961 Q 0.97945 0.74419 0.97945 0.76357 Q 0.97945 0.78295 0.97603 0.79457 Q 0.97260 0.80620 0.96233 0.81783 Q 0.95205 0.82946 0.94521 0.83333 Q 0.93836 0.83721 0.59589 0.88760 Q 0.25342 0.93798 0.23973 0.93798 Q 0.22603 0.93798 0.21575 0.93411 Q 0.20548 0.93023 0.19178 0.92248 Q 0.17808 0.91473 0.16781 0.90310 Q 0.15753 0.89147 0.15411 0.88372 Q 0.15068 0.87597 0.14041 0.82946 Q 0.13014 0.78295 0.09589 0.61628 Q 0.06164 0.44961 0.05137 0.39922 Q 0.04110 0.34884 0.03425 0.31008 Q 0.02740 0.27132 0.02740 0.24031 Z"/></clipPath>
       <clipPath id="terminal-socket-contact" clipPathUnits="objectBoundingBox"><path d="M 0.00000 0.22000 Q 0.00000 0.20800 0.00342 0.20000 Q 0.00685 0.19200 0.01712 0.18000 Q 0.02740 0.16800 0.04110 0.16000 Q 0.05479 0.15200 0.07534 0.14800 Q 0.09589 0.14400 0.15068 0.13600 Q 0.20548 0.12800 0.38356 0.10400 Q 0.56164 0.08000 0.64384 0.07200 Q 0.72603 0.06400 0.75000 0.06400 Q 0.77397 0.06400 0.78767 0.07200 Q 0.80137 0.08000 0.80479 0.08400 Q 0.80822 0.08800 0.81164 0.10400 Q 0.81507 0.12000 0.88014 0.43200 Q 0.94521 0.74400 0.94521 0.76800 Q 0.94521 0.79200 0.93836 0.80800 Q 0.93151 0.82400 0.92808 0.82800 Q 0.92466 0.83200 0.91096 0.83600 Q 0.89726 0.84000 0.56507 0.88400 Q 0.23288 0.92800 0.21233 0.92800 Q 0.19178 0.92800 0.17808 0.92000 Q 0.16438 0.91200 0.15411 0.90000 Q 0.14384 0.88800 0.13699 0.87200 Q 0.13014 0.85600 0.06849 0.56800 Q 0.00685 0.28000 0.00342 0.25600 Q 0.00000 0.23200 0.00000 0.22000 Z"/></clipPath>
     </defs></svg>
-  <div class="loading-screen" role="status"><span>Sami Studio</span><small>Loading…</small></div>
+  <div class="loading-screen" role="progressbar" aria-label="Loading Sami Studio" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+    <div class="loading-signature" aria-hidden="true">
+      <span class="loading-sketch">Sami Studio</span>
+      <span class="loading-ink-window"><span class="loading-ink">Sami Studio</span></span>
+    </div>
+    <span class="loading-caption" aria-hidden="true"><span class="loading-pilot"></span>Switching on</span>
+  </div>
   <a class="skip-link" id="skip-link" href="#terminal-workspace">Skip to terminal controls</a>
   <main>
     <section class="experience" aria-labelledby="headline">
@@ -66,12 +73,13 @@
           </div>
         </div>
       </div>
+      <a class="contact-entry" data-contact-entry href="mailto:hello@samistudio.nl" aria-haspopup="dialog" aria-controls="contact-terminal">Something needs doing?</a>
       <div class="composition" id="terminal-workspace">
         <div class="terminal" role="region" aria-label="Interactive Sami Studio terminal">
           <button class="pilot-light te-trigger" type="button" aria-label="Inspect terminal assembly" aria-expanded="false" aria-describedby="assembly-entry-hint"></button>
           <span class="sr-only" id="assembly-entry-hint">Hold the amber indicator to take the terminal apart, or focus it and press Enter.</span>
           <div class="display" id="terminal-display" aria-label="Terminal display">
-            <div class="display-topline"><button type="button" id="display-title" aria-controls="secret-terminal" aria-expanded="false" aria-describedby="secret-entry-hint">Work</button><div class="display-pagination"><button type="button" data-page="previous" aria-label="Previous project">&#8249;</button><span id="display-number">1/3</span><button type="button" data-page="next" aria-label="Next project">&#8250;</button></div><button class="shell-exit" type="button" aria-label="Exit secret terminal" hidden>exit</button></div>
+            <div class="display-topline"><button type="button" id="display-title" aria-controls="secret-terminal" aria-expanded="false" aria-describedby="secret-entry-hint">Work</button><div class="display-pagination"><button type="button" data-page="previous" data-glyph="&#8249;" aria-label="Previous project">&#8249;</button><span id="display-number">1/3</span><button type="button" data-page="next" data-glyph="&#8250;" aria-label="Next project">&#8250;</button></div><button class="shell-exit" type="button" aria-label="Exit secret terminal" hidden>exit</button></div>
             <span class="sr-only" id="secret-entry-hint">Hold Work, or focus it and press Enter, to open a hidden command prompt. The backtick key also opens it.</span>
             <div class="display-stage">
               <section class="screen screen-work" data-screen="work" aria-label="Work">
@@ -89,10 +97,15 @@
                   <span aria-hidden="true">&gt;</span><input class="shell-input" aria-label="Terminal command" maxlength="2000" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"><button type="submit" aria-label="Run command">&#8629;</button>
                 </form>
               </section>
-              <section class="screen screen-about" data-screen="about" aria-label="About" hidden><p class="screen-copy">No handoff between designer and developer, so nothing gets lost in between. Every detail you see, I decided and built.</p></section>
-              <section class="screen screen-contact" data-screen="contact" aria-label="Contact" hidden><p class="screen-copy" id="contact-copy">Got something to build? Tap here to email me.</p><p class="contact-email" id="contact-email">hello@samistudio.nl</p></section>
+              <section class="screen screen-about" data-screen="about" aria-label="About" hidden>
+                <div class="about-help"><div><h2>Build a new product</h2><p>Websites, apps and extensions.</p></div><div><h2>Improve an existing one</h2><p>UX fixes, features and performance.</p></div><a class="about-contact-link" data-contact-entry href="mailto:hello@samistudio.nl" aria-haspopup="dialog" aria-controls="contact-terminal">Discuss your project<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M4 10h11m-5-5 5 5-5 5"/></svg></a></div>
+              </section>
+              <section class="screen screen-contact" data-screen="contact" aria-label="Contact" hidden>
+                <p class="screen-copy" id="contact-copy">Got something in mind?</p>
+                <a id="contact-display-link" class="contact-screen-cta" data-contact-entry href="mailto:hello@samistudio.nl" aria-haspopup="dialog" aria-controls="contact-terminal" hidden><span>Let’s talk</span><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M3 10h13m-5-5 5 5-5 5"/></svg></a>
+                <a class="contact-email" href="mailto:hello@samistudio.nl">hello@samistudio.nl</a>
+              </section>
             </div>
-            <a id="contact-display-link" class="contact-display-link" href="mailto:hello@samistudio.nl" aria-labelledby="contact-copy contact-email" hidden></a>
             <p class="sr-only" id="display-announcement" aria-live="polite" aria-atomic="true">Work, project 1 of 3.</p>
           </div>
           <nav class="terminal-keys" aria-label="Explore Sami Studio">
@@ -104,6 +117,25 @@
       </div>
     </section>
   </main>
+  <dialog class="contact-terminal" id="contact-terminal" aria-labelledby="contact-heading" data-phase="closed">
+    <div class="contact-stage">
+      <section class="contact-monitor" aria-label="Enlarged terminal display">
+        <div class="contact-lcd">
+          <div class="contact-topline"><span>Contact</span><button class="contact-close" type="button" aria-label="Close contact form"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+          <h2 id="contact-heading" tabindex="-1">Tell me about it.</h2>
+          <form class="contact-form">
+            <div class="contact-person">
+              <label class="contact-field">Your name<input name="name" autocomplete="name" maxlength="100" placeholder="Alex" required></label>
+              <label class="contact-field">Your email<input type="email" name="email" autocomplete="email" inputmode="email" spellcheck="false" maxlength="254" placeholder="alex@example.com" required></label>
+            </div>
+            <label class="contact-field">What do you have in mind?<textarea name="message" rows="3" maxlength="4000" placeholder="A little about what needs doing…" required></textarea></label>
+            <div class="contact-actions"><a class="contact-address" href="mailto:hello@samistudio.nl">hello@samistudio.nl</a><button class="contact-submit" type="submit">Send me an email</button></div>
+            <p class="contact-status" role="status" aria-live="polite">Opens your email app.</p>
+          </form>
+        </div>
+      </section>
+    </div>
+  </dialog>
   <dialog class="gallery-shell" id="project-gallery" aria-labelledby="gallery-current" aria-describedby="gallery-instructions" data-phase="closed" tabindex="-1">
     <p id="gallery-instructions" class="sr-only">Scroll or swipe up and down to explore projects. Each scene snaps into place. Use arrow keys or Page Up and Page Down to navigate. Escape returns to work.</p>
     <p id="gallery-current" class="sr-only" aria-live="polite" aria-atomic="true">Work</p>

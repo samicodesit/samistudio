@@ -1,16 +1,44 @@
 import { KeySpring } from './key-spring.mjs';
 import { projectiveMatrix as quadMatrix, fitMobileTerminal, fitDesktopTerminal } from './gallery-geometry.mjs';
 import { initProjectGallery } from './project-gallery.js';
-import { initTerminalControls, initTerminalReflection } from './terminal-controls.mjs';
+import { initTerminalControls, initTerminalReflection, initPaginationCue } from './terminal-controls.mjs';
 import { initSecretTerminal } from './secret-terminal.mjs';
 import { initTerminalViewport } from './terminal-viewport.mjs';
 import { motionPreference } from './motion-preferences.mjs';
 import { initExplodedTerminal } from './terminal-exploded.mjs';
+import { initContactTerminal } from './contact-terminal.mjs';
+
+export function createLoadingProgress(report) {
+  // Completed-work weights reflect the measured preparation costs, not time
+  // elapsed or bytes guessed. The existing final paint owns the last unit.
+  const weights={fonts:6,artwork:4,scene:8,audio:1,gallery:12,
+    photographicRenderer:12,environment:8,textures:6,geometry:16,bindings:1,
+    roomField:7,shaders:7,interiorRestFrames:7,gpuWarm:4};
+  const completed=new Map();let total=0,finished=false;report(0);
+  return {
+    set(task,fraction=1){
+      if(finished||!Object.hasOwn(weights,task)||!Number.isFinite(fraction))return;
+      const previous=completed.get(task)||0,next=Math.max(previous,Math.min(1,Math.max(0,fraction)));
+      if(next===previous)return;
+      completed.set(task,next);total+=(next-previous)*weights[task];report(total/100);
+    },
+    finish(){if(!finished){finished=true;report(1);}},
+  };
+}
 
 (() => {
   'use strict';
   const root = document.documentElement;
   const experience = document.querySelector('.experience');
+  const loader=document.querySelector('.loading-screen');
+  const loadingProgress=createLoadingProgress(value=>{
+    loader.style.setProperty('--loading-progress',String(value));
+    loader.setAttribute('aria-valuenow',String(Math.round(value*100)));
+  });
+  if(root.classList.contains('is-loading')){
+    experience.inert=true;
+    window.addEventListener('error',()=>{experience.inert=false;},{once:true});
+  }
   const projectDialog = document.querySelector('#project-gallery');
   const scene = document.querySelector('.scene');
   const scenePhoto = document.querySelector('.scene-photo');
@@ -22,13 +50,13 @@ import { initExplodedTerminal } from './terminal-exploded.mjs';
   reflectionMask.className='terminal-reflection';reflectionMask.setAttribute('aria-hidden','true');
   const reflectionSurface=document.createElement('span');reflectionSurface.className='terminal-reflection-glint';
   reflectionMask.append(reflectionSurface);display.append(reflectionMask);
-  let terminalInView=true,explodedTerminal;
+  let terminalInView=true,explodedTerminal,contactTerminal;
   const reflection=initTerminalReflection({surface:reflectionSurface,container:document.querySelector('.terminal'),reducedMotion,
-    isVisible:()=>terminalInView&&!projectDialog.open&&display.dataset.shell!=='true'&&!explodedTerminal?.isOpen});
-  new MutationObserver(()=>reflection.refresh()).observe(projectDialog,{attributes:true,attributeFilter:['open']});
+    isVisible:()=>terminalInView&&!projectDialog.open&&!contactTerminal?.isOpen&&display.dataset.shell!=='true'&&!explodedTerminal?.isOpen});
+  new MutationObserver(()=>{reflection.refresh();paginationCue.refresh();}).observe(projectDialog,{attributes:true,attributeFilter:['open']});
   if('IntersectionObserver' in window)new IntersectionObserver(entries=>{
     const visible=entries[0].isIntersecting;
-    if(visible!==terminalInView){terminalInView=visible;reflection.refresh();}
+    if(visible!==terminalInView){terminalInView=visible;reflection.refresh();paginationCue.refresh();}
   }).observe(experience);
   let entranceAssetsReady = false;
   let entranceScheduled = false;
@@ -38,20 +66,23 @@ import { initExplodedTerminal } from './terminal-exploded.mjs';
   const fontsReady = Promise.allSettled([
     ...[400, 500].map(weight => document.fonts.load(`${weight} 16px Inter`)),
     document.fonts.load('400 104px "DM Serif Display"'),
-  ]);
-  Promise.allSettled([fontsReady, keyArtwork.decode()]).then(() => {
+  ]).then(()=>loadingProgress.set('fonts'));
+  Promise.allSettled([fontsReady, keyArtwork.decode().finally(()=>loadingProgress.set('artwork'))]).then(() => {
     entranceAssetsReady = true;
     layout();
   });
   let gallery, secretTerminal, terminalEditor;
   let mechanisms = [];
   const terminalControls = initTerminalControls({display,keys,screens,
-    pilot:document.querySelector('.pilot-light'),reducedMotion,isVisible:()=>!projectDialog.open,
-    onPage:direction=>gallery?.page(direction),onOpen:()=>gallery?.openSelected(),onLeaveWork:()=>gallery?.cancelPending()});
+    pilot:document.querySelector('.pilot-light'),reducedMotion,isVisible:()=>!projectDialog.open&&!contactTerminal?.isOpen,
+    onPage:direction=>{paginationCue.markUsed();gallery?.page(direction);},onOpen:()=>gallery?.openSelected(),onLeaveWork:()=>gallery?.cancelPending()});
+  const paginationCue=initPaginationCue({pagination:display.querySelector('.display-pagination'),reducedMotion,
+    isVisible:()=>terminalInView&&!projectDialog.open&&!contactTerminal?.isOpen&&!explodedTerminal?.isOpen&&display.dataset.view==='work'&&display.dataset.shell!=='true'});
   const showView=(view,focusElement)=>{
     secretTerminal?.close({restore:false});
     terminalControls.show(view,focusElement);
     mechanisms.forEach(mechanism=>mechanism.syncSelection());
+    paginationCue.refresh();
   };
   gallery = initProjectGallery({
     onReturn:async()=>{
@@ -71,18 +102,24 @@ import { initExplodedTerminal } from './terminal-exploded.mjs';
     onSelect:(index,total)=>terminalControls.projectChanged(index,total),
   });
   secretTerminal=initSecretTerminal({display,reducedMotion,
-    isAvailable:()=>terminalInView&&!projectDialog.open&&!explodedTerminal?.isOpen,
+    isAvailable:()=>terminalInView&&!projectDialog.open&&!contactTerminal?.isOpen&&!explodedTerminal?.isOpen,
     canType:()=>true,
     onEnter:()=>{showView('work');gallery.cancelPending();terminalControls.pulse();},
     onExit:()=>showView('work'),
     onOpenProject:id=>{showView('work');gallery.openProject(id);},
     onExplode:()=>explodedTerminal?.open(),
-    onChange:()=>{reflection.refresh();terminalEditor?.refresh();},
+    onChange:()=>{reflection.refresh();terminalEditor?.refresh();paginationCue.refresh();},
   });
   explodedTerminal=initExplodedTerminal({trigger:document.querySelector('.pilot-light'),reducedMotion,
-    isAvailable:()=>terminalInView&&!projectDialog.open,
-    onEnter:()=>{gallery.cancelPending();reflection.refresh();},
-    onExit:()=>reflection.refresh(),
+    onPrepareProgress:phase=>loadingProgress.set(phase),
+    isAvailable:()=>terminalInView&&!projectDialog.open&&!contactTerminal?.isOpen,
+    onEnter:()=>{gallery.cancelPending();reflection.refresh();paginationCue.refresh();},
+    onExit:()=>{reflection.refresh();paginationCue.refresh();},
+  });
+  contactTerminal=initContactTerminal({reducedMotion,
+    onUnavailable:()=>showView('contact'),
+    onEnter:()=>{explodedTerminal.close({immediate:true});secretTerminal.close({restore:false});gallery.cancelPending();},
+    onExit:()=>{layout();reflection.refresh();},onStateChange:()=>{reflection.refresh();paginationCue.refresh();},
   });
   const fittedPhoto = document.createElement('canvas');
   fittedPhoto.width = 1260;
@@ -92,6 +129,7 @@ import { initExplodedTerminal } from './terminal-exploded.mjs';
   scene.append(backdrop);
   const widePhoto = new Image();
   const roomPhoto = document.createElement('canvas');
+  let roomPhotoReady=false;
   let mobilePhotoCache=null;
   widePhoto.decoding = 'async';
   widePhoto.addEventListener('load', () => { prepareRoomPhoto(); layout(); }, { once: true });
@@ -208,6 +246,7 @@ import { initExplodedTerminal } from './terminal-exploded.mjs';
     sides.addColorStop(0,'transparent');sides.addColorStop(200/roomPhoto.width,'black');
     sides.addColorStop(1-200/roomPhoto.width,'black');sides.addColorStop(1,'transparent');
     context.fillStyle=sides;context.fillRect(0,0,roomPhoto.width,roomPhoto.height);
+    roomPhotoReady=true;
   }
 
   function paintBackdrop(width, height, scale, mobile, sceneOffsetLeft, sceneOffsetTop) {
@@ -264,7 +303,7 @@ import { initExplodedTerminal } from './terminal-exploded.mjs';
       scene.classList.add('is-ready');
       return;
     }
-    if (activeSceneAsset?.key !== 'desktop' || scenePhoto.naturalWidth < 1260 || !widePhoto.naturalWidth) return;
+    if (activeSceneAsset?.key !== 'desktop' || scenePhoto.naturalWidth < 1260 || !widePhoto.naturalWidth || !roomPhotoReady) return;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     backdrop.width = Math.max(1, Math.round(width * dpr));
     backdrop.height = Math.max(1, Math.round(height * dpr));
@@ -293,7 +332,7 @@ import { initExplodedTerminal } from './terminal-exploded.mjs';
     const safeBottom=mobile?(parseFloat(getComputedStyle(experience).paddingBottom)||0):0;
     const headerBottom=mobile?document.querySelector('.site-header').getBoundingClientRect().bottom:0;
     const editorFrame=mobile?terminalEditor?.frame:null;
-    const layoutKey = [width, height, mobile, safeBottom, headerBottom, JSON.stringify(editorFrame), devicePixelRatio, activeSceneAsset.key, widePhoto.naturalWidth, entranceAssetsReady].join(':');
+    const layoutKey = [width, height, mobile, safeBottom, headerBottom, JSON.stringify(editorFrame), devicePixelRatio, activeSceneAsset.key, widePhoto.naturalWidth, roomPhotoReady, entranceAssetsReady].join(':');
     if (lastLayoutKey === layoutKey) return;
     lastLayoutKey = layoutKey;
     let scale,sceneLeft,sceneTop;
@@ -339,21 +378,39 @@ import { initExplodedTerminal } from './terminal-exploded.mjs';
       ensureWidePhoto();
       paintBackdrop(width, height, scale, mobile, sceneLeft, sceneTop);
     } else paintBackdrop(width, height, scale, mobile, sceneLeft, sceneTop);
+    // The cutaway shares these pixels and this camera. Refresh it in the same
+    // transaction, including visualViewport-only changes from mobile Safari.
+    experience.dispatchEvent(new Event('terminal-layout'));
     if (!entranceScheduled && entranceAssetsReady && (mobile || scene.classList.contains('is-ready'))) {
       entranceScheduled = true;
-      // Commit the complete composition before starting one shared fade.
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        root.classList.remove('is-loading');
-        gallery.ready();
-        reflection.ready();
-      }));
+      loadingProgress.set('scene');
+      // Construction includes synchronous pixel baking and GPU uploads. Finish
+      // it behind the loading screen, never in an idle callback after visitors
+      // can already press keys. Failed WebGL preparation retains the homepage.
+      requestAnimationFrame(async () => {
+        prepareKeySound();
+        loadingProgress.set('audio');
+        await Promise.allSettled([explodedTerminal.prepare(),gallery.prepare({onProgress:value=>loadingProgress.set('gallery',value)})]);
+        // Let queued uploads settle before the shared entrance and first input.
+        requestAnimationFrame(() => {
+          loadingProgress.finish();
+          requestAnimationFrame(() => {
+            root.classList.remove('is-loading');
+            experience.inert=false;
+            gallery.ready();
+            contactTerminal.ready();
+            paginationCue.ready();
+            reflection.ready();
+          });
+        });
+      });
     }
   }
 
   let audioContext;
   let keySound;
   const soundingKeys = new Set();
-  function playKeySound() {
+  function prepareKeySound() {
     try {
       const AudioContext = window.AudioContext || window.webkitAudioContext;
       if (!AudioContext) return;
@@ -376,6 +433,12 @@ import { initExplodedTerminal } from './terminal-exploded.mjs';
           samples[i] = (body + click + seat) * attack * tail;
         }
       }
+    } catch { /* A later trusted gesture can retry audio preparation. */ }
+  }
+  function playKeySound() {
+    try {
+      prepareKeySound();
+      if (!audioContext || !keySound) return;
       const play = () => {
         if (document.hidden) return;
         if (soundingKeys.size >= 4) soundingKeys.values().next().value.stop();

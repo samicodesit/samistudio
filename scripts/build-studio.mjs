@@ -4,9 +4,15 @@ import { fileURLToPath } from 'node:url';
 
 // Explicitly publish the current homepage only, never repository or Doodle sources.
 export const studioFiles = [
+  'assets/contact-terminal.mjs','assets/contact-terminal.css','assets/contact-screen-frame.png',
   'assets/terminal-inner-board.webp','assets/terminal-inner-shell.webp',
   'assets/terminal-scene-motion.mjs','assets/terminal-room.mjs',
   'assets/terminal-construction.mjs', 'assets/terminal-renderer.mjs', 'assets/terminal-exploded.mjs', 'assets/terminal-exploded.css',
+  'assets/terminal-photo-renderer.mjs', 'assets/terminal-volume/calibration.mjs', 'assets/terminal-volume/model.mjs',
+  'assets/terminal-volume/native-surfaces.mjs', 'assets/terminal-volume/room-clean.mjs',
+  'assets/terminal-volume/internal-skins.mjs',
+  'assets/terminal-volume/environment.mjs', 'assets/terminal-volume/studio-environment.bin.gz',
+  'assets/terminal-volume/vendor/three.mjs', 'assets/terminal-volume/vendor/LICENSE-three.txt',
   'assets/terminal-viewport.mjs', 'assets/motion-preferences.mjs', 'motion-study.mjs', 'motion-study.css', 'entry-paths.mjs',
   'index.html', 'favicon.svg', 'og-image.jpg', 'assets/studio.css', 'assets/studio.js',
   'assets/key-spring.mjs', 'assets/terminal-controls.mjs', 'assets/terminal-housing.webp',

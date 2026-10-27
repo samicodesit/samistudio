@@ -480,6 +480,10 @@ export function initProjectGallery({ onReturn, onSelect }) {
     openProject(id){return open(id);},
     openSelected(){return open(rows[selected].dataset.project);},
     page(direction){ if (!dialog.open) { ++pending; clearLoading(); select(selected + direction); prefetch(); } },
+    prepare({onProgress=()=>{}}={}){
+      if(!allowPrefetch(navigator.connection)){onProgress(1);return Promise.resolve();}
+      let completed=0;const selectedMode=mode();return Promise.allSettled(ids.map(id=>prepare(id,selectedMode,'low').finally(()=>onProgress(++completed/ids.length))));
+    },
     ready(){
       if (allowPrefetch(navigator.connection)) prepareAll().catch(() => {});
       const id=projectFromHash(location.hash);if(id){baseHash='';onReturn();open(id,true);}

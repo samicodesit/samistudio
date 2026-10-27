@@ -95,3 +95,20 @@ test('the mechanical click is cached, bounded, click-free at its ends and queued
   assert.ok(rms>.015&&rms<.08,'the short click has substance without a loud tail');
   context.document.hidden=true;context.play();assert.equal(starts.length,8);
 });
+
+test('audio can be prepared during loading without playing or resuming before a gesture',()=>{
+  let contexts=0,resumes=0,starts=0,buffers=0;
+  class AudioContext {
+    sampleRate=48000;currentTime=0;state='suspended';destination={};
+    constructor(){contexts++;}
+    createBuffer(channels,length){buffers++;return {getChannelData:()=>new Float32Array(length)};}
+    createBufferSource(){return {connect(){},start(){starts++;}};}
+    resume(){resumes++;this.state='running';return Promise.resolve();}
+  }
+  const audioCode=source.slice(source.indexOf('  let audioContext;'),source.indexOf('  mechanisms = keys.map('));
+  const context={window:{AudioContext},document:{hidden:false}};
+  vm.runInNewContext(audioCode+'\nthis.prepare=prepareKeySound;this.play=playKeySound;',context);
+  context.prepare();context.prepare();
+  assert.equal(contexts,1);assert.equal(buffers,1);assert.equal(resumes,0);assert.equal(starts,0);
+  context.play();assert.equal(contexts,1);assert.equal(buffers,1);assert.equal(resumes,1);assert.equal(starts,1);
+});

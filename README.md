@@ -20,6 +20,8 @@ Personal website for Sami, designer and developer. The homepage introduces Sami 
 
 The original homepage and terminal artwork were recovered byte-for-byte from the working production deployment on 16 September 2026. The gallery builds on those sources. No framework or package installation is required for the homepage.
 
+The top-right “Something needs doing?” link opens a front-facing version of the original screen with a name, email and message form. “Send me an email” prepares a complete draft in the visitor's email application for hello@samistudio.nl. There is no website mail backend in this version. The form preserves its draft when closed, supports Escape and browser history, and respects reduced motion. Source registration and QA are retained in `design-assets/contact-terminal/`.
+
 ## Local preview and checks
 
 From the repository root, with Node.js 20 or newer:

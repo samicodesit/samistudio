@@ -1,5 +1,46 @@
 // Native terminal state and deliberate gestures. Gallery artwork/loading stays
 // owned by the existing gallery controller.
+// Idle guidance remains available until the visitor actually pages a project.
+export function initPaginationCue({pagination,page=document,reducedMotion,isVisible=()=>true,
+  setTimer=setTimeout,clearTimer=clearTimeout}) {
+  let timer=0,ready=false,used=false,disposed=false,animations=[];
+  const bindings=[],held=new Set();
+  const allowed=()=>ready&&!disposed&&!used&&!page.hidden&&!reducedMotion.matches&&isVisible()&&!held.size&&!pagination.contains(page.activeElement);
+  function stop(){clearTimer(timer);timer=0;animations.forEach(animation=>animation.cancel());animations=[];pagination.dataset.cue='idle';}
+  function refresh(delay=1500){stop();if(allowed())timer=setTimer(play,delay);}
+  function listen(target,type,fn){target.addEventListener(type,fn,{passive:true,capture:true});bindings.push(()=>target.removeEventListener(type,fn,true));}
+  listen(page,'pointerdown',event=>{held.add(`p${event.pointerId}`);stop();});
+  for(const type of ['pointerup','pointercancel'])listen(page,type,event=>{held.delete(`p${event.pointerId}`);refresh();});
+  listen(page,'keydown',event=>{held.add(`k${event.key}`);stop();});
+  listen(page,'keyup',event=>{held.delete(`k${event.key}`);refresh();});
+  listen(page,'wheel',()=>refresh());
+  listen(page,'visibilitychange',()=>{held.clear();refresh();});
+  listen(reducedMotion,'change',()=>refresh());
+  function play(){
+    timer=0;if(!allowed())return;
+    pagination.dataset.cue='playing';
+    animations=[...pagination.querySelectorAll('button')].map((button,index)=>{
+      const direction=index===0?-1:1;
+      return button.animate([
+        {transform:'translateX(0)',opacity:1,offset:0},
+        {transform:`translateX(${direction*1.5}px)`,opacity:.35,offset:.08},
+        {transform:'translateX(0)',opacity:1,offset:.13},
+        {transform:`translateX(${-direction}px)`,opacity:.55,offset:.18},
+        {transform:'translateX(0)',opacity:1,offset:.23},
+        {transform:`translateX(${direction*5}px)`,opacity:1,offset:.58},
+        {transform:'translateX(0)',opacity:1,offset:1},
+      ],{duration:680,iterations:1,easing:'cubic-bezier(.22,.7,.25,1)'});
+    });
+    timer=setTimer(()=>refresh(5000),680);
+  }
+  return {
+    ready(){if(disposed||ready)return;ready=true;refresh();},
+    refresh,
+    markUsed(){used=true;stop();},
+    destroy(){disposed=true;stop();held.clear();bindings.forEach(remove=>remove());},
+  };
+}
+
 // Finite compositor-only passes leave no running animation during the rest.
 export function initTerminalReflection({surface,container,page=document,reducedMotion,isVisible=()=>true,
   setTimer=setTimeout,clearTimer=clearTimeout}) {
